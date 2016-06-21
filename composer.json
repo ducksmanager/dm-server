@@ -12,9 +12,18 @@
         }
     ],
     "support": {
-        "issues": "https://github.com/whattheduck-server/jane/issues"
+        "issues": "https://github.com/bperel/wtd-server/issues"
+    },
+    "autoload": {
+        "psr-4": {
+            "Wtd\\": [
+                "app",
+                "app/controllers"
+            ]
+        }
     },
     "require": {
-        "silex/silex": "2.0.*"
+        "silex/silex": "2.0.*",
+        "sorien/silex-pimple-dumper": "~1.0"
     }
 }
