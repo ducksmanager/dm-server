@@ -5,7 +5,7 @@ namespace Wtd;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class CollectionController extends AppController
 {
@@ -14,9 +14,10 @@ class CollectionController extends AppController
      */
     public static function addRoutes($routing)
     {
-        $routing->post('/collection/new', function (Request $request) {
+        $routing->post('/collection/new', function (Application $app) {
 
-            return new Response('OK', 201);
+            $subRequest = Request::create('/internal/test', 'POST');
+            return $app->handle($subRequest, HttpKernelInterface::SUB_REQUEST, false);
         });
     }
 }

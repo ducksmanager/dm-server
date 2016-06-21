@@ -27,6 +27,7 @@ class Wtd implements ControllerProviderInterface
         $routing = $app['controllers_factory'];
 
         CollectionController::addRoutes($routing);
+        InternalController::addRoutes($routing);
 
         return $routing;
     }
