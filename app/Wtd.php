@@ -10,6 +10,7 @@ class Wtd implements ControllerProviderInterface
 {
     public function setup(Application $app)
     {
+        $app['debug'] = true;
     }
 
     /**

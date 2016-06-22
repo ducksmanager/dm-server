@@ -5,7 +5,6 @@ namespace Wtd;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class CollectionController extends AppController
 {
@@ -14,10 +13,26 @@ class CollectionController extends AppController
      */
     public static function addRoutes($routing)
     {
-        $routing->post('/collection/new', function (Application $app) {
+        $routing->post(
+            '/collection/new',
+            function (Application $app, Request $request) {
+                $check = self::callInternal($app, '/user/new/check', 'GET', [
+                    $request->request->get('username'),
+                    $request->request->get('password'),
+                    $request->request->get('password2')
+                ]);
+                if ($check->getStatusCode() !== 200) {
+                    return $check;
+                }
+                else {
+                    return self::callInternal($app, '/user/new', 'POST', [
+                        $request->request->get('username'),
+                        $request->request->get('password'),
+                        $request->request->get('email')
+                    ]);
+                }
 
-            $subRequest = Request::create('/internal/test', 'POST');
-            return $app->handle($subRequest, HttpKernelInterface::SUB_REQUEST, false);
-        });
+            }
+        );
     }
 }
