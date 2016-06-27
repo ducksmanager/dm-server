@@ -3,6 +3,7 @@ namespace Wtd;
 
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Silex\Application\TranslationTrait;
 
@@ -19,7 +20,14 @@ abstract class AppController
 
         return $request->getContent();
     }
-    
+
+    /**
+     * @param Application $app
+     * @param string $url
+     * @param string $type
+     * @param array $parameters
+     * @return Response
+     */
     protected static function callInternal(Application $app, $url, $type, $parameters)
     {
         if ($type === 'GET') {

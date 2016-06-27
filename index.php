@@ -32,9 +32,9 @@ $app->extend(
     /**
      * @param Translator $translator
      * @param Application $app
-     * @return mixed
+     * @return Translator
      */
-    'translator', function($translator, $app) {
+    'translator', function(Translator $translator, Application $app) {
     $translator->addLoader('yaml', new YamlFileLoader());
 
     $translator->addResource('yaml', __DIR__.'/app/locales/en.yml', 'en');
