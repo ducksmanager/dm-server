@@ -25,10 +25,10 @@ class CollectionController extends AppController
                     return $check;
                 }
                 else {
-                    return self::callInternal($app, '/user/new', 'POST', [
-                        $request->request->get('username'),
-                        $request->request->get('password'),
-                        $request->request->get('email')
+                    return self::callInternal($app, '/user/new', 'PUT', [
+                        'username' => $request->request->get('username'),
+                        'password' => $request->request->get('password'),
+                        'email' => $request->request->get('email')
                     ]);
                 }
 

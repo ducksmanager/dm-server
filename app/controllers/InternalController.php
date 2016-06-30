@@ -2,6 +2,7 @@
 
 namespace Wtd;
 
+use Exception;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,11 +19,16 @@ class InternalController extends AppController
             '/internal/user/exists/{username}',
             function (Request $request, Application $app, $username) {
                 $sql = "SELECT username FROM users WHERE username LIKE ?";
-                $existingUser = self::getConnection($app)->fetchAssoc($sql, array((string) $username));
-                if ($existingUser) {
-                    return new Response('', 409);
+                try {
+                    $existingUser = self::getConnection($app)->fetchAssoc($sql, [$username]);
+                    if ($existingUser) {
+                        return new Response('', 409);
+                    }
+                    return new Response('', 200);
                 }
-                return new Response('', 200);
+                catch (Exception $e) {
+                    return new Response('Internal server error', 500);
+                }
             }
         );
         $routing->get(
@@ -56,8 +62,19 @@ class InternalController extends AppController
             }
         );
 
-        $routing->post('/internal/user/new', function (Request $request, Application $app) {
-            // TODO
+        $routing->put('/internal/user/new', function (Request $request, Application $app) {
+            $username = $request->request->get('username');
+            $password = $request->request->get('password');
+            $email = $request->request->get('email');
+
+            $sql='INSERT INTO users(username,password,Email,DateInscription) VALUES(?, ?, ?, ?)';
+            try {
+                self::getConnection($app)->executeQuery($sql, [$username, $password, $email, date('Y-m-d')]);
+            }
+            catch (Exception $e) {
+                return new Response('Internal server error', 500);
+            }
+            
             return new Response('OK', 201);
         });
     }

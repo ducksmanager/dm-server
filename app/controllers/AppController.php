@@ -35,7 +35,7 @@ abstract class AppController
             $subRequest = Request::create('/internal' . $url . '/' . implode('/', array_values($parameters)));
         }
         else {
-            $subRequest = Request::create('/internal' . $url, 'POST', $parameters);
+            $subRequest = Request::create('/internal' . $url, $type, $parameters);
         }
         return $app->handle($subRequest, HttpKernelInterface::SUB_REQUEST, false);
     }
