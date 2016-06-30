@@ -6,6 +6,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Silex\Application\TranslationTrait;
+use Doctrine\DBAL;
 
 abstract class AppController
 {
@@ -49,5 +50,13 @@ abstract class AppController
         $translator = $app['translator'];
 
         return $translator->trans($string);
+    }
+
+    /**
+     * @param Application $app
+     * @return DBAL\Connection
+     */
+    protected static function getConnection(Application $app) {
+        return $app['db'];
     }
 }

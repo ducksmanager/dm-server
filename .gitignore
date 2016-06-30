@@ -1,4 +1,5 @@
+/.idea
+/app/config/config.ini
+/vendor
 composer.lock
 composer.phar
-/vendor
-/.idea

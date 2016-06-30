@@ -28,6 +28,24 @@ $app->register(new Silex\Provider\TranslationServiceProvider(), array(
     'locale_fallbacks' => array('en'),
 ));
 
+$conf = parse_ini_file(__DIR__.'/app/config/config.ini');
+$username = $conf['username'];
+$password = $conf['password'];
+
+$app->register(new Silex\Provider\DoctrineServiceProvider(), [
+    'db.options' => [
+        'dbname' => 'db301759616',
+        'user' => $username,
+        'password' => $password,
+        'host' => 'localhost',
+        'driver' => 'pdo_mysql',
+        'server_version' => '15.1',
+        'driverOptions' => [
+            1002 => 'SET NAMES utf8'
+        ]
+    ]
+]);
+
 $app->extend(
     /**
      * @param Translator $translator

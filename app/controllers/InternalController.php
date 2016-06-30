@@ -17,7 +17,9 @@ class InternalController extends AppController
         $routing->get(
             '/internal/user/exists/{username}',
             function (Request $request, Application $app, $username) {
-                if (false) { // TODO
+                $sql = "SELECT username FROM users WHERE username LIKE ?";
+                $existingUser = self::getConnection($app)->fetchAssoc($sql, array((string) $username));
+                if ($existingUser) {
                     return new Response('', 409);
                 }
                 return new Response('', 200);
