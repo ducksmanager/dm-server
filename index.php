@@ -28,9 +28,9 @@ $app->register(new Silex\Provider\TranslationServiceProvider(), array(
     'locale_fallbacks' => array('en'),
 ));
 
-$conf = parse_ini_file(__DIR__.'/app/config/config.ini');
-$username = $conf['username'];
-$password = $conf['password'];
+$conf = parse_ini_file(__DIR__.'/app/config/config.ini', true);
+$username = $conf['db']['username'];
+$password = $conf['db']['password'];
 
 $app->register(new Silex\Provider\DoctrineServiceProvider(), [
     'db.options' => [
@@ -60,5 +60,27 @@ $app->extend(
 
     return $translator;
 });
+
+$passwordEncoder = new \Symfony\Component\Security\Core\Encoder\BCryptPasswordEncoder(5);
+
+$app['security.default_encoder'] = function () use ($passwordEncoder) {
+    return $passwordEncoder;
+};
+
+$users = array();
+array_walk($conf['user_roles'], function($role, $user) use ($passwordEncoder, &$users) {
+    list($roleName, $rolePassword) = explode(':', $role);
+    $users[$user] = array($roleName, $passwordEncoder->encodePassword($rolePassword, ''));
+});
+
+$app->register(new Silex\Provider\SecurityServiceProvider(), array(
+    'security.firewalls' => array(
+        'collection' => array(
+            'pattern' => '^/collection/',
+            'http' => true,
+            'users' => $users
+        )
+    )
+));
 
 $app->run();
