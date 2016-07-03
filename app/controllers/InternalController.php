@@ -18,16 +18,16 @@ class InternalController extends AppController
         $routing->get(
             '/internal/user/exists/{username}',
             function (Request $request, Application $app, $username) {
-                $sql = "SELECT username FROM users WHERE username LIKE ?";
+                $sql = "SELECT username FROM users WHERE username = ?";
                 try {
                     $existingUser = self::getConnection($app)->fetchAssoc($sql, [$username]);
                     if ($existingUser) {
-                        return new Response('', 409);
+                        return new Response('', Response::HTTP_CONFLICT);
                     }
-                    return new Response('', 200);
+                    return new Response('', Response::HTTP_OK);
                 }
                 catch (Exception $e) {
-                    return new Response('Internal server error', 500);
+                    return new Response('Internal server error', Response::HTTP_INTERNAL_SERVER_ERROR);
                 }
             }
         );
@@ -55,10 +55,30 @@ class InternalController extends AppController
                     }
                 }
                 if (is_null($error)) {
-                    return new Response('OK', 200);
+                    return new Response('OK', Response::HTTP_OK);
                 }
 
-                return new Response(self::translate($app, $error), 403);
+                return new Response(self::translate($app, $error), Response::HTTP_PRECONDITION_FAILED);
+            }
+        );
+
+        $routing->get(
+            '/internal/user/check/{username}/{password}',
+            function (Request $request, Application $app, $username, $password) {
+
+                $sql = "SELECT ID FROM users WHERE username = ? AND password = ?";
+                try {
+                    $existingUser = self::getConnection($app)->fetchAssoc($sql, [$username, sha1($password)]);
+                    if ($existingUser) {
+                        return new Response($existingUser['ID'], Response::HTTP_OK);
+                    }
+                    else {
+                        return new Response('', Response::HTTP_UNAUTHORIZED);
+                    }
+                }
+                catch (Exception $e) {
+                    return new Response('Internal server error', Response::HTTP_INTERNAL_SERVER_ERROR);
+                }
             }
         );
 
@@ -72,10 +92,29 @@ class InternalController extends AppController
                 self::getConnection($app)->executeQuery($sql, [$username, $password, $email, date('Y-m-d')]);
             }
             catch (Exception $e) {
-                return new Response('Internal server error', 500);
+                return new Response('Internal server error', Response::HTTP_INTERNAL_SERVER_ERROR);
             }
             
-            return new Response('OK', 201);
+            return new Response('OK', Response::HTTP_CREATED);
+        });
+
+        $routing->put('/internal/collection/add', function (Request $request, Application $app) {
+            $country = $request->request->get('country');
+            $publication = $request->request->get('publication');
+            $issuenumber = $request->request->get('issuenumber');
+            $condition = $request->request->get('condition');
+            $userId = self::getSessionUser($app)['id'];
+
+            $sql='INSERT INTO numeros(Pays, Magazine, Numero, Etat, ID_Acquisition, ID_Utilisateur)
+                  VALUES (?, ?, ?, ?, ?, ?)';
+            try {
+                self::getConnection($app)->executeQuery($sql, [$country, $publication, $issuenumber, $condition, -1, $userId]);
+            }
+            catch (Exception $e) {
+                return new Response('Internal server error', Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+
+            return new Response('OK', Response::HTTP_CREATED);
         });
     }
 }

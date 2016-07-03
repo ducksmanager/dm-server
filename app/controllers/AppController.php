@@ -59,4 +59,21 @@ abstract class AppController
     protected static function getConnection(Application $app) {
         return $app['db'];
     }
+
+    /**
+     * @param Application $app
+     * @param string $username
+     * @param $userId
+     */
+    protected static function setSessionUser(Application $app, $username, $userId) {
+        $app['session']->set('user', array('username' => $username, 'id' => $userId));
+    }
+
+    /**
+     * @param Application $app
+     * @return string
+     */
+    protected static function getSessionUser(Application $app) {
+        return $app['session']->get('user');
+    }
 }

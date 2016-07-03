@@ -36,7 +36,6 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), [
     'db.options' => [
         'dbname' => 'db301759616',
         'user' => $username,
-        'password' => $password,
         'host' => 'localhost',
         'driver' => 'pdo_mysql',
         'server_version' => '15.1',
@@ -45,6 +44,8 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), [
         ]
     ]
 ]);
+
+$app->register(new Silex\Provider\SessionServiceProvider());
 
 $app->extend(
     /**

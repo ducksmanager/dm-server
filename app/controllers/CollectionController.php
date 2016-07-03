@@ -5,6 +5,7 @@ namespace Wtd;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class CollectionController extends AppController
 {
@@ -21,7 +22,7 @@ class CollectionController extends AppController
                     $request->request->get('password'),
                     $request->request->get('password2')
                 ]);
-                if ($check->getStatusCode() !== 200) {
+                if ($check->getStatusCode() !== Response::HTTP_OK) {
                     return $check;
                 }
                 else {
@@ -32,6 +33,18 @@ class CollectionController extends AppController
                     ]);
                 }
 
+            }
+        );
+
+        $routing->post(
+            '/collection/add',
+            function (Application $app, Request $request) {
+                return self::callInternal($app, '/collection/add', 'PUT', [
+                    'country' => $request->request->get('country'),
+                    'publication' => $request->request->get('publication'),
+                    'issuenumber' => $request->request->get('issuenumber'),
+                    'condition'   => $request->request->get('condition')
+                ]);
             }
         );
     }
