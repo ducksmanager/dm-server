@@ -8,6 +8,10 @@ use Wtd\Wtd;
 
 require_once __DIR__.'/vendor/autoload.php';
 
+if (!isset($conf)) {
+    $conf = parse_ini_file(__DIR__.'/app/config/config.ini', true);
+}
+
 $app = new \Silex\Application();
 
 $app->mount('/', new Wtd());
@@ -28,7 +32,6 @@ $app->register(new Silex\Provider\TranslationServiceProvider(), array(
     'locale_fallbacks' => array('en'),
 ));
 
-$conf = parse_ini_file(__DIR__.'/app/config/config.ini', true);
 $username = $conf['db']['username'];
 $password = $conf['db']['password'];
 

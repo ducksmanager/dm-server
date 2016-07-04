@@ -25,10 +25,13 @@
     "require": {
         "silex/silex": "2.0.*",
         "sorien/silex-pimple-dumper": "~1.0",
+        "symfony/browser-kit": "3.1.*",
         "symfony/config": "3.1.*",
         "symfony/security": "3.1.*",
         "symfony/yaml": "3.1.*",
         "symfony/translation": "3.1.*",
-        "doctrine/dbal": "2.5.*"
+        "doctrine/dbal": "2.5.*",
+        "phpunit/phpunit": "5.3.*",
+        "phpunit/php-code-coverage": "3.3.*"
     }
 }

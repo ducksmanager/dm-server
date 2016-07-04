@@ -48,8 +48,8 @@ class InternalController extends AppController
                         $error='MOTS_DE_PASSE_DIFFERENTS';
                     }
                     else {
-                        $checkResult = self::callInternal($app, '/user/exists', 'GET', [$username])->isSuccessful();
-                        if (!$checkResult) {
+                        if (!(self::callInternal($app, '/user/exists', 'GET', [$username])
+                            ->isSuccessful())) {
                             $error='UTILISATEUR_EXISTANT';
                         }
                     }
