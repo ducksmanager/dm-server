@@ -19,6 +19,9 @@
             "Wtd\\": [
                 "app",
                 "app/controllers"
+            ],
+            "Wtd\\Test\\": [
+                "test"
             ]
         }
     },
