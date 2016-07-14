@@ -9,7 +9,7 @@ use Wtd\Wtd;
 require_once __DIR__.'/vendor/autoload.php';
 
 if (!isset($conf)) {
-    $conf = parse_ini_file(__DIR__.'/app/config/config.ini', true);
+    $conf = Wtd::getAppConfig('config.ini');
 }
 
 $app = new \Silex\Application();
@@ -32,23 +32,15 @@ $app->register(new Silex\Provider\TranslationServiceProvider(), array(
     'locale_fallbacks' => array('en'),
 ));
 
-$username = $conf['db']['username'];
-$password = $conf['db']['password'];
-
 $app->register(new Silex\Provider\DoctrineServiceProvider(), [
-    'db.options' => [
-        'dbname' => 'db301759616',
-        'user' => $username,
-        'host' => 'localhost',
-        'driver' => 'pdo_mysql',
-        'server_version' => '15.1',
-        'driverOptions' => [
-            1002 => 'SET NAMES utf8'
-        ]
-    ]
+    'db.options' => Wtd::getConnectionParams($conf)
 ]);
 
+@unlink($conf['db']['path']);
+
 $app->register(new Silex\Provider\SessionServiceProvider());
+$app['session.test'] = true;
+
 
 $app->extend(
     /**

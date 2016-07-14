@@ -1,4 +1,9 @@
 <?php
-
 $loader = require __DIR__ . '/../vendor/autoload.php';
-$loader->add('collection', __DIR__ . '/.');
+
+$entityManager = \Wtd\Wtd::getEntityManager(true);
+
+$schemaTool = new \Doctrine\ORM\Tools\SchemaTool($entityManager);
+$classes = $entityManager->getMetadataFactory()->getAllMetadata();
+$schemaTool->dropDatabase();
+$schemaTool->createSchema($classes);

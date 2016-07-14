@@ -19,6 +19,12 @@
             "Wtd\\": [
                 "app",
                 "app/controllers"
+            ],
+            "Wtd\\Test\\": [
+                "test"
+            ],
+            "Wtd\\Models\\": [
+                "app/models/Wtd/Models"
             ]
         }
     },
@@ -31,6 +37,8 @@
         "symfony/yaml": "3.1.*",
         "symfony/translation": "3.1.*",
         "doctrine/dbal": "2.5.*",
+        "doctrine/orm": "2.5.*",
+        "doctrine/doctrine-bundle": "1.6.*",
         "phpunit/phpunit": "5.3.*",
         "phpunit/php-code-coverage": "3.3.*"
     }
