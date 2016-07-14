@@ -2,41 +2,14 @@
 namespace Wtd\Test;
 
 use Silex\Application;
-use Silex\WebTestCase;
+use Symfony\Component\HttpFoundation\Response;
 
 require __DIR__ . '/../test_bootstrap.php';
 
-class CollectionTest extends WebTestCase
+class CollectionTest extends TestCommon
 {
-    private static $conf;
-    private static $users;
-    private static $testUser = 'whattheduck';
-
-    public function setUp() {
-        self::$conf = parse_ini_file(__DIR__.'/../../app/config/config.test.ini', true);
-        parent::setUp();
-    }
-
-    /**
-     * @return Application
-     */
-    public function createApplication()
-    {
-        $app = null;
-        $users = [];
-        $conf = self::$conf;
-
-        require __DIR__ . '/../../index.php';
-
-        self::$users = $users;
-        return $app;
-    }
-
     public function testCreateCollection() {
-        $client = static::createClient();
-        $client->request('POST', '/collection/new', [], [], [
-            'PHP_AUTH_USER' => self::$testUser,
-            'PHP_AUTH_PW'   => explode(':', self::$conf['user_roles'][self::$testUser])[1]
-        ]);
+        $response = $this->callAuthenticatedService([]);
+        $this->assertTrue($response->isClientError());
     }
 }
