@@ -15,6 +15,42 @@ class Wtd extends AppController implements ControllerProviderInterface
     }
 
     /**
+     * @param array $conf
+     * @return array
+     */
+    public static function getConnectionParams($conf)
+    {
+        $dbConf = $conf['db'];
+
+        $username = $dbConf['username'];
+        $password = $dbConf['password'];
+
+        if (array_key_exists('dbname', $dbConf)) {
+            return [
+                'dbname' => $dbConf['dbname'],
+                'user' => $username,
+                'password' => $password,
+                'host' => 'localhost',
+                'driver' => 'pdo_mysql',
+                'server_version' => '15.1',
+                'driverOptions' => [
+                    1002 => 'SET NAMES utf8'
+                ]
+            ];
+        } else {
+            if (array_key_exists('path', $dbConf)) {
+                return [
+                    'user' => $username,
+                    'password' => $password,
+                    'path' =>  __DIR__ . $dbConf['path'],
+                    'driver' => 'pdo_sqlite'
+                ];
+            }
+        }
+        return [];
+    }
+
+    /**
      * Connect the controller classes to the routes
      * @param Application $app
      * @return \Silex\ControllerCollection

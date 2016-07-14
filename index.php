@@ -32,40 +32,11 @@ $app->register(new Silex\Provider\TranslationServiceProvider(), array(
     'locale_fallbacks' => array('en'),
 ));
 
-$dbConf = $conf['db'];
+$app->register(new Silex\Provider\DoctrineServiceProvider(), [
+    'db.options' => Wtd::getConnectionParams($conf)
+]);
 
-$username = $dbConf['username'];
-$password = $dbConf['password'];
-
-if (array_key_exists('dbname', $dbConf)) {
-    $dbname = $dbConf['dbname'];
-
-    $app->register(new Silex\Provider\DoctrineServiceProvider(), [
-        'db.options' => [
-            'user' => $username,
-            'host' => 'localhost',
-            'driver' => 'pdo_mysql',
-            'server_version' => '15.1',
-            'driverOptions' => [
-                1002 => 'SET NAMES utf8'
-            ]
-        ]
-    ]);
-}
-else if (array_key_exists('path', $dbConf)) {
-    $path = __DIR__ . $dbConf['path'];
-
-    @unlink($path);
-
-    $app->register(new Silex\Provider\DoctrineServiceProvider(), [
-        'db.options' => [
-            'user' => $username,
-            'password' => $password,
-            'path' => $path,
-            'driver' => 'pdo_sqlite'
-        ]
-    ]);
-}
+@unlink($conf['db']['path']);
 
 $app->register(new Silex\Provider\SessionServiceProvider());
 $app['session.test'] = true;
