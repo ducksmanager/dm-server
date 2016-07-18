@@ -1,12 +1,13 @@
 <?php
 namespace Wtd\Test;
 
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Tools\SchemaTool;
 use Silex\Application;
 use Silex\WebTestCase;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
-
-require __DIR__ . '/test_bootstrap.php';
+use Wtd\AppController;
+use Wtd\Models\Numeros;
+use Wtd\Wtd;
 
 class TestCommon extends WebTestCase {
 
@@ -14,8 +15,21 @@ class TestCommon extends WebTestCase {
     protected static $users;
     protected static $testUser = 'whattheduck';
 
+    /** @var EntityManager $em  */
+    protected static $em;
+
+    /** @var Application $app */
+    protected $app;
+
     public function setUp() {
-        self::$conf = parse_ini_file(__DIR__.'/../app/config/config.test.ini', true);
+        self::$conf = Wtd::getAppConfig(true);
+
+        self::$em = Wtd::getEntityManager(true);
+        $schemaTool = new SchemaTool(self::$em);
+        $classes = self::$em->getMetadataFactory()->getAllMetadata();
+        $schemaTool->dropDatabase();
+        $schemaTool->createSchema($classes);
+
         parent::setUp();
     }
 
@@ -41,14 +55,18 @@ class TestCommon extends WebTestCase {
         ];
     }
 
-    protected function callService($userCredentials, $systemCredentials = array()) {
+    protected function callService($path, $userCredentials, $parameters = array(), $systemCredentials = array()) {
         $client = static::createClient();
-        $client->request('POST', '/collection/new', $userCredentials, [], $systemCredentials);
+        $client->request('POST', $path, $userCredentials + $parameters, [], $systemCredentials);
 
         return $client->getResponse();
     }
     
-    protected function callAuthenticatedService($userCredentials) {
-        return $this->callService($userCredentials, self::getDefaultSystemCredentials());
+    protected function callAuthenticatedService($path, $userCredentials, $parameters = array()) {
+        return $this->callService($path, $userCredentials, $parameters, self::getDefaultSystemCredentials());
+    }
+
+    protected function getCurrentUserIssues() {
+        return self::$em->getRepository(Numeros::class)->findBy(array('idUtilisateur' => AppController::getSessionUser($this->app)['id']));
     }
 }
