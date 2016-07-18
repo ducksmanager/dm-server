@@ -31,5 +31,52 @@ class BibliothequeAccesExternes extends \Wtd\Models\BaseModel
     private $cle;
 
 
-}
 
+    /**
+     * Set idUtilisateur
+     *
+     * @param integer $idUtilisateur
+     *
+     * @return BibliothequeAccesExternes
+     */
+    public function setIdUtilisateur($idUtilisateur)
+    {
+        $this->idUtilisateur = $idUtilisateur;
+
+        return $this;
+    }
+
+    /**
+     * Get idUtilisateur
+     *
+     * @return integer
+     */
+    public function getIdUtilisateur()
+    {
+        return $this->idUtilisateur;
+    }
+
+    /**
+     * Set cle
+     *
+     * @param string $cle
+     *
+     * @return BibliothequeAccesExternes
+     */
+    public function setCle($cle)
+    {
+        $this->cle = $cle;
+
+        return $this;
+    }
+
+    /**
+     * Get cle
+     *
+     * @return string
+     */
+    public function getCle()
+    {
+        return $this->cle;
+    }
+}

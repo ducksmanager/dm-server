@@ -22,5 +22,14 @@ class Demo extends \Wtd\Models\BaseModel
     private $datedernierinit;
 
 
-}
 
+    /**
+     * Get datedernierinit
+     *
+     * @return \DateTime
+     */
+    public function getDatedernierinit()
+    {
+        return $this->datedernierinit;
+    }
+}

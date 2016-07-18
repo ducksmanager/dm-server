@@ -50,5 +50,110 @@ class Auteurs extends \Wtd\Models\BaseModel
     private $datemaj;
 
 
-}
 
+    /**
+     * Get idAuteur
+     *
+     * @return integer
+     */
+    public function getIdAuteur()
+    {
+        return $this->idAuteur;
+    }
+
+    /**
+     * Set nomauteur
+     *
+     * @param string $nomauteur
+     *
+     * @return Auteurs
+     */
+    public function setNomauteur($nomauteur)
+    {
+        $this->nomauteur = $nomauteur;
+
+        return $this;
+    }
+
+    /**
+     * Get nomauteur
+     *
+     * @return string
+     */
+    public function getNomauteur()
+    {
+        return $this->nomauteur;
+    }
+
+    /**
+     * Set nbhistoires
+     *
+     * @param integer $nbhistoires
+     *
+     * @return Auteurs
+     */
+    public function setNbhistoires($nbhistoires)
+    {
+        $this->nbhistoires = $nbhistoires;
+
+        return $this;
+    }
+
+    /**
+     * Get nbhistoires
+     *
+     * @return integer
+     */
+    public function getNbhistoires()
+    {
+        return $this->nbhistoires;
+    }
+
+    /**
+     * Set nbhistoiresOld
+     *
+     * @param integer $nbhistoiresOld
+     *
+     * @return Auteurs
+     */
+    public function setNbhistoiresOld($nbhistoiresOld)
+    {
+        $this->nbhistoiresOld = $nbhistoiresOld;
+
+        return $this;
+    }
+
+    /**
+     * Get nbhistoiresOld
+     *
+     * @return integer
+     */
+    public function getNbhistoiresOld()
+    {
+        return $this->nbhistoiresOld;
+    }
+
+    /**
+     * Set datemaj
+     *
+     * @param \DateTime $datemaj
+     *
+     * @return Auteurs
+     */
+    public function setDatemaj($datemaj)
+    {
+        $this->datemaj = $datemaj;
+
+        return $this;
+    }
+
+    /**
+     * Get datemaj
+     *
+     * @return \DateTime
+     */
+    public function getDatemaj()
+    {
+        return $this->datemaj;
+    }
+}

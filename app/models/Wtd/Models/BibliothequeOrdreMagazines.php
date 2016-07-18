@@ -49,5 +49,100 @@ class BibliothequeOrdreMagazines extends \Wtd\Models\BaseModel
     private $idUtilisateur;
 
 
-}
 
+    /**
+     * Set pays
+     *
+     * @param string $pays
+     *
+     * @return BibliothequeOrdreMagazines
+     */
+    public function setPays($pays)
+    {
+        $this->pays = $pays;
+
+        return $this;
+    }
+
+    /**
+     * Get pays
+     *
+     * @return string
+     */
+    public function getPays()
+    {
+        return $this->pays;
+    }
+
+    /**
+     * Set magazine
+     *
+     * @param string $magazine
+     *
+     * @return BibliothequeOrdreMagazines
+     */
+    public function setMagazine($magazine)
+    {
+        $this->magazine = $magazine;
+
+        return $this;
+    }
+
+    /**
+     * Get magazine
+     *
+     * @return string
+     */
+    public function getMagazine()
+    {
+        return $this->magazine;
+    }
+
+    /**
+     * Set ordre
+     *
+     * @param integer $ordre
+     *
+     * @return BibliothequeOrdreMagazines
+     */
+    public function setOrdre($ordre)
+    {
+        $this->ordre = $ordre;
+
+        return $this;
+    }
+
+    /**
+     * Get ordre
+     *
+     * @return integer
+     */
+    public function getOrdre()
+    {
+        return $this->ordre;
+    }
+
+    /**
+     * Set idUtilisateur
+     *
+     * @param integer $idUtilisateur
+     *
+     * @return BibliothequeOrdreMagazines
+     */
+    public function setIdUtilisateur($idUtilisateur)
+    {
+        $this->idUtilisateur = $idUtilisateur;
+
+        return $this;
+    }
+
+    /**
+     * Get idUtilisateur
+     *
+     * @return integer
+     */
+    public function getIdUtilisateur()
+    {
+        return $this->idUtilisateur;
+    }
+}

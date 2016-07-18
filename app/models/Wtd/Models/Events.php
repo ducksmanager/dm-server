@@ -29,5 +29,38 @@ class Events extends \Wtd\Models\BaseModel
     private $pct;
 
 
-}
 
+    /**
+     * Get idEvent
+     *
+     * @return integer
+     */
+    public function getIdEvent()
+    {
+        return $this->idEvent;
+    }
+
+    /**
+     * Set pct
+     *
+     * @param integer $pct
+     *
+     * @return Events
+     */
+    public function setPct($pct)
+    {
+        $this->pct = $pct;
+
+        return $this;
+    }
+
+    /**
+     * Get pct
+     *
+     * @return integer
+     */
+    public function getPct()
+    {
+        return $this->pct;
+    }
+}

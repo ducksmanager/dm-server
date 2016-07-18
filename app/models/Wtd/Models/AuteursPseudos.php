@@ -75,5 +75,196 @@ class AuteursPseudos extends \Wtd\Models\BaseModel
     private $notation = '-1';
 
 
-}
 
+    /**
+     * Set nomauteur
+     *
+     * @param string $nomauteur
+     *
+     * @return AuteursPseudos
+     */
+    public function setNomauteur($nomauteur)
+    {
+        $this->nomauteur = $nomauteur;
+
+        return $this;
+    }
+
+    /**
+     * Get nomauteur
+     *
+     * @return string
+     */
+    public function getNomauteur()
+    {
+        return $this->nomauteur;
+    }
+
+    /**
+     * Set nomauteurabrege
+     *
+     * @param string $nomauteurabrege
+     *
+     * @return AuteursPseudos
+     */
+    public function setNomauteurabrege($nomauteurabrege)
+    {
+        $this->nomauteurabrege = $nomauteurabrege;
+
+        return $this;
+    }
+
+    /**
+     * Get nomauteurabrege
+     *
+     * @return string
+     */
+    public function getNomauteurabrege()
+    {
+        return $this->nomauteurabrege;
+    }
+
+    /**
+     * Set idUser
+     *
+     * @param integer $idUser
+     *
+     * @return AuteursPseudos
+     */
+    public function setIdUser($idUser)
+    {
+        $this->idUser = $idUser;
+
+        return $this;
+    }
+
+    /**
+     * Get idUser
+     *
+     * @return integer
+     */
+    public function getIdUser()
+    {
+        return $this->idUser;
+    }
+
+    /**
+     * Set nbnonpossedesfrance
+     *
+     * @param integer $nbnonpossedesfrance
+     *
+     * @return AuteursPseudos
+     */
+    public function setNbnonpossedesfrance($nbnonpossedesfrance)
+    {
+        $this->nbnonpossedesfrance = $nbnonpossedesfrance;
+
+        return $this;
+    }
+
+    /**
+     * Get nbnonpossedesfrance
+     *
+     * @return integer
+     */
+    public function getNbnonpossedesfrance()
+    {
+        return $this->nbnonpossedesfrance;
+    }
+
+    /**
+     * Set nbnonpossedesetranger
+     *
+     * @param integer $nbnonpossedesetranger
+     *
+     * @return AuteursPseudos
+     */
+    public function setNbnonpossedesetranger($nbnonpossedesetranger)
+    {
+        $this->nbnonpossedesetranger = $nbnonpossedesetranger;
+
+        return $this;
+    }
+
+    /**
+     * Get nbnonpossedesetranger
+     *
+     * @return integer
+     */
+    public function getNbnonpossedesetranger()
+    {
+        return $this->nbnonpossedesetranger;
+    }
+
+    /**
+     * Set nbpossedes
+     *
+     * @param integer $nbpossedes
+     *
+     * @return AuteursPseudos
+     */
+    public function setNbpossedes($nbpossedes)
+    {
+        $this->nbpossedes = $nbpossedes;
+
+        return $this;
+    }
+
+    /**
+     * Get nbpossedes
+     *
+     * @return integer
+     */
+    public function getNbpossedes()
+    {
+        return $this->nbpossedes;
+    }
+
+    /**
+     * Set datestat
+     *
+     * @param \DateTime $datestat
+     *
+     * @return AuteursPseudos
+     */
+    public function setDatestat($datestat)
+    {
+        $this->datestat = $datestat;
+
+        return $this;
+    }
+
+    /**
+     * Get datestat
+     *
+     * @return \DateTime
+     */
+    public function getDatestat()
+    {
+        return $this->datestat;
+    }
+
+    /**
+     * Set notation
+     *
+     * @param boolean $notation
+     *
+     * @return AuteursPseudos
+     */
+    public function setNotation($notation)
+    {
+        $this->notation = $notation;
+
+        return $this;
+    }
+
+    /**
+     * Get notation
+     *
+     * @return boolean
+     */
+    public function getNotation()
+    {
+        return $this->notation;
+    }
+}

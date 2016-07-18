@@ -45,12 +45,131 @@ class TranchesPretes extends \Wtd\Models\BaseModel
     private $createurs;
 
     /**
-     * @var \DateTime
+     * @var integer
      *
-     * @ORM\Column(name="dateajout", type="datetime", nullable=false)
+     * @ORM\Column(name="dateajout", type="integer", nullable=false)
      */
     private $dateajout = 'CURRENT_TIMESTAMP';
 
 
-}
 
+    /**
+     * Set publicationcode
+     *
+     * @param string $publicationcode
+     *
+     * @return TranchesPretes
+     */
+    public function setPublicationcode($publicationcode)
+    {
+        $this->publicationcode = $publicationcode;
+
+        return $this;
+    }
+
+    /**
+     * Get publicationcode
+     *
+     * @return string
+     */
+    public function getPublicationcode()
+    {
+        return $this->publicationcode;
+    }
+
+    /**
+     * Set issuenumber
+     *
+     * @param string $issuenumber
+     *
+     * @return TranchesPretes
+     */
+    public function setIssuenumber($issuenumber)
+    {
+        $this->issuenumber = $issuenumber;
+
+        return $this;
+    }
+
+    /**
+     * Get issuenumber
+     *
+     * @return string
+     */
+    public function getIssuenumber()
+    {
+        return $this->issuenumber;
+    }
+
+    /**
+     * Set photographes
+     *
+     * @param string $photographes
+     *
+     * @return TranchesPretes
+     */
+    public function setPhotographes($photographes)
+    {
+        $this->photographes = $photographes;
+
+        return $this;
+    }
+
+    /**
+     * Get photographes
+     *
+     * @return string
+     */
+    public function getPhotographes()
+    {
+        return $this->photographes;
+    }
+
+    /**
+     * Set createurs
+     *
+     * @param string $createurs
+     *
+     * @return TranchesPretes
+     */
+    public function setCreateurs($createurs)
+    {
+        $this->createurs = $createurs;
+
+        return $this;
+    }
+
+    /**
+     * Get createurs
+     *
+     * @return string
+     */
+    public function getCreateurs()
+    {
+        return $this->createurs;
+    }
+
+    /**
+     * Set dateajout
+     *
+     * @param integer $dateajout
+     *
+     * @return TranchesPretes
+     */
+    public function setDateajout($dateajout)
+    {
+        $this->dateajout = $dateajout;
+
+        return $this;
+    }
+
+    /**
+     * Get dateajout
+     *
+     * @return integer
+     */
+    public function getDateajout()
+    {
+        return $this->dateajout;
+    }
+}

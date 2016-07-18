@@ -36,5 +36,62 @@ class TranchesPreviews extends \Wtd\Models\BaseModel
     private $options = '0';
 
 
-}
 
+    /**
+     * Set idSession
+     *
+     * @param string $idSession
+     *
+     * @return TranchesPreviews
+     */
+    public function setIdSession($idSession)
+    {
+        $this->idSession = $idSession;
+
+        return $this;
+    }
+
+    /**
+     * Get idSession
+     *
+     * @return string
+     */
+    public function getIdSession()
+    {
+        return $this->idSession;
+    }
+
+    /**
+     * Get idPreview
+     *
+     * @return integer
+     */
+    public function getIdPreview()
+    {
+        return $this->idPreview;
+    }
+
+    /**
+     * Set options
+     *
+     * @param string $options
+     *
+     * @return TranchesPreviews
+     */
+    public function setOptions($options)
+    {
+        $this->options = $options;
+
+        return $this;
+    }
+
+    /**
+     * Get options
+     *
+     * @return string
+     */
+    public function getOptions()
+    {
+        return $this->options;
+    }
+}

@@ -29,5 +29,38 @@ class BibliothequeContributeurs extends \Wtd\Models\BaseModel
     private $texte;
 
 
-}
 
+    /**
+     * Get nom
+     *
+     * @return string
+     */
+    public function getNom()
+    {
+        return $this->nom;
+    }
+
+    /**
+     * Set texte
+     *
+     * @param string $texte
+     *
+     * @return BibliothequeContributeurs
+     */
+    public function setTexte($texte)
+    {
+        $this->texte = $texte;
+
+        return $this;
+    }
+
+    /**
+     * Get texte
+     *
+     * @return string
+     */
+    public function getTexte()
+    {
+        return $this->texte;
+    }
+}
