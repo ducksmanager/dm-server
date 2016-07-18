@@ -5,8 +5,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Wtd\Models\Numeros;
 use Wtd\Models\Users;
 
-require __DIR__ . '/../test_bootstrap.php';
-
 class CollectionTest extends TestCommon
 {
     private function createTestCollection() {
@@ -20,10 +18,7 @@ class CollectionTest extends TestCommon
     }
 
     public function testCreateCollection() {
-        $response = $this->callAuthenticatedService('/collection/new', [
-            'username' => 'dm_user',
-            'password' => 'dm_pass'
-        ], [
+        $response = $this->callAuthenticatedServiceWithTestUser('/collection/new', [
             'password2' => 'dm_pass',
             'email' => 'test@ducksmanager.net'
         ]);
@@ -36,7 +31,49 @@ class CollectionTest extends TestCommon
         $this->assertEquals(sha1('dm_pass'), $usersWithUsername[0]->getPassword());
     }
 
-    public function testCallServiceWithUserCredentialsRequired() {
+    public function testCreateCollectionErrorDifferentPasswords() {
+        $response = $this->callAuthenticatedServiceWithTestUser('/collection/new', [
+            'password2' => 'dm_pass_different',
+            'email' => 'test@ducksmanager.net'
+        ]);
+        $this->assertEquals(Response::HTTP_PRECONDITION_FAILED, $response->getStatusCode());
+    }
+
+    public function testCreateCollectionErrorShortUsername() {
+        $response = $this->callAuthenticatedService('/collection/new', [
+            'username' => 'dm',
+            'password' => 'dm_pass'
+        ], [
+            'password2' => 'dm_pass',
+            'email' => 'test@ducksmanager.net'
+        ]);
+        $this->assertEquals(Response::HTTP_PRECONDITION_FAILED, $response->getStatusCode());
+    }
+
+    public function testCreateCollectionErrorShortPassword() {
+        $response = $this->callAuthenticatedService('/collection/new', [
+            'username' => 'dm_user',
+            'password' => 'pass'
+        ], [
+            'password2' => 'pass',
+            'email' => 'test@ducksmanager.net'
+        ]);
+        $this->assertEquals(Response::HTTP_PRECONDITION_FAILED, $response->getStatusCode());
+    }
+
+    public function testCreateCollectionErrorExistingUsername() {
+        $this->createTestCollection();
+        $response = $this->callAuthenticatedService('/collection/new', [
+            'username' => 'dm_user',
+            'password' => 'dm_pass'
+        ], [
+            'password2' => 'dm_pass',
+            'email' => 'test@ducksmanager.net'
+        ]);
+        $this->assertEquals(Response::HTTP_CONFLICT, $response->getStatusCode());
+    }
+
+    public function testAddIssue() {
         $this->assertEquals(0, count($this->getCurrentUserIssues()));
 
         $this->createTestCollection();

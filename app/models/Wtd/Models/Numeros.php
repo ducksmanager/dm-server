@@ -7,10 +7,10 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Numeros
  *
- * @ORM\Table(name="numeros", uniqueConstraints={@ORM\UniqueConstraint(name="Pays", columns={"Pays", "Magazine", "Numero", "ID_Utilisateur"})})
+ * @ORM\Table(name="numeros", uniqueConstraints={@ORM\UniqueConstraint(name="Details_Numero", columns={"Pays", "Magazine", "Numero", "ID_Utilisateur"})})
  * @ORM\Entity
  */
-class Numeros
+class Numeros extends \Wtd\Models\BaseModel
 {
     /**
      * @var string

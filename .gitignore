@@ -1,6 +1,8 @@
 /.idea
 /app/config/config.ini
+/bin
+/build
+/test/db.sqlite
 /vendor
 composer.lock
 composer.phar
-/test/db.sqlite

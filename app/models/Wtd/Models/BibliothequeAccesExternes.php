@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="bibliotheque_acces_externes")
  * @ORM\Entity
  */
-class BibliothequeAccesExternes
+class BibliothequeAccesExternes extends \Wtd\Models\BaseModel
 {
     /**
      * @var integer

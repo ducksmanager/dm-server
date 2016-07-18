@@ -18,17 +18,26 @@ class TestCommon extends WebTestCase {
     /** @var EntityManager $em  */
     protected static $em;
 
+    /** @var array $modelClasses  */
+    private static $modelClasses;
+
+    /** @var SchemaTool $schemaTool  */
+    private static $schemaTool;
+
     /** @var Application $app */
     protected $app;
 
-    public function setUp() {
+    public static function setUpBeforeClass()
+    {
         self::$conf = Wtd::getAppConfig(true);
-
         self::$em = Wtd::getEntityManager(true);
-        $schemaTool = new SchemaTool(self::$em);
-        $classes = self::$em->getMetadataFactory()->getAllMetadata();
-        $schemaTool->dropDatabase();
-        $schemaTool->createSchema($classes);
+        self::$schemaTool = new SchemaTool(self::$em);
+        self::$modelClasses = self::$em->getMetadataFactory()->getAllMetadata();
+    }
+
+    public function setUp() {
+        self::$schemaTool->dropDatabase();
+        self::$schemaTool->createSchema(self::$modelClasses);
 
         parent::setUp();
     }
@@ -48,7 +57,13 @@ class TestCommon extends WebTestCase {
         return $app;
     }
 
-    private static function getDefaultSystemCredentials() {
+    private static function getDefaultSystemCredentials($version='1.3+') {
+        return self::getDefaultSystemCredentialsNoVersion() + [
+            'HTTP_X_WTD_VERSION' => $version
+        ];
+    }
+
+    protected static function getDefaultSystemCredentialsNoVersion() {
         return [
             'PHP_AUTH_USER' => self::$testUser,
             'PHP_AUTH_PW'   => explode(':', self::$conf['user_roles'][self::$testUser])[1]
@@ -64,6 +79,17 @@ class TestCommon extends WebTestCase {
     
     protected function callAuthenticatedService($path, $userCredentials, $parameters = array()) {
         return $this->callService($path, $userCredentials, $parameters, self::getDefaultSystemCredentials());
+    }
+
+    protected function callAuthenticatedServiceWithTestUser($path, $parameters = array()) {
+        return $this->callService(
+            $path, [
+                'username' => 'dm_user',
+                'password' => 'dm_pass'
+            ],
+            $parameters,
+            self::getDefaultSystemCredentials()
+        );
     }
 
     protected function getCurrentUserIssues() {

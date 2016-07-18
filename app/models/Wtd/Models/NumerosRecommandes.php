@@ -5,12 +5,12 @@ namespace Wtd\Models;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * BibliothequeOptions
+ * NumerosRecommandes
  *
- * @ORM\Table(name="bibliotheque_options")
+ * @ORM\Table(name="numeros_recommandes")
  * @ORM\Entity
  */
-class BibliothequeOptions
+class NumerosRecommandes extends \Wtd\Models\BaseModel
 {
     /**
      * @var string
@@ -33,7 +33,7 @@ class BibliothequeOptions
     /**
      * @var string
      *
-     * @ORM\Column(name="Numero", type="string", length=8, nullable=false)
+     * @ORM\Column(name="Numero", type="string", length=10, nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
      */
@@ -42,32 +42,25 @@ class BibliothequeOptions
     /**
      * @var boolean
      *
-     * @ORM\Column(name="CouleurR", type="boolean", nullable=true)
+     * @ORM\Column(name="Notation", type="boolean", nullable=false)
      */
-    private $couleurr = '0';
+    private $notation;
 
     /**
-     * @var boolean
+     * @var integer
      *
-     * @ORM\Column(name="CouleurG", type="boolean", nullable=true)
+     * @ORM\Column(name="ID_Utilisateur", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
      */
-    private $couleurg = '0';
-
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="CouleurB", type="boolean", nullable=true)
-     */
-    private $couleurb = '0';
+    private $idUtilisateur;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="Autre", type="text", length=65535, nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\Column(name="Texte", type="text", length=65535, nullable=false)
      */
-    private $autre;
+    private $texte;
 
 
 }

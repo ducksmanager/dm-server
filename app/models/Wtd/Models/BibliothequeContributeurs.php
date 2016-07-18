@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="bibliotheque_contributeurs")
  * @ORM\Entity
  */
-class BibliothequeContributeurs
+class BibliothequeContributeurs extends \Wtd\Models\BaseModel
 {
     /**
      * @var string

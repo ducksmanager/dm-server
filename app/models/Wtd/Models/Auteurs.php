@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="auteurs")
  * @ORM\Entity
  */
-class Auteurs
+class Auteurs extends \Wtd\Models\BaseModel
 {
     /**
      * @var integer

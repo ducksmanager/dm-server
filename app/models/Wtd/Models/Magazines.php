@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="magazines")
  * @ORM\Entity
  */
-class Magazines
+class Magazines extends \Wtd\Models\BaseModel
 {
     /**
      * @var string

@@ -39,6 +39,7 @@
         "doctrine/dbal": "2.5.*",
         "doctrine/orm": "2.5.*",
         "doctrine/doctrine-bundle": "1.6.*",
+        "gedmo/doctrine-extensions": "2.4.*",
         "phpunit/phpunit": "5.3.*",
         "phpunit/php-code-coverage": "3.3.*"
     }

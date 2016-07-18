@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="users", uniqueConstraints={@ORM\UniqueConstraint(name="username", columns={"username"})})
  * @ORM\Entity
  */
-class Users
+class Users extends \Wtd\Models\BaseModel
 {
     /**
      * @var string

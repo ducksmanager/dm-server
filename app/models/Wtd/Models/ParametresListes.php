@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="parametres_listes")
  * @ORM\Entity
  */
-class ParametresListes
+class ParametresListes extends \Wtd\Models\BaseModel
 {
     /**
      * @var integer

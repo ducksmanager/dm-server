@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="achats")
  * @ORM\Entity
  */
-class Achats
+class Achats extends \Wtd\Models\BaseModel
 {
     /**
      * @var integer

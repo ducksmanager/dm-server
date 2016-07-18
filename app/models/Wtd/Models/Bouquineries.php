@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="bouquineries")
  * @ORM\Entity
  */
-class Bouquineries
+class Bouquineries extends \Wtd\Models\BaseModel
 {
     /**
      * @var integer

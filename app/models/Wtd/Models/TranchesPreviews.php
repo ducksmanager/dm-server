@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="tranches_previews")
  * @ORM\Entity
  */
-class TranchesPreviews
+class TranchesPreviews extends \Wtd\Models\BaseModel
 {
     /**
      * @var string

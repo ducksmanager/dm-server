@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="images_myfonts")
  * @ORM\Entity
  */
-class ImagesMyfonts
+class ImagesMyfonts extends \Wtd\Models\BaseModel
 {
     /**
      * @var integer

@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="events")
  * @ORM\Entity
  */
-class Events
+class Events extends \Wtd\Models\BaseModel
 {
     /**
      * @var integer

@@ -5,12 +5,12 @@ namespace Wtd\Models;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * BibliothequeOrdreMagazines
+ * TranchesDoublons
  *
- * @ORM\Table(name="bibliotheque_ordre_magazines")
+ * @ORM\Table(name="tranches_doublons")
  * @ORM\Entity
  */
-class BibliothequeOrdreMagazines
+class TranchesDoublons extends \Wtd\Models\BaseModel
 {
     /**
      * @var string
@@ -31,22 +31,20 @@ class BibliothequeOrdreMagazines
     private $magazine;
 
     /**
-     * @var integer
+     * @var string
      *
-     * @ORM\Column(name="Ordre", type="integer", nullable=false)
+     * @ORM\Column(name="Numero", type="string", length=8, nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
      */
-    private $ordre;
+    private $numero;
 
     /**
-     * @var integer
+     * @var string
      *
-     * @ORM\Column(name="ID_Utilisateur", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\Column(name="NumeroReference", type="string", length=8, nullable=false)
      */
-    private $idUtilisateur;
+    private $numeroreference;
 
 
 }

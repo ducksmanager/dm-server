@@ -6,22 +6,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Silex\Application\TranslationTrait;
-use Doctrine\DBAL;
 
 abstract class AppController
 {
-    /**
-     * @param Application $app
-     * @return Request
-     */
-    protected function getRequestContent(Application $app)
-    {
-        /** @var Request $request */
-        $request = $app['request'];
-
-        return $request->getContent();
-    }
-
     /**
      * @param Application $app
      * @param string $url
@@ -54,14 +41,6 @@ abstract class AppController
 
     /**
      * @param Application $app
-     * @return DBAL\Connection
-     */
-    protected static function getConnection(Application $app) {
-        return $app['db'];
-    }
-
-    /**
-     * @param Application $app
      * @param string $username
      * @param $userId
      */
@@ -73,7 +52,23 @@ abstract class AppController
      * @param Application $app
      * @return string
      */
-    protected static function getSessionUser(Application $app) {
+    public static function getSessionUser(Application $app) {
         return $app['session']->get('user');
+    }
+
+    /**
+     * @param Application $app
+     * @param string $clientVersion
+     */
+    protected static function setClientVersion(Application $app, $clientVersion) {
+        $app['session']->set('clientVersion', $clientVersion);
+    }
+
+    /**
+     * @param Application $app
+     * @return string
+     */
+    public static function getClientVersion(Application $app) {
+        return $app['session']->get('clientVersion');
     }
 }

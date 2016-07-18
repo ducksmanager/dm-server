@@ -3,13 +3,16 @@ namespace Wtd\Test;
 
 use Symfony\Component\HttpFoundation\Response;
 
-require __DIR__ . '/../test_bootstrap.php';
-
 class AuthTest extends TestCommon
 {
     public function testCallServiceWithoutSystemCredentials() {
         $response = $this->callService('/collection/new', [], array());
         $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+
+    public function testCallServiceWithoutClientVersion() {
+        $response = $this->callService('/collection/new', [], [], $this->getDefaultSystemCredentialsNoVersion());
+        $this->assertEquals(Response::HTTP_VERSION_NOT_SUPPORTED, $response->getStatusCode());
     }
 
     public function testCallServiceWithoutUserCredentials() {
@@ -18,10 +21,7 @@ class AuthTest extends TestCommon
     }
 
     public function testCallServiceWithUserCredentials() {
-        $response = $this->callAuthenticatedService('/collection/new', [
-            'username' => 'dm_user',
-            'password' => 'dm_pass'
-        ], [
+        $response = $this->callAuthenticatedServiceWithTestUser('/collection/new', [
             'password2' => 'test',
             'email' => 'test'
         ]);
