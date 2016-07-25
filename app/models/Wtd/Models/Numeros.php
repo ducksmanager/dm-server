@@ -52,7 +52,7 @@ class Numeros extends \Wtd\Models\BaseModel
      *
      * @ORM\Column(name="AV", type="boolean", nullable=false)
      */
-    private $av;
+    private $av = '0';
 
     /**
      * @var integer
@@ -62,9 +62,9 @@ class Numeros extends \Wtd\Models\BaseModel
     private $idUtilisateur;
 
     /**
-     * @var \DateTime
+     * @var integer
      *
-     * @ORM\Column(name="DateAjout", type="datetime", nullable=false)
+     * @ORM\Column(name="DateAjout", type="integer", nullable=false)
      */
     private $dateajout = 'CURRENT_TIMESTAMP';
 
@@ -250,7 +250,7 @@ class Numeros extends \Wtd\Models\BaseModel
     /**
      * Set dateajout
      *
-     * @param \DateTime $dateajout
+     * @param integer $dateajout
      *
      * @return Numeros
      */
@@ -264,7 +264,7 @@ class Numeros extends \Wtd\Models\BaseModel
     /**
      * Get dateajout
      *
-     * @return \DateTime
+     * @return integer
      */
     public function getDateajout()
     {

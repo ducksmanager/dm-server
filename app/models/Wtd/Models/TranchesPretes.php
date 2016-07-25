@@ -45,9 +45,9 @@ class TranchesPretes extends \Wtd\Models\BaseModel
     private $createurs;
 
     /**
-     * @var \DateTime
+     * @var integer
      *
-     * @ORM\Column(name="dateajout", type="datetime", nullable=false)
+     * @ORM\Column(name="dateajout", type="integer", nullable=false)
      */
     private $dateajout = 'CURRENT_TIMESTAMP';
 
@@ -152,7 +152,7 @@ class TranchesPretes extends \Wtd\Models\BaseModel
     /**
      * Set dateajout
      *
-     * @param \DateTime $dateajout
+     * @param integer $dateajout
      *
      * @return TranchesPretes
      */
@@ -166,7 +166,7 @@ class TranchesPretes extends \Wtd\Models\BaseModel
     /**
      * Get dateajout
      *
-     * @return \DateTime
+     * @return integer
      */
     public function getDateajout()
     {

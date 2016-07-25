@@ -40,7 +40,7 @@ class Users extends \Wtd\Models\BaseModel
      *
      * @ORM\Column(name="AccepterPartage", type="boolean", nullable=false)
      */
-    private $accepterpartage;
+    private $accepterpartage = '1';
 
     /**
      * @var \DateTime
@@ -68,7 +68,7 @@ class Users extends \Wtd\Models\BaseModel
      *
      * @ORM\Column(name="BetaUser", type="boolean", nullable=false)
      */
-    private $betauser;
+    private $betauser = '0';
 
     /**
      * @var boolean
@@ -113,9 +113,9 @@ class Users extends \Wtd\Models\BaseModel
     private $bibliothequeGrossissement = '1.5';
 
     /**
-     * @var \DateTime
+     * @var integer
      *
-     * @ORM\Column(name="DernierAcces", type="datetime", nullable=false)
+     * @ORM\Column(name="DernierAcces", type="integer", nullable=false)
      */
     private $dernieracces = 'CURRENT_TIMESTAMP';
 
@@ -446,7 +446,7 @@ class Users extends \Wtd\Models\BaseModel
     /**
      * Set dernieracces
      *
-     * @param \DateTime $dernieracces
+     * @param integer $dernieracces
      *
      * @return Users
      */
@@ -460,7 +460,7 @@ class Users extends \Wtd\Models\BaseModel
     /**
      * Get dernieracces
      *
-     * @return \DateTime
+     * @return integer
      */
     public function getDernieracces()
     {
