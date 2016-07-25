@@ -1,20 +1,32 @@
 <?php
 namespace Wtd\Test;
 
-use Silex\Application;
 use Symfony\Component\HttpFoundation\Response;
-
-require __DIR__ . '/../test_bootstrap.php';
 
 class AuthTest extends TestCommon
 {
     public function testCallServiceWithoutSystemCredentials() {
-        $response = $this->callService([]);
+        $response = $this->buildService('/collection/new', [], [], [], 'POST')->call();
         $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 
-    public function testCallServiceWithoutCredentials() {
-        $response = $this->callAuthenticatedService([]);
-        $this->assertTrue($response->isClientError());
+    public function testCallServiceWithoutClientVersion() {
+        $response = $this->buildService('/collection/new', [], [], $this->getDefaultSystemCredentialsNoVersion(),
+            'POST')->call();
+        $this->assertEquals(Response::HTTP_VERSION_NOT_SUPPORTED, $response->getStatusCode());
+    }
+
+    public function testCallServiceWithoutUserCredentials() {
+        $response = $this->buildAuthenticatedService('/collection/new', [], [])->call();
+        $this->assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
+    }
+
+    public function testCallServiceWithUserCredentials() {
+        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/new', 'POST', [
+            'password2' => 'test',
+            'email' => 'test'
+        ])->call();
+        $this->assertNotEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
+        $this->assertNotEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 }

@@ -47,5 +47,12 @@ class CollectionController extends AppController
                 ]);
             }
         );
+
+        $routing->get(
+            '/collection/fetch/',
+            function (Application $app, Request $request) {
+                return self::callInternal($app, '/collection/fetch', 'GET');
+            }
+        );
     }
 }

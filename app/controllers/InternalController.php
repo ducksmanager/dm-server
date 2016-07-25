@@ -5,8 +5,14 @@ namespace Wtd;
 use Exception;
 use Silex\Application;
 use Silex\ControllerCollection;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Wtd\Models\Numeros;
+use Wtd\Models\Users;
+use Wtd\models\Wtd\Contracts\Dtos\NumeroSimple;
+use Wtd\models\Wtd\Contracts\Dtos\PublicationCollection;
+use Wtd\models\Wtd\Contracts\Results\FetchCollectionResult;
 
 class InternalController extends AppController
 {
@@ -18,10 +24,11 @@ class InternalController extends AppController
         $routing->get(
             '/internal/user/exists/{username}',
             function (Request $request, Application $app, $username) {
-                $sql = "SELECT username FROM users WHERE username = ?";
                 try {
-                    $existingUser = self::getConnection($app)->fetchAssoc($sql, [$username]);
-                    if ($existingUser) {
+                    $existingUser = Wtd::getEntityManager()->getRepository(Users::class)->findBy(array(
+                        'username' => $username
+                    ));
+                    if (count($existingUser) > 0) {
                         return new Response('', Response::HTTP_CONFLICT);
                     }
                     return new Response('', Response::HTTP_OK);
@@ -50,7 +57,7 @@ class InternalController extends AppController
                     else {
                         if (!(self::callInternal($app, '/user/exists', 'GET', [$username])
                             ->isSuccessful())) {
-                            $error='UTILISATEUR_EXISTANT';
+                            return new Response(self::translate($app, 'UTILISATEUR_EXISTANT'), Response::HTTP_CONFLICT);
                         }
                     }
                 }
@@ -65,12 +72,13 @@ class InternalController extends AppController
         $routing->get(
             '/internal/user/check/{username}/{password}',
             function (Request $request, Application $app, $username, $password) {
-
-                $sql = "SELECT ID FROM users WHERE username = ? AND password = ?";
                 try {
-                    $existingUser = self::getConnection($app)->fetchAssoc($sql, [$username, sha1($password)]);
-                    if ($existingUser) {
-                        return new Response($existingUser['ID'], Response::HTTP_OK);
+                    $existingUser = Wtd::getEntityManager()->getRepository(Users::class)->findBy(array(
+                        'username' => $username,
+                        'password' => sha1($password)
+                    ));
+                    if (count($existingUser) > 0) {
+                        return new Response($existingUser[0]->getId(), Response::HTTP_OK);
                     }
                     else {
                         return new Response('', Response::HTTP_UNAUTHORIZED);
@@ -83,32 +91,34 @@ class InternalController extends AppController
         );
 
         $routing->put('/internal/user/new', function (Request $request, Application $app) {
-            $username = $request->request->get('username');
-            $password = $request->request->get('password');
-            $email = $request->request->get('email');
+            $user = new Users();
+            $user->setUsername($request->request->get('username'));
+            $user->setPassword(sha1($request->request->get('password')));
+            $user->setEmail($request->request->get('email'));
+            $user->setDateinscription(new \DateTime());
 
-            $sql='INSERT INTO users(username,password,Email,DateInscription) VALUES(?, ?, ?, ?)';
             try {
-                self::getConnection($app)->executeQuery($sql, [$username, $password, $email, date('Y-m-d')]);
+                Wtd::getEntityManager()->persist($user);
+                Wtd::getEntityManager()->flush();
             }
             catch (Exception $e) {
                 return new Response('Internal server error', Response::HTTP_INTERNAL_SERVER_ERROR);
             }
-            
+
             return new Response('OK', Response::HTTP_CREATED);
         });
 
         $routing->put('/internal/collection/add', function (Request $request, Application $app) {
-            $country = $request->request->get('country');
-            $publication = $request->request->get('publication');
-            $issuenumber = $request->request->get('issuenumber');
-            $condition = $request->request->get('condition');
-            $userId = self::getSessionUser($app)['id'];
+            $issue = new Numeros();
+            $issue->setPays($request->request->get('country'));
+            $issue->setMagazine($request->request->get('publication'));
+            $issue->setNumero($request->request->get('issuenumber'));
+            $issue->setEtat($request->request->get('condition'));
+            $issue->setIdUtilisateur(self::getSessionUser($app)['id']);
 
-            $sql='INSERT INTO numeros(Pays, Magazine, Numero, Etat, ID_Acquisition, ID_Utilisateur)
-                  VALUES (?, ?, ?, ?, ?, ?)';
             try {
-                self::getConnection($app)->executeQuery($sql, [$country, $publication, $issuenumber, $condition, -1, $userId]);
+                Wtd::getEntityManager()->persist($issue);
+                Wtd::getEntityManager()->flush();
             }
             catch (Exception $e) {
                 return new Response('Internal server error', Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -116,5 +126,37 @@ class InternalController extends AppController
 
             return new Response('OK', Response::HTTP_CREATED);
         });
+
+        $routing->get(
+            '/internal/collection/fetch/',
+            function (Request $request, Application $app) {
+                try {
+                    /** @var Numeros[] $issues */
+                    $issues = Wtd::getEntityManager()->getRepository(Numeros::class)->findBy(
+                        ['idUtilisateur' => self::getSessionUser($app)['id']],
+                        ['pays' => 'asc', 'magazine' => 'asc', 'numero' => 'asc']
+                    );
+
+                    $result = new FetchCollectionResult();
+
+                    foreach($issues as $issue) {
+                        $publicationCode = implode('/', [$issue->getPays(), $issue->getMagazine()]);
+                        $numero=$issue->getNumero();
+                        $etat=$issue->getEtat();
+
+                        if (!array_key_exists($publicationCode, $result->getNumeros())) {
+                            $result->getNumeros()->set($publicationCode, new PublicationCollection());
+                            $result->getStatic()->getMagazines()->add($publicationCode);
+                        }
+
+                        $result->getNumeros()->get($publicationCode)->add(new NumeroSimple($numero, $etat));
+                    }
+                    return new JsonResponse($result->toArray());
+                }
+                catch (Exception $e) {
+                    return new Response('Internal server error', Response::HTTP_INTERNAL_SERVER_ERROR);
+                }
+            }
+        );
     }
 }
