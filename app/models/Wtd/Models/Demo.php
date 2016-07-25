@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="demo")
  * @ORM\Entity
  */
-class Demo
+class Demo extends \Wtd\Models\BaseModel
 {
     /**
      * @var \DateTime
@@ -22,5 +22,14 @@ class Demo
     private $datedernierinit;
 
 
-}
 
+    /**
+     * Get datedernierinit
+     *
+     * @return \DateTime
+     */
+    public function getDatedernierinit()
+    {
+        return $this->datedernierinit;
+    }
+}
