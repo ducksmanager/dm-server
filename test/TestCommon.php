@@ -140,6 +140,14 @@ class TestCommon extends WebTestCase {
         $numero2->setIdUtilisateur($user->getId());
         self::$em->persist($numero2);
 
+        $numero3 = new Numeros();
+        $numero3->setPays('fr');
+        $numero3->setMagazine('MP');
+        $numero3->setNumero('301');
+        $numero3->setEtat('mauvais');
+        $numero3->setIdUtilisateur($user->getId());
+        self::$em->persist($numero3);
+
         self::$em->flush();
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Wtd;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Exception;
 use Silex\Application;
 use Silex\ControllerCollection;
@@ -144,8 +145,8 @@ class InternalController extends AppController
                         $numero=$issue->getNumero();
                         $etat=$issue->getEtat();
 
-                        if (!array_key_exists($publicationCode, $result->getNumeros())) {
-                            $result->getNumeros()->set($publicationCode, new PublicationCollection());
+                        if (!$result->getNumeros()->containsKey($publicationCode)) {
+                            $result->getNumeros()->set($publicationCode, new ArrayCollection());
                             $result->getStatic()->getMagazines()->add($publicationCode);
                         }
 

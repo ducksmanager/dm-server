@@ -6,7 +6,7 @@ use Wtd\models\Wtd\Contracts\Dtos\PublicationCollection;
 
 class FetchCollectionResult
 {
-    /** @var ArrayCollection $numeros */
+    /** @var PublicationCollection $numeros */
     private $numeros;
 
     /** @var CoaDataResult $static */
@@ -14,7 +14,7 @@ class FetchCollectionResult
 
     public function __construct()
     {
-        $this->numeros = new ArrayCollection();
+        $this->numeros = new PublicationCollection();
         $this->static = new CoaDataResult();
     }
 

@@ -49,4 +49,9 @@ class NumeroSimple
     {
         $this->etat = $etat;
     }
+
+    public function toArray()
+    {
+        return get_object_vars($this);
+    }
 }
