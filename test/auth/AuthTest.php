@@ -23,6 +23,8 @@ class AuthTest extends TestCommon
 
     public function testCallServiceWithUserCredentials() {
         $response = $this->buildAuthenticatedServiceWithTestUser('/collection/new', 'POST', [
+            'username' => 'dm_user',
+            'password' => 'test',
             'password2' => 'test',
             'email' => 'test'
         ])->call();

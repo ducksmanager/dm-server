@@ -7,24 +7,24 @@ use Wtd\Models\Users;
 class CollectionTest extends TestCommon
 {
     /**
-     * @param string $username
      * @return null|Response
      */
-    private function callAddIssue($username = 'dm_user')
+    private function callAddIssue()
     {
-        return $this->buildAuthenticatedService('/collection/add', [
-            'username' => $username,
-            'password' => sha1('dm_pass')
-        ], [
+        return $this->buildAuthenticatedServiceWithTestUser('/collection/add',
+            'POST',
+        [
             'country' => 'fr',
             'publication' => 'DDD',
-            'issuenumber' => '1',
+            'issuenumber' => '3',
             'condition' => 'bon'
         ])->call();
     }
 
     public function testCreateCollection() {
-        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/new', 'POST', [
+        $response = $this->buildAuthenticatedService('/collection/new', [], [
+            'username' => 'dm_user',
+            'password' => 'dm_pass',
             'password2' => 'dm_pass',
             'email' => 'test@ducksmanager.net'
         ])->call();
@@ -38,7 +38,9 @@ class CollectionTest extends TestCommon
     }
 
     public function testCreateCollectionErrorDifferentPasswords() {
-        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/new', 'POST', [
+        $response = $this->buildAuthenticatedService('/collection/new', [], [
+            'username' => 'dm_user',
+            'password' => 'dm_pass',
             'password2' => 'dm_pass_different',
             'email' => 'test@ducksmanager.net'
         ])->call();
@@ -46,10 +48,9 @@ class CollectionTest extends TestCommon
     }
 
     public function testCreateCollectionErrorShortUsername() {
-        $response = $this->buildAuthenticatedService('/collection/new', [
+        $response = $this->buildAuthenticatedService('/collection/new', [], [
             'username' => 'dm',
-            'password' => 'dm_pass'
-        ], [
+            'password' => 'dm_pass',
             'password2' => 'dm_pass',
             'email' => 'test@ducksmanager.net'
         ])->call();
@@ -57,10 +58,9 @@ class CollectionTest extends TestCommon
     }
 
     public function testCreateCollectionErrorShortPassword() {
-        $response = $this->buildAuthenticatedService('/collection/new', [
+        $response = $this->buildAuthenticatedService('/collection/new', [], [
             'username' => 'dm_user',
-            'password' => 'pass'
-        ], [
+            'password' => 'pass',
             'password2' => 'pass',
             'email' => 'test@ducksmanager.net'
         ])->call();
@@ -69,10 +69,9 @@ class CollectionTest extends TestCommon
 
     public function testCreateCollectionErrorExistingUsername() {
         $this->createTestCollection();
-        $response = $this->buildAuthenticatedService('/collection/new', [
+        $response = $this->buildAuthenticatedService('/collection/new', [], [
             'username' => 'dm_user',
-            'password' => 'dm_pass'
-        ], [
+            'password' => 'dm_pass',
             'password2' => 'dm_pass',
             'email' => 'test@ducksmanager.net'
         ])->call();
@@ -82,21 +81,11 @@ class CollectionTest extends TestCommon
     public function testAddIssue() {
         $this->assertEquals(0, count($this->getCurrentUserIssues()));
 
-        $this->createTestCollection('dm_user');
+        $this->createTestCollection('dm_user'); // Creates a collection with 3 issues
 
-        $response = $this->callAddIssue('dm_user');
+        $response = $this->callAddIssue();
 
         $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
-        $this->assertEquals(1, count($this->getCurrentUserIssues()));
-    }
-
-    public function testAddIssueNonExistingCollection() {
-        $this->assertEquals(0, count($this->getCurrentUserIssues()));
-
-        $this->createTestCollection('dm_user');
-
-        $response = $this->callAddIssue('dm_user2');
-
-        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+        $this->assertEquals(4, count($this->getCurrentUserIssues()));
     }
 }
