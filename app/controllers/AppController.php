@@ -75,11 +75,11 @@ abstract class AppController
 
     public function authenticateUser(Application $app, $request) {
         if (preg_match('#^/collection/((?!new/?).)+$#', $request->getPathInfo())) {
-            try {
-                $authHeader = $request->headers->get('authorization');
-
-                list($type, $base64Auth) = explode(' ', $authHeader);
-                list($username, $password) = explode(':', base64_decode($base64Auth));
+            $authHeader = $request->headers->get('authorization');
+            list($type, $base64Auth) = explode(' ', $authHeader);
+            $base64AuthParts = explode(':', base64_decode($base64Auth));
+            if (count($base64AuthParts) === 2) {
+                list($username, $password) = $base64AuthParts;
 
                 $userCheck = self::callInternal($app, '/user/check', 'GET', [
                     'username' => $username,
@@ -90,7 +90,8 @@ abstract class AppController
                 } else {
                     $this->setSessionUser($app, $username, $userCheck->getContent());
                 }
-            } catch (Exception $e) {
+            }
+            else {
                 return new Response('', Response::HTTP_UNAUTHORIZED);
             }
         }

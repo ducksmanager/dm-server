@@ -6,19 +6,25 @@ use Symfony\Component\HttpFoundation\Response;
 class AuthTest extends TestCommon
 {
     public function testCallServiceWithoutSystemCredentials() {
-        $response = $this->buildService('/collection/new', [], [], [], 'POST')->call();
+        $response = $this->buildService('/collection/add', [], [], [], 'POST')->call();
         $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 
     public function testCallServiceWithoutClientVersion() {
-        $response = $this->buildService('/collection/new', [], [], $this->getDefaultSystemCredentialsNoVersion(),
+        $response = $this->buildService('/collection/add', [], [], $this->getDefaultSystemCredentialsNoVersion(),
             'POST')->call();
         $this->assertEquals(Response::HTTP_VERSION_NOT_SUPPORTED, $response->getStatusCode());
     }
 
     public function testCallServiceWithoutUserCredentials() {
-        $response = $this->buildAuthenticatedService('/collection/new', [], [])->call();
-        $this->assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
+        $response = $this->buildAuthenticatedService('/collection/add', [], [])->call();
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+
+    public function testCallServiceWithWrongUserCredentials() {
+        $response = $this->buildAuthenticatedService('/collection/add', ['username' => 'dm_user',
+            'password' => 'invalid'], [])->call();
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 
     public function testCallServiceWithUserCredentials() {

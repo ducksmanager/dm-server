@@ -37,10 +37,13 @@ class TestCommon extends WebTestCase {
     }
 
     public function setUp() {
+        self::initDatabase();
+        parent::setUp();
+    }
+
+    protected static function initDatabase() {
         self::$schemaTool->dropDatabase();
         self::$schemaTool->createSchema(self::$modelClasses);
-
-        parent::setUp();
     }
 
     /**
@@ -115,7 +118,7 @@ class TestCommon extends WebTestCase {
     /**
      * @param string $username
      */
-    protected function createTestCollection($username = 'dm_user') {
+    protected static function createTestCollection($username = 'dm_user') {
         $user = new Users();
         $user->setUsername($username);
         $user->setPassword(sha1('dm_pass'));
