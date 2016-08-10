@@ -26,7 +26,7 @@ class InternalController extends AppController
             '/internal/user/exists/{username}',
             function (Request $request, Application $app, $username) {
                 try {
-                    $existingUser = Wtd::getEntityManager()->getRepository(Users::class)->findBy(array(
+                    $existingUser = Wtd::getDmEntityManager()->getRepository(Users::class)->findBy(array(
                         'username' => $username
                     ));
                     if (count($existingUser) > 0) {
@@ -74,7 +74,7 @@ class InternalController extends AppController
             '/internal/user/check/{username}/{password}',
             function (Request $request, Application $app, $username, $password) {
                 try {
-                    $existingUser = Wtd::getEntityManager()->getRepository(Users::class)->findBy(array(
+                    $existingUser = Wtd::getDmEntityManager()->getRepository(Users::class)->findBy(array(
                         'username' => $username,
                         'password' => sha1($password)
                     ));
@@ -99,8 +99,8 @@ class InternalController extends AppController
             $user->setDateinscription(new \DateTime());
 
             try {
-                Wtd::getEntityManager()->persist($user);
-                Wtd::getEntityManager()->flush();
+                Wtd::getDmEntityManager()->persist($user);
+                Wtd::getDmEntityManager()->flush();
             }
             catch (Exception $e) {
                 return new Response('Internal server error', Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -118,8 +118,8 @@ class InternalController extends AppController
             $issue->setIdUtilisateur(self::getSessionUser($app)['id']);
 
             try {
-                Wtd::getEntityManager()->persist($issue);
-                Wtd::getEntityManager()->flush();
+                Wtd::getDmEntityManager()->persist($issue);
+                Wtd::getDmEntityManager()->flush();
             }
             catch (Exception $e) {
                 return new Response('Internal server error', Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -133,7 +133,7 @@ class InternalController extends AppController
             function (Request $request, Application $app) {
                 try {
                     /** @var Numeros[] $issues */
-                    $issues = Wtd::getEntityManager()->getRepository(Numeros::class)->findBy(
+                    $issues = Wtd::getDmEntityManager()->getRepository(Numeros::class)->findBy(
                         ['idUtilisateur' => self::getSessionUser($app)['id']],
                         ['pays' => 'asc', 'magazine' => 'asc', 'numero' => 'asc']
                     );

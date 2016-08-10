@@ -33,7 +33,11 @@ $app->register(new Silex\Provider\TranslationServiceProvider(), array(
 ));
 
 $app->register(new Silex\Provider\DoctrineServiceProvider(), [
-    'db.options' => Wtd::getConnectionParams($conf)
+    'db.options' => Wtd::getConnectionParams($conf['db'])
+]);
+
+$app->register(new Silex\Provider\DoctrineServiceProvider(), [
+    'db.options' => Wtd::getConnectionParams($conf['db_coa'])
 ]);
 
 @unlink($conf['db']['path']);

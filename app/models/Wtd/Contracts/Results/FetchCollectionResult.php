@@ -37,7 +37,7 @@ class FetchCollectionResult
     /**
      * @return CoaDataResult
      */
-    public function getStatic(): CoaDataResult
+    public function getStatic()
     {
         return $this->static;
     }

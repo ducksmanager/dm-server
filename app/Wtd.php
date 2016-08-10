@@ -21,8 +21,14 @@ class Wtd extends AppController implements ControllerProviderInterface
     const CONFIG_FILE_DEFAULT = 'config.ini';
     const CONFIG_FILE_TEST = 'config.test.ini';
 
+    const CONFIG_DB_KEY_DM = 'db';
+    const CONFIG_DB_KEY_COA = 'db_coa';
+
     /** @var EntityManager $em */
     public static $em;
+
+    /** @var EntityManager $coaEm */
+    public static $coaEm;
 
     public function setup(Application $app)
     {
@@ -41,13 +47,11 @@ class Wtd extends AppController implements ControllerProviderInterface
     }
 
     /**
-     * @param array $conf
+     * @param array $dbConf
      * @return array
      */
-    public static function getConnectionParams($conf)
+    public static function getConnectionParams($dbConf)
     {
-        $dbConf = $conf['db'];
-
         $username = $dbConf['username'];
         $password = $dbConf['password'];
 
@@ -81,38 +85,54 @@ class Wtd extends AppController implements ControllerProviderInterface
         return [];
     }
 
+    static function getCoaEntityManager($forTest = false) {
+        if (is_null(self::$coaEm)) {
+            self::$coaEm = self::getEntityManager(self::CONFIG_DB_KEY_COA, $forTest);
+        }
+        return self::$coaEm;
+    }
+
+    static function getDmEntityManager($forTest = false) {
+        if (is_null(self::$em)) {
+            self::$em = self::getEntityManager(self::CONFIG_DB_KEY_DM, $forTest);
+        }
+        return self::$em;
+    }
+
     /**
+     * @param string $dbKey
      * @param bool $forTest
      * @return EntityManager
      */
-    static function getEntityManager($forTest = false)
+    static function getEntityManager($dbKey, $forTest = false)
     {
-        if (is_null(self::$em)) {
-            $cache = new ArrayCache();
-            // standard annotation reader
-            $annotationReader = new AnnotationReader();
-            $cachedAnnotationReader = new CachedReader(
-                $annotationReader, // use reader
-                $cache // and a cache driver
-            );
-            $evm = new EventManager();
-            $timestampableListener = new TimestampableListener();
-            $timestampableListener->setAnnotationReader($cachedAnnotationReader);
-            $evm->addEventSubscriber($timestampableListener);
+        $cache = new ArrayCache();
+        // standard annotation reader
+        $annotationReader = new AnnotationReader();
+        $cachedAnnotationReader = new CachedReader(
+            $annotationReader, // use reader
+            $cache // and a cache driver
+        );
+        $evm = new EventManager();
+        $timestampableListener = new TimestampableListener();
+        $timestampableListener->setAnnotationReader($cachedAnnotationReader);
+        $evm->addEventSubscriber($timestampableListener);
 
-            $config = self::getAppConfig($forTest);
+        $config = self::getAppConfig($forTest)[$dbKey];
 
-            $metaDataConfig = Setup::createAnnotationMetadataConfiguration(
-                array(__DIR__ . "/models"), true, null, null, false
-            );
-            $connectionParams = self::getConnectionParams($config);
-            $conn = DriverManager::getConnection($connectionParams, $metaDataConfig, $evm);
-            $conn->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'string');
-            $conn->getDatabasePlatform()->registerDoctrineTypeMapping('timestamp', 'integer');
+        $metaDataConfig = Setup::createAnnotationMetadataConfiguration(
+            array(__DIR__ . "/models"), true, null, null, false
+        );
+        $connectionParams = self::getConnectionParams($config);
+        $conn = DriverManager::getConnection($connectionParams, $metaDataConfig, $evm);
+        $conn->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'string');
+        $conn->getDatabasePlatform()->registerDoctrineTypeMapping('timestamp', 'integer');
 
-            self::$em = EntityManager::create($conn, $metaDataConfig);
+        if (array_key_exists('tables', $config)) {
+            $conn->getConfiguration()->setFilterSchemaAssetsExpression($config['tables']);
         }
-        return self::$em;
+
+        return EntityManager::create($conn, $metaDataConfig);
     }
 
     /**

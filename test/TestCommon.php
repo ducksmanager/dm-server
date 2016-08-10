@@ -31,7 +31,7 @@ class TestCommon extends WebTestCase {
     public static function setUpBeforeClass()
     {
         self::$conf = Wtd::getAppConfig(true);
-        self::$em = Wtd::getEntityManager(true);
+        self::$em = Wtd::getDmEntityManager(true);
         self::$schemaTool = new SchemaTool(self::$em);
         self::$modelClasses = self::$em->getMetadataFactory()->getAllMetadata();
     }
