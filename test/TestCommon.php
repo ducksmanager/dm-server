@@ -1,7 +1,7 @@
 <?php
 namespace Wtd\Test;
 
-use Doctrine\ORM\EntityManager;
+use Coa\Models\InducksCountryname;
 use Doctrine\ORM\Tools\SchemaTool;
 use Silex\Application;
 use Silex\WebTestCase;
@@ -16,14 +16,17 @@ class TestCommon extends WebTestCase {
     protected static $users;
     protected static $testUser = 'whattheduck';
 
-    /** @var EntityManager $em  */
-    protected static $em;
+    /** @var array $modelClassesDm  */
+    private static $modelClassesDm;
 
-    /** @var array $modelClasses  */
-    private static $modelClasses;
+    /** @var array $modelClassesCoa  */
+    private static $modelClassesCoa;
 
-    /** @var SchemaTool $schemaTool  */
-    private static $schemaTool;
+    /** @var SchemaTool $schemaToolDm  */
+    private static $schemaToolDm;
+
+    /** @var SchemaTool $schemaToolCoa  */
+    private static $schemaToolCoa;
 
     /** @var Application $app */
     protected $app;
@@ -31,9 +34,15 @@ class TestCommon extends WebTestCase {
     public static function setUpBeforeClass()
     {
         self::$conf = Wtd::getAppConfig(true);
-        self::$em = Wtd::getDmEntityManager(true);
-        self::$schemaTool = new SchemaTool(self::$em);
-        self::$modelClasses = self::$em->getMetadataFactory()->getAllMetadata();
+
+        $em = Wtd::getDmEntityManager(true);
+        $coaEm = Wtd::getCoaEntityManager(true);
+
+        self::$schemaToolDm = new SchemaTool($em);
+        self::$modelClassesDm = $em->getMetadataFactory()->getAllMetadata();
+
+        self::$schemaToolCoa = new SchemaTool($coaEm);
+        self::$modelClassesCoa = $coaEm->getMetadataFactory()->getAllMetadata();
     }
 
     public function setUp() {
@@ -42,8 +51,11 @@ class TestCommon extends WebTestCase {
     }
 
     protected static function initDatabase() {
-        self::$schemaTool->dropDatabase();
-        self::$schemaTool->createSchema(self::$modelClasses);
+        self::$schemaToolDm->dropDatabase();
+        self::$schemaToolDm->createSchema(array_merge(
+            self::$modelClassesDm,
+            self::$modelClassesCoa
+        ));
     }
 
     /**
@@ -112,7 +124,7 @@ class TestCommon extends WebTestCase {
     }
 
     protected function getCurrentUserIssues() {
-        return self::$em->getRepository(Numeros::class)->findBy(array('idUtilisateur' => AppController::getSessionUser($this->app)['id']));
+        return Wtd::$em->getRepository(Numeros::class)->findBy(array('idUtilisateur' => AppController::getSessionUser($this->app)['id']));
     }
 
     /**
@@ -124,8 +136,8 @@ class TestCommon extends WebTestCase {
         $user->setPassword(sha1('dm_pass'));
         $user->setEmail('test@ducksmanager.net');
         $user->setDateinscription(\DateTime::createFromFormat('Y-m-d', '2000-01-01'));
-        self::$em->persist($user);
-        self::$em->flush();
+        Wtd::$em->persist($user);
+        Wtd::$em->flush();
 
         $numero1 = new Numeros();
         $numero1->setPays('fr');
@@ -133,7 +145,7 @@ class TestCommon extends WebTestCase {
         $numero1->setNumero('1');
         $numero1->setEtat('indefini');
         $numero1->setIdUtilisateur($user->getId());
-        self::$em->persist($numero1);
+        Wtd::$em->persist($numero1);
 
         $numero2 = new Numeros();
         $numero2->setPays('fr');
@@ -141,7 +153,7 @@ class TestCommon extends WebTestCase {
         $numero2->setNumero('300');
         $numero2->setEtat('bon');
         $numero2->setIdUtilisateur($user->getId());
-        self::$em->persist($numero2);
+        Wtd::$em->persist($numero2);
 
         $numero3 = new Numeros();
         $numero3->setPays('fr');
@@ -149,8 +161,20 @@ class TestCommon extends WebTestCase {
         $numero3->setNumero('301');
         $numero3->setEtat('mauvais');
         $numero3->setIdUtilisateur($user->getId());
-        self::$em->persist($numero3);
+        Wtd::$em->persist($numero3);
 
-        self::$em->flush();
+        Wtd::$em->flush();
+    }
+
+    protected static function createCoaData() {
+        $country = new InducksCountryname();
+        $country->setCountrycode('fr');
+        $country->setLanguagecode('fr');
+        $country->setCountryname('France');
+
+        Wtd::$em->persist($country);
+
+        Wtd::$em->flush();
+
     }
 }

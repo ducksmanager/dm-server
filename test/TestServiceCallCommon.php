@@ -65,7 +65,7 @@ class TestServiceCallCommon {
     /**
      * @return array
      */
-    public function getParameters(): array
+    public function getParameters()
     {
         return $this->parameters;
     }

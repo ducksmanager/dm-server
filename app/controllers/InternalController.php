@@ -2,6 +2,7 @@
 
 namespace Wtd;
 
+use Coa\Models\InducksCountryname;
 use Doctrine\Common\Collections\ArrayCollection;
 use Exception;
 use Silex\Application;
@@ -140,7 +141,11 @@ class InternalController extends AppController
 
                     $result = new FetchCollectionResult();
 
+                    $countryCodes = [];
+
                     foreach($issues as $issue) {
+                        $countryCodes[] = $issue->getPays();
+
                         $publicationCode = implode('/', [$issue->getPays(), $issue->getMagazine()]);
                         $numero=$issue->getNumero();
                         $etat=$issue->getEtat();
@@ -152,7 +157,36 @@ class InternalController extends AppController
 
                         $result->getNumeros()->get($publicationCode)->add(new NumeroSimple($numero, $etat));
                     }
+
+                    $countryNames = self::callInternal($app, '/coa/countrynames', 'GET', [implode(',', array_unique($countryCodes))]);
+
                     return new JsonResponse($result->toArray());
+                }
+                catch (Exception $e) {
+                    return new Response('Internal server error', Response::HTTP_INTERNAL_SERVER_ERROR);
+                }
+            }
+        );
+
+        $routing->get(
+            '/internal/coa/countrynames/{countryCodes}',
+            function (Request $request, Application $app, $countryCodes) {
+                try {
+                    $qb = Wtd::getCoaEntityManager()->createQueryBuilder();
+                    $qb
+                        ->select('inducks_countryname.countrycode, inducks_countryname.countryname')
+                        ->from(InducksCountryname::class, 'inducks_countryname')
+                        ->where($qb->expr()->in('inducks_countryname.countrycode', explode(',', $countryCodes)));
+
+                    $results = $qb->getQuery()->getResult();
+                    $countryNames = array();
+                    array_walk(
+                        $results,
+                        function($result) use (&$countryNames) {
+                            $countryNames[$result['countrycode']] = $result['countryname'];
+                        }
+                    );
+                    return new JsonResponse($countryNames);
                 }
                 catch (Exception $e) {
                     return new Response('Internal server error', Response::HTTP_INTERNAL_SERVER_ERROR);

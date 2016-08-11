@@ -10,7 +10,8 @@ class FetchCollectionTest extends TestCommon
     public function setUp()
     {
         parent::setUp();
-        $this->createTestCollection('dm_user');
+        self::createTestCollection('dm_user');
+        self::createCoaData();
     }
 
 

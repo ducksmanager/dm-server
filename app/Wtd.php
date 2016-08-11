@@ -18,8 +18,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class Wtd extends AppController implements ControllerProviderInterface
 {
-    const CONFIG_FILE_DEFAULT = 'config.ini';
-    const CONFIG_FILE_TEST = 'config.test.ini';
+    const CONFIG_FILE_DEFAULT = 'config.db.ini';
+    const CONFIG_FILE_TEST = 'config.db.test.ini';
 
     const CONFIG_DB_KEY_DM = 'db';
     const CONFIG_DB_KEY_COA = 'db_coa';
@@ -40,10 +40,24 @@ class Wtd extends AppController implements ControllerProviderInterface
      * @return array
      */
     public static function getAppConfig($forTest) {
-        return parse_ini_file(
+        $config = parse_ini_file(
             __DIR__.'/config/' . ($forTest ? self::CONFIG_FILE_TEST : self::CONFIG_FILE_DEFAULT)
             , true
         );
+        $genericConfig = parse_ini_file(
+            __DIR__.'/config/schemas.ini'
+            , true
+        );
+        foreach($genericConfig as $dbKey => $genericConfigForDbKey) {
+            if (array_key_exists($dbKey, $config)) {
+                $config[$dbKey] = array_merge($config[$dbKey], $genericConfigForDbKey);
+            }
+            else {
+                $config[$dbKey] = $genericConfigForDbKey;
+            }
+        }
+
+        return $config;
     }
 
     /**
@@ -121,7 +135,7 @@ class Wtd extends AppController implements ControllerProviderInterface
         $config = self::getAppConfig($forTest)[$dbKey];
 
         $metaDataConfig = Setup::createAnnotationMetadataConfiguration(
-            array(__DIR__ . "/models"), true, null, null, false
+            array(__DIR__ . "/models/".$config['models_path']), true, null, null, false
         );
         $connectionParams = self::getConnectionParams($config);
         $conn = DriverManager::getConnection($connectionParams, $metaDataConfig, $evm);
@@ -129,7 +143,7 @@ class Wtd extends AppController implements ControllerProviderInterface
         $conn->getDatabasePlatform()->registerDoctrineTypeMapping('timestamp', 'integer');
 
         if (array_key_exists('tables', $config)) {
-            $conn->getConfiguration()->setFilterSchemaAssetsExpression($config['tables']);
+            $conn->getConfiguration()->setFilterSchemaAssetsExpression('~^'.$config['tables'].'$~');
         }
 
         return EntityManager::create($conn, $metaDataConfig);

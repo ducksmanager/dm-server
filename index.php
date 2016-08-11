@@ -9,7 +9,7 @@ use Wtd\Wtd;
 require_once __DIR__.'/vendor/autoload.php';
 
 if (!isset($conf)) {
-    $conf = Wtd::getAppConfig('config.ini');
+    $conf = Wtd::getAppConfig('config.db.ini');
 }
 
 $app = new \Silex\Application();

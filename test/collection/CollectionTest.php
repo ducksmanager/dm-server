@@ -3,6 +3,7 @@ namespace Wtd\Test;
 
 use Symfony\Component\HttpFoundation\Response;
 use Wtd\Models\Users;
+use Wtd\Wtd;
 
 class CollectionTest extends TestCommon
 {
@@ -30,7 +31,7 @@ class CollectionTest extends TestCommon
         ])->call();
         $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
 
-        $usersWithUsername = self::$em->getRepository(Users::class)->findBy(array('username' => 'dm_user'));
+        $usersWithUsername = Wtd::$em->getRepository(Users::class)->findBy(array('username' => 'dm_user'));
 
         $this->assertEquals(1, count($usersWithUsername));
         $this->assertEquals(Users::class, get_class($usersWithUsername[0]));
@@ -68,7 +69,7 @@ class CollectionTest extends TestCommon
     }
 
     public function testCreateCollectionErrorExistingUsername() {
-        $this->createTestCollection();
+        self::createTestCollection();
         $response = $this->buildAuthenticatedService('/collection/new', [], [
             'username' => 'dm_user',
             'password' => 'dm_pass',
@@ -81,7 +82,7 @@ class CollectionTest extends TestCommon
     public function testAddIssue() {
         $this->assertEquals(0, count($this->getCurrentUserIssues()));
 
-        $this->createTestCollection('dm_user'); // Creates a collection with 3 issues
+        self::createTestCollection('dm_user'); // Creates a collection with 3 issues
 
         $response = $this->callAddIssue();
 

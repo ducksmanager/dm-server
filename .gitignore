@@ -1,5 +1,5 @@
 /.idea
-/app/config/config.ini
+/app/config/config.db.ini
 /bin
 /build
 /test/db.sqlite
