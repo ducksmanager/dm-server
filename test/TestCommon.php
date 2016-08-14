@@ -52,11 +52,11 @@ class TestCommon extends WebTestCase {
     }
 
     protected static function initDatabase() {
-        self::$schemaToolDm->dropDatabase();
-        self::$schemaToolDm->createSchema(array_merge(
-            self::$modelClassesDm,
-            self::$modelClassesCoa
-        ));
+        self::$schemaToolDm->dropSchema(self::$modelClassesDm);
+        self::$schemaToolDm->createSchema(self::$modelClassesDm);
+
+        self::$schemaToolCoa->dropSchema(self::$modelClassesCoa);
+        self::$schemaToolCoa->createSchema(self::$modelClassesCoa);
     }
 
     /**
@@ -168,23 +168,28 @@ class TestCommon extends WebTestCase {
     }
 
     protected static function createCoaData() {
-        $country = new InducksCountryname();
-        $country->setCountrycode('fr');
-        $country->setLanguagecode('fr');
-        $country->setCountryname('France');
-        Wtd::$em->persist($country);
+        $country1 = new InducksCountryname();
+        $country1->setCountrycode('fr');
+        $country1->setLanguagecode('fr');
+        $country1->setCountryname('France');
+        Wtd::$coaEm->persist($country1);
+
+        $country2 = new InducksCountryname();
+        $country2->setCountrycode('es');
+        $country2->setLanguagecode('fr');
+        $country2->setCountryname('Espagne');
+        Wtd::$coaEm->persist($country2);
 
         $publication1 = new InducksPublication();
         $publication1->setPublicationCode('fr/DDD');
         $publication1->setTitle('Dynastie');
-        Wtd::$em->persist($publication1);
+        Wtd::$coaEm->persist($publication1);
 
         $publication2 = new InducksPublication();
         $publication2->setPublicationCode('fr/MP');
         $publication2->setTitle('Parade');
-        Wtd::$em->persist($publication2);
+        Wtd::$coaEm->persist($publication2);
 
-        Wtd::$em->flush();
-
+        Wtd::$coaEm->flush();
     }
 }

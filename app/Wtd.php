@@ -85,15 +85,21 @@ class Wtd extends AppController implements ControllerProviderInterface
             break;
 
             case 'sqlite':
-                return [
+                $params = [
                     'user' => $username,
                     'password' => $password,
-                    'path' =>  $dbConf['in_memory'] === '1',
                     'driver' => 'pdo_sqlite',
                     'driverOptions' => [
                         1002 => 'SET NAMES utf8'
                     ]
                 ];
+                if (array_key_exists('in_memory', $dbConf)) {
+                    $params['memory'] = true;
+                }
+                else {
+                    $params['path'] = $dbConf['path'];
+                }
+                return $params;
             break;
         }
         return [];
@@ -186,6 +192,7 @@ class Wtd extends AppController implements ControllerProviderInterface
         );
 
         CollectionController::addRoutes($routing);
+        CoaListController::addRoutes($routing);
         InternalController::addRoutes($routing);
 
         return $routing;

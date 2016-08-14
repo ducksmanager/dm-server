@@ -54,7 +54,7 @@ class CollectionController extends AppController
         );
 
         $routing->get(
-            '/collection/fetch/',
+            '/collection/fetch',
             function (Application $app, Request $request) {
                 $issuesResponse = self::callInternal($app, '/collection/fetch', 'GET');
                 if ($issuesResponse->getStatusCode() !== Response::HTTP_OK) {

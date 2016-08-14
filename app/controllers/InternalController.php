@@ -128,7 +128,7 @@ class InternalController extends AppController
         });
 
         $routing->get(
-            '/internal/collection/fetch/',
+            '/internal/collection/fetch',
             function (Request $request, Application $app) {
                 try {
                     /** @var Numeros[] $issues */
@@ -152,8 +152,11 @@ class InternalController extends AppController
                     $qb = Wtd::getCoaEntityManager()->createQueryBuilder();
                     $qb
                         ->select('inducks_countryname.countrycode, inducks_countryname.countryname')
-                        ->from(InducksCountryname::class, 'inducks_countryname')
-                        ->where($qb->expr()->in('inducks_countryname.countrycode', explode(',', $countryCodes)));
+                        ->from(InducksCountryname::class, 'inducks_countryname');
+
+                    if ($countryCodes !== null) {
+                        $qb->where($qb->expr()->in('inducks_countryname.countrycode', explode(',', $countryCodes)));
+                    }
 
                     $results = $qb->getQuery()->getResult();
                     $countryNames = array();
@@ -166,10 +169,10 @@ class InternalController extends AppController
                     return new JsonResponse(ModelHelper::getSerializedArray($countryNames));
                 }
                 catch (Exception $e) {
-                    return new Response('Internal server error', Response::HTTP_INTERNAL_SERVER_ERROR);
+                    new Response('Internal server error', Response::HTTP_INTERNAL_SERVER_ERROR);
                 }
             }
-        );
+        )->value('countryCodes', null);
 
         $routing->get(
             '/internal/coa/publicationtitles/{publicationCodes}',
@@ -178,8 +181,14 @@ class InternalController extends AppController
                     $qb = Wtd::getCoaEntityManager()->createQueryBuilder();
                     $qb
                         ->select('inducks_publication.publicationcode, inducks_publication.title')
-                        ->from(InducksPublication::class, 'inducks_publication')
-                        ->where($qb->expr()->in('inducks_publication.publicationcode', explode(',', $publicationCodes)));
+                        ->from(InducksPublication::class, 'inducks_publication');
+
+                    if (preg_match('#^[a-z]+/%$#', $publicationCodes)) {
+                        $qb->where($qb->expr()->like('inducks_publication.publicationcode', "'".$publicationCodes."'"));
+                    }
+                    else {
+                        $qb->where($qb->expr()->in('inducks_publication.publicationcode', explode(',', $publicationCodes)));
+                    }
 
                     $results = $qb->getQuery()->getResult();
                     $publicationTitles = array();

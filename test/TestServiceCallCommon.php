@@ -131,7 +131,7 @@ class TestServiceCallCommon {
      */
     public function call() {
         $path = $this->path;
-        if ($this->method === 'GET') {
+        if ($this->method === 'GET' && count($this->parameters) > 0) {
             $path .= '/' . implode('/', array_values($this->parameters));
         }
         $this->client->request(
