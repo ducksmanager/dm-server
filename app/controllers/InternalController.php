@@ -3,6 +3,7 @@
 namespace Wtd;
 
 use Coa\Models\InducksCountryname;
+use Coa\Models\InducksPublication;
 use Doctrine\Common\Collections\ArrayCollection;
 use Exception;
 use Silex\Application;
@@ -12,9 +13,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Wtd\Models\Numeros;
 use Wtd\Models\Users;
-use Wtd\models\Wtd\Contracts\Dtos\NumeroSimple;
-use Wtd\models\Wtd\Contracts\Dtos\PublicationCollection;
-use Wtd\models\Wtd\Contracts\Results\FetchCollectionResult;
 
 class InternalController extends AppController
 {
@@ -139,28 +137,7 @@ class InternalController extends AppController
                         ['pays' => 'asc', 'magazine' => 'asc', 'numero' => 'asc']
                     );
 
-                    $result = new FetchCollectionResult();
-
-                    $countryCodes = [];
-
-                    foreach($issues as $issue) {
-                        $countryCodes[] = $issue->getPays();
-
-                        $publicationCode = implode('/', [$issue->getPays(), $issue->getMagazine()]);
-                        $numero=$issue->getNumero();
-                        $etat=$issue->getEtat();
-
-                        if (!$result->getNumeros()->containsKey($publicationCode)) {
-                            $result->getNumeros()->set($publicationCode, new ArrayCollection());
-                            $result->getStatic()->getMagazines()->add($publicationCode);
-                        }
-
-                        $result->getNumeros()->get($publicationCode)->add(new NumeroSimple($numero, $etat));
-                    }
-
-                    $countryNames = self::callInternal($app, '/coa/countrynames', 'GET', [implode(',', array_unique($countryCodes))]);
-
-                    return new JsonResponse($result->toArray());
+                    return new JsonResponse(ModelHelper::getSerializedArray($issues));
                 }
                 catch (Exception $e) {
                     return new Response('Internal server error', Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -186,12 +163,38 @@ class InternalController extends AppController
                             $countryNames[$result['countrycode']] = $result['countryname'];
                         }
                     );
-                    return new JsonResponse($countryNames);
+                    return new JsonResponse(ModelHelper::getSerializedArray($countryNames));
                 }
                 catch (Exception $e) {
                     return new Response('Internal server error', Response::HTTP_INTERNAL_SERVER_ERROR);
                 }
             }
         );
+
+        $routing->get(
+            '/internal/coa/publicationtitles/{publicationCodes}',
+            function (Request $request, Application $app, $publicationCodes) {
+                try {
+                    $qb = Wtd::getCoaEntityManager()->createQueryBuilder();
+                    $qb
+                        ->select('inducks_publication.publicationcode, inducks_publication.title')
+                        ->from(InducksPublication::class, 'inducks_publication')
+                        ->where($qb->expr()->in('inducks_publication.publicationcode', explode(',', $publicationCodes)));
+
+                    $results = $qb->getQuery()->getResult();
+                    $publicationTitles = array();
+                    array_walk(
+                        $results,
+                        function($result) use (&$publicationTitles) {
+                            $publicationTitles[$result['publicationcode']] = $result['title'];
+                        }
+                    );
+                    return new JsonResponse(ModelHelper::getSerializedArray($publicationTitles));
+                }
+                catch (Exception $e) {
+                    return new Response('Internal server error', Response::HTTP_INTERNAL_SERVER_ERROR);
+                }
+            }
+        )->assert('publicationCodes', '.+');
     }
 }

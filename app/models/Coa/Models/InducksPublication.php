@@ -17,7 +17,7 @@ class InducksPublication extends \Coa\Models\BaseModel
      *
      * @ORM\Column(name="publicationcode", type="string", length=12, nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\GeneratedValue(strategy="NONE")
      */
     private $publicationcode = '';
 
@@ -106,6 +106,20 @@ class InducksPublication extends \Coa\Models\BaseModel
     private $maintenanceteamcode;
 
 
+
+    /**
+     * Set publicationcode
+     *
+     * @param string $publicationcode
+     *
+     * @return InducksPublication
+     */
+    public function setPublicationCode($publicationcode)
+    {
+        $this->publicationcode = $publicationcode;
+
+        return $this;
+    }
 
     /**
      * Get publicationcode

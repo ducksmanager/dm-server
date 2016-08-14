@@ -2,10 +2,15 @@
 
 namespace Wtd;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Silex\Application;
 use Silex\ControllerCollection;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Wtd\Models\Numeros;
+use Wtd\models\Wtd\Contracts\Dtos\NumeroSimple;
+use Wtd\models\Wtd\Contracts\Results\FetchCollectionResult;
 
 class CollectionController extends AppController
 {
@@ -51,7 +56,49 @@ class CollectionController extends AppController
         $routing->get(
             '/collection/fetch/',
             function (Application $app, Request $request) {
-                return self::callInternal($app, '/collection/fetch', 'GET');
+                $issuesResponse = self::callInternal($app, '/collection/fetch', 'GET');
+                if ($issuesResponse->getStatusCode() !== Response::HTTP_OK) {
+                    return $issuesResponse;
+                }
+                /** @var Numeros[] $issues */
+                $issues = ModelHelper::getUnserializedArrayFromJson($issuesResponse->getContent());
+
+                $result = new FetchCollectionResult();
+                foreach ($issues as $issue) {
+                    $publicationCode = PublicationHelper::getPublicationCode($issue);
+                    $numero = $issue->getNumero();
+                    $etat = $issue->getEtat();
+
+                    if (!$result->getNumeros()->containsKey($publicationCode)) {
+                        $result->getNumeros()->set($publicationCode, new ArrayCollection());
+                    }
+
+                    $result->getNumeros()->get($publicationCode)->add(new NumeroSimple($numero, $etat));
+                }
+
+                $countryNames = ModelHelper::getUnserializedArrayFromJson(
+                    self::callInternal($app, '/coa/countrynames', 'GET', [
+                        implode(',', array_unique(
+                            array_map(function (Numeros $issue) {
+                                return $issue->getPays();
+                            }, $issues)
+                        ))
+                    ])->getContent()
+                );
+                $result->getStatic()->setPays(new ArrayCollection($countryNames));
+
+                $publicationTitles = ModelHelper::getUnserializedArrayFromJson(
+                    self::callInternal($app, '/coa/publicationtitles', 'GET', [
+                        implode(',', array_unique(
+                            array_map(function (Numeros $issue) {
+                                return PublicationHelper::getPublicationCode($issue);
+                            }, $issues)
+                        ))
+                    ])->getContent()
+                );
+                $result->getStatic()->setMagazines(new ArrayCollection($publicationTitles));
+
+                return new JsonResponse($result->toArray());
             }
         );
     }

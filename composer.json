@@ -18,7 +18,8 @@
         "psr-4": {
             "Wtd\\": [
                 "app",
-                "app/controllers"
+                "app/controllers",
+                "app/helpers"
             ],
             "Wtd\\Test\\": [
                 "test"

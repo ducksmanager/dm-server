@@ -2,6 +2,7 @@
 namespace Wtd\Test;
 
 use Coa\Models\InducksCountryname;
+use Coa\Models\InducksPublication;
 use Doctrine\ORM\Tools\SchemaTool;
 use Silex\Application;
 use Silex\WebTestCase;
@@ -171,8 +172,17 @@ class TestCommon extends WebTestCase {
         $country->setCountrycode('fr');
         $country->setLanguagecode('fr');
         $country->setCountryname('France');
-
         Wtd::$em->persist($country);
+
+        $publication1 = new InducksPublication();
+        $publication1->setPublicationCode('fr/DDD');
+        $publication1->setTitle('Dynastie');
+        Wtd::$em->persist($publication1);
+
+        $publication2 = new InducksPublication();
+        $publication2->setPublicationCode('fr/MP');
+        $publication2->setTitle('Parade');
+        Wtd::$em->persist($publication2);
 
         Wtd::$em->flush();
 
