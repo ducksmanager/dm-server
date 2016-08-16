@@ -2,6 +2,7 @@
 namespace Wtd\Test;
 
 use Coa\Models\InducksCountryname;
+use Coa\Models\InducksIssue;
 use Coa\Models\InducksPublication;
 use Doctrine\ORM\Tools\SchemaTool;
 use Silex\Application;
@@ -189,6 +190,24 @@ class TestCommon extends WebTestCase {
         $publication2->setPublicationCode('fr/MP');
         $publication2->setTitle('Parade');
         Wtd::$coaEm->persist($publication2);
+
+        $issue1 = new InducksIssue();
+        $issue1->setPublicationcode('fr/DDD');
+        $issue1->setIssuenumber('1');
+        $issue1->setIssuecode('fr/DDD 1');
+        Wtd::$coaEm->persist($issue1);
+
+        $issue2 = new InducksIssue();
+        $issue2->setPublicationcode('fr/DDD');
+        $issue2->setIssuenumber('2');
+        $issue2->setIssuecode('fr/DDD 2');
+        Wtd::$coaEm->persist($issue2);
+
+        $issue3 = new InducksIssue();
+        $issue3->setPublicationcode('fr/MP');
+        $issue3->setIssuenumber('300');
+        $issue3->setIssuecode('fr/MP 300');
+        Wtd::$coaEm->persist($issue3);
 
         Wtd::$coaEm->flush();
     }

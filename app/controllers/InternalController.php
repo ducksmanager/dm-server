@@ -3,8 +3,8 @@
 namespace Wtd;
 
 use Coa\Models\InducksCountryname;
+use Coa\Models\InducksIssue;
 use Coa\Models\InducksPublication;
-use Doctrine\Common\Collections\ArrayCollection;
 use Exception;
 use Silex\Application;
 use Silex\ControllerCollection;
@@ -205,5 +205,31 @@ class InternalController extends AppController
                 }
             }
         )->assert('publicationCodes', '.+');
+
+        $routing->get(
+            '/internal/coa/issues/{publicationCode}',
+            function (Request $request, Application $app, $publicationCode) {
+                try {
+                    $qb = Wtd::getCoaEntityManager()->createQueryBuilder();
+                    $qb
+                        ->select('inducks_issue.issuenumber')
+                        ->from(InducksIssue::class, 'inducks_issue');
+
+                    $qb->where($qb->expr()->eq('inducks_issue.publicationcode', "'".$publicationCode."'"));
+
+                    $results = $qb->getQuery()->getResult();
+                    $issueNumbers = array_map(
+                        function($issue) {
+                            return $issue['issuenumber'];
+                        },
+                        $results
+                    );
+                    return new JsonResponse(ModelHelper::getSerializedArray($issueNumbers));
+                }
+                catch (Exception $e) {
+                    return new Response('Internal server error', Response::HTTP_INTERNAL_SERVER_ERROR);
+                }
+            }
+        )->assert('publicationCode', '.+');
     }
 }

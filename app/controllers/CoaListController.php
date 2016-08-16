@@ -35,5 +35,16 @@ class CoaListController extends AppController
                 );
             }
         )->assert('country', '[a-z]+');
+
+        $routing->get(
+            '/coa/list/issues/{publicationcode}',
+            function (Application $app, Request $request, $publicationcode) {
+                return new JsonResponse(
+                    ModelHelper::getUnserializedArrayFromJson(
+                        self::callInternal($app, '/coa/issues', 'GET', [$publicationcode])->getContent()
+                    )
+                );
+            }
+        )->assert('publicationcode', '^[a-z]+/[-A-Z0-9]+$');
     }
 }

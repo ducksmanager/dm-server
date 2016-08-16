@@ -16,6 +16,9 @@
     },
     "autoload": {
         "psr-4": {
+            "Coa\\Models\\": [
+                "app/models/Coa/Models"
+            ],
             "Wtd\\": [
                 "app",
                 "app/controllers",
