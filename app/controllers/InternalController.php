@@ -24,7 +24,7 @@ class InternalController extends AppController
         $routing->get(
             '/internal/user/exists/{username}',
             function (Request $request, Application $app, $username) {
-                try {
+                return AppController::return500ErrorOnException(function() use ($username) {
                     $existingUser = Wtd::getDmEntityManager()->getRepository(Users::class)->findBy(array(
                         'username' => $username
                     ));
@@ -32,10 +32,7 @@ class InternalController extends AppController
                         return new Response('', Response::HTTP_CONFLICT);
                     }
                     return new Response('', Response::HTTP_OK);
-                }
-                catch (Exception $e) {
-                    return new Response('Internal server error', Response::HTTP_INTERNAL_SERVER_ERROR);
-                }
+                });
             }
         );
         $routing->get(
@@ -72,65 +69,55 @@ class InternalController extends AppController
         $routing->get(
             '/internal/user/check/{username}/{password}',
             function (Request $request, Application $app, $username, $password) {
-                try {
+                return AppController::return500ErrorOnException(function() use ($username, $password) {
                     $existingUser = Wtd::getDmEntityManager()->getRepository(Users::class)->findBy(array(
                         'username' => $username,
                         'password' => sha1($password)
                     ));
                     if (count($existingUser) > 0) {
                         return new Response($existingUser[0]->getId(), Response::HTTP_OK);
-                    }
-                    else {
+                    } else {
                         return new Response('', Response::HTTP_UNAUTHORIZED);
                     }
-                }
-                catch (Exception $e) {
-                    return new Response('Internal server error', Response::HTTP_INTERNAL_SERVER_ERROR);
-                }
+                });
             }
         );
 
         $routing->put('/internal/user/new', function (Request $request, Application $app) {
-            $user = new Users();
-            $user->setUsername($request->request->get('username'));
-            $user->setPassword(sha1($request->request->get('password')));
-            $user->setEmail($request->request->get('email'));
-            $user->setDateinscription(new \DateTime());
+            return AppController::return500ErrorOnException(function() use ($request) {
+                $user = new Users();
+                $user->setUsername($request->request->get('username'));
+                $user->setPassword(sha1($request->request->get('password')));
+                $user->setEmail($request->request->get('email'));
+                $user->setDateinscription(new \DateTime());
 
-            try {
                 Wtd::getDmEntityManager()->persist($user);
                 Wtd::getDmEntityManager()->flush();
-            }
-            catch (Exception $e) {
-                return new Response('Internal server error', Response::HTTP_INTERNAL_SERVER_ERROR);
-            }
 
-            return new Response('OK', Response::HTTP_CREATED);
+                return new Response('OK', Response::HTTP_CREATED);
+            });
         });
 
         $routing->put('/internal/collection/add', function (Request $request, Application $app) {
-            $issue = new Numeros();
-            $issue->setPays($request->request->get('country'));
-            $issue->setMagazine($request->request->get('publication'));
-            $issue->setNumero($request->request->get('issuenumber'));
-            $issue->setEtat($request->request->get('condition'));
-            $issue->setIdUtilisateur(self::getSessionUser($app)['id']);
+            return AppController::return500ErrorOnException(function() use ($request, $app) {
+                $issue = new Numeros();
+                $issue->setPays($request->request->get('country'));
+                $issue->setMagazine($request->request->get('publication'));
+                $issue->setNumero($request->request->get('issuenumber'));
+                $issue->setEtat($request->request->get('condition'));
+                $issue->setIdUtilisateur(self::getSessionUser($app)['id']);
 
-            try {
                 Wtd::getDmEntityManager()->persist($issue);
                 Wtd::getDmEntityManager()->flush();
-            }
-            catch (Exception $e) {
-                return new Response('Internal server error', Response::HTTP_INTERNAL_SERVER_ERROR);
-            }
 
-            return new Response('OK', Response::HTTP_CREATED);
+                return new Response('OK', Response::HTTP_CREATED);
+            });
         });
 
         $routing->get(
             '/internal/collection/fetch',
             function (Request $request, Application $app) {
-                try {
+                return AppController::return500ErrorOnException(function() use ($app) {
                     /** @var Numeros[] $issues */
                     $issues = Wtd::getDmEntityManager()->getRepository(Numeros::class)->findBy(
                         ['idUtilisateur' => self::getSessionUser($app)['id']],
@@ -138,17 +125,14 @@ class InternalController extends AppController
                     );
 
                     return new JsonResponse(ModelHelper::getSerializedArray($issues));
-                }
-                catch (Exception $e) {
-                    return new Response('Internal server error', Response::HTTP_INTERNAL_SERVER_ERROR);
-                }
+                });
             }
         );
 
         $routing->get(
             '/internal/coa/countrynames/{countryCodes}',
             function (Request $request, Application $app, $countryCodes) {
-                try {
+                return AppController::return500ErrorOnException(function() use ($countryCodes) {
                     $qb = Wtd::getCoaEntityManager()->createQueryBuilder();
                     $qb
                         ->select('inducks_countryname.countrycode, inducks_countryname.countryname')
@@ -167,17 +151,14 @@ class InternalController extends AppController
                         }
                     );
                     return new JsonResponse(ModelHelper::getSerializedArray($countryNames));
-                }
-                catch (Exception $e) {
-                    new Response('Internal server error', Response::HTTP_INTERNAL_SERVER_ERROR);
-                }
+                });
             }
         )->value('countryCodes', null);
 
         $routing->get(
             '/internal/coa/publicationtitles/{publicationCodes}',
             function (Request $request, Application $app, $publicationCodes) {
-                try {
+                return AppController::return500ErrorOnException(function() use ($publicationCodes) {
                     $qb = Wtd::getCoaEntityManager()->createQueryBuilder();
                     $qb
                         ->select('inducks_publication.publicationcode, inducks_publication.title')
@@ -199,17 +180,14 @@ class InternalController extends AppController
                         }
                     );
                     return new JsonResponse(ModelHelper::getSerializedArray($publicationTitles));
-                }
-                catch (Exception $e) {
-                    return new Response('Internal server error', Response::HTTP_INTERNAL_SERVER_ERROR);
-                }
+                });
             }
         )->assert('publicationCodes', '.+');
 
         $routing->get(
             '/internal/coa/issues/{publicationCode}',
             function (Request $request, Application $app, $publicationCode) {
-                try {
+                return AppController::return500ErrorOnException(function() use ($publicationCode) {
                     $qb = Wtd::getCoaEntityManager()->createQueryBuilder();
                     $qb
                         ->select('inducks_issue.issuenumber')
@@ -225,17 +203,14 @@ class InternalController extends AppController
                         $results
                     );
                     return new JsonResponse(ModelHelper::getSerializedArray($issueNumbers));
-                }
-                catch (Exception $e) {
-                    return new Response('Internal server error', Response::HTTP_INTERNAL_SERVER_ERROR);
-                }
+                });
             }
         )->assert('publicationCode', '.+');
 
         $routing->post(
             '/internal/rawsql',
             function (Request $request, Application $app) {
-                try {
+                return AppController::return500ErrorOnException(function() use ($request) {
                     $query = $request->request->get('query');
                     $db = $request->request->get('db');
 
@@ -246,10 +221,7 @@ class InternalController extends AppController
 
                     $results = $em->getConnection()->fetchAll($query);
                     return new JsonResponse($results);
-                }
-                catch (Exception $e) {
-                    return new Response('Internal server error', Response::HTTP_INTERNAL_SERVER_ERROR);
-                }
+                });
             }
         );
     }

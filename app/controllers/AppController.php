@@ -96,4 +96,13 @@ abstract class AppController
             }
         }
     }
+
+    protected static function return500ErrorOnException($function) {
+        try {
+            return call_user_func($function);
+        }
+        catch (Exception $e) {
+            return new Response('Internal server error', Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 }
