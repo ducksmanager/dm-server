@@ -231,5 +231,26 @@ class InternalController extends AppController
                 }
             }
         )->assert('publicationCode', '.+');
+
+        $routing->post(
+            '/internal/rawsql',
+            function (Request $request, Application $app) {
+                try {
+                    $query = $request->request->get('query');
+                    $db = $request->request->get('db');
+
+                    $em = Wtd::getEntityManagerFromDbName($db);
+                    if (is_null($em)) {
+                        return new Response('Invalid parameter : db='.$db, Response::HTTP_BAD_REQUEST);
+                    }
+
+                    $results = $em->getConnection()->fetchAll($query);
+                    return new JsonResponse($results);
+                }
+                catch (Exception $e) {
+                    return new Response('Internal server error', Response::HTTP_INTERNAL_SERVER_ERROR);
+                }
+            }
+        );
     }
 }

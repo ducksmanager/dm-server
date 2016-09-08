@@ -15,5 +15,5 @@ function isCoaConfig()
     return $modelNamespace === 'Coa\\Models\\';
 }
 
-$em = Wtd::getEntityManager(isCoaConfig() ? Wtd::CONFIG_DB_KEY_COA : Wtd::CONFIG_DB_KEY_DM);
+$em = Wtd::createEntityManager(isCoaConfig() ? Wtd::CONFIG_DB_KEY_COA : Wtd::CONFIG_DB_KEY_DM);
 return \Doctrine\ORM\Tools\Console\ConsoleRunner::createHelperSet($em);

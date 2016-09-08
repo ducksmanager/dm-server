@@ -151,7 +151,7 @@ class InducksIssue extends \Coa\Models\BaseModel
     /**
      * @param string $publicationcode
      */
-    public function setPublicationcode(string $publicationcode)
+    public function setPublicationcode($publicationcode)
     {
         $this->publicationcode = $publicationcode;
     }

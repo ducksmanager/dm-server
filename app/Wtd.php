@@ -44,11 +44,11 @@ class Wtd extends AppController implements ControllerProviderInterface
             __DIR__.'/config/' . ($forTest ? self::CONFIG_FILE_TEST : self::CONFIG_FILE_DEFAULT)
             , true
         );
-        $genericConfig = parse_ini_file(
+        $schemas = parse_ini_file(
             __DIR__.'/config/schemas.ini'
             , true
         );
-        foreach($genericConfig as $dbKey => $genericConfigForDbKey) {
+        foreach($schemas as $dbKey => $genericConfigForDbKey) {
             if (array_key_exists($dbKey, $config)) {
                 $config[$dbKey] = array_merge($config[$dbKey], $genericConfigForDbKey);
             }
@@ -58,6 +58,13 @@ class Wtd extends AppController implements ControllerProviderInterface
         }
 
         return $config;
+    }
+
+    public static function getAppRoles() {
+        return parse_ini_file(
+            __DIR__.'/config/roles.ini'
+            , true
+        );
     }
 
     /**
@@ -107,16 +114,33 @@ class Wtd extends AppController implements ControllerProviderInterface
 
     static function getCoaEntityManager($forTest = false) {
         if (is_null(self::$coaEm)) {
-            self::$coaEm = self::getEntityManager(self::CONFIG_DB_KEY_COA, $forTest);
+            self::$coaEm = self::createEntityManager(self::CONFIG_DB_KEY_COA, $forTest);
         }
         return self::$coaEm;
     }
 
     static function getDmEntityManager($forTest = false) {
         if (is_null(self::$em)) {
-            self::$em = self::getEntityManager(self::CONFIG_DB_KEY_DM, $forTest);
+            self::$em = self::createEntityManager(self::CONFIG_DB_KEY_DM, $forTest);
         }
         return self::$em;
+    }
+
+    /**
+     * @param string $dbName
+     * @param bool $forTest
+     * @return EntityManager|null
+     */
+    static function getEntityManagerFromDbName($dbName, $forTest = false) {
+        switch($dbName) {
+            case self::CONFIG_DB_KEY_COA:
+                return self::getCoaEntityManager($forTest);
+                break;
+            case self::CONFIG_DB_KEY_DM:
+                return self::getDmEntityManager($forTest);
+                break;
+        }
+        return null;
     }
 
     /**
@@ -124,7 +148,7 @@ class Wtd extends AppController implements ControllerProviderInterface
      * @param bool $forTest
      * @return EntityManager
      */
-    static function getEntityManager($dbKey, $forTest = false)
+    static function createEntityManager($dbKey, $forTest = false)
     {
         $cache = new ArrayCache();
         // standard annotation reader
@@ -194,6 +218,7 @@ class Wtd extends AppController implements ControllerProviderInterface
         CollectionController::addRoutes($routing);
         CoaListController::addRoutes($routing);
         InternalController::addRoutes($routing);
+        RawSqlController::addRoutes($routing);
 
         return $routing;
     }

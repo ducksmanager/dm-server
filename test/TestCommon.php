@@ -15,8 +15,10 @@ use Wtd\Wtd;
 class TestCommon extends WebTestCase {
 
     protected static $conf;
+    protected static $roles;
     protected static $users;
     protected static $testUser = 'whattheduck';
+    protected static $rawSqlUser = 'rawsql';
 
     /** @var array $modelClassesDm  */
     private static $modelClassesDm;
@@ -36,6 +38,7 @@ class TestCommon extends WebTestCase {
     public static function setUpBeforeClass()
     {
         self::$conf = Wtd::getAppConfig(true);
+        self::$roles = Wtd::getAppRoles();
 
         $em = Wtd::getDmEntityManager(true);
         $coaEm = Wtd::getCoaEntityManager(true);
@@ -75,16 +78,16 @@ class TestCommon extends WebTestCase {
         return $app;
     }
 
-    private static function getDefaultSystemCredentials($version='1.3+') {
-        return self::getDefaultSystemCredentialsNoVersion() + [
+    private static function getSystemCredentials($appUser, $version = '1.3+') {
+        return self::getSystemCredentialsNoVersion($appUser) + [
             'HTTP_X_WTD_VERSION' => $version
         ];
     }
 
-    protected static function getDefaultSystemCredentialsNoVersion() {
+    protected static function getSystemCredentialsNoVersion($appUser) {
         return [
-            'PHP_AUTH_USER' => self::$testUser,
-            'PHP_AUTH_PW'   => explode(':', self::$conf['user_roles'][self::$testUser])[1]
+            'PHP_AUTH_USER' => $appUser,
+            'PHP_AUTH_PW'   => explode(':', self::$roles[$appUser])[1]
         ];
     }
 
@@ -112,16 +115,16 @@ class TestCommon extends WebTestCase {
         return $service;
     }
     
-    protected function buildAuthenticatedService($path, $userCredentials, $parameters = array()) {
-        return $this->buildService($path, $userCredentials, $parameters, self::getDefaultSystemCredentials(), 'POST');
+    protected function buildAuthenticatedService($path, $appUser, $userCredentials, $parameters = array()) {
+        return $this->buildService($path, $userCredentials, $parameters, self::getSystemCredentials($appUser), 'POST');
     }
 
-    protected function buildAuthenticatedServiceWithTestUser($path, $method, $parameters = array()) {
+    protected function buildAuthenticatedServiceWithTestUser($path, $appUser, $method, $parameters = array()) {
         return $this->buildService(
             $path, [
             'username' => 'dm_user',
             'password' => 'dm_pass'
-        ], $parameters, self::getDefaultSystemCredentials(), $method
+        ], $parameters, self::getSystemCredentials($appUser), $method
         );
     }
 

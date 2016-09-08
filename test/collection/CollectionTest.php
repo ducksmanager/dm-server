@@ -12,9 +12,7 @@ class CollectionTest extends TestCommon
      */
     private function callAddIssue()
     {
-        return $this->buildAuthenticatedServiceWithTestUser('/collection/add',
-            'POST',
-        [
+        return $this->buildAuthenticatedServiceWithTestUser('/collection/add', TestCommon::$testUser, 'POST', [
             'country' => 'fr',
             'publication' => 'DDD',
             'issuenumber' => '3',
@@ -23,7 +21,7 @@ class CollectionTest extends TestCommon
     }
 
     public function testCreateCollection() {
-        $response = $this->buildAuthenticatedService('/collection/new', [], [
+        $response = $this->buildAuthenticatedService('/collection/new', TestCommon::$testUser, [], [
             'username' => 'dm_user',
             'password' => 'dm_pass',
             'password2' => 'dm_pass',
@@ -39,7 +37,7 @@ class CollectionTest extends TestCommon
     }
 
     public function testCreateCollectionErrorDifferentPasswords() {
-        $response = $this->buildAuthenticatedService('/collection/new', [], [
+        $response = $this->buildAuthenticatedService('/collection/new', TestCommon::$testUser, [], [
             'username' => 'dm_user',
             'password' => 'dm_pass',
             'password2' => 'dm_pass_different',
@@ -49,7 +47,7 @@ class CollectionTest extends TestCommon
     }
 
     public function testCreateCollectionErrorShortUsername() {
-        $response = $this->buildAuthenticatedService('/collection/new', [], [
+        $response = $this->buildAuthenticatedService('/collection/new', TestCommon::$testUser, [], [
             'username' => 'dm',
             'password' => 'dm_pass',
             'password2' => 'dm_pass',
@@ -59,7 +57,7 @@ class CollectionTest extends TestCommon
     }
 
     public function testCreateCollectionErrorShortPassword() {
-        $response = $this->buildAuthenticatedService('/collection/new', [], [
+        $response = $this->buildAuthenticatedService('/collection/new', TestCommon::$testUser, [], [
             'username' => 'dm_user',
             'password' => 'pass',
             'password2' => 'pass',
@@ -70,7 +68,7 @@ class CollectionTest extends TestCommon
 
     public function testCreateCollectionErrorExistingUsername() {
         self::createTestCollection();
-        $response = $this->buildAuthenticatedService('/collection/new', [], [
+        $response = $this->buildAuthenticatedService('/collection/new', TestCommon::$testUser, [], [
             'username' => 'dm_user',
             'password' => 'dm_pass',
             'password2' => 'dm_pass',

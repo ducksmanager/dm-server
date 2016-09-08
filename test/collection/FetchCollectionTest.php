@@ -14,9 +14,8 @@ class FetchCollectionTest extends TestCommon
         self::createCoaData();
     }
 
-
     public function testFetchCollection() {
-        $service = $this->buildAuthenticatedServiceWithTestUser('/collection/fetch', 'GET');
+        $service = $this->buildAuthenticatedServiceWithTestUser('/collection/fetch', TestCommon::$testUser, 'GET');
         $response = $service->call();
 
         $objectResponse = json_decode($response->getContent());

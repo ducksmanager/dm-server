@@ -1,5 +1,6 @@
 /.idea
 /app/config/config.db.ini
+/app/config/roles.ini
 /bin
 /build
 /test/db.sqlite

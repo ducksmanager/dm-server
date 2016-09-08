@@ -67,18 +67,25 @@ $app['security.default_encoder'] = function () use ($passwordEncoder) {
     return $passwordEncoder;
 };
 
+$roles = Wtd::getAppRoles();
+
 $users = array();
-array_walk($conf['user_roles'], function($role, $user) use ($passwordEncoder, &$users) {
+array_walk($roles, function($role, $user) use ($passwordEncoder, &$users) {
     list($roleName, $rolePassword) = explode(':', $role);
     $users[$user] = array($roleName, $passwordEncoder->encodePassword($rolePassword, ''));
 });
 
 $app->register(new Silex\Provider\SecurityServiceProvider(), array(
     'security.firewalls' => array(
+        'all' => array(
+            'pattern' => '^/rawsql',
+            'http' => true,
+            'users' => ['rawsql' => $users['rawsql']]
+        ),
         'collection' => array(
             'pattern' => '^/collection/',
             'http' => true,
-            'users' => $users
+            'users' => ['whattheduck' => $users['whattheduck']]
         )
     )
 ));
