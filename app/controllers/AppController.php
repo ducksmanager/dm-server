@@ -89,6 +89,7 @@ abstract class AppController
                     return $userCheck;
                 } else {
                     $this->setSessionUser($app, $username, $userCheck->getContent());
+                    return true;
                 }
             }
             else {
