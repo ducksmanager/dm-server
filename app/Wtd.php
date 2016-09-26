@@ -198,7 +198,10 @@ class Wtd extends AppController implements ControllerProviderInterface
          * @param Application $app
          * @return Response|void
          */
-            function($request, Application $app) {
+            function(Request $request, Application $app) {
+                if (strpos($request->getPathInfo(), '/status/') === 0) {
+                    return;
+                }
                 if (is_null(self::getClientVersion($app))) {
                     $clientVersion = $request->headers->get('x-wtd-version');
                     if (is_null($clientVersion)) {
@@ -219,6 +222,7 @@ class Wtd extends AppController implements ControllerProviderInterface
         CoaListController::addRoutes($routing);
         InternalController::addRoutes($routing);
         RawSqlController::addRoutes($routing);
+        StatusController::addRoutes($routing);
 
         return $routing;
     }
