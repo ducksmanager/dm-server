@@ -21,18 +21,24 @@ class Wtd extends AppController implements ControllerProviderInterface
     const CONFIG_FILE_DEFAULT = 'config.db.ini';
     const CONFIG_FILE_TEST = 'config.db.test.ini';
 
+    /** @var EntityManager[] $entityManagers */
+    public static $entityManagers = [];
+
     const CONFIG_DB_KEY_DM = 'db';
     const CONFIG_DB_KEY_COA = 'db_coa';
 
-    /** @var EntityManager $em */
-    public static $em;
-
-    /** @var EntityManager $coaEm */
-    public static $coaEm;
+    public static $configuredEntityManagerNames = [self::CONFIG_DB_KEY_DM, self::CONFIG_DB_KEY_COA];
 
     public function setup(Application $app)
     {
         $app['debug'] = true;
+    }
+
+    public static function getSchemas() {
+        return parse_ini_file(
+            __DIR__.'/config/schemas.ini'
+            , true
+        );
     }
 
     /**
@@ -44,10 +50,8 @@ class Wtd extends AppController implements ControllerProviderInterface
             __DIR__.'/config/' . ($forTest ? self::CONFIG_FILE_TEST : self::CONFIG_FILE_DEFAULT)
             , true
         );
-        $schemas = parse_ini_file(
-            __DIR__.'/config/schemas.ini'
-            , true
-        );
+        $schemas = self::getSchemas();
+
         foreach($schemas as $dbKey => $genericConfigForDbKey) {
             if (array_key_exists($dbKey, $config)) {
                 $config[$dbKey] = array_merge($config[$dbKey], $genericConfigForDbKey);
@@ -112,35 +116,22 @@ class Wtd extends AppController implements ControllerProviderInterface
         return [];
     }
 
-    static function getCoaEntityManager($forTest = false) {
-        if (is_null(self::$coaEm)) {
-            self::$coaEm = self::createEntityManager(self::CONFIG_DB_KEY_COA, $forTest);
-        }
-        return self::$coaEm;
-    }
-
-    static function getDmEntityManager($forTest = false) {
-        if (is_null(self::$em)) {
-            self::$em = self::createEntityManager(self::CONFIG_DB_KEY_DM, $forTest);
-        }
-        return self::$em;
-    }
-
     /**
      * @param string $dbName
      * @param bool $forTest
      * @return EntityManager|null
      */
-    static function getEntityManagerFromDbName($dbName, $forTest = false) {
-        switch($dbName) {
-            case self::CONFIG_DB_KEY_COA:
-                return self::getCoaEntityManager($forTest);
-                break;
-            case self::CONFIG_DB_KEY_DM:
-                return self::getDmEntityManager($forTest);
-                break;
+    static function getEntityManager($dbName, $forTest = false) {
+        if (!in_array($dbName, self::$configuredEntityManagerNames)) {
+            echo 'Invalid entity manager : '.$dbName;
+            return null;
         }
-        return null;
+        else {
+            if (!array_key_exists($dbName, self::$entityManagers)) {
+                self::$entityManagers[$dbName] = self::createEntityManager($dbName, $forTest);
+            }
+            return self::$entityManagers[$dbName];
+        }
     }
 
     /**

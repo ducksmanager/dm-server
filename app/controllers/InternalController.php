@@ -5,7 +5,6 @@ namespace Wtd;
 use Coa\Models\InducksCountryname;
 use Coa\Models\InducksIssue;
 use Coa\Models\InducksPublication;
-use Exception;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -25,7 +24,7 @@ class InternalController extends AppController
             '/internal/user/exists/{username}',
             function (Request $request, Application $app, $username) {
                 return AppController::return500ErrorOnException(function() use ($username) {
-                    $existingUser = Wtd::getDmEntityManager()->getRepository(Users::class)->findBy(array(
+                    $existingUser = Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_DM)->getRepository(Users::class)->findBy(array(
                         'username' => $username
                     ));
                     if (count($existingUser) > 0) {
@@ -70,7 +69,7 @@ class InternalController extends AppController
             '/internal/user/check/{username}/{password}',
             function (Request $request, Application $app, $username, $password) {
                 return AppController::return500ErrorOnException(function() use ($username, $password) {
-                    $existingUser = Wtd::getDmEntityManager()->getRepository(Users::class)->findBy(array(
+                    $existingUser = Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_DM)->getRepository(Users::class)->findBy(array(
                         'username' => $username,
                         'password' => sha1($password)
                     ));
@@ -91,8 +90,8 @@ class InternalController extends AppController
                 $user->setEmail($request->request->get('email'));
                 $user->setDateinscription(new \DateTime());
 
-                Wtd::getDmEntityManager()->persist($user);
-                Wtd::getDmEntityManager()->flush();
+                Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_DM)->persist($user);
+                Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_DM)->flush();
 
                 return new Response('OK', Response::HTTP_CREATED);
             });
@@ -107,8 +106,8 @@ class InternalController extends AppController
                 $issue->setEtat($request->request->get('condition'));
                 $issue->setIdUtilisateur(self::getSessionUser($app)['id']);
 
-                Wtd::getDmEntityManager()->persist($issue);
-                Wtd::getDmEntityManager()->flush();
+                Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_DM)->persist($issue);
+                Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_DM)->flush();
 
                 return new Response('OK', Response::HTTP_CREATED);
             });
@@ -119,7 +118,7 @@ class InternalController extends AppController
             function (Request $request, Application $app) {
                 return AppController::return500ErrorOnException(function() use ($app) {
                     /** @var Numeros[] $issues */
-                    $issues = Wtd::getDmEntityManager()->getRepository(Numeros::class)->findBy(
+                    $issues = Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_DM)->getRepository(Numeros::class)->findBy(
                         ['idUtilisateur' => self::getSessionUser($app)['id']],
                         ['pays' => 'asc', 'magazine' => 'asc', 'numero' => 'asc']
                     );
@@ -133,7 +132,7 @@ class InternalController extends AppController
             '/internal/coa/countrynames/{countryCodes}',
             function (Request $request, Application $app, $countryCodes) {
                 return AppController::return500ErrorOnException(function() use ($countryCodes) {
-                    $qb = Wtd::getCoaEntityManager()->createQueryBuilder();
+                    $qb = Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_COA)->createQueryBuilder();
                     $qb
                         ->select('inducks_countryname.countrycode, inducks_countryname.countryname')
                         ->from(InducksCountryname::class, 'inducks_countryname');
@@ -159,7 +158,7 @@ class InternalController extends AppController
             '/internal/coa/publicationtitles/{publicationCodes}',
             function (Request $request, Application $app, $publicationCodes) {
                 return AppController::return500ErrorOnException(function() use ($publicationCodes) {
-                    $qb = Wtd::getCoaEntityManager()->createQueryBuilder();
+                    $qb = Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_COA)->createQueryBuilder();
                     $qb
                         ->select('inducks_publication.publicationcode, inducks_publication.title')
                         ->from(InducksPublication::class, 'inducks_publication');
@@ -188,7 +187,7 @@ class InternalController extends AppController
             '/internal/coa/issues/{publicationCode}',
             function (Request $request, Application $app, $publicationCode) {
                 return AppController::return500ErrorOnException(function() use ($publicationCode) {
-                    $qb = Wtd::getCoaEntityManager()->createQueryBuilder();
+                    $qb = Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_COA)->createQueryBuilder();
                     $qb
                         ->select('inducks_issue.issuenumber')
                         ->from(InducksIssue::class, 'inducks_issue');
@@ -214,7 +213,7 @@ class InternalController extends AppController
                     $query = $request->request->get('query');
                     $db = $request->request->get('db');
 
-                    $em = Wtd::getEntityManagerFromDbName($db);
+                    $em = Wtd::getEntityManager($db);
                     if (is_null($em)) {
                         return new Response('Invalid parameter : db='.$db, Response::HTTP_BAD_REQUEST);
                     }

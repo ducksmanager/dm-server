@@ -4,7 +4,6 @@ namespace Wtd\Test;
 use Coa\Models\InducksCountryname;
 use Coa\Models\InducksIssue;
 use Coa\Models\InducksPublication;
-use Doctrine\ORM\Tools\SchemaTool;
 use Silex\Application;
 use Silex\WebTestCase;
 use Wtd\AppController;
@@ -20,17 +19,8 @@ class TestCommon extends WebTestCase {
     protected static $testUser = 'whattheduck';
     protected static $rawSqlUser = 'rawsql';
 
-    /** @var array $modelClassesDm  */
-    private static $modelClassesDm;
-
-    /** @var array $modelClassesCoa  */
-    private static $modelClassesCoa;
-
-    /** @var SchemaTool $schemaToolDm  */
-    private static $schemaToolDm;
-
-    /** @var SchemaTool $schemaToolCoa  */
-    private static $schemaToolCoa;
+    /** @var SchemaWithClasses[] $schemas */
+    private static $schemas = [];
 
     /** @var Application $app */
     protected $app;
@@ -40,14 +30,9 @@ class TestCommon extends WebTestCase {
         self::$conf = Wtd::getAppConfig(true);
         self::$roles = Wtd::getAppRoles();
 
-        $em = Wtd::getDmEntityManager(true);
-        $coaEm = Wtd::getCoaEntityManager(true);
-
-        self::$schemaToolDm = new SchemaTool($em);
-        self::$modelClassesDm = $em->getMetadataFactory()->getAllMetadata();
-
-        self::$schemaToolCoa = new SchemaTool($coaEm);
-        self::$modelClassesCoa = $coaEm->getMetadataFactory()->getAllMetadata();
+        foreach(Wtd::$configuredEntityManagerNames as $emName) {
+            self::$schemas[$emName] = SchemaWithClasses::createFromEntityManager(Wtd::getEntityManager($emName, true));
+        }
     }
 
     public function setUp() {
@@ -56,11 +41,10 @@ class TestCommon extends WebTestCase {
     }
 
     protected static function initDatabase() {
-        self::$schemaToolDm->dropSchema(self::$modelClassesDm);
-        self::$schemaToolDm->createSchema(self::$modelClassesDm);
 
-        self::$schemaToolCoa->dropSchema(self::$modelClassesCoa);
-        self::$schemaToolCoa->createSchema(self::$modelClassesCoa);
+        foreach(Wtd::$configuredEntityManagerNames as $emName) {
+            self::$schemas[$emName]->recreateSchema();
+        }
     }
 
     /**
@@ -129,20 +113,25 @@ class TestCommon extends WebTestCase {
     }
 
     protected function getCurrentUserIssues() {
-        return Wtd::$em->getRepository(Numeros::class)->findBy(array('idUtilisateur' => AppController::getSessionUser($this->app)['id']));
+        $dmEntityManager = Wtd::$entityManagers[Wtd::CONFIG_DB_KEY_DM];
+        return $dmEntityManager->getRepository(Numeros::class)->findBy(
+            array('idUtilisateur' => AppController::getSessionUser($this->app)['id'])
+        );
     }
 
     /**
      * @param string $username
      */
     protected static function createTestCollection($username = 'dm_user') {
+        $dmEntityManager = Wtd::$entityManagers[Wtd::CONFIG_DB_KEY_DM];
+        
         $user = new Users();
         $user->setUsername($username);
         $user->setPassword(sha1('dm_pass'));
         $user->setEmail('test@ducksmanager.net');
         $user->setDateinscription(\DateTime::createFromFormat('Y-m-d', '2000-01-01'));
-        Wtd::$em->persist($user);
-        Wtd::$em->flush();
+        $dmEntityManager->persist($user);
+        $dmEntityManager->flush();
 
         $numero1 = new Numeros();
         $numero1->setPays('fr');
@@ -150,7 +139,7 @@ class TestCommon extends WebTestCase {
         $numero1->setNumero('1');
         $numero1->setEtat('indefini');
         $numero1->setIdUtilisateur($user->getId());
-        Wtd::$em->persist($numero1);
+        $dmEntityManager->persist($numero1);
 
         $numero2 = new Numeros();
         $numero2->setPays('fr');
@@ -158,7 +147,7 @@ class TestCommon extends WebTestCase {
         $numero2->setNumero('300');
         $numero2->setEtat('bon');
         $numero2->setIdUtilisateur($user->getId());
-        Wtd::$em->persist($numero2);
+        $dmEntityManager->persist($numero2);
 
         $numero3 = new Numeros();
         $numero3->setPays('fr');
@@ -166,52 +155,54 @@ class TestCommon extends WebTestCase {
         $numero3->setNumero('301');
         $numero3->setEtat('mauvais');
         $numero3->setIdUtilisateur($user->getId());
-        Wtd::$em->persist($numero3);
+        $dmEntityManager->persist($numero3);
 
-        Wtd::$em->flush();
+        $dmEntityManager->flush();
     }
 
     protected static function createCoaData() {
+        $coaEntityManager = Wtd::$entityManagers[Wtd::CONFIG_DB_KEY_COA];
+        
         $country1 = new InducksCountryname();
         $country1->setCountrycode('fr');
         $country1->setLanguagecode('fr');
         $country1->setCountryname('France');
-        Wtd::$coaEm->persist($country1);
+        $coaEntityManager->persist($country1);
 
         $country2 = new InducksCountryname();
         $country2->setCountrycode('es');
         $country2->setLanguagecode('fr');
         $country2->setCountryname('Espagne');
-        Wtd::$coaEm->persist($country2);
+        $coaEntityManager->persist($country2);
 
         $publication1 = new InducksPublication();
         $publication1->setPublicationCode('fr/DDD');
         $publication1->setTitle('Dynastie');
-        Wtd::$coaEm->persist($publication1);
+        $coaEntityManager->persist($publication1);
 
         $publication2 = new InducksPublication();
         $publication2->setPublicationCode('fr/MP');
         $publication2->setTitle('Parade');
-        Wtd::$coaEm->persist($publication2);
+        $coaEntityManager->persist($publication2);
 
         $issue1 = new InducksIssue();
         $issue1->setPublicationcode('fr/DDD');
         $issue1->setIssuenumber('1');
         $issue1->setIssuecode('fr/DDD 1');
-        Wtd::$coaEm->persist($issue1);
+        $coaEntityManager->persist($issue1);
 
         $issue2 = new InducksIssue();
         $issue2->setPublicationcode('fr/DDD');
         $issue2->setIssuenumber('2');
         $issue2->setIssuecode('fr/DDD 2');
-        Wtd::$coaEm->persist($issue2);
+        $coaEntityManager->persist($issue2);
 
         $issue3 = new InducksIssue();
         $issue3->setPublicationcode('fr/MP');
         $issue3->setIssuenumber('300');
         $issue3->setIssuecode('fr/MP 300');
-        Wtd::$coaEm->persist($issue3);
+        $coaEntityManager->persist($issue3);
 
-        Wtd::$coaEm->flush();
+        $coaEntityManager->flush();
     }
 }

@@ -4,16 +4,22 @@ require_once __DIR__."/../Wtd.php";
 
 use Wtd\Wtd;
 
+function getSchemaConfigKey($modelNamespace) {
+    $schemas = Wtd::getSchemas();
+
+    return array_keys($schemas)[array_search($modelNamespace, array_column($schemas, 'models_namespace'))];
+}
+
 /**
  * @return bool
  */
-function isCoaConfig()
+function getSchemaConfigKeyFromCommandLine()
 {
     $namespaceRegex = '#^--namespace=(.+)$#';
     $modelNamespace = preg_replace($namespaceRegex, '$1', array_values(preg_grep($namespaceRegex, $_SERVER['argv']))[0]);
 
-    return $modelNamespace === 'Coa\\Models\\';
+    return getSchemaConfigKey($modelNamespace);
 }
 
-$em = Wtd::createEntityManager(isCoaConfig() ? Wtd::CONFIG_DB_KEY_COA : Wtd::CONFIG_DB_KEY_DM);
+$em = Wtd::createEntityManager(getSchemaConfigKeyFromCommandLine());
 return \Doctrine\ORM\Tools\Console\ConsoleRunner::createHelperSet($em);

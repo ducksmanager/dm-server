@@ -29,7 +29,9 @@ class CollectionTest extends TestCommon
         ])->call();
         $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
 
-        $usersWithUsername = Wtd::$em->getRepository(Users::class)->findBy(array('username' => 'dm_user'));
+        $usersWithUsername = Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_DM)->getRepository(Users::class)->findBy(
+            array('username' => 'dm_user')
+        );
 
         $this->assertEquals(1, count($usersWithUsername));
         $this->assertEquals(Users::class, get_class($usersWithUsername[0]));
