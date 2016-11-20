@@ -19,6 +19,9 @@
             "Coa\\Models\\": [
                 "app/models/Coa/Models"
             ],
+            "CoverId\\Models\\": [
+                "app/models/CoverId/Models"
+            ],
             "Wtd\\": [
                 "app",
                 "app/controllers",
