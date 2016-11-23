@@ -36,5 +36,62 @@ class CoverImports extends \CoverId\Models\BaseModel
     private $importError;
 
 
-}
 
+    /**
+     * Get coverid
+     *
+     * @return integer
+     */
+    public function getCoverid()
+    {
+        return $this->coverid;
+    }
+
+    /**
+     * Set imported
+     *
+     * @param \DateTime $imported
+     *
+     * @return CoverImports
+     */
+    public function setImported($imported)
+    {
+        $this->imported = $imported;
+
+        return $this;
+    }
+
+    /**
+     * Get imported
+     *
+     * @return \DateTime
+     */
+    public function getImported()
+    {
+        return $this->imported;
+    }
+
+    /**
+     * Set importError
+     *
+     * @param string $importError
+     *
+     * @return CoverImports
+     */
+    public function setImportError($importError)
+    {
+        $this->importError = $importError;
+
+        return $this;
+    }
+
+    /**
+     * Get importError
+     *
+     * @return string
+     */
+    public function getImportError()
+    {
+        return $this->importError;
+    }
+}

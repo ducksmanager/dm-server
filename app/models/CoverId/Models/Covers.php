@@ -36,5 +36,62 @@ class Covers extends \CoverId\Models\BaseModel
     private $url;
 
 
-}
 
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set issuecode
+     *
+     * @param string $issuecode
+     *
+     * @return Covers
+     */
+    public function setIssuecode($issuecode)
+    {
+        $this->issuecode = $issuecode;
+
+        return $this;
+    }
+
+    /**
+     * Get issuecode
+     *
+     * @return string
+     */
+    public function getIssuecode()
+    {
+        return $this->issuecode;
+    }
+
+    /**
+     * Set url
+     *
+     * @param string $url
+     *
+     * @return Covers
+     */
+    public function setUrl($url)
+    {
+        $this->url = $url;
+
+        return $this;
+    }
+
+    /**
+     * Get url
+     *
+     * @return string
+     */
+    public function getUrl()
+    {
+        return $this->url;
+    }
+}
