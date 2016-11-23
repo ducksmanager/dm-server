@@ -9,6 +9,9 @@ use Wtd\Wtd;
  * @return bool|string
  */
 function getSchemaConfigKey($modelNamespace) {
+    if (is_null($modelNamespace)) {
+        return false;
+    }
     $schemas = Wtd::getSchemas();
     $modelNamespace = str_replace('\\', '', $modelNamespace);
 
@@ -45,8 +48,13 @@ function getCommandLineParameter($paramName) {
  */
 function getSchemaConfigKeyFromCommandLine()
 {
-    return getSchemaConfigKey(getCommandLineParameter('namespace'))
-        || getSchemaConfigKey(getCommandLineParameter('filter'));
+    $schemaKeyFromNamespace = getSchemaConfigKey(getCommandLineParameter('namespace'));
+    if ($schemaKeyFromNamespace !== false) {
+        return $schemaKeyFromNamespace;
+    }
+    else {
+        return getSchemaConfigKey(getCommandLineParameter('filter'));
+    }
 }
 
 $schemaConfigKey = getSchemaConfigKeyFromCommandLine();
