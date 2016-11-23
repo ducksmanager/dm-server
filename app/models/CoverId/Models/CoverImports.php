@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * CoverImports
  *
- * @ORM\Table(name="cover_imports", uniqueConstraints={@ORM\UniqueConstraint(name="uniquefieldset", columns={"coverid", "imported", "import_error"})})
+ * @ORM\Table(name="cover_imports", uniqueConstraints={@ORM\UniqueConstraint(name="uniquefieldset_cover_imports", columns={"coverid", "imported", "import_error"})})
  * @ORM\Entity
  */
 class CoverImports extends \CoverId\Models\BaseModel

@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Covers
  *
- * @ORM\Table(name="covers", uniqueConstraints={@ORM\UniqueConstraint(name="uniquefieldset", columns={"issuecode", "url"})})
+ * @ORM\Table(name="covers", uniqueConstraints={@ORM\UniqueConstraint(name="uniquefieldset_covers", columns={"issuecode", "url"})})
  * @ORM\Entity
  */
 class Covers extends \CoverId\Models\BaseModel
