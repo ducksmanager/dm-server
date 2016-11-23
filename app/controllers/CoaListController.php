@@ -46,5 +46,15 @@ class CoaListController extends AppController
                 );
             }
         )->assert('publicationcode', '^[a-z]+/[-A-Z0-9]+$');
+
+        $routing->get(
+            '/coa/list/issuesbycodes/{issuecodes}',
+            function (Application $app, Request $request, $issuecodes) {
+                $response = ModelHelper::getUnserializedArrayFromJson(
+                    self::callInternal($app, '/coa/issuesbycodes', 'GET', [$issuecodes])->getContent()
+                );
+                return new JsonResponse(ModelHelper::getSimpleArray($response));
+            }
+        )->assert('issuecodes', '^([a-z]+/[- A-Z0-9]+,){0,4}[a-z]+/[- A-Z0-9]+$');
     }
 }

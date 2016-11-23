@@ -12,6 +12,12 @@ class ModelHelper {
         }, $array);
     }
 
+    static function getSimpleArray($objectArray) {
+        return array_map(function($object) {
+            return $object->toArray();
+        }, $objectArray);
+    }
+
     /**
      * @param array $array
      * @return array

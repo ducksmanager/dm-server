@@ -6,10 +6,12 @@ use Coa\Models\InducksCountryname;
 use Coa\Models\InducksIssue;
 use Coa\Models\InducksPublication;
 use Silex\Application;
+use Doctrine\ORM\Query\Expr\Join;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Wtd\models\Coa\Contracts\Results\SimpleIssue;
 use Wtd\Models\Numeros;
 use Wtd\Models\Users;
 
@@ -205,6 +207,30 @@ class InternalController extends AppController
                 });
             }
         )->assert('publicationCode', '.+');
+
+        $routing->get(
+            '/internal/coa/issuesbycodes/{issuecodes}',
+            function (Request $request, Application $app, $issuecodes) {
+                return AppController::return500ErrorOnException(function() use ($issuecodes) {
+                    $qb = Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_COA)->createQueryBuilder();
+                    $qb
+                        ->select('inducks_publication.countrycode, inducks_publication.title, inducks_issue.issuenumber')
+                        ->from(InducksIssue::class, 'inducks_issue')
+                        ->join(InducksPublication::class, 'inducks_publication', Join::WITH, 'inducks_issue.publicationcode = inducks_publication.publicationcode');
+
+                    $qb->where($qb->expr()->in('inducks_issue.issuecode ',  explode(',', $issuecodes)));
+
+                    $results = $qb->getQuery()->getResult();
+                    $issues = array_map(
+                        function($issue) {
+                            return new SimpleIssue($issue['countrycode'], $issue['title'], $issue['issuenumber']);
+                        },
+                        $results
+                    );
+                    return new JsonResponse(ModelHelper::getSerializedArray($issues));
+                });
+            }
+        )->assert('issuecodes', '^([a-z]+/[- A-Z0-9]+,){0,4}[a-z]+/[- A-Z0-9]+$');
 
         $routing->post(
             '/internal/rawsql',

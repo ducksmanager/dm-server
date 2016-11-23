@@ -177,11 +177,13 @@ class TestCommon extends WebTestCase {
 
         $publication1 = new InducksPublication();
         $publication1->setPublicationCode('fr/DDD');
+        $publication1->setCountrycode('fr');
         $publication1->setTitle('Dynastie');
         $coaEntityManager->persist($publication1);
 
         $publication2 = new InducksPublication();
         $publication2->setPublicationCode('fr/MP');
+        $publication1->setCountrycode('fr');
         $publication2->setTitle('Parade');
         $coaEntityManager->persist($publication2);
 
