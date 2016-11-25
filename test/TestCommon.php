@@ -4,6 +4,7 @@ namespace Wtd\Test;
 use Coa\Models\InducksCountryname;
 use Coa\Models\InducksIssue;
 use Coa\Models\InducksPublication;
+use CoverId\Models\Covers;
 use Silex\Application;
 use Silex\WebTestCase;
 use Wtd\AppController;
@@ -81,14 +82,11 @@ class TestCommon extends WebTestCase {
      * @param array $parameters
      * @param array $systemCredentials
      * @param string $method
+     * @param array $files
      * @return TestServiceCallCommon
      */
     protected function buildService(
-        $path,
-        $userCredentials,
-        $parameters = array(),
-        $systemCredentials = array(),
-        $method = 'POST'
+        $path, $userCredentials, $parameters = array(), $systemCredentials = array(), $method = 'POST', $files = array()
     ) {
         $service = new TestServiceCallCommon(static::createClient());
         $service->setPath($path);
@@ -96,19 +94,20 @@ class TestCommon extends WebTestCase {
         $service->setParameters($parameters);
         $service->setSystemCredentials($systemCredentials);
         $service->setMethod($method);
+        $service->setFiles($files);
         return $service;
     }
     
-    protected function buildAuthenticatedService($path, $appUser, $userCredentials, $parameters = array()) {
-        return $this->buildService($path, $userCredentials, $parameters, self::getSystemCredentials($appUser), 'POST');
+    protected function buildAuthenticatedService($path, $appUser, $userCredentials, $parameters = array(), $files = array()) {
+        return $this->buildService($path, $userCredentials, $parameters, self::getSystemCredentials($appUser), 'POST', $files);
     }
 
-    protected function buildAuthenticatedServiceWithTestUser($path, $appUser, $method, $parameters = array()) {
+    protected function buildAuthenticatedServiceWithTestUser($path, $appUser, $method, $parameters = array(), $files = array()) {
         return $this->buildService(
             $path, [
             'username' => 'dm_user',
             'password' => 'dm_pass'
-        ], $parameters, self::getSystemCredentials($appUser), $method
+        ], $parameters, self::getSystemCredentials($appUser), $method, $files
         );
     }
 
@@ -206,5 +205,35 @@ class TestCommon extends WebTestCase {
         $coaEntityManager->persist($issue3);
 
         $coaEntityManager->flush();
+    }
+
+    protected static function createCoverIds()
+    {
+        $coverIdEntityManager = Wtd::$entityManagers[Wtd::CONFIG_DB_KEY_COVER_ID];
+
+        $coverIds = [];
+
+        $cover = new Covers();
+        $cover->setIssuecode('fr/DDD   1');
+        $cover->setUrl('webusers/2010/12/fr_ddd_001a_001.jpg');
+        $coverIdEntityManager->persist($cover);
+        $coverIdEntityManager->flush();
+        $coverIds[]= $cover->getId();
+
+        $cover2 = new Covers();
+        $cover2->setIssuecode('fr/MP    1');
+        $cover2->setUrl('fr/mp/fr_mp_0001a_001.jpg');
+        $coverIdEntityManager->persist($cover2);
+        $coverIdEntityManager->flush();
+        $coverIds[]= $cover2->getId();
+
+        $cover3 = new Covers();
+        $cover3->setIssuecode('fr/MP    2');
+        $cover3->setUrl('fr/mp/fr_mp_0002a_001.jpg');
+        $coverIdEntityManager->persist($cover3);
+        $coverIdEntityManager->flush();
+        $coverIds[]= $cover3->getId();
+
+        return $coverIds;
     }
 }

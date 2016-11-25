@@ -5,6 +5,7 @@ namespace Wtd;
 use Coa\Models\InducksCountryname;
 use Coa\Models\InducksIssue;
 use Coa\Models\InducksPublication;
+use CoverId\Models\Covers;
 use Silex\Application;
 use Doctrine\ORM\Query\Expr\Join;
 use Silex\ControllerCollection;
@@ -231,6 +232,29 @@ class InternalController extends AppController
                 });
             }
         )->assert('issuecodes', '^([a-z]+/[- A-Z0-9]+,){0,4}[a-z]+/[- A-Z0-9]+$');
+
+        $routing->get(
+            '/internal/cover-id/issuecodes/{coverids}',
+            function (Request $request, Application $app, $coverids) {
+                return AppController::return500ErrorOnException(function() use ($coverids) {
+                    $qb = Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_COVER_ID)->createQueryBuilder();
+                    $qb
+                        ->select('covers.issuecode')
+                        ->from(Covers::class, 'covers');
+
+                    $qb->where($qb->expr()->in('covers.id',  explode(',', $coverids)));
+
+                    $results = $qb->getQuery()->getResult();
+                    $issueCodes = array_map(
+                        function($issue) {
+                            return $issue['issuecode'];
+                        },
+                        $results
+                    );
+                    return new JsonResponse(ModelHelper::getSerializedArray($issueCodes));
+                });
+            }
+        )->assert('coverids', '^([0-9]+,){0,4}[0-9]+$');
 
         $routing->post(
             '/internal/rawsql',

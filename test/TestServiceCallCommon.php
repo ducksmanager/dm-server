@@ -21,6 +21,7 @@ class TestServiceCallCommon {
     private $systemCredentials = array();
     private $clientVersion;
     private $method;
+    private $files = array();
 
     /**
      * @param Client $client
@@ -127,6 +128,22 @@ class TestServiceCallCommon {
     }
 
     /**
+     * @return mixed
+     */
+    public function getFiles()
+    {
+        return $this->files;
+    }
+
+    /**
+     * @param mixed $files
+     */
+    public function setFiles($files)
+    {
+        $this->files = $files;
+    }
+
+    /**
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function call() {
@@ -138,7 +155,7 @@ class TestServiceCallCommon {
             $this->method,
             $path,
             $this->parameters,
-            [],
+            $this->files,
             ['HTTP_AUTHORIZATION' => 'Basic '.base64_encode(implode(':', $this->userCredentials))]
               + $this->systemCredentials
         );

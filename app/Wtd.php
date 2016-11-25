@@ -26,8 +26,9 @@ class Wtd extends AppController implements ControllerProviderInterface
 
     const CONFIG_DB_KEY_DM = 'db';
     const CONFIG_DB_KEY_COA = 'db_coa';
+    const CONFIG_DB_KEY_COVER_ID = 'db_cover_id';
 
-    public static $configuredEntityManagerNames = [self::CONFIG_DB_KEY_DM, self::CONFIG_DB_KEY_COA];
+    public static $configuredEntityManagerNames = [self::CONFIG_DB_KEY_DM, self::CONFIG_DB_KEY_COA, self::CONFIG_DB_KEY_COVER_ID];
 
     public function setup(Application $app)
     {
@@ -211,6 +212,7 @@ class Wtd extends AppController implements ControllerProviderInterface
 
         CollectionController::addRoutes($routing);
         CoaListController::addRoutes($routing);
+        CoverIdController::addRoutes($routing);
         InternalController::addRoutes($routing);
         RawSqlController::addRoutes($routing);
         StatusController::addRoutes($routing);
