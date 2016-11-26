@@ -213,21 +213,25 @@ class InternalController extends AppController
             '/internal/coa/issuesbycodes/{issuecodes}',
             function (Request $request, Application $app, $issuecodes) {
                 return AppController::return500ErrorOnException(function() use ($issuecodes) {
+                    $issuecodesList = explode(',', $issuecodes);
+
                     $qb = Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_COA)->createQueryBuilder();
                     $qb
                         ->select('inducks_publication.countrycode, inducks_publication.title, inducks_issue.issuenumber')
                         ->from(InducksIssue::class, 'inducks_issue')
                         ->join(InducksPublication::class, 'inducks_publication', Join::WITH, 'inducks_issue.publicationcode = inducks_publication.publicationcode');
 
-                    $qb->where($qb->expr()->in('inducks_issue.issuecode ',  explode(',', $issuecodes)));
+                    $qb->where($qb->expr()->in('inducks_issue.issuecode', $issuecodesList));
 
                     $results = $qb->getQuery()->getResult();
-                    $issues = array_map(
-                        function($issue) {
-                            return new SimpleIssue($issue['countrycode'], $issue['title'], $issue['issuenumber']);
-                        },
-                        $results
+
+                    array_walk(
+                        $results,
+                        function($issue, $i) use ($issuecodesList, &$issues) {
+                            $issues[$issuecodesList[$i]] = new SimpleIssue($issue['countrycode'], $issue['title'], $issue['issuenumber']);
+                        }
                     );
+
                     return new JsonResponse(ModelHelper::getSerializedArray($issues));
                 });
             }
@@ -237,20 +241,24 @@ class InternalController extends AppController
             '/internal/cover-id/issuecodes/{coverids}',
             function (Request $request, Application $app, $coverids) {
                 return AppController::return500ErrorOnException(function() use ($coverids) {
+                    $coveridsList = explode(',', $coverids);
+
                     $qb = Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_COVER_ID)->createQueryBuilder();
                     $qb
                         ->select('covers.issuecode')
                         ->from(Covers::class, 'covers');
 
-                    $qb->where($qb->expr()->in('covers.id',  explode(',', $coverids)));
+                    $qb->where($qb->expr()->in('covers.id', $coveridsList));
 
                     $results = $qb->getQuery()->getResult();
-                    $issueCodes = array_map(
-                        function($issue) {
-                            return $issue['issuecode'];
-                        },
-                        $results
+
+                    array_walk(
+                        $results,
+                        function($issue, $i) use ($coveridsList, &$issueCodes) {
+                            $issueCodes[$coveridsList[$i]] = $issue['issuecode'];
+                        }
                     );
+
                     return new JsonResponse(ModelHelper::getSerializedArray($issueCodes));
                 });
             }

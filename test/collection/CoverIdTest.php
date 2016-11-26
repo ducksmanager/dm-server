@@ -38,16 +38,16 @@ class CoverIdTest extends TestCommon
             . implode(',', [self::$coverIds[0], self::$coverIds[2]]), TestCommon::$testUser, 'GET');
         $response = $service->call();
 
-        $arrayResponse = json_decode($response->getContent());
+        $objectResponse = json_decode($response->getContent());
 
-        $this->assertInternalType('array', $arrayResponse);
-        $this->assertEquals(2, count($arrayResponse));
+        $this->assertInternalType('object', $objectResponse);
+        $this->assertEquals(2, count(get_object_vars($objectResponse)));
 
-        $this->assertInternalType('string', $arrayResponse[0]);
-        $this->assertEquals('fr/DDD   1', $arrayResponse[0]);
+        $this->assertInternalType('string', $objectResponse->{self::$coverIds[0]});
+        $this->assertEquals('fr/DDD 1', $objectResponse->{self::$coverIds[0]});
 
-        $this->assertInternalType('string', $arrayResponse[1]);
-        $this->assertEquals('fr/MP    2', $arrayResponse[1]);
+        $this->assertInternalType('string', $objectResponse->{self::$coverIds[2]});
+        $this->assertEquals('fr/MP 300', $objectResponse->{self::$coverIds[2]});
     }
 
     public function testCoverIdSearchMultipleUploads() {

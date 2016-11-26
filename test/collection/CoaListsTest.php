@@ -75,12 +75,11 @@ class CoaListsTest extends TestCommon
 
         $arrayResponse = json_decode($response->getContent());
 
-        $this->assertInternalType('array', $arrayResponse);
-        $this->assertEquals(1, count($arrayResponse));
+        $this->assertInternalType('object', $arrayResponse);
 
-        $this->assertInternalType('object', $arrayResponse[0]);
-        $this->assertEquals('fr', $arrayResponse[0]->countrycode);
-        $this->assertEquals('Dynastie', $arrayResponse[0]->publicationtitle);
-        $this->assertEquals('1', $arrayResponse[0]->issuenumber);
+        $this->assertInternalType('object', $arrayResponse->{'fr/DDD 1'});
+        $this->assertEquals('fr', $arrayResponse->{'fr/DDD 1'}->countrycode);
+        $this->assertEquals('Dynastie', $arrayResponse->{'fr/DDD 1'}->publicationtitle);
+        $this->assertEquals('1', $arrayResponse->{'fr/DDD 1'}->issuenumber);
     }
 }

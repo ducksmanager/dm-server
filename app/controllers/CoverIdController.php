@@ -40,14 +40,24 @@ class CoverIdController extends AppController
 
                             switch(self::$similarImagesEngine) {
                                 case 'mocked':
-                                    $response = SimilarImagesHelper::getSimilarImagesMocked($file);
+                                    $engineResponse = SimilarImagesHelper::getSimilarImagesMocked($file);
                                 break;
                                 default:
-                                    $response = SimilarImagesHelper::getSimilarImages($file);
+                                    $engineResponse = SimilarImagesHelper::getSimilarImages($file);
                             }
 
-                            if (json_decode($response)) {
-                                return new JsonResponse($response, 200, [], true);
+                            if (!is_null($engineResponse)) {
+                                $coverids = implode(',', $engineResponse['image_ids']);
+                                $issueCodes = ModelHelper::getUnserializedArrayFromJson(
+                                    self::callInternal($app, '/cover-id/issuecodes', 'GET', [$coverids])->getContent()
+                                );
+
+                                $issueCodesStr = implode(',', $issueCodes);
+                                $issues = ModelHelper::getUnserializedArrayFromJson(
+                                    self::callInternal($app, '/coa/issuesbycodes', 'GET', [$issueCodesStr])->getContent()
+                                );
+
+                                return new JsonResponse(ModelHelper::getSimpleArray($issues));
                             }
                             else {
                                 return new Response("Can't decode image similarity response", Response::HTTP_INTERNAL_SERVER_ERROR);

@@ -182,7 +182,7 @@ class TestCommon extends WebTestCase {
 
         $publication2 = new InducksPublication();
         $publication2->setPublicationCode('fr/MP');
-        $publication1->setCountrycode('fr');
+        $publication2->setCountrycode('fr');
         $publication2->setTitle('Parade');
         $coaEntityManager->persist($publication2);
 
@@ -214,22 +214,22 @@ class TestCommon extends WebTestCase {
         $coverIds = [];
 
         $cover = new Covers();
-        $cover->setIssuecode('fr/DDD   1');
+        $cover->setIssuecode('fr/DDD 1');
         $cover->setUrl('webusers/2010/12/fr_ddd_001a_001.jpg');
         $coverIdEntityManager->persist($cover);
         $coverIdEntityManager->flush();
         $coverIds[]= $cover->getId();
 
         $cover2 = new Covers();
-        $cover2->setIssuecode('fr/MP    1');
-        $cover2->setUrl('fr/mp/fr_mp_0001a_001.jpg');
+        $cover2->setIssuecode('fr/DDD 2');
+        $cover2->setUrl('webusers/2010/12/fr_ddd_002a_001.jpg');
         $coverIdEntityManager->persist($cover2);
         $coverIdEntityManager->flush();
         $coverIds[]= $cover2->getId();
 
         $cover3 = new Covers();
-        $cover3->setIssuecode('fr/MP    2');
-        $cover3->setUrl('fr/mp/fr_mp_0002a_001.jpg');
+        $cover3->setIssuecode('fr/MP 300');
+        $cover3->setUrl('fr/mp/fr_mp_0300a_001.jpg');
         $coverIdEntityManager->persist($cover3);
         $coverIdEntityManager->flush();
         $coverIds[]= $cover3->getId();

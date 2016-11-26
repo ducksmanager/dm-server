@@ -24,7 +24,7 @@ class SimilarImagesHelper {
         curl_setopt($ch, CURLOPT_POSTFIELDS, file_get_contents($file->getPath()));
 
         $response = curl_exec($ch);
-        return $response;
+        return json_decode($response, true);
     }
 
     /**
@@ -33,6 +33,17 @@ class SimilarImagesHelper {
      */
     public static function getSimilarImagesMocked($file)
     {
-        return json_encode("{\"bounding_rects\":[{\"height\":846,\"width\":625,\"x\":67,\"y\":44}],\"image_ids\":[2],\"scores\":[58.0],\"tags\":[\"\"],\"type\":\"SEARCH_RESULTS\"}");
+        return array(
+            "bounding_rects" => array(
+                "height" => 846,
+                "width"  => 625,
+                "x" => 67,
+                "y" => 44
+            ),
+            "image_ids" => array(2),
+            "scores" => array(58.0),
+            "tags" => array(''),
+            "type" => "SEARCH_RESULTS"
+        );
     }
 }
