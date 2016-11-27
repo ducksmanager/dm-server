@@ -84,6 +84,7 @@ class Wtd extends AppController implements ControllerProviderInterface
         switch ($dbConf['type']) {
             case 'mysql':
                 return [
+                    'port' => $dbConf['port'],
                     'dbname' => $dbConf['dbname'],
                     'user' => $username,
                     'password' => $password,
