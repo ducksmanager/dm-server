@@ -88,7 +88,7 @@ class Wtd extends AppController implements ControllerProviderInterface
                     'dbname' => $dbConf['dbname'],
                     'user' => $username,
                     'password' => $password,
-                    'host' => 'localhost',
+                    'host' => $dbConf['host'],
                     'driver' => 'pdo_mysql',
                     'server_version' => '15.1',
                     'driverOptions' => [

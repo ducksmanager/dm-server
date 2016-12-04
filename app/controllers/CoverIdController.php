@@ -46,7 +46,7 @@ class CoverIdController extends AppController
                                     $engineResponse = SimilarImagesHelper::getSimilarImages($file);
                             }
 
-                            if (!is_null($engineResponse)) {
+                            if (!is_null($engineResponse) && !empty($engineResponse['image_ids'])) {
                                 $coverids = implode(',', $engineResponse['image_ids']);
                                 $issueCodes = ModelHelper::getUnserializedArrayFromJson(
                                     self::callInternal($app, '/cover-id/issuecodes', 'GET', [$coverids])->getContent()
