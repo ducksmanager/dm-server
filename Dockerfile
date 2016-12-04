@@ -13,5 +13,3 @@ RUN apt-get update && apt-get install -y git wget unzip
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 RUN cd /var/www/html/dm-server && composer install --no-plugins --no-scripts
-
-#CMD cd /var/log/apache2 && for logfile in /var/log/apache2/*.log; do echo "$logfile" && rm $logfile && touch $logfile; done && /etc/init.d/apache2 reload"
