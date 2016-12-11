@@ -10,6 +10,7 @@ require_once __DIR__.'/vendor/autoload.php';
 
 if (!isset($conf)) {
     $conf = Wtd::getAppConfig('config.db.ini');
+    $settings = Wtd::initSettings('settings.ini');
 }
 
 $app = new \Silex\Application();

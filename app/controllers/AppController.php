@@ -103,7 +103,7 @@ abstract class AppController
             return call_user_func($function);
         }
         catch (Exception $e) {
-            return new Response('Internal server error', Response::HTTP_INTERNAL_SERVER_ERROR);
+            return new Response($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }

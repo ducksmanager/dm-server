@@ -9,10 +9,11 @@ use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 class CoverIdController extends AppController
 {
-    static $uploadFileName = 'WTD_jpg';
+    static $uploadFileName = 'wtd_jpg';
     static $uploadDestination = ['/tmp', 'test.jpg'];
 
     static $similarImagesEngine = 'default';
@@ -22,6 +23,23 @@ class CoverIdController extends AppController
      */
     public static function addRoutes($routing)
     {
+        $routing->get(
+            '/cover-id/issue/{issueNumber}',
+            function (Application $app, Request $request, $issueNumber) {
+                /** @var BinaryFileResponse $internalRequestResponse */
+                $internalRequestResponse = self::callInternal($app, '/cover-id/issue', 'GET', [$issueNumber]);
+                $response = new Response(file_get_contents($internalRequestResponse->getFile()->getRealPath()));
+
+                $disposition = $response->headers->makeDisposition(
+                    ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+                    'cover.jpg'
+                );
+
+                $response->headers->set('Content-Disposition', $disposition);
+                return $response;
+            }
+        )->assert('issueNumber', '^[a-z]+/[- A-Z0-9]+$');
+
         $routing->post(
             '/cover-id/search',
             function (Application $app, Request $request) {

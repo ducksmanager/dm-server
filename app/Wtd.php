@@ -30,6 +30,16 @@ class Wtd extends AppController implements ControllerProviderInterface
 
     public static $configuredEntityManagerNames = [self::CONFIG_DB_KEY_DM, self::CONFIG_DB_KEY_COA, self::CONFIG_DB_KEY_COVER_ID];
 
+    public static $settings;
+
+    public static function initSettings($fileName)
+    {
+        self::$settings = parse_ini_file(
+            __DIR__.'/config/' . $fileName
+            , true
+        );
+    }
+
     public function setup(Application $app)
     {
         $app['debug'] = true;

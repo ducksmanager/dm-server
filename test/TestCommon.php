@@ -19,6 +19,9 @@ class TestCommon extends WebTestCase {
     protected static $users;
     protected static $testUser = 'whattheduck';
     protected static $rawSqlUser = 'rawsql';
+    protected static $uploadBase = '/tmp/dm-server';
+
+    protected static $exampleImage = 'cover_example.jpg';
 
     /** @var SchemaWithClasses[] $schemas */
     private static $schemas = [];
@@ -28,6 +31,7 @@ class TestCommon extends WebTestCase {
 
     public static function setUpBeforeClass()
     {
+        Wtd::initSettings('settings.test.ini');
         self::$conf = Wtd::getAppConfig(true);
         self::$roles = Wtd::getAppRoles();
 
@@ -38,6 +42,8 @@ class TestCommon extends WebTestCase {
 
     public function setUp() {
         self::initDatabase();
+        @rmdir(Wtd::$settings['image_local_root']);
+        @mkdir(Wtd::$settings['image_local_root'], 0777, true);
         parent::setUp();
     }
 
@@ -123,13 +129,14 @@ class TestCommon extends WebTestCase {
      */
     protected static function createTestCollection($username = 'dm_user') {
         $dmEntityManager = Wtd::$entityManagers[Wtd::CONFIG_DB_KEY_DM];
-        
+
         $user = new Users();
         $user->setUsername($username);
         $user->setPassword(sha1('dm_pass'));
         $user->setEmail('test@ducksmanager.net');
         $user->setDateinscription(\DateTime::createFromFormat('Y-m-d', '2000-01-01'));
         $dmEntityManager->persist($user);
+
         $dmEntityManager->flush();
 
         $numero1 = new Numeros();
@@ -139,6 +146,7 @@ class TestCommon extends WebTestCase {
         $numero1->setEtat('indefini');
         $numero1->setIdUtilisateur($user->getId());
         $dmEntityManager->persist($numero1);
+        $dmEntityManager->flush();
 
         $numero2 = new Numeros();
         $numero2->setPays('fr');
@@ -147,6 +155,7 @@ class TestCommon extends WebTestCase {
         $numero2->setEtat('bon');
         $numero2->setIdUtilisateur($user->getId());
         $dmEntityManager->persist($numero2);
+        $dmEntityManager->flush();
 
         $numero3 = new Numeros();
         $numero3->setPays('fr');
@@ -213,27 +222,29 @@ class TestCommon extends WebTestCase {
 
         $coverIds = [];
 
-        $cover = new Covers();
-        $cover->setIssuecode('fr/DDD 1');
-        $cover->setUrl('webusers/2010/12/fr_ddd_001a_001.jpg');
-        $coverIdEntityManager->persist($cover);
-        $coverIdEntityManager->flush();
-        $coverIds[]= $cover->getId();
+        $urls = [
+            'fr/DDD 1' => 'webusers/2010/12/fr_ddd_001a_001.jpg',
+            'fr/DDD 2' => 'webusers/2010/12/fr_ddd_002a_001.jpg',
+            'fr/MP 300' => 'webusers/2010/12/fr_mp_0300a_001.jpg'
+        ];
 
-        $cover2 = new Covers();
-        $cover2->setIssuecode('fr/DDD 2');
-        $cover2->setUrl('webusers/2010/12/fr_ddd_002a_001.jpg');
-        $coverIdEntityManager->persist($cover2);
-        $coverIdEntityManager->flush();
-        $coverIds[]= $cover2->getId();
+        foreach($urls as $issueNumber => $url) {
+            $cover = new Covers();
+            $cover->setIssuecode($issueNumber);
+            $cover->setUrl($url);
+            $coverIdEntityManager->persist($cover);
+            $coverIdEntityManager->flush();
+            $coverIds[]= $cover->getId();
 
-        $cover3 = new Covers();
-        $cover3->setIssuecode('fr/MP 300');
-        $cover3->setUrl('fr/mp/fr_mp_0300a_001.jpg');
-        $coverIdEntityManager->persist($cover3);
-        $coverIdEntityManager->flush();
-        $coverIds[]= $cover3->getId();
+            @mkdir(Wtd::$settings['image_remote_root'].dirname($url), 0777, true);
+            $imagePath = self::getPathToFileToUpload(self::$exampleImage);
+            file_put_contents(Wtd::$settings['image_remote_root'] . $url, file_get_contents($imagePath));
+        }
 
         return $coverIds;
+    }
+
+    protected static function getPathToFileToUpload($fileName) {
+        return implode(DIRECTORY_SEPARATOR, array(__DIR__, 'fixtures', $fileName));
     }
 }

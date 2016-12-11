@@ -9,6 +9,7 @@ use CoverId\Models\Covers;
 use Silex\Application;
 use Doctrine\ORM\Query\Expr\Join;
 use Silex\ControllerCollection;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -263,6 +264,32 @@ class InternalController extends AppController
                 });
             }
         )->assert('coverids', '^([0-9]+,){0,4}[0-9]+$');
+
+
+        $routing->get(
+            '/internal/cover-id/issue/{issueNumber}',
+            function (Request $request, Application $app, $issueNumber) {
+                return AppController::return500ErrorOnException(function() use ($issueNumber) {
+                    $qb = Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_COVER_ID)->createQueryBuilder();
+                    $qb
+                        ->select('covers.url, covers.id')
+                        ->from(Covers::class, 'covers');
+
+                    $qb->where($qb->expr()->eq('covers.issuecode', "'".$issueNumber."'"));
+
+                    $result = $qb->getQuery()->getOneOrNullResult();
+
+                    $localFilePath = Wtd::$settings['image_local_root'] . basename($result['url']);
+
+                    file_put_contents(
+                        $localFilePath,
+                        file_get_contents(Wtd::$settings['image_remote_root'] . $result['url'])
+                    );
+
+                    return new BinaryFileResponse($localFilePath);
+                });
+            }
+        )->assert('issueNumber', '^[a-z]+/[- A-Z0-9]+$');
 
         $routing->post(
             '/internal/rawsql',

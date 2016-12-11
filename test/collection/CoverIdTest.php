@@ -1,6 +1,7 @@
 <?php
 namespace Wtd\Test;
 
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
 use Wtd\CoverIdController;
@@ -11,7 +12,6 @@ class CoverIdTest extends TestCommon
 
     static $uploadDestination = ['/tmp', 'test.jpg'];
 
-    static $exampleImage = 'cover_example.jpg';
     static $exampleImageToUpload = 'cover_example_to_upload.jpg';
 
     public function setUp()
@@ -53,8 +53,8 @@ class CoverIdTest extends TestCommon
     public function testCoverIdSearchMultipleUploads() {
         $service = $this->buildAuthenticatedServiceWithTestUser(
             '/cover-id/search', TestCommon::$testUser, 'POST', array(), array(
-                'WTD_jpg' => self::getCoverIdSearchUploadImage(),
-                'WTD_jpg2' => self::getCoverIdSearchUploadImage()
+                'wtd_jpg' => self::getCoverIdSearchUploadImage(),
+                'wtd_jpg2' => self::getCoverIdSearchUploadImage()
             )
         );
         $response = $service->call();
@@ -68,7 +68,7 @@ class CoverIdTest extends TestCommon
 
         $service = $this->buildAuthenticatedServiceWithTestUser(
             '/cover-id/search', TestCommon::$testUser, 'POST', array(), array(
-                'WTD_jpg' => self::getCoverIdSearchUploadImage()
+                'wtd_jpg' => self::getCoverIdSearchUploadImage()
             )
         );
         $response = $service->call();
@@ -82,17 +82,26 @@ class CoverIdTest extends TestCommon
 
         $service = $this->buildAuthenticatedServiceWithTestUser(
             '/cover-id/search', TestCommon::$testUser, 'POST', array(), array(
-                'WTD_invalid_jpg' => self::getCoverIdSearchUploadImage()
+                'wtd_invalid_jpg' => self::getCoverIdSearchUploadImage()
             )
         );
         $response = $service->call();
 
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
-        $this->assertEquals('Invalid upload file : expected file name WTD_jpg', $response->getContent());
+        $this->assertEquals('Invalid upload file : expected file name wtd_jpg', $response->getContent());
     }
 
-    private static function getPathToFileToUpload($fileName) {
-        return implode(DIRECTORY_SEPARATOR, array(__DIR__, '..', 'fixtures', $fileName));
+    public function testFetchCover() {
+        $service = $this->buildAuthenticatedServiceWithTestUser(
+            '/cover-id/issue/fr/DDD 1', TestCommon::$testUser, 'GET'
+        );
+        /** @var BinaryFileResponse $response */
+        $response = $service->call();
+
+        file_put_contents('/tmp/test.jpg', $response->getContent());
+        $type=exif_imagetype('/tmp/test.jpg');
+        $this->assertEquals(IMAGETYPE_JPEG, $type);   //A specific image type
+
     }
 
     private static function getCoverIdSearchUploadImage() {
