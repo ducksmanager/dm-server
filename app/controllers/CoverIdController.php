@@ -24,10 +24,10 @@ class CoverIdController extends AppController
     public static function addRoutes($routing)
     {
         $routing->get(
-            '/cover-id/issue/{issueNumber}',
-            function (Application $app, Request $request, $issueNumber) {
+            '/cover-id/download/{issueUrl}',
+            function (Application $app, Request $request, $issueUrl) {
                 /** @var BinaryFileResponse $internalRequestResponse */
-                $internalRequestResponse = self::callInternal($app, '/cover-id/issue', 'GET', [$issueNumber]);
+                $internalRequestResponse = self::callInternal($app, '/cover-id/download', 'GET', [$issueUrl]);
                 $response = new Response(file_get_contents($internalRequestResponse->getFile()->getRealPath()));
 
                 $disposition = $response->headers->makeDisposition(
@@ -38,7 +38,7 @@ class CoverIdController extends AppController
                 $response->headers->set('Content-Disposition', $disposition);
                 return $response;
             }
-        )->assert('issueNumber', '^[a-z]+/[- A-Z0-9]+$');
+        )->assert('issueUrl', '.+');
 
         $routing->post(
             '/cover-id/search',

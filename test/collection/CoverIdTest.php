@@ -91,9 +91,9 @@ class CoverIdTest extends TestCommon
         $this->assertEquals('Invalid upload file : expected file name wtd_jpg', $response->getContent());
     }
 
-    public function testFetchCover() {
+    public function testDownloadCover() {
         $service = $this->buildAuthenticatedServiceWithTestUser(
-            '/cover-id/issue/fr/DDD 1', TestCommon::$testUser, 'GET'
+            '/cover-id/download/webusers/2010/12/fr_ddd_001a_001.jpg', TestCommon::$testUser, 'GET'
         );
         /** @var BinaryFileResponse $response */
         $response = $service->call();

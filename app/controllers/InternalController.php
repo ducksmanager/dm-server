@@ -6,6 +6,7 @@ use Coa\Models\InducksCountryname;
 use Coa\Models\InducksIssue;
 use Coa\Models\InducksPublication;
 use CoverId\Models\Covers;
+use Exception;
 use Silex\Application;
 use Doctrine\ORM\Query\Expr\Join;
 use Silex\ControllerCollection;
@@ -13,7 +14,7 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Wtd\models\Coa\Contracts\Results\SimpleIssue;
+use Wtd\models\Coa\Contracts\Results\SimpleIssueWithUrl;
 use Wtd\Models\Numeros;
 use Wtd\Models\Users;
 
@@ -211,34 +212,6 @@ class InternalController extends AppController
         )->assert('publicationCode', '.+');
 
         $routing->get(
-            '/internal/coa/issuesbycodes/{issuecodes}',
-            function (Request $request, Application $app, $issuecodes) {
-                return AppController::return500ErrorOnException(function() use ($issuecodes) {
-                    $issuecodesList = explode(',', $issuecodes);
-
-                    $qb = Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_COA)->createQueryBuilder();
-                    $qb
-                        ->select('inducks_publication.countrycode, inducks_publication.title, inducks_issue.issuenumber')
-                        ->from(InducksIssue::class, 'inducks_issue')
-                        ->join(InducksPublication::class, 'inducks_publication', Join::WITH, 'inducks_issue.publicationcode = inducks_publication.publicationcode');
-
-                    $qb->where($qb->expr()->in('inducks_issue.issuecode', $issuecodesList));
-
-                    $results = $qb->getQuery()->getResult();
-
-                    array_walk(
-                        $results,
-                        function($issue, $i) use ($issuecodesList, &$issues) {
-                            $issues[$issuecodesList[$i]] = new SimpleIssue($issue['countrycode'], $issue['title'], $issue['issuenumber']);
-                        }
-                    );
-
-                    return new JsonResponse(ModelHelper::getSerializedArray($issues));
-                });
-            }
-        )->assert('issuecodes', '^([a-z]+/[- A-Z0-9]+,){0,4}[a-z]+/[- A-Z0-9]+$');
-
-        $routing->get(
             '/internal/cover-id/issuecodes/{coverids}',
             function (Request $request, Application $app, $coverids) {
                 return AppController::return500ErrorOnException(function() use ($coverids) {
@@ -265,31 +238,72 @@ class InternalController extends AppController
             }
         )->assert('coverids', '^([0-9]+,){0,4}[0-9]+$');
 
-
         $routing->get(
-            '/internal/cover-id/issue/{issueNumber}',
-            function (Request $request, Application $app, $issueNumber) {
-                return AppController::return500ErrorOnException(function() use ($issueNumber) {
-                    $qb = Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_COVER_ID)->createQueryBuilder();
-                    $qb
-                        ->select('covers.url, covers.id')
+            '/internal/coa/issuesbycodes/{issuecodes}',
+            function (Request $request, Application $app, $issuecodes) {
+                return AppController::return500ErrorOnException(function() use ($issuecodes) {
+                    $issuecodesList = explode(',', $issuecodes);
+
+                    $qbIssueInfo = Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_COA)->createQueryBuilder();
+                    $qbIssueInfo
+                        ->select('inducks_publication.countrycode, inducks_publication.title, inducks_issue.issuenumber, inducks_issue.issuecode')
+                        ->from(InducksIssue::class, 'inducks_issue')
+                        ->join(InducksPublication::class, 'inducks_publication', Join::WITH, 'inducks_issue.publicationcode = inducks_publication.publicationcode');
+
+                    $qbIssueInfo->where($qbIssueInfo->expr()->in('inducks_issue.issuecode', $issuecodesList));
+
+                    $resultsIssueInfo = $qbIssueInfo->getQuery()->getResult();
+
+                    array_walk(
+                        $resultsIssueInfo,
+                        function($issue) use (&$issues) {
+                            $issues[$issue['issuecode']] = SimpleIssueWithUrl::buildWithoutUrl($issue['countrycode'], $issue['title'], $issue['issuenumber']);
+                        }
+                    );
+
+                    $qbCoverInfo = Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_COVER_ID)->createQueryBuilder();
+                    $qbCoverInfo
+                        ->select('covers.id, covers.url, covers.issuecode')
                         ->from(Covers::class, 'covers');
 
-                    $qb->where($qb->expr()->eq('covers.issuecode', "'".$issueNumber."'"));
+                    $qbCoverInfo->where($qbCoverInfo->expr()->in('covers.issuecode', $issuecodesList));
 
-                    $result = $qb->getQuery()->getOneOrNullResult();
+                    $resultsCoverInfo = $qbCoverInfo->getQuery()->getResult();
 
-                    $localFilePath = Wtd::$settings['image_local_root'] . basename($result['url']);
+                    array_walk(
+                        $resultsCoverInfo,
+                        function($issue) use (&$issues) {
+
+                            if (empty($issues[$issue['issuecode']])) {
+                                throw new Exception('No COA data exists for this issue : ' . $issue['issuecode']);
+                            }
+                            /** @var SimpleIssueWithUrl $issueObject */
+                            $issueObject = $issues[$issue['issuecode']];
+                            $issueObject->setFullurl($issue['url']);
+                        }
+                    );
+
+                    return new JsonResponse(ModelHelper::getSerializedArray($issues));
+                });
+            }
+        )->assert('issuecodes', '^([a-z]+/[- A-Z0-9]+,){0,4}[a-z]+/[- A-Z0-9]+$');
+
+
+        $routing->get(
+            '/internal/cover-id/download/{coverUrl}',
+            function (Request $request, Application $app, $coverUrl) {
+                return AppController::return500ErrorOnException(function() use ($coverUrl) {
+                    $localFilePath = Wtd::$settings['image_local_root'] . basename($coverUrl);
 
                     file_put_contents(
                         $localFilePath,
-                        file_get_contents(Wtd::$settings['image_remote_root'] . $result['url'])
+                        file_get_contents(Wtd::$settings['image_remote_root'] . $coverUrl)
                     );
 
                     return new BinaryFileResponse($localFilePath);
                 });
             }
-        )->assert('issueNumber', '^[a-z]+/[- A-Z0-9]+$');
+        )->assert('coverUrl', '.+');
 
         $routing->post(
             '/internal/rawsql',

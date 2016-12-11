@@ -3,23 +3,28 @@
 namespace Wtd\models\Coa\Contracts\Results;
 
 
-class SimpleIssue
+class SimpleIssueWithUrl
 {
     private $countrycode;
     private $publicationtitle;
     private $issuenumber;
+    private $fullurl;
+
+    public static function buildWithoutUrl($countrycode, $publicationtitle, $issuenumber)
+    {
+        $o = new SimpleIssueWithUrl();
+        $o->countrycode = $countrycode;
+        $o->publicationtitle = $publicationtitle;
+        $o->issuenumber = $issuenumber;
+
+        return $o;
+    }
 
     /**
      * SimpleIssue constructor.
-     * @param $countrycode
-     * @param $publicationtitle
-     * @param $issuenumber
      */
-    public function __construct($countrycode, $publicationtitle, $issuenumber)
+    public function __construct()
     {
-        $this->countrycode = $countrycode;
-        $this->publicationtitle = $publicationtitle;
-        $this->issuenumber = $issuenumber;
     }
 
     /**
@@ -70,11 +75,29 @@ class SimpleIssue
         $this->issuenumber = $issuenumber;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getFullurl()
+    {
+        return $this->fullurl;
+    }
+
+    /**
+     * @param mixed $fullurl
+     */
+    public function setFullurl($fullurl)
+    {
+        $this->fullurl = $fullurl;
+    }
+
+
     public function toArray() {
         return [
             'countrycode' => $this->getCountrycode(),
             'publicationtitle' => $this->getPublicationtitle(),
-            'issuenumber' => $this->getIssuenumber()
+            'issuenumber' => $this->getIssuenumber(),
+            'fullurl' => $this->getFullurl()
         ];
     }
 }
