@@ -98,11 +98,17 @@ abstract class AppController
         }
     }
 
-    protected static function return500ErrorOnException($function) {
+    /**
+     * @param $app Application
+     * @param $function callable
+     * @return mixed|Response
+     */
+    protected static function return500ErrorOnException($app, $function) {
         try {
             return call_user_func($function);
         }
         catch (Exception $e) {
+            $app['monolog']->addError($e->getMessage());
             return new Response($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }

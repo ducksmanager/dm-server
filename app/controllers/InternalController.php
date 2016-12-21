@@ -28,7 +28,7 @@ class InternalController extends AppController
         $routing->get(
             '/internal/user/exists/{username}',
             function (Request $request, Application $app, $username) {
-                return AppController::return500ErrorOnException(function() use ($username) {
+                return AppController::return500ErrorOnException($app, function() use ($username) {
                     $existingUser = Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_DM)->getRepository(Users::class)->findBy(array(
                         'username' => $username
                     ));
@@ -73,7 +73,7 @@ class InternalController extends AppController
         $routing->get(
             '/internal/user/check/{username}/{password}',
             function (Request $request, Application $app, $username, $password) {
-                return AppController::return500ErrorOnException(function() use ($username, $password) {
+                return AppController::return500ErrorOnException($app, function() use ($username, $password) {
                     $existingUser = Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_DM)->getRepository(Users::class)->findBy(array(
                         'username' => $username,
                         'password' => sha1($password)
@@ -88,7 +88,7 @@ class InternalController extends AppController
         );
 
         $routing->put('/internal/user/new', function (Request $request, Application $app) {
-            return AppController::return500ErrorOnException(function() use ($request) {
+            return AppController::return500ErrorOnException($app, function() use ($request) {
                 $user = new Users();
                 $user->setUsername($request->request->get('username'));
                 $user->setPassword(sha1($request->request->get('password')));
@@ -103,7 +103,7 @@ class InternalController extends AppController
         });
 
         $routing->put('/internal/collection/add', function (Request $request, Application $app) {
-            return AppController::return500ErrorOnException(function() use ($request, $app) {
+            return AppController::return500ErrorOnException($app, function() use ($request, $app) {
                 $issue = new Numeros();
                 $issue->setPays($request->request->get('country'));
                 $issue->setMagazine($request->request->get('publication'));
@@ -121,7 +121,7 @@ class InternalController extends AppController
         $routing->get(
             '/internal/collection/fetch',
             function (Request $request, Application $app) {
-                return AppController::return500ErrorOnException(function() use ($app) {
+                return AppController::return500ErrorOnException($app, function() use ($app) {
                     /** @var Numeros[] $issues */
                     $issues = Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_DM)->getRepository(Numeros::class)->findBy(
                         ['idUtilisateur' => self::getSessionUser($app)['id']],
@@ -136,7 +136,7 @@ class InternalController extends AppController
         $routing->get(
             '/internal/coa/countrynames/{countryCodes}',
             function (Request $request, Application $app, $countryCodes) {
-                return AppController::return500ErrorOnException(function() use ($countryCodes) {
+                return AppController::return500ErrorOnException($app, function() use ($countryCodes) {
                     $qb = Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_COA)->createQueryBuilder();
                     $qb
                         ->select('inducks_countryname.countrycode, inducks_countryname.countryname')
@@ -162,7 +162,7 @@ class InternalController extends AppController
         $routing->get(
             '/internal/coa/publicationtitles/{publicationCodes}',
             function (Request $request, Application $app, $publicationCodes) {
-                return AppController::return500ErrorOnException(function() use ($publicationCodes) {
+                return AppController::return500ErrorOnException($app, function() use ($publicationCodes) {
                     $qb = Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_COA)->createQueryBuilder();
                     $qb
                         ->select('inducks_publication.publicationcode, inducks_publication.title')
@@ -191,7 +191,7 @@ class InternalController extends AppController
         $routing->get(
             '/internal/coa/issues/{publicationCode}',
             function (Request $request, Application $app, $publicationCode) {
-                return AppController::return500ErrorOnException(function() use ($publicationCode) {
+                return AppController::return500ErrorOnException($app, function() use ($publicationCode) {
                     $qb = Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_COA)->createQueryBuilder();
                     $qb
                         ->select('inducks_issue.issuenumber')
@@ -214,7 +214,7 @@ class InternalController extends AppController
         $routing->get(
             '/internal/cover-id/issuecodes/{coverids}',
             function (Request $request, Application $app, $coverids) {
-                return AppController::return500ErrorOnException(function() use ($coverids) {
+                return AppController::return500ErrorOnException($app, function() use ($coverids) {
                     $coveridsList = explode(',', $coverids);
 
                     $qb = Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_COVER_ID)->createQueryBuilder();
@@ -241,7 +241,7 @@ class InternalController extends AppController
         $routing->get(
             '/internal/coa/issuesbycodes/{issuecodes}',
             function (Request $request, Application $app, $issuecodes) {
-                return AppController::return500ErrorOnException(function() use ($issuecodes) {
+                return AppController::return500ErrorOnException($app, function() use ($issuecodes) {
                     $issuecodesList = explode(',', $issuecodes);
 
                     $qbIssueInfo = Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_COA)->createQueryBuilder();
@@ -296,7 +296,7 @@ class InternalController extends AppController
         $routing->get(
             '/internal/cover-id/download/{coverUrl}',
             function (Request $request, Application $app, $coverUrl) {
-                return AppController::return500ErrorOnException(function() use ($coverUrl) {
+                return AppController::return500ErrorOnException($app, function() use ($coverUrl) {
                     $localFilePath = Wtd::$settings['image_local_root'] . basename($coverUrl);
 
                     @mkdir(Wtd::$settings['image_local_root'].dirname($coverUrl), 0777, true);
@@ -313,7 +313,7 @@ class InternalController extends AppController
         $routing->post(
             '/internal/rawsql',
             function (Request $request, Application $app) {
-                return AppController::return500ErrorOnException(function() use ($request) {
+                return AppController::return500ErrorOnException($app, function() use ($request) {
                     $query = $request->request->get('query');
                     $db = $request->request->get('db');
 

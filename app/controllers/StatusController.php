@@ -18,7 +18,7 @@ class StatusController extends AppController
         $routing->get(
             '/status/{serverIp}/{serverPort}',
             function (Application $app, Request $request, $serverIp, $serverPort) {
-                return AppController::return500ErrorOnException(function() use ($serverIp, $serverPort) {
+                return AppController::return500ErrorOnException($app, function() use ($serverIp, $serverPort) {
                     $rawSqlUserRole = 'rawsql';
                     $credentialsForRawSql = Wtd::getAppRoles()[$rawSqlUserRole];
                     $rawSqlUserPassword = explode(':', $credentialsForRawSql)[1];
