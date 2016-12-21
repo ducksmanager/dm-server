@@ -279,7 +279,11 @@ class InternalController extends AppController
                             }
                             /** @var SimpleIssueWithUrl $issueObject */
                             $issueObject = $issues[$issue['issuecode']];
-                            $issueObject->setFullurl($issue['url']);
+                            $url = $issue['url'];
+                            if (strpos($url, 'webusers') === 0) {
+                                $url = 'webusers/'.$url;
+                            }
+                            $issueObject->setFullurl($url);
                         }
                     );
 
@@ -295,6 +299,7 @@ class InternalController extends AppController
                 return AppController::return500ErrorOnException(function() use ($coverUrl) {
                     $localFilePath = Wtd::$settings['image_local_root'] . basename($coverUrl);
 
+                    @mkdir(Wtd::$settings['image_local_root'].dirname($coverUrl), 0777, true);
                     file_put_contents(
                         $localFilePath,
                         file_get_contents(Wtd::$settings['image_remote_root'] . $coverUrl)
