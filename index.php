@@ -28,6 +28,10 @@ $app->before(function (Request $request) {
     return true;
 });
 
+$app->register(new Sorien\Provider\PimpleDumpProvider(), array(
+    'pimpledump.output_dir' => __DIR__)
+);
+
 $app->register(new Silex\Provider\LocaleServiceProvider());
 
 if (!isset($GLOBALS['__PHPUNIT_BOOTSTRAP'])) {
