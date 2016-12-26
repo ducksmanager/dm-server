@@ -23,33 +23,28 @@ class StatusController extends AppController
                     $credentialsForRawSql = Wtd::getAppRoles()[$rawSqlUserRole];
                     $rawSqlUserPassword = explode(':', $credentialsForRawSql)[1];
 
-                    $context = stream_context_create([
-                        'http' => [
-                            'method' => 'POST',
-                            'header' => implode("\r\n",
-                                [
-                                    'Authorization: Basic ' . base64_encode($rawSqlUserRole . ':' . $rawSqlUserPassword),
-                                    'Content-Type: application/x-www-form-urlencoded',
-                                    'Cache-Control: no-cache',
-                                    'x-dm-version: 1.0',
-                                ]),
-                            'content' => http_build_query(
-                                [
-                                    'query' => 'SELECT * FROM inducks_country',
-                                    'db' => 'db_coa'
-                                ]
-                            )
+                    $ch = curl_init();
+                    curl_setopt($ch, CURLOPT_URL, 'http://' . $serverIp . ':' . $serverPort . '/dm-server/rawsql');
+                    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+                    curl_setopt($ch, CURLOPT_POST, TRUE);
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query(
+                        [
+                            'query' => 'SELECT * FROM inducks_country',
+                            'db' => 'db_coa'
                         ]
-                    ]);
-                    $handle = fopen('http://' . $serverIp . ':' . $serverPort . '/wtd-server/rawsql', "r", null,
-                        $context);
+                    ));
+                    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                        'Authorization: Basic ' . base64_encode($rawSqlUserRole . ':' . $rawSqlUserPassword),
+                        'Content-Type: application/x-www-form-urlencoded',
+                        'Cache-Control: no-cache',
+                        'x-dm-version: 1.0',
+                    ));
 
-                    if ($handle) {
-                        $buffer = "";
-                        while (!feof($handle)) {
-                            $buffer .= fgets($handle, 4096);
-                        }
-                        fclose($handle);
+                    $buffer = curl_exec($ch);
+                    curl_close($ch);
+
+                    if ($buffer) {
                         $objectResponse = json_decode($buffer, true);
 
                         if (count($objectResponse) > 1
@@ -64,6 +59,6 @@ class StatusController extends AppController
                 });
 
             }
-        )->assert('serverIp', '^[.\d]+$')->assert('serverPort', '^[\d]+$');
+        )->assert('serverIp', '^.+$')->assert('serverPort', '^[\d]+$');
     }
 }
