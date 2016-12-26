@@ -71,7 +71,7 @@ class TestCommon extends WebTestCase {
 
     private static function getSystemCredentials($appUser, $version = '1.3+') {
         return self::getSystemCredentialsNoVersion($appUser) + [
-            'HTTP_X_WTD_VERSION' => $version
+            'HTTP_X_DM_VERSION' => $version
         ];
     }
 
