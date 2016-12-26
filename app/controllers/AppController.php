@@ -108,7 +108,9 @@ abstract class AppController
             return call_user_func($function);
         }
         catch (Exception $e) {
-            $app['monolog']->addError($e->getMessage());
+            if (isset($app['monolog'])) {
+                $app['monolog']->addError($e->getMessage());
+            }
             return new Response($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
