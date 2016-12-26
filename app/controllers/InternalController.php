@@ -313,7 +313,7 @@ class InternalController extends AppController
         $routing->post(
             '/internal/rawsql',
             function (Request $request, Application $app) {
-                return AppController::return500ErrorOnException($app, function() use ($request) {
+                return AppController::return500ErrorOnException($app, function() use ($request, $app) {
                     $query = $request->request->get('query');
                     $db = $request->request->get('db');
 
@@ -322,6 +322,7 @@ class InternalController extends AppController
                         return new Response('Invalid parameter : db='.$db, Response::HTTP_BAD_REQUEST);
                     }
 
+                    $app['monolog']->addInfo('Raw sql sent : '.$query);
                     $results = $em->getConnection()->fetchAll($query);
                     return new JsonResponse($results);
                 });
