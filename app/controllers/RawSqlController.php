@@ -1,10 +1,9 @@
 <?php
 
-namespace Wtd;
+namespace DmServer;
 
 use Silex\Application;
 use Silex\ControllerCollection;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 class RawSqlController extends AppController

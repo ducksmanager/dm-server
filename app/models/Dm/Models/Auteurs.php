@@ -1,6 +1,6 @@
 <?php
 
-namespace Wtd\Models;
+namespace Dm\Models;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="auteurs")
  * @ORM\Entity
  */
-class Auteurs extends \Wtd\Models\BaseModel
+class Auteurs extends \Dm\Models\BaseModel
 {
     /**
      * @var integer

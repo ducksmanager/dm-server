@@ -1,5 +1,5 @@
 <?php
-namespace Wtd\Test;
+namespace DmServer\Test;
 
 use Symfony\Component\HttpFoundation\Response;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Wtd\Models;
+namespace Dm\Models;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="parametres_listes")
  * @ORM\Entity
  */
-class ParametresListes extends \Wtd\Models\BaseModel
+class ParametresListes extends \Dm\Models\BaseModel
 {
     /**
      * @var integer

@@ -1,6 +1,6 @@
 <?php
 
-namespace Wtd;
+namespace DmServer;
 
 use CoverId\Models\BaseModel;
 use Silex\Application;

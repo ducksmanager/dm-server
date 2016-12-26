@@ -4,18 +4,18 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Translation\Loader\YamlFileLoader;
 use Symfony\Component\Translation\Translator;
-use Wtd\Wtd;
+use DmServer\DmServer;
 
 require_once __DIR__.'/vendor/autoload.php';
 
 if (!isset($conf)) {
-    $conf = Wtd::getAppConfig('config.db.ini');
-    $settings = Wtd::initSettings('settings.ini');
+    $conf = DmServer::getAppConfig('config.db.ini');
+    $settings = DmServer::initSettings('settings.ini');
 }
 
 $app = new \Silex\Application();
 
-$app->mount('/', new Wtd());
+$app->mount('/', new DmServer());
 
 $app->match('/', function () {
     return '';
@@ -46,11 +46,11 @@ $app->register(new Silex\Provider\TranslationServiceProvider(), array(
 ));
 
 $app->register(new Silex\Provider\DoctrineServiceProvider(), [
-    'db.options' => Wtd::getConnectionParams($conf['db'])
+    'db.options' => DmServer::getConnectionParams($conf['db'])
 ]);
 
 $app->register(new Silex\Provider\DoctrineServiceProvider(), [
-    'db.options' => Wtd::getConnectionParams($conf['db_coa'])
+    'db.options' => DmServer::getConnectionParams($conf['db_coa'])
 ]);
 
 @unlink($conf['db']['path']);
@@ -80,7 +80,7 @@ $app['security.default_encoder'] = function () use ($passwordEncoder) {
     return $passwordEncoder;
 };
 
-$roles = Wtd::getAppRoles();
+$roles = DmServer::getAppRoles();
 
 $users = array();
 array_walk($roles, function($role, $user) use ($passwordEncoder, &$users) {

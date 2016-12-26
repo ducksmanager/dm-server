@@ -1,6 +1,6 @@
 <?php
 
-namespace Wtd\models\Wtd\Contracts\Dtos;
+namespace Dm\Contracts\Dtos;
 
 
 class NumeroSimple

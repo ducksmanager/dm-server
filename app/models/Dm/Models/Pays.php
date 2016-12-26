@@ -1,6 +1,6 @@
 <?php
 
-namespace Wtd\Models;
+namespace Dm\Models;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="pays")
  * @ORM\Entity
  */
-class Pays extends \Wtd\Models\BaseModel
+class Pays extends \Dm\Models\BaseModel
 {
     /**
      * @var string

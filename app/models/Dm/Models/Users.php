@@ -1,6 +1,6 @@
 <?php
 
-namespace Wtd\Models;
+namespace Dm\Models;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="users", uniqueConstraints={@ORM\UniqueConstraint(name="username", columns={"username"})})
  * @ORM\Entity
  */
-class Users extends \Wtd\Models\BaseModel
+class Users extends \Dm\Models\BaseModel
 {
     /**
      * @var string

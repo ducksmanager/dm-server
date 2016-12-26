@@ -16,22 +16,28 @@
     },
     "autoload": {
         "psr-4": {
+            "Coa\\Contracts\\": [
+                "app/models/Coa/Contracts"
+            ],
             "Coa\\Models\\": [
                 "app/models/Coa/Models"
             ],
             "CoverId\\Models\\": [
                 "app/models/CoverId/Models"
             ],
-            "Wtd\\": [
+            "Dm\\Contracts\\": [
+                "app/models/Dm/Contracts"
+            ],
+            "Dm\\Models\\": [
+                "app/models/Dm/Models"
+            ],
+            "DmServer\\": [
                 "app",
                 "app/controllers",
                 "app/helpers"
             ],
-            "Wtd\\Test\\": [
+            "DmServer\\Test\\": [
                 "test"
-            ],
-            "Wtd\\Models\\": [
-                "app/models/Wtd/Models"
             ]
         }
     },

@@ -1,6 +1,6 @@
 <?php
 
-namespace Wtd\Models;
+namespace Dm\Models;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="tranches_pretes")
  * @ORM\Entity
  */
-class TranchesPretes extends \Wtd\Models\BaseModel
+class TranchesPretes extends \Dm\Models\BaseModel
 {
     /**
      * @var string

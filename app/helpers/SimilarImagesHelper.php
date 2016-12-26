@@ -1,5 +1,5 @@
 <?php
-namespace Wtd;
+namespace DmServer;
 
 use Symfony\Component\HttpFoundation\File\File;
 

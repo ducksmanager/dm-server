@@ -1,10 +1,10 @@
 <?php
-namespace Wtd\Test;
+namespace DmServer\Test;
 
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
-use Wtd\CoverIdController;
+use DmServer\CoverIdController;
 
 class CoverIdTest extends TestCommon
 {

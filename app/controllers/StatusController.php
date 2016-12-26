@@ -1,10 +1,9 @@
 <?php
 
-namespace Wtd;
+namespace DmServer;
 
 use Silex\Application;
 use Silex\ControllerCollection;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -23,7 +22,7 @@ class StatusController extends AppController
             function (Application $app, Request $request, $serverIp, $serverPort) {
                 return AppController::return500ErrorOnException($app, function() use ($serverIp, $serverPort) {
                     $rawSqlUserRole = 'rawsql';
-                    $credentialsForRawSql = Wtd::getAppRoles()[$rawSqlUserRole];
+                    $credentialsForRawSql = DmServer::getAppRoles()[$rawSqlUserRole];
                     $rawSqlUserPassword = explode(':', $credentialsForRawSql)[1];
 
                     $ch = curl_init();

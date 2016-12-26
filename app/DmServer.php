@@ -1,6 +1,6 @@
 <?php
 
-namespace Wtd;
+namespace DmServer;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\CachedReader;
@@ -16,7 +16,7 @@ use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class Wtd extends AppController implements ControllerProviderInterface
+class DmServer extends AppController implements ControllerProviderInterface
 {
     const CONFIG_FILE_DEFAULT = 'config.db.ini';
     const CONFIG_FILE_TEST = 'config.db.test.ini';

@@ -1,5 +1,5 @@
 <?php
-namespace Wtd;
+namespace DmServer;
 
 class ModelHelper {
     /**

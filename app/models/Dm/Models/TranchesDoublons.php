@@ -1,16 +1,16 @@
 <?php
 
-namespace Wtd\Models;
+namespace Dm\Models;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * BibliothequeOrdreMagazines
+ * TranchesDoublons
  *
- * @ORM\Table(name="bibliotheque_ordre_magazines")
+ * @ORM\Table(name="tranches_doublons")
  * @ORM\Entity
  */
-class BibliothequeOrdreMagazines extends \Wtd\Models\BaseModel
+class TranchesDoublons extends \Dm\Models\BaseModel
 {
     /**
      * @var string
@@ -31,22 +31,20 @@ class BibliothequeOrdreMagazines extends \Wtd\Models\BaseModel
     private $magazine;
 
     /**
-     * @var integer
+     * @var string
      *
-     * @ORM\Column(name="Ordre", type="integer", nullable=false)
+     * @ORM\Column(name="Numero", type="string", length=8, nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
      */
-    private $ordre;
+    private $numero;
 
     /**
-     * @var integer
+     * @var string
      *
-     * @ORM\Column(name="ID_Utilisateur", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\Column(name="NumeroReference", type="string", length=8, nullable=false)
      */
-    private $idUtilisateur;
+    private $numeroreference;
 
 
 
@@ -55,7 +53,7 @@ class BibliothequeOrdreMagazines extends \Wtd\Models\BaseModel
      *
      * @param string $pays
      *
-     * @return BibliothequeOrdreMagazines
+     * @return TranchesDoublons
      */
     public function setPays($pays)
     {
@@ -79,7 +77,7 @@ class BibliothequeOrdreMagazines extends \Wtd\Models\BaseModel
      *
      * @param string $magazine
      *
-     * @return BibliothequeOrdreMagazines
+     * @return TranchesDoublons
      */
     public function setMagazine($magazine)
     {
@@ -99,50 +97,50 @@ class BibliothequeOrdreMagazines extends \Wtd\Models\BaseModel
     }
 
     /**
-     * Set ordre
+     * Set numero
      *
-     * @param integer $ordre
+     * @param string $numero
      *
-     * @return BibliothequeOrdreMagazines
+     * @return TranchesDoublons
      */
-    public function setOrdre($ordre)
+    public function setNumero($numero)
     {
-        $this->ordre = $ordre;
+        $this->numero = $numero;
 
         return $this;
     }
 
     /**
-     * Get ordre
+     * Get numero
      *
-     * @return integer
+     * @return string
      */
-    public function getOrdre()
+    public function getNumero()
     {
-        return $this->ordre;
+        return $this->numero;
     }
 
     /**
-     * Set idUtilisateur
+     * Set numeroreference
      *
-     * @param integer $idUtilisateur
+     * @param string $numeroreference
      *
-     * @return BibliothequeOrdreMagazines
+     * @return TranchesDoublons
      */
-    public function setIdUtilisateur($idUtilisateur)
+    public function setNumeroreference($numeroreference)
     {
-        $this->idUtilisateur = $idUtilisateur;
+        $this->numeroreference = $numeroreference;
 
         return $this;
     }
 
     /**
-     * Get idUtilisateur
+     * Get numeroreference
      *
-     * @return integer
+     * @return string
      */
-    public function getIdUtilisateur()
+    public function getNumeroreference()
     {
-        return $this->idUtilisateur;
+        return $this->numeroreference;
     }
 }

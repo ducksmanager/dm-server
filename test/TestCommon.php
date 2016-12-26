@@ -1,5 +1,5 @@
 <?php
-namespace Wtd\Test;
+namespace DmServer\Test;
 
 use Coa\Models\InducksCountryname;
 use Coa\Models\InducksIssue;
@@ -7,10 +7,10 @@ use Coa\Models\InducksPublication;
 use CoverId\Models\Covers;
 use Silex\Application;
 use Silex\WebTestCase;
-use Wtd\AppController;
-use Wtd\Models\Numeros;
-use Wtd\Models\Users;
-use Wtd\Wtd;
+use DmServer\AppController;
+use Dm\Models\Numeros;
+use Dm\Models\Users;
+use DmServer\DmServer;
 
 class TestCommon extends WebTestCase {
 
@@ -31,25 +31,25 @@ class TestCommon extends WebTestCase {
 
     public static function setUpBeforeClass()
     {
-        Wtd::initSettings('settings.test.ini');
-        self::$conf = Wtd::getAppConfig(true);
-        self::$roles = Wtd::getAppRoles();
+        DmServer::initSettings('settings.test.ini');
+        self::$conf = DmServer::getAppConfig(true);
+        self::$roles = DmServer::getAppRoles();
 
-        foreach(Wtd::$configuredEntityManagerNames as $emName) {
-            self::$schemas[$emName] = SchemaWithClasses::createFromEntityManager(Wtd::getEntityManager($emName, true));
+        foreach(DmServer::$configuredEntityManagerNames as $emName) {
+            self::$schemas[$emName] = SchemaWithClasses::createFromEntityManager(DmServer::getEntityManager($emName, true));
         }
     }
 
     public function setUp() {
         self::initDatabase();
-        @rmdir(Wtd::$settings['image_local_root']);
-        @mkdir(Wtd::$settings['image_local_root'], 0777, true);
+        @rmdir(DmServer::$settings['image_local_root']);
+        @mkdir(DmServer::$settings['image_local_root'], 0777, true);
         parent::setUp();
     }
 
     protected static function initDatabase() {
 
-        foreach(Wtd::$configuredEntityManagerNames as $emName) {
+        foreach(DmServer::$configuredEntityManagerNames as $emName) {
             self::$schemas[$emName]->recreateSchema();
         }
     }
@@ -118,7 +118,7 @@ class TestCommon extends WebTestCase {
     }
 
     protected function getCurrentUserIssues() {
-        $dmEntityManager = Wtd::$entityManagers[Wtd::CONFIG_DB_KEY_DM];
+        $dmEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_DM];
         return $dmEntityManager->getRepository(Numeros::class)->findBy(
             array('idUtilisateur' => AppController::getSessionUser($this->app)['id'])
         );
@@ -128,7 +128,7 @@ class TestCommon extends WebTestCase {
      * @param string $username
      */
     protected static function createTestCollection($username = 'dm_user') {
-        $dmEntityManager = Wtd::$entityManagers[Wtd::CONFIG_DB_KEY_DM];
+        $dmEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_DM];
 
         $user = new Users();
         $user->setUsername($username);
@@ -169,7 +169,7 @@ class TestCommon extends WebTestCase {
     }
 
     protected static function createCoaData() {
-        $coaEntityManager = Wtd::$entityManagers[Wtd::CONFIG_DB_KEY_COA];
+        $coaEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_COA];
         
         $country1 = new InducksCountryname();
         $country1->setCountrycode('fr');
@@ -218,7 +218,7 @@ class TestCommon extends WebTestCase {
 
     protected static function createCoverIds()
     {
-        $coverIdEntityManager = Wtd::$entityManagers[Wtd::CONFIG_DB_KEY_COVER_ID];
+        $coverIdEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_COVER_ID];
 
         $coverIds = [];
 
@@ -237,9 +237,9 @@ class TestCommon extends WebTestCase {
             $coverIdEntityManager->flush();
             $coverIds[]= $cover->getId();
 
-            @mkdir(Wtd::$settings['image_remote_root'].dirname($url), 0777, true);
+            @mkdir(DmServer::$settings['image_remote_root'].dirname($url), 0777, true);
             $imagePath = self::getPathToFileToUpload(self::$exampleImage);
-            file_put_contents(Wtd::$settings['image_remote_root'] . $url, file_get_contents($imagePath));
+            file_put_contents(DmServer::$settings['image_remote_root'] . $url, file_get_contents($imagePath));
         }
 
         return $coverIds;

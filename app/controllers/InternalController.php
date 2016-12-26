@@ -1,22 +1,22 @@
 <?php
 
-namespace Wtd;
+namespace DmServer;
 
 use Coa\Models\InducksCountryname;
 use Coa\Models\InducksIssue;
 use Coa\Models\InducksPublication;
 use CoverId\Models\Covers;
+use Coa\Contracts\Results\SimpleIssueWithUrl;
+use Dm\Models\Numeros;
+use Dm\Models\Users;
+use Doctrine\ORM\Query\Expr\Join;
 use Exception;
 use Silex\Application;
-use Doctrine\ORM\Query\Expr\Join;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Wtd\models\Coa\Contracts\Results\SimpleIssueWithUrl;
-use Wtd\Models\Numeros;
-use Wtd\Models\Users;
 
 class InternalController extends AppController
 {
@@ -29,7 +29,7 @@ class InternalController extends AppController
             '/internal/user/exists/{username}',
             function (Request $request, Application $app, $username) {
                 return AppController::return500ErrorOnException($app, function() use ($username) {
-                    $existingUser = Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_DM)->getRepository(Users::class)->findBy(array(
+                    $existingUser = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->getRepository(Users::class)->findBy(array(
                         'username' => $username
                     ));
                     if (count($existingUser) > 0) {
@@ -74,7 +74,7 @@ class InternalController extends AppController
             '/internal/user/check/{username}/{password}',
             function (Request $request, Application $app, $username, $password) {
                 return AppController::return500ErrorOnException($app, function() use ($username, $password) {
-                    $existingUser = Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_DM)->getRepository(Users::class)->findBy(array(
+                    $existingUser = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->getRepository(Users::class)->findBy(array(
                         'username' => $username,
                         'password' => sha1($password)
                     ));
@@ -95,8 +95,8 @@ class InternalController extends AppController
                 $user->setEmail($request->request->get('email'));
                 $user->setDateinscription(new \DateTime());
 
-                Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_DM)->persist($user);
-                Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_DM)->flush();
+                DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->persist($user);
+                DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->flush();
 
                 return new Response('OK', Response::HTTP_CREATED);
             });
@@ -111,8 +111,8 @@ class InternalController extends AppController
                 $issue->setEtat($request->request->get('condition'));
                 $issue->setIdUtilisateur(self::getSessionUser($app)['id']);
 
-                Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_DM)->persist($issue);
-                Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_DM)->flush();
+                DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->persist($issue);
+                DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->flush();
 
                 return new Response('OK', Response::HTTP_CREATED);
             });
@@ -123,7 +123,7 @@ class InternalController extends AppController
             function (Request $request, Application $app) {
                 return AppController::return500ErrorOnException($app, function() use ($app) {
                     /** @var Numeros[] $issues */
-                    $issues = Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_DM)->getRepository(Numeros::class)->findBy(
+                    $issues = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->getRepository(Numeros::class)->findBy(
                         ['idUtilisateur' => self::getSessionUser($app)['id']],
                         ['pays' => 'asc', 'magazine' => 'asc', 'numero' => 'asc']
                     );
@@ -137,7 +137,7 @@ class InternalController extends AppController
             '/internal/coa/countrynames/{countryCodes}',
             function (Request $request, Application $app, $countryCodes) {
                 return AppController::return500ErrorOnException($app, function() use ($countryCodes) {
-                    $qb = Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_COA)->createQueryBuilder();
+                    $qb = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_COA)->createQueryBuilder();
                     $qb
                         ->select('inducks_countryname.countrycode, inducks_countryname.countryname')
                         ->from(InducksCountryname::class, 'inducks_countryname');
@@ -163,7 +163,7 @@ class InternalController extends AppController
             '/internal/coa/publicationtitles/{publicationCodes}',
             function (Request $request, Application $app, $publicationCodes) {
                 return AppController::return500ErrorOnException($app, function() use ($publicationCodes) {
-                    $qb = Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_COA)->createQueryBuilder();
+                    $qb = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_COA)->createQueryBuilder();
                     $qb
                         ->select('inducks_publication.publicationcode, inducks_publication.title')
                         ->from(InducksPublication::class, 'inducks_publication');
@@ -192,7 +192,7 @@ class InternalController extends AppController
             '/internal/coa/issues/{publicationCode}',
             function (Request $request, Application $app, $publicationCode) {
                 return AppController::return500ErrorOnException($app, function() use ($publicationCode) {
-                    $qb = Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_COA)->createQueryBuilder();
+                    $qb = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_COA)->createQueryBuilder();
                     $qb
                         ->select('inducks_issue.issuenumber')
                         ->from(InducksIssue::class, 'inducks_issue');
@@ -217,7 +217,7 @@ class InternalController extends AppController
                 return AppController::return500ErrorOnException($app, function() use ($coverids) {
                     $coveridsList = explode(',', $coverids);
 
-                    $qb = Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_COVER_ID)->createQueryBuilder();
+                    $qb = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_COVER_ID)->createQueryBuilder();
                     $qb
                         ->select('covers.issuecode')
                         ->from(Covers::class, 'covers');
@@ -244,7 +244,7 @@ class InternalController extends AppController
                 return AppController::return500ErrorOnException($app, function() use ($issuecodes) {
                     $issuecodesList = explode(',', $issuecodes);
 
-                    $qbIssueInfo = Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_COA)->createQueryBuilder();
+                    $qbIssueInfo = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_COA)->createQueryBuilder();
                     $qbIssueInfo
                         ->select('inducks_publication.countrycode, inducks_publication.title, inducks_issue.issuenumber, inducks_issue.issuecode')
                         ->from(InducksIssue::class, 'inducks_issue')
@@ -261,7 +261,7 @@ class InternalController extends AppController
                         }
                     );
 
-                    $qbCoverInfo = Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_COVER_ID)->createQueryBuilder();
+                    $qbCoverInfo = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_COVER_ID)->createQueryBuilder();
                     $qbCoverInfo
                         ->select('covers.id, covers.url, covers.issuecode')
                         ->from(Covers::class, 'covers');
@@ -297,12 +297,12 @@ class InternalController extends AppController
             '/internal/cover-id/download/{coverUrl}',
             function (Request $request, Application $app, $coverUrl) {
                 return AppController::return500ErrorOnException($app, function() use ($coverUrl) {
-                    $localFilePath = Wtd::$settings['image_local_root'] . basename($coverUrl);
+                    $localFilePath = DmServer::$settings['image_local_root'] . basename($coverUrl);
 
-                    @mkdir(Wtd::$settings['image_local_root'].dirname($coverUrl), 0777, true);
+                    @mkdir(DmServer::$settings['image_local_root'].dirname($coverUrl), 0777, true);
                     file_put_contents(
                         $localFilePath,
-                        file_get_contents(Wtd::$settings['image_remote_root'] . $coverUrl)
+                        file_get_contents(DmServer::$settings['image_remote_root'] . $coverUrl)
                     );
 
                     return new BinaryFileResponse($localFilePath);
@@ -317,7 +317,7 @@ class InternalController extends AppController
                     $query = $request->request->get('query');
                     $db = $request->request->get('db');
 
-                    $em = Wtd::getEntityManager($db);
+                    $em = DmServer::getEntityManager($db);
                     if (is_null($em)) {
                         return new Response('Invalid parameter : db='.$db, Response::HTTP_BAD_REQUEST);
                     }

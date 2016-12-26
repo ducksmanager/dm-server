@@ -1,7 +1,7 @@
 <?php
-namespace Wtd;
+namespace DmServer;
 
-use Wtd\Models\Numeros;
+use Dm\Models\Numeros;
 
 class PublicationHelper {
     static function getPublicationCode(Numeros $issue) {

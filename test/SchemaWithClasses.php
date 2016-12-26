@@ -1,6 +1,6 @@
 <?php
 
-namespace Wtd\Test;
+namespace DmServer\Test;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\SchemaTool;

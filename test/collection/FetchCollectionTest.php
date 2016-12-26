@@ -1,9 +1,9 @@
 <?php
-namespace Wtd\Test;
+namespace DmServer\Test;
 
 use Symfony\Component\HttpFoundation\Response;
-use Wtd\Models\Numeros;
-use Wtd\Models\Users;
+use Dm\Models\Numeros;
+use Dm\Models\Users;
 
 class FetchCollectionTest extends TestCommon
 {

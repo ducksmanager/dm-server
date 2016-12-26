@@ -1,8 +1,8 @@
 <?php
-namespace Wtd\models\Wtd\Contracts\Results;
+namespace Dm\Contracts\Results;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Wtd\models\Wtd\Contracts\Dtos\PublicationCollection;
+use Dm\Contracts\Dtos\PublicationCollection;
 
 class FetchCollectionResult
 {

@@ -1,16 +1,16 @@
 <?php
 
-namespace Wtd\Models;
+namespace Dm\Models;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * NumerosRecommandes
+ * BibliothequeOrdreMagazines
  *
- * @ORM\Table(name="numeros_recommandes")
+ * @ORM\Table(name="bibliotheque_ordre_magazines")
  * @ORM\Entity
  */
-class NumerosRecommandes extends \Wtd\Models\BaseModel
+class BibliothequeOrdreMagazines extends \Dm\Models\BaseModel
 {
     /**
      * @var string
@@ -31,20 +31,13 @@ class NumerosRecommandes extends \Wtd\Models\BaseModel
     private $magazine;
 
     /**
-     * @var string
+     * @var integer
      *
-     * @ORM\Column(name="Numero", type="string", length=10, nullable=false)
+     * @ORM\Column(name="Ordre", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
      */
-    private $numero;
-
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="Notation", type="boolean", nullable=false)
-     */
-    private $notation;
+    private $ordre;
 
     /**
      * @var integer
@@ -55,13 +48,6 @@ class NumerosRecommandes extends \Wtd\Models\BaseModel
      */
     private $idUtilisateur;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="Texte", type="text", length=65535, nullable=false)
-     */
-    private $texte;
-
 
 
     /**
@@ -69,7 +55,7 @@ class NumerosRecommandes extends \Wtd\Models\BaseModel
      *
      * @param string $pays
      *
-     * @return NumerosRecommandes
+     * @return BibliothequeOrdreMagazines
      */
     public function setPays($pays)
     {
@@ -93,7 +79,7 @@ class NumerosRecommandes extends \Wtd\Models\BaseModel
      *
      * @param string $magazine
      *
-     * @return NumerosRecommandes
+     * @return BibliothequeOrdreMagazines
      */
     public function setMagazine($magazine)
     {
@@ -113,51 +99,27 @@ class NumerosRecommandes extends \Wtd\Models\BaseModel
     }
 
     /**
-     * Set numero
+     * Set ordre
      *
-     * @param string $numero
+     * @param integer $ordre
      *
-     * @return NumerosRecommandes
+     * @return BibliothequeOrdreMagazines
      */
-    public function setNumero($numero)
+    public function setOrdre($ordre)
     {
-        $this->numero = $numero;
+        $this->ordre = $ordre;
 
         return $this;
     }
 
     /**
-     * Get numero
+     * Get ordre
      *
-     * @return string
+     * @return integer
      */
-    public function getNumero()
+    public function getOrdre()
     {
-        return $this->numero;
-    }
-
-    /**
-     * Set notation
-     *
-     * @param boolean $notation
-     *
-     * @return NumerosRecommandes
-     */
-    public function setNotation($notation)
-    {
-        $this->notation = $notation;
-
-        return $this;
-    }
-
-    /**
-     * Get notation
-     *
-     * @return boolean
-     */
-    public function getNotation()
-    {
-        return $this->notation;
+        return $this->ordre;
     }
 
     /**
@@ -165,7 +127,7 @@ class NumerosRecommandes extends \Wtd\Models\BaseModel
      *
      * @param integer $idUtilisateur
      *
-     * @return NumerosRecommandes
+     * @return BibliothequeOrdreMagazines
      */
     public function setIdUtilisateur($idUtilisateur)
     {
@@ -182,29 +144,5 @@ class NumerosRecommandes extends \Wtd\Models\BaseModel
     public function getIdUtilisateur()
     {
         return $this->idUtilisateur;
-    }
-
-    /**
-     * Set texte
-     *
-     * @param string $texte
-     *
-     * @return NumerosRecommandes
-     */
-    public function setTexte($texte)
-    {
-        $this->texte = $texte;
-
-        return $this;
-    }
-
-    /**
-     * Get texte
-     *
-     * @return string
-     */
-    public function getTexte()
-    {
-        return $this->texte;
     }
 }

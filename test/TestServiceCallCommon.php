@@ -1,14 +1,14 @@
 <?php
-namespace Wtd\Test;
+namespace DmServer\Test;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\SchemaTool;
 use Silex\Application;
 use Silex\WebTestCase;
 use Symfony\Component\HttpKernel\Client;
-use Wtd\AppController;
-use Wtd\Models\Numeros;
-use Wtd\Wtd;
+use DmServer\AppController;
+use Dm\Models\Numeros;
+use DmServer\DmServer;
 
 class TestServiceCallCommon {
 

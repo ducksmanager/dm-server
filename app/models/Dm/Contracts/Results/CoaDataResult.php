@@ -1,5 +1,5 @@
 <?php
-namespace Wtd\models\Wtd\Contracts\Results;
+namespace Dm\Contracts\Results;
 
 
 use Doctrine\Common\Collections\ArrayCollection;

@@ -1,16 +1,16 @@
 <?php
 
-namespace Wtd;
+namespace DmServer;
 
+use Dm\Contracts\Dtos\NumeroSimple;
+use Dm\Models\Numeros;
+use Dm\Contracts\Results\FetchCollectionResult;
 use Doctrine\Common\Collections\ArrayCollection;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Wtd\Models\Numeros;
-use Wtd\models\Wtd\Contracts\Dtos\NumeroSimple;
-use Wtd\models\Wtd\Contracts\Results\FetchCollectionResult;
 
 class CollectionController extends AppController
 {

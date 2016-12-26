@@ -1,8 +1,8 @@
 <?php
 require_once __DIR__."/../../vendor/autoload.php";
-require_once __DIR__."/../Wtd.php";
+require_once __DIR__."/../DmServer.php";
 
-use Wtd\Wtd;
+use DmServer\DmServer;
 
 /**
  * @param string $modelNamespace
@@ -12,7 +12,7 @@ function getSchemaConfigKey($modelNamespace) {
     if (is_null($modelNamespace)) {
         return false;
     }
-    $schemas = Wtd::getSchemas();
+    $schemas = DmServer::getSchemas();
     $modelNamespace = str_replace('\\', '', $modelNamespace);
 
     foreach($schemas as $schemaKey=>$schema) {
@@ -62,5 +62,5 @@ if ($schemaConfigKey === false) {
     echo "Namespace in command line not found among schemas : ".$_SERVER['argv']."\n";
 }
 
-$em = Wtd::createEntityManager($schemaConfigKey);
+$em = DmServer::createEntityManager($schemaConfigKey);
 return \Doctrine\ORM\Tools\Console\ConsoleRunner::createHelperSet($em);

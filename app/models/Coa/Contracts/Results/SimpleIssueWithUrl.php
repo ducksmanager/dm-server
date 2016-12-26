@@ -1,6 +1,6 @@
 <?php
 
-namespace Wtd\models\Coa\Contracts\Results;
+namespace Coa\Contracts\Results;
 
 
 class SimpleIssueWithUrl

@@ -1,9 +1,9 @@
 <?php
-namespace Wtd\Test;
+namespace DmServer\Test;
 
 use Symfony\Component\HttpFoundation\Response;
-use Wtd\Models\Users;
-use Wtd\Wtd;
+use Dm\Models\Users;
+use DmServer\DmServer;
 
 class CollectionTest extends TestCommon
 {
@@ -29,7 +29,7 @@ class CollectionTest extends TestCommon
         ])->call();
         $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
 
-        $usersWithUsername = Wtd::getEntityManager(Wtd::CONFIG_DB_KEY_DM)->getRepository(Users::class)->findBy(
+        $usersWithUsername = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->getRepository(Users::class)->findBy(
             array('username' => 'dm_user')
         );
 

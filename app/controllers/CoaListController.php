@@ -1,6 +1,6 @@
 <?php
 
-namespace Wtd;
+namespace DmServer;
 
 use Coa\Models\BaseModel;
 use Silex\Application;
