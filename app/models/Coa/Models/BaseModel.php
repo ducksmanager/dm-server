@@ -8,4 +8,7 @@ namespace Coa\Models;
  */
 class BaseModel
 {
+    const COUNTRY_CODE_VALIDATION =     '[a-z]+';
+    const PUBLICATION_CODE_VALIDATION = '[a-z]+/[-A-Z0-9]+';
+    const ISSUE_CODE_VALIDATION =       '[a-z]+/[-A-Z0-9 ]+';
 }

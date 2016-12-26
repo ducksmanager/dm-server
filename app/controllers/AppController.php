@@ -112,4 +112,11 @@ abstract class AppController
             return new Response($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+    protected static function getParamAssertRegex($baseRegex, $maxOccurrences = 1) {
+        if ($maxOccurrences === 1) {
+            return '^'.$baseRegex.'$';
+        }
+        return '^('.$baseRegex.',){0,'.($maxOccurrences-1).'}'.$baseRegex.'$';
+    }
 }

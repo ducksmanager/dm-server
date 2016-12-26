@@ -2,6 +2,7 @@
 
 namespace Wtd;
 
+use CoverId\Models\BaseModel;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -98,6 +99,6 @@ class CoverIdController extends AppController
                     )
                 );
             }
-        )->assert('coverids', '^([0-9]+,){0,4}[0-9]+$');
+        )->assert('coverids', self::getParamAssertRegex(BaseModel::COVER_ID_VALIDATION, 4));
     }
 }

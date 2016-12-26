@@ -8,4 +8,5 @@ namespace CoverId\Models;
  */
 class BaseModel
 {
+    const COVER_ID_VALIDATION = '[0-9]+';
 }

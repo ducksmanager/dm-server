@@ -2,6 +2,7 @@
 
 namespace Wtd;
 
+use Coa\Models\BaseModel;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -34,7 +35,7 @@ class CoaListController extends AppController
                     )
                 );
             }
-        )->assert('country', '[a-z]+');
+        )->assert('country', self::getParamAssertRegex(BaseModel::COUNTRY_CODE_VALIDATION));
 
         $routing->get(
             '/coa/list/issues/{publicationcode}',
@@ -45,7 +46,7 @@ class CoaListController extends AppController
                     )
                 );
             }
-        )->assert('publicationcode', '^[a-z]+/[-A-Z0-9]+$');
+        )->assert('publicationcode', self::getParamAssertRegex(BaseModel::PUBLICATION_CODE_VALIDATION));
 
         $routing->get(
             '/coa/list/issuesbycodes/{issuecodes}',
@@ -55,6 +56,6 @@ class CoaListController extends AppController
                 );
                 return new JsonResponse(ModelHelper::getSimpleArray($response));
             }
-        )->assert('issuecodes', '^([a-z]+/[- A-Z0-9]+,){0,4}[a-z]+/[- A-Z0-9]+$');
+        )->assert('issuecodes', self::getParamAssertRegex(BaseModel::ISSUE_CODE_VALIDATION, 4));
     }
 }
