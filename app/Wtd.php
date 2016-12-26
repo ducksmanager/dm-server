@@ -206,7 +206,7 @@ class Wtd extends AppController implements ControllerProviderInterface
                     return;
                 }
                 if (is_null(self::getClientVersion($app))) {
-                    $clientVersion = $request->headers->get('x-wtd-version');
+                    $clientVersion = $request->headers->get('x-dm-version');
                     if (is_null($clientVersion)) {
                         return new Response('Unspecified client version', Response::HTTP_VERSION_NOT_SUPPORTED);
                     } else {
