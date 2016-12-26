@@ -29,10 +29,14 @@ $app->before(function (Request $request) {
 });
 
 $app->register(new Silex\Provider\LocaleServiceProvider());
-$app->register(new Silex\Provider\MonologServiceProvider(), array(
-    'monolog.logfile' => __DIR__.'/development.log',
-    'monolog.level' => \Monolog\Logger::INFO,
-));
+
+if (!isset($GLOBALS['__PHPUNIT_BOOTSTRAP'])) {
+    $app->register(new Silex\Provider\MonologServiceProvider(), array(
+        'monolog.logfile' => __DIR__ . '/development.log',
+        'monolog.level' => \Monolog\Logger::INFO,
+    ));
+}
+
 $app->register(new Silex\Provider\TranslationServiceProvider(), array(
     'locale_fallbacks' => array('en'),
 ));

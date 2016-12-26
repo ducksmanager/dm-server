@@ -322,7 +322,9 @@ class InternalController extends AppController
                         return new Response('Invalid parameter : db='.$db, Response::HTTP_BAD_REQUEST);
                     }
 
-                    $app['monolog']->addInfo('Raw sql sent : '.$query);
+                    if (isset($app['monolog'])) {
+                        $app['monolog']->addInfo('Raw sql sent : '.$query);
+                    }
                     $results = $em->getConnection()->fetchAll($query);
                     return new JsonResponse($results);
                 });

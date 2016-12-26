@@ -17,6 +17,9 @@ class StatusController extends AppController
     {
         $routing->get(
             '/status/{serverIp}/{serverPort}',
+            /**
+             * @codeCoverageIgnore
+             */
             function (Application $app, Request $request, $serverIp, $serverPort) {
                 return AppController::return500ErrorOnException($app, function() use ($serverIp, $serverPort) {
                     $rawSqlUserRole = 'rawsql';

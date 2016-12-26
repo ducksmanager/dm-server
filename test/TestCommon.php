@@ -225,7 +225,8 @@ class TestCommon extends WebTestCase {
         $urls = [
             'fr/DDD 1' => 'webusers/2010/12/fr_ddd_001a_001.jpg',
             'fr/DDD 2' => 'webusers/2010/12/fr_ddd_002a_001.jpg',
-            'fr/MP 300' => 'webusers/2010/12/fr_mp_0300a_001.jpg'
+            'fr/MP 300' => 'webusers/2010/12/fr_mp_0300a_001.jpg',
+            'fr/XXX 111' => 'webusers/2010/12/fr_xxx_111_001.jpg'
         ];
 
         foreach($urls as $issueNumber => $url) {
