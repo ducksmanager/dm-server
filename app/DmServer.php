@@ -221,6 +221,8 @@ class DmServer extends AppController implements ControllerProviderInterface
             }
         );
 
+        AppController::initTranslation($app);
+
         CollectionController::addRoutes($routing);
         CoaListController::addRoutes($routing);
         CoverIdController::addRoutes($routing);

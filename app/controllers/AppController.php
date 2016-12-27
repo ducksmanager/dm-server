@@ -10,6 +10,13 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 abstract class AppController
 {
+    /** @var $translator TranslationTrait */
+    static $translator;
+
+    static function initTranslation($app) {
+        self::$translator = $app['translator'];
+    }
+
     /**
      * @param Application $app
      * @param string $url
@@ -26,18 +33,6 @@ abstract class AppController
             $subRequest = Request::create('/internal' . $url, $type, $parameters);
         }
         return $app->handle($subRequest, HttpKernelInterface::SUB_REQUEST, false);
-    }
-
-    /**
-     * @param Application $app
-     * @param string $string
-     * @return string
-     */
-    protected static function translate(Application $app, $string) {
-        /** @var TranslationTrait $translator */
-        $translator = $app['translator'];
-
-        return $translator->trans($string);
     }
 
     /**

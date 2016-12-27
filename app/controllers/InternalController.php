@@ -58,7 +58,7 @@ class InternalController extends AppController
                     else {
                         if (!(self::callInternal($app, '/user/exists', 'GET', [$username])
                             ->isSuccessful())) {
-                            return new Response(self::translate($app, 'UTILISATEUR_EXISTANT'), Response::HTTP_CONFLICT);
+                            return new Response(self::$translator->trans('UTILISATEUR_EXISTANT'), Response::HTTP_CONFLICT);
                         }
                     }
                 }
@@ -66,7 +66,7 @@ class InternalController extends AppController
                     return new Response('OK', Response::HTTP_OK);
                 }
 
-                return new Response(self::translate($app, $error), Response::HTTP_PRECONDITION_FAILED);
+                return new Response(self::$translator->trans($error), Response::HTTP_PRECONDITION_FAILED);
             }
         );
 
