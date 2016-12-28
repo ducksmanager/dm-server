@@ -120,6 +120,18 @@ class CollectionController extends AppController
                         ])->getContent(), 200, [], true
                     );
                 }
+                else {
+                    return new JsonResponse(
+                        self::callInternal($app, '/collection/issues', 'POST', [
+                            'country'      => $country,
+                            'publication'  => $publication,
+                            'issuenumbers' => $issuenumbers,
+                            'condition' => $condition,
+                            'istosell' => $istosell,
+                            'purchaseid' => $purchaseid
+                        ])->getContent(), 200, [], true
+                    );
+                }
             }
         )
             ->value('condition', null)

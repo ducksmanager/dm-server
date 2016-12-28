@@ -144,6 +144,8 @@ class TestCommon extends WebTestCase {
         $numero1->setMagazine('DDD');
         $numero1->setNumero('1');
         $numero1->setEtat('indefini');
+        $numero1->setIdAcquisition('-2');
+        $numero1->setAv(false);
         $numero1->setIdUtilisateur($user->getId());
         $dmEntityManager->persist($numero1);
         $dmEntityManager->flush();

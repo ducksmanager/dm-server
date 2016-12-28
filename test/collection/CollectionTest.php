@@ -1,6 +1,8 @@
 <?php
 namespace DmServer\Test;
 
+use Dm\Models\Numeros;
+use DmServer\AppController;
 use Symfony\Component\HttpFoundation\Response;
 use Dm\Models\Users;
 use DmServer\DmServer;
@@ -90,7 +92,7 @@ class CollectionTest extends TestCommon
         $this->assertEquals(4, count($this->getCurrentUserIssues()));
     }
 
-    public function testUpdateCollection() {
+    public function testDeleteCollection() {
         self::createTestCollection();
         $response = $this->buildAuthenticatedServiceWithTestUser('/collection/update', TestCommon::$testUser, 'POST', [
             'country' => 'fr',
@@ -104,6 +106,47 @@ class CollectionTest extends TestCommon
 
         $this->assertEquals('DELETE', $responseObject[0]->action);
         $this->assertEquals(1, $responseObject[0]->numberOfIssues);
+    }
+
+    public function testUpdateCollection() {
+        self::createTestCollection();
+
+        $country = 'fr';
+        $publication = 'DDD';
+        $issueToUpdate = '1';
+        $issueToCreate = '3';
+
+        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/update', TestCommon::$testUser, 'POST', [
+            'country' => $country,
+            'publication' => $publication,
+            'issuenumbers' => [$issueToUpdate, $issueToCreate],
+            'condition' => 'bon',
+        ])->call();
+
+        $responseObject = json_decode($response->getContent());
+        $this->assertNotNull($responseObject);
+
+        $this->assertEquals('UPDATE', $responseObject[0]->action);
+        $this->assertEquals(1, $responseObject[0]->numberOfIssues);
+
+        /** @var Numeros $updatedIssue */
+        $updatedIssue = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->getRepository(Numeros::class)->findOneBy(
+            ['idUtilisateur' => AppController::getSessionUser($this->app)['id'], 'pays' => $country, 'magazine' => $publication, 'numero' => $issueToUpdate]
+        );
+        $this->assertEquals('bon', $updatedIssue->getEtat());
+        $this->assertEquals('-2', $updatedIssue->getIdAcquisition());
+        $this->assertFalse($updatedIssue->getAv());
+
+        $this->assertEquals('CREATE', $responseObject[1]->action);
+        $this->assertEquals(1, $responseObject[1]->numberOfIssues);
+
+        /** @var Numeros $createdIssue */
+        $createdIssue = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->getRepository(Numeros::class)->findOneBy(
+            ['idUtilisateur' => AppController::getSessionUser($this->app)['id'], 'pays' => $country, 'magazine' => $publication, 'numero' => $issueToCreate]
+        );
+        $this->assertEquals('bon', $createdIssue->getEtat());
+        $this->assertEquals('-2', $createdIssue->getIdAcquisition());
+        $this->assertFalse($createdIssue->getAv());
     }
 
 }

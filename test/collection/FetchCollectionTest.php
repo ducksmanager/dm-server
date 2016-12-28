@@ -1,9 +1,6 @@
 <?php
 namespace DmServer\Test;
 
-use Symfony\Component\HttpFoundation\Response;
-use Dm\Models\Numeros;
-use Dm\Models\Users;
 
 class FetchCollectionTest extends TestCommon
 {

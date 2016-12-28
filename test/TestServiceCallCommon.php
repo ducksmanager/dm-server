@@ -1,14 +1,7 @@
 <?php
 namespace DmServer\Test;
 
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Tools\SchemaTool;
-use Silex\Application;
-use Silex\WebTestCase;
 use Symfony\Component\HttpKernel\Client;
-use DmServer\AppController;
-use Dm\Models\Numeros;
-use DmServer\DmServer;
 
 class TestServiceCallCommon {
 
