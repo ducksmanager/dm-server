@@ -1,4 +1,5 @@
 <?php
+use DmServer\AppController;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -73,6 +74,7 @@ $app->extend(
 
     return $translator;
 });
+AppController::initTranslation($app);
 
 $passwordEncoder = new \Symfony\Component\Security\Core\Encoder\BCryptPasswordEncoder(5);
 
