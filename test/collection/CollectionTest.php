@@ -89,4 +89,21 @@ class CollectionTest extends TestCommon
         $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
         $this->assertEquals(4, count($this->getCurrentUserIssues()));
     }
+
+    public function testUpdateCollection() {
+        self::createTestCollection();
+        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/update', TestCommon::$testUser, 'POST', [
+            'country' => 'fr',
+            'publication' => 'DDD',
+            'issuenumbers' => ['1'],
+            'condition' => 'non_possede',
+        ])->call();
+
+        $responseObject = json_decode($response->getContent());
+        $this->assertNotNull($responseObject);
+
+        $this->assertEquals('DELETE', $responseObject[0]->action);
+        $this->assertEquals(1, $responseObject[0]->numberOfIssues);
+    }
+
 }

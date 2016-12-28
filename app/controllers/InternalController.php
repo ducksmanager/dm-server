@@ -7,6 +7,7 @@ use Coa\Models\InducksIssue;
 use Coa\Models\InducksPublication;
 use CoverId\Models\Covers;
 use Coa\Contracts\Results\SimpleIssueWithUrl;
+use Dm\Contracts\Results\UpdateCollectionResult;
 use Dm\Models\Numeros;
 use Dm\Models\Users;
 use Doctrine\ORM\Query\Expr\Join;
@@ -129,6 +130,36 @@ class InternalController extends AppController
                     );
 
                     return new JsonResponse(ModelHelper::getSerializedArray($issues));
+                });
+            }
+        );
+
+        $routing->delete(
+            '/internal/collection/issues',
+            function (Request $request, Application $app) {
+                return AppController::return500ErrorOnException($app, function() use ($app, $request) {
+                    $country = $request->request->get('country');
+                    $publication = $request->request->get('publication');
+                    $issuenumbers = $request->request->get('issuenumbers');
+
+                    $qb = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->createQueryBuilder();
+                    $qb
+                        ->delete(Numeros::class, 'issues')
+
+                        ->andWhere($qb->expr()->eq('issues.pays', ':country'))
+                        ->setParameter(':country', $country)
+
+                        ->andWhere($qb->expr()->eq('issues.magazine', ':publication'))
+                        ->setParameter(':publication', $publication)
+
+                        ->andWhere($qb->expr()->in('issues.numero', ':issuenumbers'))
+                        ->setParameter(':issuenumbers', $issuenumbers);
+
+                    $nbRemoved = $qb->getQuery()->getResult();
+
+                    $deletionResult = new UpdateCollectionResult('DELETE', $nbRemoved);
+
+                    return new JsonResponse(ModelHelper::getSimpleArray([$deletionResult]));
                 });
             }
         );

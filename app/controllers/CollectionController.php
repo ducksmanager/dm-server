@@ -97,9 +97,33 @@ class CollectionController extends AppController
                     ])->getContent()
                 );
                 $result->getStatic()->setMagazines(new ArrayCollection($publicationTitles));
-
                 return new JsonResponse($result->toArray());
             }
         );
+
+        $routing->post(
+            '/collection/update',
+            function (Application $app, Request $request) {
+                $country = $request->request->get('country');
+                $publication = $request->request->get('publication');
+                $issuenumbers = $request->request->get('issuenumbers');
+                $condition = $request->request->get('condition');
+                $istosell = $request->request->get('istosell');
+                $purchaseid = $request->request->get('purchaseid');
+
+                if ($condition === 'non_possede') {
+                    return new JsonResponse(
+                        self::callInternal($app, '/collection/issues', 'DELETE', [
+                            'country'      => $country,
+                            'publication'  => $publication,
+                            'issuenumbers' => $issuenumbers
+                        ])->getContent(), 200, [], true
+                    );
+                }
+            }
+        )
+            ->value('condition', null)
+            ->value('istosell', null)
+            ->value('purchaseid', null);
     }
 }
