@@ -9,19 +9,6 @@ use DmServer\DmServer;
 
 class CollectionTest extends TestCommon
 {
-    /**
-     * @return null|Response
-     */
-    private function callAddIssue()
-    {
-        return $this->buildAuthenticatedServiceWithTestUser('/collection/add', TestCommon::$testUser, 'POST', [
-            'country' => 'fr',
-            'publication' => 'DDD',
-            'issuenumber' => '3',
-            'condition' => 'bon'
-        ])->call();
-    }
-
     public function testCreateCollection() {
         $response = $this->buildAuthenticatedService('/user/new', TestCommon::$testUser, [], [
             'username' => 'dm_user',
@@ -86,9 +73,14 @@ class CollectionTest extends TestCommon
 
         self::createTestCollection('dm_user'); // Creates a collection with 3 issues
 
-        $response = $this->callAddIssue();
+        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/issues', TestCommon::$testUser, 'POST', [
+            'country' => 'fr',
+            'publication' => 'DDD',
+            'issuenumbers' => ['3'],
+            'condition' => 'bon'
+        ])->call();
 
-        $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
         $this->assertEquals(4, count($this->getCurrentUserIssues()));
     }
 
@@ -103,6 +95,7 @@ class CollectionTest extends TestCommon
             'condition' => 'non_possede',
         ])->call();
 
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
         $responseObject = json_decode($response->getContent());
         $this->assertNotNull($responseObject);
 
@@ -126,6 +119,7 @@ class CollectionTest extends TestCommon
             'condition' => 'bon',
         ])->call();
 
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
         $responseObject = json_decode($response->getContent());
         $this->assertNotNull($responseObject);
 

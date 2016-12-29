@@ -19,18 +19,6 @@ class CollectionController extends AppController
      */
     public static function addRoutes($routing)
     {
-        $routing->post(
-            '/collection/add',
-            function (Application $app, Request $request) {
-                return self::callInternal($app, '/collection/add', 'PUT', [
-                    'country' => $request->request->get('country'),
-                    'publication' => $request->request->get('publication'),
-                    'issuenumber' => $request->request->get('issuenumber'),
-                    'condition'   => $request->request->get('condition')
-                ]);
-            }
-        );
-
         $routing->get(
             '/collection/issues',
             function (Application $app, Request $request) {

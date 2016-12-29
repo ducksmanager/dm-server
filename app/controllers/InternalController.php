@@ -103,22 +103,6 @@ class InternalController extends AppController
             });
         });
 
-        $routing->put('/internal/collection/add', function (Request $request, Application $app) {
-            return AppController::return500ErrorOnException($app, function() use ($request, $app) {
-                $issue = new Numeros();
-                $issue->setPays($request->request->get('country'));
-                $issue->setMagazine($request->request->get('publication'));
-                $issue->setNumero($request->request->get('issuenumber'));
-                $issue->setEtat($request->request->get('condition'));
-                $issue->setIdUtilisateur(self::getSessionUser($app)['id']);
-
-                DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->persist($issue);
-                DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->flush();
-
-                return new Response('OK', Response::HTTP_CREATED);
-            });
-        });
-
         $routing->get(
             '/internal/collection/issues',
             function (Request $request, Application $app) {
