@@ -7,12 +7,15 @@ class FetchCollectionTest extends TestCommon
     public function setUp()
     {
         parent::setUp();
-        self::createTestCollection('dm_user');
+
+        $collectionUserInfo = self::createTestCollection('dm_user');
+        self::setSessionUser($this->app, $collectionUserInfo);
+
         self::createCoaData();
     }
 
     public function testFetchCollection() {
-        $service = $this->buildAuthenticatedServiceWithTestUser('/collection/fetch', TestCommon::$testUser, 'GET');
+        $service = $this->buildAuthenticatedServiceWithTestUser('/collection/issues', TestCommon::$testUser, 'GET');
         $response = $service->call();
 
         $objectResponse = json_decode($response->getContent());

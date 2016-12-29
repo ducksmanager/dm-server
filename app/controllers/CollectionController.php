@@ -20,28 +20,6 @@ class CollectionController extends AppController
     public static function addRoutes($routing)
     {
         $routing->post(
-            '/collection/new',
-            function (Application $app, Request $request) {
-                $check = self::callInternal($app, '/user/new/check', 'GET', [
-                    $request->request->get('username'),
-                    $request->request->get('password'),
-                    $request->request->get('password2')
-                ]);
-                if ($check->getStatusCode() !== Response::HTTP_OK) {
-                    return $check;
-                }
-                else {
-                    return self::callInternal($app, '/user/new', 'PUT', [
-                        'username' => $request->request->get('username'),
-                        'password' => $request->request->get('password'),
-                        'email' => $request->request->get('email')
-                    ]);
-                }
-
-            }
-        );
-
-        $routing->post(
             '/collection/add',
             function (Application $app, Request $request) {
                 return self::callInternal($app, '/collection/add', 'PUT', [
@@ -54,9 +32,9 @@ class CollectionController extends AppController
         );
 
         $routing->get(
-            '/collection/fetch',
+            '/collection/issues',
             function (Application $app, Request $request) {
-                $issuesResponse = self::callInternal($app, '/collection/fetch', 'GET');
+                $issuesResponse = self::callInternal($app, '/collection/issues', 'GET');
                 if ($issuesResponse->getStatusCode() !== Response::HTTP_OK) {
                     return $issuesResponse;
                 }
@@ -102,7 +80,7 @@ class CollectionController extends AppController
         );
 
         $routing->post(
-            '/collection/update',
+            '/collection/issues',
             function (Application $app, Request $request) {
                 $country = $request->request->get('country');
                 $publication = $request->request->get('publication');

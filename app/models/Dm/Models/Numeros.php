@@ -45,14 +45,14 @@ class Numeros extends \Dm\Models\BaseModel
      *
      * @ORM\Column(name="ID_Acquisition", type="integer", nullable=false)
      */
-    private $idAcquisition = '-1';
+    private $idAcquisition = -1;
 
     /**
      * @var boolean
      *
      * @ORM\Column(name="AV", type="boolean", nullable=false)
      */
-    private $av = '0';
+    private $av = false;
 
     /**
      * @var integer

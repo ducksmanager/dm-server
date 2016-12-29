@@ -51,6 +51,7 @@ class TestCommon extends WebTestCase {
 
         foreach(DmServer::$configuredEntityManagerNames as $emName) {
             self::$schemas[$emName]->recreateSchema();
+            DmServer::getEntityManager($emName)->clear();
         }
     }
 
@@ -126,6 +127,7 @@ class TestCommon extends WebTestCase {
 
     /**
      * @param string $username
+     * @return array user info
      */
     protected static function createTestCollection($username = 'dm_user') {
         $dmEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_DM];
@@ -168,6 +170,8 @@ class TestCommon extends WebTestCase {
         $dmEntityManager->persist($numero3);
 
         $dmEntityManager->flush();
+
+        return array('username' => $user->getUsername(), 'id' => $user->getId());
     }
 
     protected static function createCoaData() {
@@ -216,6 +220,7 @@ class TestCommon extends WebTestCase {
         $coaEntityManager->persist($issue3);
 
         $coaEntityManager->flush();
+        $coaEntityManager->clear();
     }
 
     protected static function createCoverIds()
@@ -249,5 +254,13 @@ class TestCommon extends WebTestCase {
 
     protected static function getPathToFileToUpload($fileName) {
         return implode(DIRECTORY_SEPARATOR, array(__DIR__, 'fixtures', $fileName));
+    }
+
+    /**
+     * @param Application $app
+     * @param $userInfo array
+     */
+    protected static function setSessionUser(Application $app, $userInfo) {
+        $app['session']->set('user', $userInfo);
     }
 }

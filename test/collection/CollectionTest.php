@@ -23,7 +23,7 @@ class CollectionTest extends TestCommon
     }
 
     public function testCreateCollection() {
-        $response = $this->buildAuthenticatedService('/collection/new', TestCommon::$testUser, [], [
+        $response = $this->buildAuthenticatedService('/user/new', TestCommon::$testUser, [], [
             'username' => 'dm_user',
             'password' => 'dm_pass',
             'password2' => 'dm_pass',
@@ -41,7 +41,7 @@ class CollectionTest extends TestCommon
     }
 
     public function testCreateCollectionErrorDifferentPasswords() {
-        $response = $this->buildAuthenticatedService('/collection/new', TestCommon::$testUser, [], [
+        $response = $this->buildAuthenticatedService('/user/new', TestCommon::$testUser, [], [
             'username' => 'dm_user',
             'password' => 'dm_pass',
             'password2' => 'dm_pass_different',
@@ -51,7 +51,7 @@ class CollectionTest extends TestCommon
     }
 
     public function testCreateCollectionErrorShortUsername() {
-        $response = $this->buildAuthenticatedService('/collection/new', TestCommon::$testUser, [], [
+        $response = $this->buildAuthenticatedService('/user/new', TestCommon::$testUser, [], [
             'username' => 'dm',
             'password' => 'dm_pass',
             'password2' => 'dm_pass',
@@ -61,7 +61,7 @@ class CollectionTest extends TestCommon
     }
 
     public function testCreateCollectionErrorShortPassword() {
-        $response = $this->buildAuthenticatedService('/collection/new', TestCommon::$testUser, [], [
+        $response = $this->buildAuthenticatedService('/user/new', TestCommon::$testUser, [], [
             'username' => 'dm_user',
             'password' => 'pass',
             'password2' => 'pass',
@@ -72,7 +72,7 @@ class CollectionTest extends TestCommon
 
     public function testCreateCollectionErrorExistingUsername() {
         self::createTestCollection();
-        $response = $this->buildAuthenticatedService('/collection/new', TestCommon::$testUser, [], [
+        $response = $this->buildAuthenticatedService('/user/new', TestCommon::$testUser, [], [
             'username' => 'dm_user',
             'password' => 'dm_pass',
             'password2' => 'dm_pass',
@@ -92,9 +92,11 @@ class CollectionTest extends TestCommon
         $this->assertEquals(4, count($this->getCurrentUserIssues()));
     }
 
-    public function testDeleteCollection() {
-        self::createTestCollection();
-        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/update', TestCommon::$testUser, 'POST', [
+    public function testDeleteFromCollection() {
+        $collectionUserInfo = self::createTestCollection();
+        self::setSessionUser($this->app, $collectionUserInfo);
+
+        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/issues', TestCommon::$testUser, 'POST', [
             'country' => 'fr',
             'publication' => 'DDD',
             'issuenumbers' => ['1'],
@@ -109,14 +111,15 @@ class CollectionTest extends TestCommon
     }
 
     public function testUpdateCollection() {
-        self::createTestCollection();
+        $collectionUserInfo = self::createTestCollection();
+        self::setSessionUser($this->app, $collectionUserInfo);
 
         $country = 'fr';
         $publication = 'DDD';
         $issueToUpdate = '1';
         $issueToCreate = '3';
 
-        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/update', TestCommon::$testUser, 'POST', [
+        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/issues', TestCommon::$testUser, 'POST', [
             'country' => $country,
             'publication' => $publication,
             'issuenumbers' => [$issueToUpdate, $issueToCreate],
@@ -133,6 +136,7 @@ class CollectionTest extends TestCommon
         $updatedIssue = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->getRepository(Numeros::class)->findOneBy(
             ['idUtilisateur' => AppController::getSessionUser($this->app)['id'], 'pays' => $country, 'magazine' => $publication, 'numero' => $issueToUpdate]
         );
+        $this->assertNotNull($updatedIssue);
         $this->assertEquals('bon', $updatedIssue->getEtat());
         $this->assertEquals('-2', $updatedIssue->getIdAcquisition());
         $this->assertFalse($updatedIssue->getAv());
@@ -144,6 +148,7 @@ class CollectionTest extends TestCommon
         $createdIssue = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->getRepository(Numeros::class)->findOneBy(
             ['idUtilisateur' => AppController::getSessionUser($this->app)['id'], 'pays' => $country, 'magazine' => $publication, 'numero' => $issueToCreate]
         );
+        $this->assertNotNull($createdIssue);
         $this->assertEquals('bon', $createdIssue->getEtat());
         $this->assertEquals('-2', $createdIssue->getIdAcquisition());
         $this->assertFalse($createdIssue->getAv());

@@ -120,7 +120,7 @@ class InternalController extends AppController
         });
 
         $routing->get(
-            '/internal/collection/fetch',
+            '/internal/collection/issues',
             function (Request $request, Application $app) {
                 return AppController::return500ErrorOnException($app, function() use ($app) {
                     /** @var Numeros[] $issues */
@@ -153,7 +153,10 @@ class InternalController extends AppController
                         ->setParameter(':publication', $publication)
 
                         ->andWhere($qb->expr()->in('issues.numero', ':issuenumbers'))
-                        ->setParameter(':issuenumbers', $issuenumbers);
+                        ->setParameter(':issuenumbers', $issuenumbers)
+
+                        ->andWhere($qb->expr()->in('issues.idUtilisateur', ':userId'))
+                        ->setParameter(':userId', self::getSessionUser($app)['id']);
 
                     $nbRemoved = $qb->getQuery()->getResult();
 
@@ -168,6 +171,7 @@ class InternalController extends AppController
             '/internal/collection/issues',
             function (Request $request, Application $app) {
                 return AppController::return500ErrorOnException($app, function() use ($app, $request) {
+
                     $country = $request->request->get('country');
                     $publication = $request->request->get('publication');
                     $issuenumbers = $request->request->get('issuenumbers');
@@ -194,6 +198,9 @@ class InternalController extends AppController
 
                         ->andWhere($qb->expr()->in('issues.numero', ':issuenumbers'))
                         ->setParameter(':issuenumbers', $issuenumbers)
+
+                        ->andWhere($qb->expr()->eq('issues.idUtilisateur', ':userId'))
+                        ->setParameter(':userId', self::getSessionUser($app)['id'])
 
                         ->indexBy('issues', 'issues.numero');
 
