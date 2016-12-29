@@ -26,7 +26,9 @@ class RawSqlTest extends TestCommon
             'query' => 'SELECT * FROM numeros',
             'db'    => 'db_wrong'
         ]);
+        ob_start();
         $response = $service->call();
+        ob_end_clean();
 
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
