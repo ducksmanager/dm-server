@@ -44,18 +44,21 @@ class CoverIdController extends AppController
         $routing->post(
             '/cover-id/search',
             function (Application $app, Request $request) {
-                if (($nbUploaded = $request->files->count()) !== 1) {
-                    return new Response('Invalid number of uploaded files : should be 1, was '.$nbUploaded, Response::HTTP_BAD_REQUEST);
-                }
-                else {
-                    /** @var File $uploadedFile */
-                    $uploadedFile = $request->files->get(self::$uploadFileName);
-                    if (is_null($uploadedFile)) {
-                        return new Response('Invalid upload file : expected file name '.self::$uploadFileName, Response::HTTP_BAD_REQUEST);
+                return AppController::return500ErrorOnException($app, function() use ($app, $request) {
+                    $app['monolog']->addInfo('Cover ID search: start');
+                    if (($nbUploaded = $request->files->count()) !== 1) {
+                        return new Response('Invalid number of uploaded files : should be 1, was '.$nbUploaded, Response::HTTP_BAD_REQUEST);
                     }
                     else {
-                        try {
+                        /** @var File $uploadedFile */
+                        $uploadedFile = $request->files->get(self::$uploadFileName);
+                        if (is_null($uploadedFile)) {
+                            return new Response('Invalid upload file : expected file name '.self::$uploadFileName, Response::HTTP_BAD_REQUEST);
+                        }
+                        else {
+                            $app['monolog']->addInfo('Cover ID search: upload file validation done');
                             $file = $uploadedFile->move(self::$uploadDestination[0], self::$uploadDestination[1]);
+                            $app['monolog']->addInfo('Cover ID search: upload file moving done');
 
                             switch(self::$similarImagesEngine) {
                                 case 'mocked':
@@ -64,29 +67,30 @@ class CoverIdController extends AppController
                                 default:
                                     $engineResponse = SimilarImagesHelper::getSimilarImages($file);
                             }
+                            $app['monolog']->addInfo('Cover ID search: processing done');
 
                             if (!is_null($engineResponse) && !empty($engineResponse['image_ids'])) {
                                 $coverids = implode(',', $engineResponse['image_ids']);
+                                $app['monolog']->addInfo('Cover ID search: matched cover IDs '.$coverids);
                                 $issueCodes = ModelHelper::getUnserializedArrayFromJson(
                                     self::callInternal($app, '/cover-id/issuecodes', 'GET', [$coverids])->getContent()
                                 );
 
                                 $issueCodesStr = implode(',', $issueCodes);
+                                $app['monolog']->addInfo('Cover ID search: matched issue codes '.$issueCodesStr);
                                 $issues = ModelHelper::getUnserializedArrayFromJson(
                                     self::callInternal($app, '/coa/issuesbycodes', 'GET', [$issueCodesStr])->getContent()
                                 );
+                                $app['monolog']->addInfo('Cover ID search: matched '.count($issueCodes).' issues');
 
                                 return new JsonResponse(ModelHelper::getSimpleArray($issues));
                             }
                             else {
-                                return new Response("Can't decode image similarity response", Response::HTTP_INTERNAL_SERVER_ERROR);
+                                throw new \Exception("Can't decode image similarity response");
                             }
                         }
-                        catch(\Exception $e) {
-                            return new Response("Exception : ".$e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
-                        }
                     }
-                }
+                });
             }
         );
 
