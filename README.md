@@ -1,4 +1,4 @@
-### Instructions
+### Setup
 
 Clone the repo, `cd` into it.
 
@@ -10,3 +10,8 @@ Run a container :
 
 Then run the following command to fix the Apache logfile structure :
 ``docker exec -it dm-server-box /bin/bash -c 'cd /var/log/apache2 && for logfile in /var/log/apache2/*.log; do rm $logfile && touch $logfile; done && /etc/init.d/apache2 reload'``
+
+
+### Configuration
+
+Copy `config/config.db.base.ini` into `config/config.db.ini` and change the DB settings.
