@@ -21,43 +21,42 @@ class StatusController extends AppController
              */
             function (Application $app, Request $request, $serverIp, $serverPort) {
                 return AppController::return500ErrorOnException($app, function() use ($serverIp, $serverPort) {
-                    $rawSqlUserRole = 'rawsql';
-                    $credentialsForRawSql = DmServer::getAppRoles()[$rawSqlUserRole];
-                    $rawSqlUserPassword = explode(':', $credentialsForRawSql)[1];
 
-                    $ch = curl_init();
-                    curl_setopt($ch, CURLOPT_URL, 'http://' . $serverIp . ':' . $serverPort . '/dm-server/rawsql');
-                    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-                    curl_setopt($ch, CURLOPT_POST, TRUE);
-                    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query(
+                    $databaseChecks = [
                         [
-                            'query' => 'SELECT * FROM inducks_country',
-                            'db' => 'db_coa'
+                            'db' => DmServer::CONFIG_DB_KEY_DM,
+                            'query' => 'SELECT * FROM bibliotheque_ordre_magazines LIMIT 1',
+                            'expectedQueryResultsHeader' => ['Pays', 'Magazine', 'Ordre', 'ID_Utilisateur']
+
+                        ], [
+                            'db' => DmServer::CONFIG_DB_KEY_COA,
+                            'query' => 'SELECT * FROM inducks_country LIMIT 1',
+                            'expectedQueryResultsHeader' => ['countrycode', 'countryname', 'defaultlanguage']
+                        ], [
+                            'db' => DmServer::CONFIG_DB_KEY_COVER_ID,
+                            'query' => 'SELECT * FROM covers LIMIT 1',
+                            'expectedQueryResultsHeader' => ['ID', 'issuecode', 'sitecode', 'url']
+                        ], [
+                            'db' => DmServer::CONFIG_DB_KEY_DM_STATS,
+                            'query' => 'SELECT * FROM utilisateurs_histoires_manquantes LIMIT 1',
+                            'expectedQueryResultsHeader' => ['ID_User', 'personcode', 'storycode']
                         ]
-                    ));
-                    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                        'Authorization: Basic ' . base64_encode($rawSqlUserRole . ':' . $rawSqlUserPassword),
-                        'Content-Type: application/x-www-form-urlencoded',
-                        'Cache-Control: no-cache',
-                        'x-dm-version: 1.0',
-                    ));
+                    ];
 
-                    $buffer = curl_exec($ch);
-                    curl_close($ch);
-
-                    if ($buffer) {
-                        $objectResponse = json_decode($buffer, true);
-
-                        if (count($objectResponse) > 1
-                            && array_keys($objectResponse[0]) === ['countrycode', 'countryname', 'defaultlanguage']
-                        ) {
-                            return new Response('OK');
-                        } else {
-                            return new Response('Error' . "\n\n" . print_r($objectResponse, true), 500);
+                    $errors = [];
+                    foreach($databaseChecks as $dbCheck) {
+                        $response = DatabaseCheckHelper::checkDatabase($serverIp, $serverPort, $dbCheck['expectedQueryResultsHeader'], $dbCheck['query'], $dbCheck['db']);
+                        if ($response->getStatusCode() !== Response::HTTP_OK) {
+                            $errors[] = $response->getContent();
                         }
                     }
-                    return new Response('Error', 500);
+
+                    if (count($errors) > 0) {
+                        return new Response(implode('<br />', $errors));
+                    }
+                    else {
+                        return new Response('OK for all databases');
+                    }
                 });
 
             }
