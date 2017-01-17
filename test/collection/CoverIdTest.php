@@ -35,7 +35,7 @@ class CoverIdTest extends TestCommon
     public function testGetIssueListByIssueCodes() {
         $service = $this->buildAuthenticatedServiceWithTestUser(
             '/cover-id/issuecodes/'
-            . implode(',', [self::$coverIds[0], self::$coverIds[2]]), TestCommon::$testUser, 'GET');
+            . implode(',', [self::$coverIds[0], self::$coverIds[2]]), TestCommon::$testUser);
         $response = $service->call();
 
         $objectResponse = json_decode($response->getContent());
@@ -93,8 +93,7 @@ class CoverIdTest extends TestCommon
 
     public function testDownloadCover() {
         $service = $this->buildAuthenticatedServiceWithTestUser(
-            '/cover-id/download/webusers/2010/12/fr_ddd_001a_001.jpg', TestCommon::$testUser, 'GET'
-        );
+            '/cover-id/download/webusers/2010/12/fr_ddd_001a_001.jpg', TestCommon::$testUser);
         /** @var BinaryFileResponse $response */
         $response = $service->call();
 
