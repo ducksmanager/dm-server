@@ -31,6 +31,9 @@
             "Dm\\Models\\": [
                 "app/models/Dm/Models"
             ],
+            "DmStats\\Models\\": [
+                "app/models/DmStats/Models"
+            ],
             "DmServer\\": [
                 "app",
                 "app/controllers",
