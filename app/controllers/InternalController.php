@@ -10,6 +10,7 @@ use Coa\Contracts\Results\SimpleIssueWithUrl;
 use Dm\Contracts\Results\UpdateCollectionResult;
 use Dm\Models\Numeros;
 use Dm\Models\Users;
+use DmStats\Models\AuteursHistoires;
 use Doctrine\ORM\Query\Expr\Join;
 use Exception;
 use Silex\Application;
@@ -404,6 +405,26 @@ class InternalController extends AppController
                 });
             }
         )->assert('coverUrl', '.+');
+
+        $routing->get(
+            '/internal/stats/watchedauthors',
+            function (Request $request, Application $app) {
+                return AppController::return500ErrorOnException($app, function() {
+                    $qbWatchedAuthors = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM_STATS)->createQueryBuilder();
+                    $qbWatchedAuthors
+                        ->select('authors.personcode')
+                        ->from(AuteursHistoires::class, 'authors');
+
+                    $watchedAuthorsResults = $qbWatchedAuthors->getQuery()->getResult();
+
+                    $issueCodes = array_map(function($author) {
+                        return $author['personcode'];
+                    }, $watchedAuthorsResults);
+
+                    return new JsonResponse(ModelHelper::getSerializedArray($issueCodes));
+                });
+            }
+        );
 
         $routing->post(
             '/internal/rawsql',

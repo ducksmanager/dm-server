@@ -229,6 +229,7 @@ class DmServer extends AppController implements ControllerProviderInterface
         InternalController::addRoutes($routing);
         RawSqlController::addRoutes($routing);
         StatusController::addRoutes($routing);
+        StatsController::addRoutes($routing);
 
         return $routing;
     }

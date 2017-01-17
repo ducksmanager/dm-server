@@ -5,6 +5,7 @@ use Coa\Models\InducksCountryname;
 use Coa\Models\InducksIssue;
 use Coa\Models\InducksPublication;
 use CoverId\Models\Covers;
+use DmStats\Models\AuteursHistoires;
 use Silex\Application;
 use Silex\WebTestCase;
 use DmServer\AppController;
@@ -221,6 +222,16 @@ class TestCommon extends WebTestCase {
 
         $coaEntityManager->flush();
         $coaEntityManager->clear();
+    }
+
+    public function createStatsData() {
+        $dmStatsEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_DM_STATS];
+
+        $author_story = new AuteursHistoires();
+        $author_story->setPersoncode('CB');
+        $author_story->setStorycode('ARC CBL 5B');
+        $dmStatsEntityManager->persist($author_story);
+        $dmStatsEntityManager->flush();
     }
 
     protected static function createCoverIds()
