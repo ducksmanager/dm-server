@@ -1,4 +1,5 @@
 <?php
+
 namespace Coa\Models;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -6,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * InducksCountryname
  *
- * @ORM\Table(name="inducks_countryname", indexes={@ORM\Index(name="fk0", columns={"languagecode"})})
+ * @ORM\Table(name="inducks_countryname", indexes={@ORM\Index(name="fk_inducks_countryname0", columns={"languagecode"})})
  * @ORM\Entity
  */
 class InducksCountryname extends \Coa\Models\BaseModel
@@ -32,7 +33,7 @@ class InducksCountryname extends \Coa\Models\BaseModel
     /**
      * @var string
      *
-     * @ORM\Column(name="countryname", type="string", length=88, nullable=true)
+     * @ORM\Column(name="countryname", type="string", length=58, nullable=true)
      */
     private $countryname;
 

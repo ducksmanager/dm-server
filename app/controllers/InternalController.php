@@ -332,7 +332,7 @@ class InternalController extends AppController
                     return new JsonResponse(ModelHelper::getSerializedArray($issueCodes));
                 });
             }
-        )->assert('coverids', '^([0-9]+,)+[0-9]+$');
+        )->assert('coverids', '^([0-9]+,)*[0-9]+$');
 
         $routing->get(
             '/internal/coa/issuesbycodes/{issuecodes}',
@@ -386,7 +386,7 @@ class InternalController extends AppController
                     return new JsonResponse(ModelHelper::getSerializedArray($issues));
                 });
             }
-        )->assert('issuecodes', '^([a-z]+/[- A-Z0-9]+,)+[a-z]+/[- A-Z0-9]+$');
+        )->assert('issuecodes', '^([a-z]+/[- A-Z0-9]+,)*[a-z]+/[- A-Z0-9]+$');
 
 
         $routing->get(

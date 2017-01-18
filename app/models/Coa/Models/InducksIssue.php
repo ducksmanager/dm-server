@@ -7,12 +7,11 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * InducksIssue
  *
- * @ORM\Table(name="inducks_issue", indexes={@ORM\Index(name="inducks_issue_fk0", columns={"issuerangecode"}), @ORM\Index(name="inducks_issue_fk1", columns={"publicationcode"})})
+ * @ORM\Table(name="inducks_issue", indexes={@ORM\Index(name="fk_inducks_issue0", columns={"issuerangecode"}), @ORM\Index(name="fk_inducks_issue1", columns={"publicationcode"})})
  * @ORM\Entity
  */
 class InducksIssue extends \Coa\Models\BaseModel
 {
-
     /**
      * @var string
      *
@@ -67,7 +66,7 @@ class InducksIssue extends \Coa\Models\BaseModel
     /**
      * @var string
      *
-     * @ORM\Column(name="price", type="string", length=91, nullable=true)
+     * @ORM\Column(name="price", type="string", length=99, nullable=true)
      */
     private $price;
 

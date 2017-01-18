@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * InducksPublication
  *
- * @ORM\Table(name="inducks_publication", indexes={@ORM\Index(name="inducks_publication_fk0", columns={"countrycode"}), @ORM\Index(name="fk1", columns={"languagecode"}), @ORM\Index(name="title", columns={"title"})})
+ * @ORM\Table(name="inducks_publication", indexes={@ORM\Index(name="fk_inducks_publication0", columns={"countrycode"}), @ORM\Index(name="fk_inducks_publication1", columns={"languagecode"}), @ORM\Index(name="title", columns={"title"})})
  * @ORM\Entity
  */
 class InducksPublication extends \Coa\Models\BaseModel
