@@ -24,11 +24,13 @@ class StatsTest extends TestCommon
     }
 
     public function testGetWatchedAuthors() {
-        $service = $this->buildAuthenticatedServiceWithTestUser('/stats/watchedauthors', TestCommon::$testUser);
+        $service = $this->buildAuthenticatedServiceWithTestUser('/stats/watchedauthorsstorycount', TestCommon::$testUser);
         $response = $service->call();
 
         $objectResponse = json_decode($response->getContent());
-        $this->assertInternalType('array', $objectResponse);
-        $this->assertEquals('CB', $objectResponse[0]);
+        $this->assertInternalType('object', $objectResponse);
+        $this->assertEquals('CB', array_keys(get_object_vars($objectResponse))[0]);
+        $this->assertEquals('Carl Barks', $objectResponse->CB->fullname);
+        $this->assertEquals(1, $objectResponse->CB->storycount);
     }
 }

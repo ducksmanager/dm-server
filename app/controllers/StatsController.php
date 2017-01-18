@@ -15,14 +15,25 @@ class StatsController extends AppController
     public static function addRoutes($routing)
     {
         $routing->get(
-            '/stats/watchedauthors',
+            '/stats/watchedauthorsstorycount',
             function (Application $app, Request $request) {
                 return AppController::return500ErrorOnException($app, function() use ($app) {
-                    return new JsonResponse(
-                        ModelHelper::getUnserializedArrayFromJson(
-                            self::callInternal($app, '/stats/watchedauthors', 'GET')->getContent()
-                        )
+                    $authorsAndStoryCount = ModelHelper::getUnserializedArrayFromJson(
+                        self::callInternal($app, '/stats/authorsstorycount', 'GET')->getContent()
                     );
+                    $authorsFullNames = ModelHelper::getUnserializedArrayFromJson(
+                        self::callInternal($app, '/stats/authorsfullnames', 'GET', [implode(',', array_keys($authorsAndStoryCount))])->getContent()
+                    );
+
+                    $watchedAuthorsStoryCount = [];
+                    array_walk($authorsAndStoryCount, function($storyCount, $personCode) use(&$watchedAuthorsStoryCount, $authorsFullNames) {
+                        $watchedAuthorsStoryCount[$personCode] = [
+                            'fullname' => $authorsFullNames[$personCode],
+                            'storycount' => $storyCount
+                        ];
+                    });
+
+                    return new JsonResponse($watchedAuthorsStoryCount);
                 });
             }
         );

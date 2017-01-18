@@ -3,6 +3,7 @@ namespace DmServer\Test;
 
 use Coa\Models\InducksCountryname;
 use Coa\Models\InducksIssue;
+use Coa\Models\InducksPerson;
 use Coa\Models\InducksPublication;
 use CoverId\Models\Covers;
 use DmStats\Models\AuteursHistoires;
@@ -227,11 +228,22 @@ class TestCommon extends WebTestCase {
     public function createStatsData() {
         $dmStatsEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_DM_STATS];
 
-        $author_story = new AuteursHistoires();
-        $author_story->setPersoncode('CB');
-        $author_story->setStorycode('ARC CBL 5B');
-        $dmStatsEntityManager->persist($author_story);
+        $authorStory = new AuteursHistoires();
+        $authorStory->setPersoncode('CB');
+        $authorStory->setStorycode('ARC CBL 5B');
+        $dmStatsEntityManager->persist($authorStory);
         $dmStatsEntityManager->flush();
+
+        $coaEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_COA];
+
+        $inducksPerson = new InducksPerson();
+        $inducksPerson->setPersoncode("CB");
+        $inducksPerson->setFullname("Carl Barks");
+        $coaEntityManager->persist($inducksPerson);
+        $coaEntityManager->flush();
+
+        $dmStatsEntityManager->clear();
+        $coaEntityManager->clear();
     }
 
     protected static function createCoverIds()

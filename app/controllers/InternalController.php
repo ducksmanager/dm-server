@@ -4,6 +4,7 @@ namespace DmServer;
 
 use Coa\Models\InducksCountryname;
 use Coa\Models\InducksIssue;
+use Coa\Models\InducksPerson;
 use Coa\Models\InducksPublication;
 use CoverId\Models\Covers;
 use Coa\Contracts\Results\SimpleIssueWithUrl;
@@ -407,21 +408,45 @@ class InternalController extends AppController
         )->assert('coverUrl', '.+');
 
         $routing->get(
-            '/internal/stats/watchedauthors',
+            '/internal/stats/authorsfullnames/{authors}',
+            function (Request $request, Application $app, $authors) {
+                return AppController::return500ErrorOnException($app, function() use($authors) {
+                    $authorsList = explode(',', $authors);
+
+                    $qbAuthorsFullNames = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_COA)->createQueryBuilder();
+                    $qbAuthorsFullNames
+                        ->select('p.personcode, p.fullname')
+                        ->from(InducksPerson::class, 'p')
+                        ->where($qbAuthorsFullNames->expr()->in('p.personcode', $authorsList));
+
+                    $fullNamesResults = $qbAuthorsFullNames->getQuery()->getResult();
+
+                    $fullNames = [];
+                    array_walk($fullNamesResults, function($authorFullName) use (&$fullNames) {
+                        $fullNames[$authorFullName['personcode']] = $authorFullName['fullname'];
+                    });
+                    return new JsonResponse(ModelHelper::getSerializedArray($fullNames));
+                });
+            }
+        );
+
+        $routing->get(
+            '/internal/stats/authorsstorycount',
             function (Request $request, Application $app) {
                 return AppController::return500ErrorOnException($app, function() {
-                    $qbWatchedAuthors = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM_STATS)->createQueryBuilder();
-                    $qbWatchedAuthors
-                        ->select('authors.personcode')
-                        ->from(AuteursHistoires::class, 'authors');
+                    $qbStoryCountPerAuthor = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM_STATS)->createQueryBuilder();
+                    $qbStoryCountPerAuthor
+                        ->select('author_stories.personcode, COUNT(author_stories.storycode) AS storyNumber')
+                        ->from(AuteursHistoires::class, 'author_stories');
 
-                    $watchedAuthorsResults = $qbWatchedAuthors->getQuery()->getResult();
+                    $storyCountResults = $qbStoryCountPerAuthor->getQuery()->getResult();
 
-                    $issueCodes = array_map(function($author) {
-                        return $author['personcode'];
-                    }, $watchedAuthorsResults);
+                    $storyCounts = [];
+                    array_walk($storyCountResults, function($storyCount) use (&$storyCounts) {
+                        $storyCounts[$storyCount['personcode']] = (int) $storyCount['storyNumber'];
+                    });
 
-                    return new JsonResponse(ModelHelper::getSerializedArray($issueCodes));
+                    return new JsonResponse(ModelHelper::getSerializedArray($storyCounts));
                 });
             }
         );

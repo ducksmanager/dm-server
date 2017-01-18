@@ -3,6 +3,7 @@
 /app/config/roles.ini
 /bin
 /build
+/development.log
 /test/db.sqlite
 /vendor
 composer.lock
