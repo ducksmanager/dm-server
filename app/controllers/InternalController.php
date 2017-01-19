@@ -12,6 +12,7 @@ use Dm\Contracts\Results\UpdateCollectionResult;
 use Dm\Models\Numeros;
 use Dm\Models\Users;
 use DmStats\Models\AuteursHistoires;
+use DmStats\Models\UtilisateursHistoiresManquantes;
 use Doctrine\ORM\Query\Expr\Join;
 use Exception;
 use Silex\Application;
@@ -447,6 +448,27 @@ class InternalController extends AppController
                     });
 
                     return new JsonResponse(ModelHelper::getSerializedArray($storyCounts));
+                });
+            }
+        );
+
+        $routing->get(
+            '/internal/stats/authorsstorycount/usercollection/missing',
+            function (Request $request, Application $app) {
+                return AppController::return500ErrorOnException($app, function() {
+                    $qbMissingStoryCountPerAuthor = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM_STATS)->createQueryBuilder();
+                    $qbMissingStoryCountPerAuthor
+                        ->select('author_stories_missing_for_user.personcode, COUNT(author_stories_missing_for_user.storycode) AS storyNumber')
+                        ->from(UtilisateursHistoiresManquantes::class, 'author_stories_missing_for_user');
+
+                    $missingStoryCountResults = $qbMissingStoryCountPerAuthor->getQuery()->getResult();
+
+                    $missingStoryCounts = [];
+                    array_walk($missingStoryCountResults, function($storyCount) use (&$missingStoryCounts) {
+                        $missingStoryCounts[$storyCount['personcode']] = (int) $storyCount['storyNumber'];
+                    });
+
+                    return new JsonResponse(ModelHelper::getSerializedArray($missingStoryCounts));
                 });
             }
         );

@@ -7,6 +7,8 @@ use Coa\Models\InducksPerson;
 use Coa\Models\InducksPublication;
 use CoverId\Models\Covers;
 use DmStats\Models\AuteursHistoires;
+use DmStats\Models\AuteursPseudosSimple;
+use DmStats\Models\UtilisateursHistoiresManquantes;
 use Silex\Application;
 use Silex\WebTestCase;
 use DmServer\AppController;
@@ -228,10 +230,27 @@ class TestCommon extends WebTestCase {
     public function createStatsData() {
         $dmStatsEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_DM_STATS];
 
-        $authorStory = new AuteursHistoires();
-        $authorStory->setPersoncode('CB');
-        $authorStory->setStorycode('ARC CBL 5B');
-        $dmStatsEntityManager->persist($authorStory);
+        $authorUser = new AuteursPseudosSimple();
+        $authorUser->setIdUser(AppController::getSessionUser($this->app)['id']);
+        $authorUser->setNomauteurabrege('CB');
+        $dmStatsEntityManager->persist($authorUser);
+
+        $authorStory1 = new AuteursHistoires();
+        $authorStory1->setPersoncode('CB');
+        $authorStory1->setStorycode('ARC CBL 5B');
+        $dmStatsEntityManager->persist($authorStory1);
+
+        $authorStory2 = new AuteursHistoires();
+        $authorStory2->setPersoncode('CB');
+        $authorStory2->setStorycode('ARC CBL 6B');
+        $dmStatsEntityManager->persist($authorStory2);
+
+        $missingStoryForUser = new UtilisateursHistoiresManquantes();
+        $missingStoryForUser->setPersoncode('CB');
+        $missingStoryForUser->setStorycode('ARC CBL 6B');
+        $missingStoryForUser->setIdUser(AppController::getSessionUser($this->app)['id']);
+        $dmStatsEntityManager->persist($missingStoryForUser);
+
         $dmStatsEntityManager->flush();
 
         $coaEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_COA];

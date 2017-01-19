@@ -21,15 +21,19 @@ class StatsController extends AppController
                     $authorsAndStoryCount = ModelHelper::getUnserializedArrayFromJson(
                         self::callInternal($app, '/stats/authorsstorycount', 'GET')->getContent()
                     );
+                    $authorsAndStoryMissingForUserCount = ModelHelper::getUnserializedArrayFromJson(
+                        self::callInternal($app, '/stats/authorsstorycount/usercollection/missing', 'GET')->getContent()
+                    );
                     $authorsFullNames = ModelHelper::getUnserializedArrayFromJson(
                         self::callInternal($app, '/stats/authorsfullnames', 'GET', [implode(',', array_keys($authorsAndStoryCount))])->getContent()
                     );
 
                     $watchedAuthorsStoryCount = [];
-                    array_walk($authorsAndStoryCount, function($storyCount, $personCode) use(&$watchedAuthorsStoryCount, $authorsFullNames) {
+                    array_walk($authorsFullNames, function($authorFullName, $personCode) use(&$watchedAuthorsStoryCount, $authorsAndStoryCount, $authorsAndStoryMissingForUserCount) {
                         $watchedAuthorsStoryCount[$personCode] = [
-                            'fullname' => $authorsFullNames[$personCode],
-                            'storycount' => $storyCount
+                            'fullname' => $authorFullName,
+                            'missingstorycount' => $authorsAndStoryMissingForUserCount[$personCode] ?? 0,
+                            'storycount' => $authorsAndStoryCount[$personCode] ?? 0
                         ];
                     });
 

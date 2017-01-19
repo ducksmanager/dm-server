@@ -31,6 +31,7 @@ class StatsTest extends TestCommon
         $this->assertInternalType('object', $objectResponse);
         $this->assertEquals('CB', array_keys(get_object_vars($objectResponse))[0]);
         $this->assertEquals('Carl Barks', $objectResponse->CB->fullname);
-        $this->assertEquals(1, $objectResponse->CB->storycount);
+        $this->assertEquals(2, $objectResponse->CB->storycount);
+        $this->assertEquals(1, $objectResponse->CB->missingstorycount);
     }
 }
