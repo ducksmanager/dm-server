@@ -66,6 +66,7 @@ class TestCommon extends WebTestCase {
     {
         $app = null;
         $users = [];
+        /** @noinspection PhpUnusedLocalVariableInspection */
         $conf = self::$conf;
 
         require __DIR__ . '/../index.php';

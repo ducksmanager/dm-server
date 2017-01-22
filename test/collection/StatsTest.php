@@ -1,11 +1,6 @@
 <?php
 namespace DmServer\Test;
 
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\Response;
-use DmServer\CoverIdController;
-
 class StatsTest extends TestCommon
 {
 

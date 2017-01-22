@@ -18,6 +18,7 @@ class CollectionTest extends TestCommon
         ])->call();
         $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
 
+        /** @var Users[] $usersWithUsername */
         $usersWithUsername = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->getRepository(Users::class)->findBy(
             array('username' => 'dm_user')
         );

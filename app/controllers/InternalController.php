@@ -78,12 +78,13 @@ class InternalController extends AppController
             '/internal/user/check/{username}/{password}',
             function (Request $request, Application $app, $username, $password) {
                 return AppController::return500ErrorOnException($app, function() use ($username, $password) {
-                    $existingUser = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->getRepository(Users::class)->findBy(array(
+                    /** @var Users $existingUser */
+                    $existingUser = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->getRepository(Users::class)->findOneBy(array(
                         'username' => $username,
                         'password' => sha1($password)
                     ));
-                    if (count($existingUser) > 0) {
-                        return new Response($existingUser[0]->getId(), Response::HTTP_OK);
+                    if (!is_null($existingUser)) {
+                        return new Response($existingUser->getId(), Response::HTTP_OK);
                     } else {
                         return new Response('', Response::HTTP_UNAUTHORIZED);
                     }

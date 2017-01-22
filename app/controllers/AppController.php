@@ -68,10 +68,10 @@ abstract class AppController
         return $app['session']->get('clientVersion');
     }
 
-    public function authenticateUser(Application $app, $request) {
+    public function authenticateUser(Application $app, Request $request) {
         if (preg_match('#^/collection/((?!new/?).)+$#', $request->getPathInfo())) {
             $authHeader = $request->headers->get('authorization');
-            list($type, $base64Auth) = explode(' ', $authHeader);
+            $base64Auth = explode(' ', $authHeader)[1];
             $base64AuthParts = explode(':', base64_decode($base64Auth));
             if (count($base64AuthParts) === 2) {
                 list($username, $password) = $base64AuthParts;
