@@ -98,7 +98,10 @@ $app->register(new Silex\Provider\SecurityServiceProvider(), array(
         'collection' => array(
             'pattern' => '^/collection/',
             'http' => true,
-            'users' => ['whattheduck' => $users['whattheduck']]
+            'users' => [
+                'ducksmanager' => $users['ducksmanager'],
+                'whattheduck' => $users['whattheduck']
+            ]
         )
     )
 ));

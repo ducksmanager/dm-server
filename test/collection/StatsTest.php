@@ -19,7 +19,7 @@ class StatsTest extends TestCommon
     }
 
     public function testGetWatchedAuthors() {
-        $service = $this->buildAuthenticatedServiceWithTestUser('/stats/watchedauthorsstorycount', TestCommon::$testUser);
+        $service = $this->buildAuthenticatedServiceWithTestUser('/collection/stats/watchedauthorsstorycount', TestCommon::$testUser);
         $response = $service->call();
 
         $objectResponse = json_decode($response->getContent());
