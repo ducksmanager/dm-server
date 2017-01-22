@@ -1,5 +1,6 @@
 {
     "name": "bperel/whattheduck-server",
+    "license": "Apache-2.0",
     "description": "WhatTheDuck server REST API endpoint",
     "version": "0.0.1",
     "type": "library",
