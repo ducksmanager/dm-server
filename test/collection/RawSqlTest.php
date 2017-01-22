@@ -8,11 +8,11 @@ class RawSqlTest extends TestCommon
     public function setUp()
     {
         parent::setUp();
-        self::createTestCollection('dm_user');
+        self::createTestCollection('dm_test_user');
     }
 
     public function testRawSqlWithUserWithoutPermission() {
-        $service = $this->buildAuthenticatedServiceWithTestUser('/rawsql', TestCommon::$testUser, 'POST', [
+        $service = $this->buildAuthenticatedServiceWithTestUser('/rawsql', TestCommon::$dmUser, 'POST', [
             'query' => 'SELECT * FROM numeros',
             'db'    => 'db'
         ]);

@@ -21,7 +21,11 @@ class TestCommon extends WebTestCase {
     protected static $conf;
     protected static $roles;
     protected static $users;
-    protected static $testUser = 'whattheduck';
+    protected static $defaultTestDmUserName = 'dm_test_user';
+    protected static $testDmUsers = [
+        'dm_test_user' => 'test'
+    ];
+    protected static $dmUser = 'dm_test';
     protected static $rawSqlUser = 'rawsql';
     protected static $uploadBase = '/tmp/dm-server';
 
@@ -83,8 +87,7 @@ class TestCommon extends WebTestCase {
 
     protected static function getSystemCredentialsNoVersion($appUser) {
         return [
-            'PHP_AUTH_USER' => $appUser,
-            'PHP_AUTH_PW'   => explode(':', self::$roles[$appUser])[1]
+            'HTTP_AUTHORIZATION' => 'Basic '.base64_encode(implode(':', [$appUser, explode(':', self::$roles[$appUser])[1]]))
         ];
     }
 
@@ -117,8 +120,8 @@ class TestCommon extends WebTestCase {
     protected function buildAuthenticatedServiceWithTestUser($path, $appUser, $method = 'GET', $parameters = array(), $files = array()) {
         return $this->buildService(
             $path, [
-            'username' => 'dm_user',
-            'password' => 'dm_pass'
+            'username' => self::$defaultTestDmUserName,
+            'password' => sha1(self::$testDmUsers[self::$defaultTestDmUserName])
         ], $parameters, self::getSystemCredentials($appUser), $method, $files
         );
     }
@@ -134,12 +137,14 @@ class TestCommon extends WebTestCase {
      * @param string $username
      * @return array user info
      */
-    protected static function createTestCollection($username = 'dm_user') {
+    protected static function createTestCollection($username = 'dm_test_user') {
+        $password = self::$testDmUsers[$username];
+
         $dmEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_DM];
 
         $user = new Users();
         $user->setUsername($username);
-        $user->setPassword(sha1('dm_pass'));
+        $user->setPassword(sha1($password));
         $user->setEmail('test@ducksmanager.net');
         $user->setDateinscription(\DateTime::createFromFormat('Y-m-d', '2000-01-01'));
         $dmEntityManager->persist($user);

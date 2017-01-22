@@ -19,7 +19,7 @@ class StatsTest extends TestCommon
     }
 
     public function testGetWatchedAuthors() {
-        $service = $this->buildAuthenticatedServiceWithTestUser('/collection/stats/watchedauthorsstorycount', TestCommon::$testUser);
+        $service = $this->buildAuthenticatedServiceWithTestUser('/collection/stats/watchedauthorsstorycount', TestCommon::$dmUser);
         $response = $service->call();
 
         $objectResponse = json_decode($response->getContent());
@@ -28,5 +28,12 @@ class StatsTest extends TestCommon
         $this->assertEquals('Carl Barks', $objectResponse->CB->fullname);
         $this->assertEquals(2, $objectResponse->CB->storycount);
         $this->assertEquals(1, $objectResponse->CB->missingstorycount);
+    }
+
+    public function testGetSuggestions() {
+        $service = $this->buildAuthenticatedServiceWithTestUser('/collection/stats/suggestedpublications', TestCommon::$dmUser);
+        $response = $service->call();
+
+        $objectResponse = json_decode($response->getContent());
     }
 }

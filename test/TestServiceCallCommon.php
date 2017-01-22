@@ -144,13 +144,19 @@ class TestServiceCallCommon {
         if ($this->method === 'GET' && count($this->parameters) > 0) {
             $path .= '/' . implode('/', array_values($this->parameters));
         }
+        $headers = $this->systemCredentials;
+        if (count($this->userCredentials) > 0) {
+            $headers = array_merge($headers, [
+                'HTTP_X_DM_USER' => $this->userCredentials['username'],
+                'HTTP_X_DM_PASS' => $this->userCredentials['password']
+            ]);
+        }
         $this->client->request(
             $this->method,
             $path,
             $this->parameters,
             $this->files,
-            ['HTTP_AUTHORIZATION' => 'Basic '.base64_encode(implode(':', $this->userCredentials))]
-              + $this->systemCredentials
+            $headers
         );
         return $this->client->getResponse();
     }

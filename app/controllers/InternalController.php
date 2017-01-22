@@ -81,7 +81,7 @@ class InternalController extends AppController
                     /** @var Users $existingUser */
                     $existingUser = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->getRepository(Users::class)->findOneBy(array(
                         'username' => $username,
-                        'password' => sha1($password)
+                        'password' => $password
                     ));
                     if (!is_null($existingUser)) {
                         return new Response($existingUser->getId(), Response::HTTP_OK);

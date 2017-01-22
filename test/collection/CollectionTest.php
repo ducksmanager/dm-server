@@ -10,8 +10,8 @@ use DmServer\DmServer;
 class CollectionTest extends TestCommon
 {
     public function testCreateCollection() {
-        $response = $this->buildAuthenticatedService('/user/new', TestCommon::$testUser, [], [
-            'username' => 'dm_user',
+        $response = $this->buildAuthenticatedService('/user/new', TestCommon::$dmUser, [], [
+            'username' => self::$defaultTestDmUserName,
             'password' => 'dm_pass',
             'password2' => 'dm_pass',
             'email' => 'test@ducksmanager.net'
@@ -20,7 +20,7 @@ class CollectionTest extends TestCommon
 
         /** @var Users[] $usersWithUsername */
         $usersWithUsername = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->getRepository(Users::class)->findBy(
-            array('username' => 'dm_user')
+            array('username' => self::$defaultTestDmUserName)
         );
 
         $this->assertEquals(1, count($usersWithUsername));
@@ -29,8 +29,8 @@ class CollectionTest extends TestCommon
     }
 
     public function testCreateCollectionErrorDifferentPasswords() {
-        $response = $this->buildAuthenticatedService('/user/new', TestCommon::$testUser, [], [
-            'username' => 'dm_user',
+        $response = $this->buildAuthenticatedService('/user/new', TestCommon::$dmUser, [], [
+            'username' => self::$defaultTestDmUserName,
             'password' => 'dm_pass',
             'password2' => 'dm_pass_different',
             'email' => 'test@ducksmanager.net'
@@ -39,7 +39,7 @@ class CollectionTest extends TestCommon
     }
 
     public function testCreateCollectionErrorShortUsername() {
-        $response = $this->buildAuthenticatedService('/user/new', TestCommon::$testUser, [], [
+        $response = $this->buildAuthenticatedService('/user/new', TestCommon::$dmUser, [], [
             'username' => 'dm',
             'password' => 'dm_pass',
             'password2' => 'dm_pass',
@@ -49,8 +49,8 @@ class CollectionTest extends TestCommon
     }
 
     public function testCreateCollectionErrorShortPassword() {
-        $response = $this->buildAuthenticatedService('/user/new', TestCommon::$testUser, [], [
-            'username' => 'dm_user',
+        $response = $this->buildAuthenticatedService('/user/new', TestCommon::$dmUser, [], [
+            'username' => self::$defaultTestDmUserName,
             'password' => 'pass',
             'password2' => 'pass',
             'email' => 'test@ducksmanager.net'
@@ -60,8 +60,8 @@ class CollectionTest extends TestCommon
 
     public function testCreateCollectionErrorExistingUsername() {
         self::createTestCollection();
-        $response = $this->buildAuthenticatedService('/user/new', TestCommon::$testUser, [], [
-            'username' => 'dm_user',
+        $response = $this->buildAuthenticatedService('/user/new', TestCommon::$dmUser, [], [
+            'username' => self::$defaultTestDmUserName,
             'password' => 'dm_pass',
             'password2' => 'dm_pass',
             'email' => 'test@ducksmanager.net'
@@ -72,9 +72,9 @@ class CollectionTest extends TestCommon
     public function testAddIssue() {
         $this->assertEquals(0, count($this->getCurrentUserIssues()));
 
-        self::createTestCollection('dm_user'); // Creates a collection with 3 issues
+        self::createTestCollection(self::$defaultTestDmUserName); // Creates a collection with 3 issues
 
-        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/issues', TestCommon::$testUser, 'POST', [
+        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/issues', TestCommon::$dmUser, 'POST', [
             'country' => 'fr',
             'publication' => 'DDD',
             'issuenumbers' => ['3'],
@@ -89,7 +89,7 @@ class CollectionTest extends TestCommon
         $collectionUserInfo = self::createTestCollection();
         self::setSessionUser($this->app, $collectionUserInfo);
 
-        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/issues', TestCommon::$testUser, 'POST', [
+        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/issues', TestCommon::$dmUser, 'POST', [
             'country' => 'fr',
             'publication' => 'DDD',
             'issuenumbers' => ['1'],
@@ -113,7 +113,7 @@ class CollectionTest extends TestCommon
         $issueToUpdate = '1';
         $issueToCreate = '3';
 
-        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/issues', TestCommon::$testUser, 'POST', [
+        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/issues', TestCommon::$dmUser, 'POST', [
             'country' => $country,
             'publication' => $publication,
             'issuenumbers' => [$issueToUpdate, $issueToCreate],

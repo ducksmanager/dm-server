@@ -15,7 +15,7 @@ class StatsController extends AppController
     public static function addRoutes($routing)
     {
         $routing->get(
-            '/stats/watchedauthorsstorycount',
+            '/collection/stats/watchedauthorsstorycount',
             function (Application $app, Request $request) {
                 return AppController::return500ErrorOnException($app, function() use ($app) {
                     $authorsAndStoryCount = ModelHelper::getUnserializedArrayFromJson(

@@ -8,14 +8,14 @@ class FetchCollectionTest extends TestCommon
     {
         parent::setUp();
 
-        $collectionUserInfo = self::createTestCollection('dm_user');
+        $collectionUserInfo = self::createTestCollection('dm_test_user');
         self::setSessionUser($this->app, $collectionUserInfo);
 
         self::createCoaData();
     }
 
     public function testFetchCollection() {
-        $service = $this->buildAuthenticatedServiceWithTestUser('/collection/issues', TestCommon::$testUser);
+        $service = $this->buildAuthenticatedServiceWithTestUser('/collection/issues', TestCommon::$dmUser);
         $response = $service->call();
 
         $objectResponse = json_decode($response->getContent());

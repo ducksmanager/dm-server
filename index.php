@@ -100,7 +100,8 @@ $app->register(new Silex\Provider\SecurityServiceProvider(), array(
             'http' => true,
             'users' => [
                 'ducksmanager' => $users['ducksmanager'],
-                'whattheduck' => $users['whattheduck']
+                'whattheduck' => $users['whattheduck'],
+                'dm_test' => $users['dm_test']
             ]
         )
     )

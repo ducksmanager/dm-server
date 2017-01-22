@@ -71,19 +71,20 @@ abstract class AppController
     public function authenticateUser(Application $app, Request $request) {
         if (preg_match('#^/collection/((?!new/?).)+$#', $request->getPathInfo())) {
             $authHeader = $request->headers->get('authorization');
-            $base64Auth = explode(' ', $authHeader)[1];
-            $base64AuthParts = explode(':', base64_decode($base64Auth));
-            if (count($base64AuthParts) === 2) {
-                list($username, $password) = $base64AuthParts;
+            $username = $request->headers->get('x-dm-user');
+            $password = $request->headers->get('x-dm-pass');
+            if (isset($username) && isset($password)) {
+                $app['monolog']->addInfo("Authenticating $username...");
 
                 $userCheck = self::callInternal($app, '/user/check', 'GET', [
                     'username' => $username,
                     'password' => $password
                 ]);
                 if ($userCheck->getStatusCode() !== Response::HTTP_OK) {
-                    return $userCheck;
+                    return new Response('', Response::HTTP_UNAUTHORIZED);
                 } else {
                     $this->setSessionUser($app, $username, $userCheck->getContent());
+                    $app['monolog']->addInfo("$username is logged in");
                     return true;
                 }
             }

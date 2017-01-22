@@ -13,7 +13,7 @@ class CoaListsTest extends TestCommon
     }
 
     public function testGetCountryList() {
-        $service = $this->buildAuthenticatedServiceWithTestUser('/coa/list/countries', TestCommon::$testUser);
+        $service = $this->buildAuthenticatedServiceWithTestUser('/coa/list/countries', TestCommon::$dmUser);
         $response = $service->call();
 
         $objectResponse = json_decode($response->getContent());
@@ -24,7 +24,7 @@ class CoaListsTest extends TestCommon
     }
 
     public function testGetPublicationList() {
-        $service = $this->buildAuthenticatedServiceWithTestUser('/coa/list/publications/fr', TestCommon::$testUser);
+        $service = $this->buildAuthenticatedServiceWithTestUser('/coa/list/publications/fr', TestCommon::$dmUser);
         $response = $service->call();
 
         $objectResponse = json_decode($response->getContent());
@@ -35,14 +35,14 @@ class CoaListsTest extends TestCommon
     }
 
     public function testGetPublicationListInvalidCountry() {
-        $service = $this->buildAuthenticatedServiceWithTestUser('/coa/list/publications/fr0', TestCommon::$testUser);
+        $service = $this->buildAuthenticatedServiceWithTestUser('/coa/list/publications/fr0', TestCommon::$dmUser);
         $response = $service->call();
 
         $this->assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
     }
 
     public function testGetIssueList() {
-        $service = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issues/fr/DDD', TestCommon::$testUser);
+        $service = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issues/fr/DDD', TestCommon::$dmUser);
         $response = $service->call();
 
         $arrayResponse = json_decode($response->getContent());
@@ -53,7 +53,7 @@ class CoaListsTest extends TestCommon
     }
 
     public function testGetIssueListEmptyList() {
-        $service = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issues/fr/DD', TestCommon::$testUser);
+        $service = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issues/fr/DD', TestCommon::$dmUser);
         $response = $service->call();
 
         $arrayResponse = json_decode($response->getContent());
@@ -63,14 +63,14 @@ class CoaListsTest extends TestCommon
     }
 
     public function testGetIssueListInvalidPublicationCode() {
-        $service = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issues/fr/DD_', TestCommon::$testUser);
+        $service = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issues/fr/DD_', TestCommon::$dmUser);
         $response = $service->call();
 
         $this->assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
     }
 
     public function testGetIssueListByIssueCodes() {
-        $service = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issuesbycodes/fr/DDD 1', TestCommon::$testUser);
+        $service = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issuesbycodes/fr/DDD 1', TestCommon::$dmUser);
         $response = $service->call();
 
         $arrayResponse = json_decode($response->getContent());

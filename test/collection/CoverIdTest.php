@@ -35,7 +35,7 @@ class CoverIdTest extends TestCommon
     public function testGetIssueListByIssueCodes() {
         $service = $this->buildAuthenticatedServiceWithTestUser(
             '/cover-id/issuecodes/'
-            . implode(',', [self::$coverIds[0], self::$coverIds[2]]), TestCommon::$testUser);
+            . implode(',', [self::$coverIds[0], self::$coverIds[2]]), TestCommon::$dmUser);
         $response = $service->call();
 
         $objectResponse = json_decode($response->getContent());
@@ -52,7 +52,7 @@ class CoverIdTest extends TestCommon
 
     public function testCoverIdSearchMultipleUploads() {
         $service = $this->buildAuthenticatedServiceWithTestUser(
-            '/cover-id/search', TestCommon::$testUser, 'POST', array(), array(
+            '/cover-id/search', TestCommon::$dmUser, 'POST', array(), array(
                 'wtd_jpg' => self::getCoverIdSearchUploadImage(),
                 'wtd_jpg2' => self::getCoverIdSearchUploadImage()
             )
@@ -67,7 +67,7 @@ class CoverIdTest extends TestCommon
         $this->assertFileNotExists(implode(DIRECTORY_SEPARATOR, self::$uploadDestination));
 
         $service = $this->buildAuthenticatedServiceWithTestUser(
-            '/cover-id/search', TestCommon::$testUser, 'POST', array(), array(
+            '/cover-id/search', TestCommon::$dmUser, 'POST', array(), array(
                 'wtd_jpg' => self::getCoverIdSearchUploadImage()
             )
         );
@@ -81,7 +81,7 @@ class CoverIdTest extends TestCommon
         $this->assertFileNotExists(implode(DIRECTORY_SEPARATOR, self::$uploadDestination));
 
         $service = $this->buildAuthenticatedServiceWithTestUser(
-            '/cover-id/search', TestCommon::$testUser, 'POST', array(), array(
+            '/cover-id/search', TestCommon::$dmUser, 'POST', array(), array(
                 'wtd_invalid_jpg' => self::getCoverIdSearchUploadImage()
             )
         );
@@ -93,7 +93,7 @@ class CoverIdTest extends TestCommon
 
     public function testDownloadCover() {
         $service = $this->buildAuthenticatedServiceWithTestUser(
-            '/cover-id/download/webusers/2010/12/fr_ddd_001a_001.jpg', TestCommon::$testUser);
+            '/cover-id/download/webusers/2010/12/fr_ddd_001a_001.jpg', TestCommon::$dmUser);
         /** @var BinaryFileResponse $response */
         $response = $service->call();
 

@@ -11,24 +11,24 @@ class AuthTest extends TestCommon
     }
 
     public function testCallServiceWithoutClientVersion() {
-        $response = $this->buildService('/collection/issues', [], [], $this->getSystemCredentialsNoVersion(TestCommon::$testUser),
+        $response = $this->buildService('/collection/issues', [], [], $this->getSystemCredentialsNoVersion(TestCommon::$dmUser),
             'POST')->call();
         $this->assertEquals(Response::HTTP_VERSION_NOT_SUPPORTED, $response->getStatusCode());
     }
 
     public function testCallServiceWithoutUserCredentials() {
-        $response = $this->buildAuthenticatedService('/collection/issues', TestCommon::$testUser, [], [])->call();
+        $response = $this->buildAuthenticatedService('/collection/issues', TestCommon::$dmUser, [], [])->call();
         $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 
     public function testCallServiceWithWrongUserCredentials() {
-        $response = $this->buildAuthenticatedService('/collection/issues', TestCommon::$testUser, ['username' => 'dm_user',
+        $response = $this->buildAuthenticatedService('/collection/issues', TestCommon::$dmUser, ['username' => 'dm_test',
             'password' => 'invalid'], [])->call();
         $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 
     public function testCallServiceWithUserCredentials() {
-        $response = $this->buildAuthenticatedServiceWithTestUser('/user/new', TestCommon::$testUser, 'POST', [
+        $response = $this->buildAuthenticatedServiceWithTestUser('/user/new', TestCommon::$dmUser, 'POST', [
             'username' => 'dm_user',
             'password' => 'test',
             'password2' => 'test',
