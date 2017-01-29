@@ -76,9 +76,9 @@ class DmServer extends AppController implements ControllerProviderInterface
         return $config;
     }
 
-    public static function getAppRoles() {
+    public static function getAppRoles($forTest) {
         return parse_ini_file(
-            __DIR__.'/config/roles.ini'
+            __DIR__.($forTest ? '/config/roles.base.ini' : '/config/roles.ini')
             , true
         );
     }

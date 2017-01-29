@@ -41,7 +41,7 @@ class TestCommon extends WebTestCase {
     {
         DmServer::initSettings('settings.test.ini');
         self::$conf = DmServer::getAppConfig(true);
-        self::$roles = DmServer::getAppRoles();
+        self::$roles = DmServer::getAppRoles(true);
 
         foreach(DmServer::$configuredEntityManagerNames as $emName) {
             self::$schemas[$emName] = SchemaWithClasses::createFromEntityManager(DmServer::getEntityManager($emName, true));
