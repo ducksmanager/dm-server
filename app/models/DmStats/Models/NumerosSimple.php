@@ -7,20 +7,11 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * NumerosSimple
  *
- * @ORM\Table(name="numeros_simple", indexes={@ORM\Index(name="ID_Utilisateur", columns={"ID_Utilisateur"}), @ORM\Index(name="Numero", columns={"Numero"}), @ORM\Index(name="Publicationcode", columns={"Publicationcode"})})
+ * @ORM\Table(name="numeros_simple", indexes={@ORM\Index(name="ID_Utilisateur", columns={"ID_Utilisateur"}), @ORM\Index(name="numeros_simple_issue", columns={"Publicationcode", "Numero"})})
  * @ORM\Entity
  */
 class NumerosSimple extends \DmStats\Models\BaseModel
 {
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="ID_Utilisateur", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
-     */
-    private $idUtilisateur;
-
     /**
      * @var string
      *
@@ -39,31 +30,19 @@ class NumerosSimple extends \DmStats\Models\BaseModel
      */
     private $numero;
 
-
-
     /**
-     * Set idUtilisateur
+     * @var \DmStats\Models\AuteursPseudosSimple
      *
-     * @param integer $idUtilisateur
-     *
-     * @return NumerosSimple
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\OneToOne(targetEntity="DmStats\Models\AuteursPseudosSimple")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="ID_Utilisateur", referencedColumnName="ID_User")
+     * })
      */
-    public function setIdUtilisateur($idUtilisateur)
-    {
-        $this->idUtilisateur = $idUtilisateur;
+    private $idUtilisateur;
 
-        return $this;
-    }
 
-    /**
-     * Get idUtilisateur
-     *
-     * @return integer
-     */
-    public function getIdUtilisateur()
-    {
-        return $this->idUtilisateur;
-    }
 
     /**
      * Set publicationcode
@@ -111,5 +90,29 @@ class NumerosSimple extends \DmStats\Models\BaseModel
     public function getNumero()
     {
         return $this->numero;
+    }
+
+    /**
+     * Set idUtilisateur
+     *
+     * @param \DmStats\Models\AuteursPseudosSimple $idUtilisateur
+     *
+     * @return NumerosSimple
+     */
+    public function setIdUtilisateur(\DmStats\Models\AuteursPseudosSimple $idUtilisateur)
+    {
+        $this->idUtilisateur = $idUtilisateur;
+
+        return $this;
+    }
+
+    /**
+     * Get idUtilisateur
+     *
+     * @return \DmStats\Models\AuteursPseudosSimple
+     */
+    public function getIdUtilisateur()
+    {
+        return $this->idUtilisateur;
     }
 }

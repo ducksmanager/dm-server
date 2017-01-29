@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * AuteursPseudosSimple
  *
- * @ORM\Table(name="auteurs_pseudos_simple", indexes={@ORM\Index(name="index_auteur_inducks", columns={"NomAuteurAbrege"})})
+ * @ORM\Table(name="auteurs_pseudos_simple", uniqueConstraints={@ORM\UniqueConstraint(name="auteurs_pseudos_simple_ID_User_NomAuteurAbrege_uindex", columns={"ID_User", "NomAuteurAbrege"})}, indexes={@ORM\Index(name="index_auteur_inducks", columns={"NomAuteurAbrege"})})
  * @ORM\Entity
  */
 class AuteursPseudosSimple extends \DmStats\Models\BaseModel
@@ -15,9 +15,16 @@ class AuteursPseudosSimple extends \DmStats\Models\BaseModel
     /**
      * @var integer
      *
-     * @ORM\Column(name="ID_User", type="integer", nullable=false)
+     * @ORM\Column(name="ID", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="ID_User", type="integer", nullable=false)
      */
     private $idUser;
 
@@ -25,8 +32,6 @@ class AuteursPseudosSimple extends \DmStats\Models\BaseModel
      * @var string
      *
      * @ORM\Column(name="NomAuteurAbrege", type="string", length=79, nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
      */
     private $nomauteurabrege;
 
@@ -38,6 +43,16 @@ class AuteursPseudosSimple extends \DmStats\Models\BaseModel
     private $notation;
 
 
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
     /**
      * Set idUser

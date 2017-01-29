@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * AuteursHistoires
  *
- * @ORM\Table(name="auteurs_histoires", indexes={@ORM\Index(name="index_person", columns={"personcode"}), @ORM\Index(name="index_storycode", columns={"storycode"})})
+ * @ORM\Table(name="auteurs_histoires", indexes={@ORM\Index(name="index_storycode", columns={"storycode"})})
  * @ORM\Entity
  */
 class AuteursHistoires extends \DmStats\Models\BaseModel

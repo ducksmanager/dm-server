@@ -13,38 +13,18 @@ use Doctrine\ORM\Mapping as ORM;
 class UtilisateursPublicationsManquantes extends \DmStats\Models\BaseModel
 {
     /**
-     * @var string
+     * @var integer
      *
-     * @ORM\Column(name="storycode", type="string", length=19, nullable=false)
+     * @ORM\Column(name="ID", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $storycode;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="publicationcode", type="string", length=12, nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
-     */
-    private $publicationcode;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="issuenumber", type="string", length=12, nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
-     */
-    private $issuenumber;
+    private $id;
 
     /**
      * @var integer
      *
      * @ORM\Column(name="ID_User", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
      */
     private $idUser;
 
@@ -56,6 +36,27 @@ class UtilisateursPublicationsManquantes extends \DmStats\Models\BaseModel
     private $personcode;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="storycode", type="string", length=19, nullable=false)
+     */
+    private $storycode;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="publicationcode", type="string", length=12, nullable=false)
+     */
+    private $publicationcode;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="issuenumber", type="string", length=12, nullable=false)
+     */
+    private $issuenumber;
+
+    /**
      * @var boolean
      *
      * @ORM\Column(name="Notation", type="boolean", nullable=false)
@@ -63,6 +64,64 @@ class UtilisateursPublicationsManquantes extends \DmStats\Models\BaseModel
     private $notation;
 
 
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set idUser
+     *
+     * @param integer $idUser
+     *
+     * @return UtilisateursPublicationsManquantes
+     */
+    public function setIdUser($idUser)
+    {
+        $this->idUser = $idUser;
+
+        return $this;
+    }
+
+    /**
+     * Get idUser
+     *
+     * @return integer
+     */
+    public function getIdUser()
+    {
+        return $this->idUser;
+    }
+
+    /**
+     * Set personcode
+     *
+     * @param string $personcode
+     *
+     * @return UtilisateursPublicationsManquantes
+     */
+    public function setPersoncode($personcode)
+    {
+        $this->personcode = $personcode;
+
+        return $this;
+    }
+
+    /**
+     * Get personcode
+     *
+     * @return string
+     */
+    public function getPersoncode()
+    {
+        return $this->personcode;
+    }
 
     /**
      * Set storycode
@@ -134,54 +193,6 @@ class UtilisateursPublicationsManquantes extends \DmStats\Models\BaseModel
     public function getIssuenumber()
     {
         return $this->issuenumber;
-    }
-
-    /**
-     * Set idUser
-     *
-     * @param integer $idUser
-     *
-     * @return UtilisateursPublicationsManquantes
-     */
-    public function setIdUser($idUser)
-    {
-        $this->idUser = $idUser;
-
-        return $this;
-    }
-
-    /**
-     * Get idUser
-     *
-     * @return integer
-     */
-    public function getIdUser()
-    {
-        return $this->idUser;
-    }
-
-    /**
-     * Set personcode
-     *
-     * @param string $personcode
-     *
-     * @return UtilisateursPublicationsManquantes
-     */
-    public function setPersoncode($personcode)
-    {
-        $this->personcode = $personcode;
-
-        return $this;
-    }
-
-    /**
-     * Get personcode
-     *
-     * @return string
-     */
-    public function getPersoncode()
-    {
-        return $this->personcode;
     }
 
     /**

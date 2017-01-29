@@ -25,7 +25,7 @@ class StatsController extends AppController
                         self::callInternal($app, '/stats/authorsstorycount/usercollection/missing', 'GET')->getContent()
                     );
                     $authorsFullNames = ModelHelper::getUnserializedArrayFromJson(
-                        self::callInternal($app, '/stats/authorsfullnames', 'GET', [implode(',', array_keys($authorsAndStoryCount))])->getContent()
+                        self::callInternal($app, '/coa/authorsfullnames', 'GET', [implode(',', array_keys($authorsAndStoryCount))])->getContent()
                     );
 
                     $watchedAuthorsStoryCount = [];

@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * UtilisateursPublicationsSuggerees
  *
- * @ORM\Table(name="utilisateurs_publications_suggerees", indexes={@ORM\Index(name="user", columns={"ID_User"})})
+ * @ORM\Table(name="utilisateurs_publications_suggerees", indexes={@ORM\Index(name="IDX_FCBB992A6E9059DF", columns={"ID_User"})})
  * @ORM\Entity
  */
 class UtilisateursPublicationsSuggerees extends \DmStats\Models\BaseModel
@@ -33,18 +33,21 @@ class UtilisateursPublicationsSuggerees extends \DmStats\Models\BaseModel
     /**
      * @var integer
      *
-     * @ORM\Column(name="ID_User", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
-     */
-    private $idUser;
-
-    /**
-     * @var integer
-     *
      * @ORM\Column(name="Score", type="integer", nullable=false)
      */
     private $score;
+
+    /**
+     * @var \DmStats\Models\AuteursPseudosSimple
+     *
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\OneToOne(targetEntity="DmStats\Models\AuteursPseudosSimple")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="ID_User", referencedColumnName="ID_User")
+     * })
+     */
+    private $idUser;
 
 
 
@@ -97,30 +100,6 @@ class UtilisateursPublicationsSuggerees extends \DmStats\Models\BaseModel
     }
 
     /**
-     * Set idUser
-     *
-     * @param integer $idUser
-     *
-     * @return UtilisateursPublicationsSuggerees
-     */
-    public function setIdUser($idUser)
-    {
-        $this->idUser = $idUser;
-
-        return $this;
-    }
-
-    /**
-     * Get idUser
-     *
-     * @return integer
-     */
-    public function getIdUser()
-    {
-        return $this->idUser;
-    }
-
-    /**
      * Set score
      *
      * @param integer $score
@@ -142,5 +121,29 @@ class UtilisateursPublicationsSuggerees extends \DmStats\Models\BaseModel
     public function getScore()
     {
         return $this->score;
+    }
+
+    /**
+     * Set idUser
+     *
+     * @param \DmStats\Models\AuteursPseudosSimple $idUser
+     *
+     * @return UtilisateursPublicationsSuggerees
+     */
+    public function setIdUser(\DmStats\Models\AuteursPseudosSimple $idUser)
+    {
+        $this->idUser = $idUser;
+
+        return $this;
+    }
+
+    /**
+     * Get idUser
+     *
+     * @return \DmStats\Models\AuteursPseudosSimple
+     */
+    public function getIdUser()
+    {
+        return $this->idUser;
     }
 }

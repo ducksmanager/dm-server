@@ -6,6 +6,7 @@ use Coa\Models\InducksCountryname;
 use Coa\Models\InducksIssue;
 use Coa\Models\InducksPerson;
 use Coa\Models\InducksPublication;
+use Coa\Models\InducksStory;
 use CoverId\Models\Covers;
 use Coa\Contracts\Results\SimpleIssueWithUrl;
 use Dm\Contracts\Results\UpdateCollectionResult;
@@ -13,7 +14,10 @@ use Dm\Models\Numeros;
 use Dm\Models\Users;
 use DmStats\Models\AuteursHistoires;
 use DmStats\Models\UtilisateursHistoiresManquantes;
+use DmStats\Models\UtilisateursPublicationsManquantes;
+use DmStats\Models\UtilisateursPublicationsSuggerees;
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\Query\Expr\OrderBy;
 use Exception;
 use Silex\Application;
 use Silex\ControllerCollection;
@@ -410,10 +414,10 @@ class InternalController extends AppController
         )->assert('coverUrl', '.+');
 
         $routing->get(
-            '/internal/stats/authorsfullnames/{authors}',
+            '/internal/coa/authorsfullnames/{authors}',
             function (Request $request, Application $app, $authors) {
                 return AppController::return500ErrorOnException($app, function() use($authors) {
-                    $authorsList = explode(',', $authors);
+                    $authorsList = array_unique(explode(',', $authors));
 
                     $qbAuthorsFullNames = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_COA)->createQueryBuilder();
                     $qbAuthorsFullNames
@@ -428,6 +432,32 @@ class InternalController extends AppController
                         $fullNames[$authorFullName['personcode']] = $authorFullName['fullname'];
                     });
                     return new JsonResponse(ModelHelper::getSerializedArray($fullNames));
+                });
+            }
+        );
+
+        $routing->get(
+            '/internal/coa/storydetails/{storyCodes}',
+            function (Request $request, Application $app, $storyCodes) {
+                return AppController::return500ErrorOnException($app, function() use($storyCodes) {
+                    $storyList = array_unique(explode(',', $storyCodes));
+
+                    $qbStoryDetails = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_COA)->createQueryBuilder();
+                    $qbStoryDetails
+                        ->select('story.storycode, story.title, story.storycomment')
+                        ->from(InducksStory::class, 'story')
+                        ->where($qbStoryDetails->expr()->in('story.storycode', $storyList));
+
+                    $storyDetailsResults = $qbStoryDetails->getQuery()->getResult();
+
+                    $storyDetails = [];
+                    array_walk($storyDetailsResults, function($story) use (&$storyDetails) {
+                        $storyDetails[$story['storycode']] = [
+                            'storycomment' => $story['storycomment'],
+                            'title' => $story['title']
+                        ];
+                    });
+                    return new JsonResponse(ModelHelper::getSerializedArray($storyDetails));
                 });
             }
         );
@@ -470,6 +500,35 @@ class InternalController extends AppController
                     });
 
                     return new JsonResponse(ModelHelper::getSerializedArray($missingStoryCounts));
+                });
+            }
+        );
+
+        $routing->get(
+            '/internal/stats/suggestedpublications',
+            function (Request $request, Application $app) {
+                return AppController::return500ErrorOnException($app, function() use ($app) {
+                    $qbGetSuggestions = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM_STATS)->createQueryBuilder();
+
+                    $qbGetSuggestions
+                        ->select('missing_publications.personcode, missing_publications.storycode, ' .
+                                 'suggested_publications.publicationcode, suggested_publications.issuenumber, suggested_publications.score')
+                        ->from(UtilisateursPublicationsSuggerees::class, 'suggested_publications')
+                        ->join(UtilisateursPublicationsManquantes::class, 'missing_publications', Join::WITH, $qbGetSuggestions->expr()->andX(
+                            $qbGetSuggestions->expr()->eq('suggested_publications.idUser', 'missing_publications.idUser'),
+                            $qbGetSuggestions->expr()->eq('suggested_publications.publicationcode', 'missing_publications.publicationcode'),
+                            $qbGetSuggestions->expr()->eq('suggested_publications.issuenumber', 'missing_publications.issuenumber')
+                        ))
+
+                        ->where($qbGetSuggestions->expr()->in('suggested_publications.idUser', ':userId'))
+                        ->setParameter(':userId', self::getSessionUser($app)['id'])
+                        ->orderBy(new OrderBy('suggested_publications.score', 'DESC'))
+                        ->setMaxResults(20)
+                        ;
+                    $sql = $qbGetSuggestions->getQuery()->getSQL();
+                    $suggestionResults = $qbGetSuggestions->getQuery()->getResult();
+
+                    return new JsonResponse(ModelHelper::getSerializedArray($suggestionResults));
                 });
             }
         );
