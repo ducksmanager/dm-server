@@ -24,7 +24,7 @@ abstract class AppController
      * @param array $parameters
      * @return Response
      */
-    protected static function callInternal(Application $app, $url, $type, $parameters = [])
+    public static function callInternal(Application $app, $url, $type, $parameters = [])
     {
         if ($type === 'GET') {
             $subRequest = Request::create('/internal' . $url . (count($parameters) === 0 ? '' : '/' . implode('/', array_values($parameters))));

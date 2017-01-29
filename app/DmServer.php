@@ -203,7 +203,7 @@ class DmServer extends AppController implements ControllerProviderInterface
          * @return Response|void
          */
             function(Request $request, Application $app) {
-                if (strpos($request->getPathInfo(), '/status/') === 0) {
+                if (strpos($request->getPathInfo(), '/status') === 0) {
                     return;
                 }
                 if (is_null(self::getClientVersion($app))) {
