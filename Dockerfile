@@ -14,4 +14,7 @@ RUN docker-php-ext-install pdo pdo_mysql opcache
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-RUN cd /var/www/html/dm-server && composer install --no-plugins --no-scripts
+RUN cd /var/www/html/dm-server && \
+  composer install --no-plugins --no-scripts && \
+  touch development.log && chown www-data:www-data development.log &&
+  touch pimple.json && chown www-data:www-data pimple.json
