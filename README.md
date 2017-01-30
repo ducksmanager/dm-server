@@ -5,6 +5,9 @@ Clone the repo, `cd` into it.
 Build the image :
 ``docker build -t dm-server .``
 
+Build the network that will also contain the DBs :
+``docker network create -d bridge --subnet 172.25.0.0/16 dm_network``
+
 Run a container :
 ``docker run -d --restart=always -v `pwd`/app/config:/var/www/html/dm-server/app/config -p 8001:80 --name dm-server-box --net dm_network dm-server``
 
