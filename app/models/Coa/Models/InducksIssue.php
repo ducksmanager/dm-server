@@ -24,16 +24,16 @@ class InducksIssue extends \Coa\Models\BaseModel
     /**
      * @var string
      *
-     * @ORM\Column(name="publicationcode", type="string", length=12, nullable=false)
+     * @ORM\Column(name="issuerangecode", type="string", length=14, nullable=true)
      */
-    private $publicationcode = '';
+    private $issuerangecode;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="issuerangecode", type="string", length=14, nullable=true)
+     * @ORM\Column(name="publicationcode", type="string", length=12, nullable=true)
      */
-    private $issuerangecode;
+    private $publicationcode;
 
     /**
      * @var string

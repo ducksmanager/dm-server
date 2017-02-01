@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * InducksPublication
  *
- * @ORM\Table(name="inducks_publication", indexes={@ORM\Index(name="fk_inducks_publication0", columns={"countrycode"}), @ORM\Index(name="fk_inducks_publication1", columns={"languagecode"}), @ORM\Index(name="title", columns={"title"})})
+ * @ORM\Table(name="inducks_publication", indexes={@ORM\Index(name="fk_inducks_publication0", columns={"countrycode"}), @ORM\Index(name="fk_inducks_publication1", columns={"languagecode"}), @ORM\Index(name="fulltext_inducks_publication", columns={"title"})})
  * @ORM\Entity
  */
 class InducksPublication extends \Coa\Models\BaseModel
@@ -38,7 +38,7 @@ class InducksPublication extends \Coa\Models\BaseModel
     /**
      * @var string
      *
-     * @ORM\Column(name="title", type="text", length=65535, nullable=true)
+     * @ORM\Column(name="title", type="string", length=131, nullable=true)
      */
     private $title;
 
@@ -52,7 +52,7 @@ class InducksPublication extends \Coa\Models\BaseModel
     /**
      * @var string
      *
-     * @ORM\Column(name="publicationcomment", type="string", length=1298, nullable=true)
+     * @ORM\Column(name="publicationcomment", type="string", length=1425, nullable=true)
      */
     private $publicationcomment;
 

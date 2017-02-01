@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * InducksStory
  *
- * @ORM\Table(name="inducks_story", indexes={@ORM\Index(name="fk_inducks_story0", columns={"originalstoryversioncode"}), @ORM\Index(name="fk_inducks_story1", columns={"firstpublicationdate"}), @ORM\Index(name="fulltext_inducks_story_temp", columns={"title", "repcountrysummary"})})
+ * @ORM\Table(name="inducks_story", indexes={@ORM\Index(name="fk_inducks_story0", columns={"originalstoryversioncode"}), @ORM\Index(name="fk_inducks_story1", columns={"firstpublicationdate"}), @ORM\Index(name="fulltext_inducks_story", columns={"title", "repcountrysummary"})})
  * @ORM\Entity
  */
 class InducksStory extends \Coa\Models\BaseModel
@@ -52,7 +52,7 @@ class InducksStory extends \Coa\Models\BaseModel
     /**
      * @var string
      *
-     * @ORM\Column(name="title", type="text", length=65535, nullable=true)
+     * @ORM\Column(name="title", type="string", length=210, nullable=true)
      */
     private $title;
 
@@ -80,7 +80,7 @@ class InducksStory extends \Coa\Models\BaseModel
     /**
      * @var string
      *
-     * @ORM\Column(name="repcountrysummary", type="text", length=65535, nullable=true)
+     * @ORM\Column(name="repcountrysummary", type="string", length=88, nullable=true)
      */
     private $repcountrysummary;
 

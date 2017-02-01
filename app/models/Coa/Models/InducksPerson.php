@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * InducksPerson
  *
- * @ORM\Table(name="inducks_person", indexes={@ORM\Index(name="fk_inducks_person0", columns={"nationalitycountrycode"}), @ORM\Index(name="fullname", columns={"fullname", "birthname"})})
+ * @ORM\Table(name="inducks_person", indexes={@ORM\Index(name="fk_inducks_person0", columns={"nationalitycountrycode"}), @ORM\Index(name="fulltext_inducks_person", columns={"fullname", "birthname"})})
  * @ORM\Entity
  */
 class InducksPerson extends \Coa\Models\BaseModel
@@ -31,7 +31,7 @@ class InducksPerson extends \Coa\Models\BaseModel
     /**
      * @var string
      *
-     * @ORM\Column(name="fullname", type="text", length=65535, nullable=true)
+     * @ORM\Column(name="fullname", type="string", length=79, nullable=true)
      */
     private $fullname;
 
@@ -66,7 +66,7 @@ class InducksPerson extends \Coa\Models\BaseModel
     /**
      * @var string
      *
-     * @ORM\Column(name="birthname", type="text", length=65535, nullable=true)
+     * @ORM\Column(name="birthname", type="string", length=37, nullable=true)
      */
     private $birthname;
 
