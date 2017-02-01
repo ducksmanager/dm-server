@@ -2,9 +2,12 @@
 namespace DmStats\Models;
 
 /**
- * Children classes are generated with (to be run from the app folder):
+ * Children classes can be generated with (to be run from the app folder):
  * ../vendor/bin/doctrine orm:convert-mapping --namespace=DmStats\\Models\\ --force --from-database annotation ./models --extend DmStats\\Models\\BaseModel
  * ../vendor/bin/doctrine orm:generate-entities models --filter=DmStats\\\\Models
+ *
+ * Recreate the DB schema with (to be run from the app folder) :
+ * ../vendor/bin/doctrine orm:schema-tool:create --namespace=DmStats\\Models\\
  */
 class BaseModel
 {
