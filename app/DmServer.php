@@ -2,6 +2,8 @@
 
 namespace DmServer;
 
+use DmServer\Controllers;
+use DmServer\Controllers\AbstractController;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\CachedReader;
 use Doctrine\Common\Cache\ArrayCache;
@@ -16,7 +18,7 @@ use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class DmServer extends AppController implements ControllerProviderInterface
+class DmServer extends AbstractController implements ControllerProviderInterface
 {
     const CONFIG_FILE_DEFAULT = 'config.db.ini';
     const CONFIG_FILE_TEST = 'config.db.test.ini';
@@ -222,14 +224,26 @@ class DmServer extends AppController implements ControllerProviderInterface
             }
         );
 
-        UserController::addRoutes($routing);
-        CollectionController::addRoutes($routing);
-        CoaListController::addRoutes($routing);
-        CoverIdController::addRoutes($routing);
-        InternalController::addRoutes($routing);
-        RawSqlController::addRoutes($routing);
-        StatusController::addRoutes($routing);
-        StatsController::addRoutes($routing);
+        Controllers\User\AppController::addRoutes($routing);
+        Controllers\User\InternalController::addRoutes($routing);
+
+        Controllers\Collection\AppController::addRoutes($routing);
+        Controllers\Collection\InternalController::addRoutes($routing);
+
+        Controllers\Coa\AppController::addRoutes($routing);
+        Controllers\Coa\InternalController::addRoutes($routing);
+
+        Controllers\CoverId\AppController::addRoutes($routing);
+        Controllers\CoverId\InternalController::addRoutes($routing);
+
+        Controllers\RawSql\AppController::addRoutes($routing);
+        Controllers\RawSql\InternalController::addRoutes($routing);
+
+        Controllers\Status\AppController::addRoutes($routing);
+
+        Controllers\Stats\AppController::addRoutes($routing);
+        Controllers\Stats\InternalController::addRoutes($routing);
+
 
         return $routing;
     }

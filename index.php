@@ -72,7 +72,7 @@ $app->extend(
 
     return $translator;
 });
-AppController::initTranslation($app);
+\DmServer\Controllers\AbstractController::initTranslation($app);
 
 $passwordEncoder = new \Symfony\Component\Security\Core\Encoder\BCryptPasswordEncoder(5);
 

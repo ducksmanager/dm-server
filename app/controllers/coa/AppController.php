@@ -1,14 +1,16 @@
 <?php
 
-namespace DmServer;
+namespace DmServer\Controllers\Coa;
 
 use Coa\Models\BaseModel;
+use DmServer\Controllers\AbstractController;
+use DmServer\ModelHelper;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-class CoaListController extends AppController
+class AppController extends AbstractController
 {
     /**
      * @param $routing ControllerCollection

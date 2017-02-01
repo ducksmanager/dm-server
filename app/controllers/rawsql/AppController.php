@@ -1,12 +1,13 @@
 <?php
 
-namespace DmServer;
+namespace DmServer\Controllers\Rawsql;
 
+use DmServer\Controllers\AbstractController;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\Request;
 
-class RawSqlController extends AppController
+class AppController extends AbstractController
 {
     /**
      * @param $routing ControllerCollection

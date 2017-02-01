@@ -1,5 +1,5 @@
 <?php
-namespace DmServer;
+namespace DmServer\Controllers;
 
 use Silex\Application;
 use Silex\Application\TranslationTrait;
@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
-abstract class AppController
+abstract class AbstractController
 {
     /** @var $translator TranslationTrait */
     static $translator;

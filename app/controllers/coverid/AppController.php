@@ -1,8 +1,11 @@
 <?php
 
-namespace DmServer;
+namespace DmServer\Controllers\Coverid;
 
 use CoverId\Models\BaseModel;
+use DmServer\Controllers\AbstractController;
+use DmServer\ModelHelper;
+use DmServer\SimilarImagesHelper;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -12,7 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
-class CoverIdController extends AppController
+class AppController extends AbstractController
 {
     static $uploadFileName = 'wtd_jpg';
     static $uploadDestination = ['/tmp', 'test.jpg'];
@@ -44,7 +47,7 @@ class CoverIdController extends AppController
         $routing->post(
             '/cover-id/search',
             function (Application $app, Request $request) {
-                return AppController::return500ErrorOnException($app, function() use ($app, $request) {
+                return AbstractController::return500ErrorOnException($app, function() use ($app, $request) {
                     $app['monolog']->addInfo('Cover ID search: start');
                     if (($nbUploaded = $request->files->count()) !== 1) {
                         return new Response('Invalid number of uploaded files : should be 1, was '.$nbUploaded, Response::HTTP_BAD_REQUEST);

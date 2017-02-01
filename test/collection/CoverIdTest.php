@@ -4,7 +4,7 @@ namespace DmServer\Test;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
-use DmServer\CoverIdController;
+use DmServer\Controllers\Coverid\AppController;
 
 class CoverIdTest extends TestCommon
 {
@@ -23,7 +23,7 @@ class CoverIdTest extends TestCommon
         @unlink(implode(DIRECTORY_SEPARATOR, self::$uploadDestination));
         copy(self::getPathToFileToUpload(self::$exampleImage), self::getPathToFileToUpload(self::$exampleImageToUpload));
 
-        CoverIdController::$similarImagesEngine = 'mocked';
+        AppController::$similarImagesEngine = 'mocked';
     }
 
     public function tearDown()

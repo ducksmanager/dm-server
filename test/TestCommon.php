@@ -6,12 +6,12 @@ use Coa\Models\InducksIssue;
 use Coa\Models\InducksPerson;
 use Coa\Models\InducksPublication;
 use CoverId\Models\Covers;
+use DmServer\Controllers\AbstractController;
 use DmStats\Models\AuteursHistoires;
 use DmStats\Models\AuteursPseudosSimple;
 use DmStats\Models\UtilisateursHistoiresManquantes;
 use Silex\Application;
 use Silex\WebTestCase;
-use DmServer\AppController;
 use Dm\Models\Numeros;
 use Dm\Models\Users;
 use DmServer\DmServer;
@@ -129,7 +129,7 @@ class TestCommon extends WebTestCase {
     protected function getCurrentUserIssues() {
         $dmEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_DM];
         return $dmEntityManager->getRepository(Numeros::class)->findBy(
-            array('idUtilisateur' => AppController::getSessionUser($this->app)['id'])
+            array('idUtilisateur' => AbstractController::getSessionUser($this->app)['id'])
         );
     }
 
@@ -237,7 +237,7 @@ class TestCommon extends WebTestCase {
         $dmStatsEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_DM_STATS];
 
         $authorUser = new AuteursPseudosSimple();
-        $authorUser->setIdUser(AppController::getSessionUser($this->app)['id']);
+        $authorUser->setIdUser(AbstractController::getSessionUser($this->app)['id']);
         $authorUser->setNomauteurabrege('CB');
         $dmStatsEntityManager->persist($authorUser);
 
@@ -254,7 +254,7 @@ class TestCommon extends WebTestCase {
         $missingStoryForUser = new UtilisateursHistoiresManquantes();
         $missingStoryForUser->setPersoncode('CB');
         $missingStoryForUser->setStorycode('ARC CBL 6B');
-        $missingStoryForUser->setIdUser(AppController::getSessionUser($this->app)['id']);
+        $missingStoryForUser->setIdUser(AbstractController::getSessionUser($this->app)['id']);
         $dmStatsEntityManager->persist($missingStoryForUser);
 
         $dmStatsEntityManager->flush();

@@ -1,13 +1,16 @@
 <?php
 
-namespace DmServer;
+namespace DmServer\Controllers\Status;
 
+use DmServer\Controllers\AbstractController;
+use DmServer\DatabaseCheckHelper;
+use DmServer\DmServer;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class StatusController extends AppController
+class AppController extends AbstractController
 {
     /**
      * @param $routing ControllerCollection
@@ -20,7 +23,7 @@ class StatusController extends AppController
              * @codeCoverageIgnore
              */
             function (Application $app, Request $request) {
-                return AppController::return500ErrorOnException($app, function() use ($app) {
+                return AbstractController::return500ErrorOnException($app, function() use ($app) {
 
                     self::setClientVersion($app, '1.0.0');
 
@@ -35,10 +38,10 @@ class StatusController extends AppController
                         ], [
                             'db' => DmServer::CONFIG_DB_KEY_COVER_ID,
                             'query' => 'SELECT ID, issuecode, url FROM covers LIMIT 1'
-                        ]/*, [
+                        ], [
                             'db' => DmServer::CONFIG_DB_KEY_DM_STATS,
                             'query' => 'SELECT * FROM utilisateurs_histoires_manquantes LIMIT 1'
-                        ]*/
+                        ]
                     ];
 
                     $errors = [];

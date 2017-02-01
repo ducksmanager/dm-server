@@ -1,10 +1,13 @@
 <?php
 
-namespace DmServer;
+namespace DmServer\Controllers\Collection;
 
 use Dm\Contracts\Dtos\NumeroSimple;
-use Dm\Models\Numeros;
 use Dm\Contracts\Results\FetchCollectionResult;
+use Dm\Models\Numeros;
+use DmServer\Controllers\AbstractController;
+use DmServer\ModelHelper;
+use DmServer\PublicationHelper;
 use Doctrine\Common\Collections\ArrayCollection;
 use Silex\Application;
 use Silex\ControllerCollection;
@@ -12,7 +15,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class CollectionController extends AppController
+class AppController extends AbstractController
 {
     /**
      * @param $routing ControllerCollection

@@ -1,13 +1,14 @@
 <?php
 
-namespace DmServer;
+namespace DmServer\Controllers\User;
 
+use DmServer\Controllers\AbstractController;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class UserController extends AppController
+class AppController extends AbstractController
 {
     /**
      * @param $routing ControllerCollection

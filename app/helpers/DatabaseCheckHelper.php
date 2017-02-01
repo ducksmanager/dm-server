@@ -1,6 +1,7 @@
 <?php
 namespace DmServer;
 
+use DmServer\Controllers\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 
 class DatabaseCheckHelper {
@@ -13,7 +14,7 @@ class DatabaseCheckHelper {
      */
     static function checkDatabase($app, $query, $db): Response
     {
-        $response = AppController::callInternal($app, '/rawsql', 'POST', [
+        $response = AbstractController::callInternal($app, '/rawsql', 'POST', [
             'query' => $query,
             'db' => $db
         ]);

@@ -1,13 +1,15 @@
 <?php
 
-namespace DmServer;
+namespace DmServer\Controllers\Stats;
 
+use DmServer\Controllers\AbstractController;
+use DmServer\ModelHelper;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-class StatsController extends AppController
+class AppController extends AbstractController
 {
     /**
      * @param $routing ControllerCollection
@@ -17,7 +19,7 @@ class StatsController extends AppController
         $routing->get(
             '/collection/stats/watchedauthorsstorycount',
             function (Application $app, Request $request) {
-                return AppController::return500ErrorOnException($app, function() use ($app) {
+                return AbstractController::return500ErrorOnException($app, function() use ($app) {
                     $authorsAndStoryCount = ModelHelper::getUnserializedArrayFromJson(
                         self::callInternal($app, '/stats/authorsstorycount', 'GET')->getContent()
                     );

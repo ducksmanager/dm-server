@@ -2,7 +2,7 @@
 namespace DmServer\Test;
 
 use Dm\Models\Numeros;
-use DmServer\AppController;
+use DmServer\Controllers\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Dm\Models\Users;
 use DmServer\DmServer;
@@ -129,7 +129,7 @@ class CollectionTest extends TestCommon
 
         /** @var Numeros $updatedIssue */
         $updatedIssue = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->getRepository(Numeros::class)->findOneBy(
-            ['idUtilisateur' => AppController::getSessionUser($this->app)['id'], 'pays' => $country, 'magazine' => $publication, 'numero' => $issueToUpdate]
+            ['idUtilisateur' => AbstractController::getSessionUser($this->app)['id'], 'pays' => $country, 'magazine' => $publication, 'numero' => $issueToUpdate]
         );
         $this->assertNotNull($updatedIssue);
         $this->assertEquals('bon', $updatedIssue->getEtat());
@@ -141,7 +141,7 @@ class CollectionTest extends TestCommon
 
         /** @var Numeros $createdIssue */
         $createdIssue = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->getRepository(Numeros::class)->findOneBy(
-            ['idUtilisateur' => AppController::getSessionUser($this->app)['id'], 'pays' => $country, 'magazine' => $publication, 'numero' => $issueToCreate]
+            ['idUtilisateur' => AbstractController::getSessionUser($this->app)['id'], 'pays' => $country, 'magazine' => $publication, 'numero' => $issueToCreate]
         );
         $this->assertNotNull($createdIssue);
         $this->assertEquals('bon', $createdIssue->getEtat());
