@@ -1,5 +1,5 @@
 <?php
-use DmServer\AppController;
+use DmServer\Controllers\AbstractController;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -72,7 +72,7 @@ $app->extend(
 
     return $translator;
 });
-\DmServer\Controllers\AbstractController::initTranslation($app);
+AbstractController::initTranslation($app);
 
 $passwordEncoder = new \Symfony\Component\Security\Core\Encoder\BCryptPasswordEncoder(5);
 
@@ -90,7 +90,7 @@ array_walk($roles, function($role, $user) use ($passwordEncoder, &$users) {
 
 $app->register(new Silex\Provider\SecurityServiceProvider(), array(
     'security.firewalls' => array(
-        'all' => array(
+        'rawsql' => array(
             'pattern' => '^/rawsql',
             'http' => true,
             'users' => ['rawsql' => $users['rawsql']]

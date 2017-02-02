@@ -40,7 +40,7 @@ class InternalController extends AbstractController
                     }
 
                     $results = $qb->getQuery()->getResult();
-                    $countryNames = array();
+                    $countryNames = [];
                     array_walk(
                         $results,
                         function($result) use (&$countryNames) {
@@ -69,7 +69,7 @@ class InternalController extends AbstractController
                     }
 
                     $results = $qb->getQuery()->getResult();
-                    $publicationTitles = array();
+                    $publicationTitles = [];
                     array_walk(
                         $results,
                         function($result) use (&$publicationTitles) {

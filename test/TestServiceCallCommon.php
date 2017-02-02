@@ -10,11 +10,11 @@ class TestServiceCallCommon {
 
     private $path;
     private $userCredentials;
-    private $parameters = array();
-    private $systemCredentials = array();
+    private $parameters = [];
+    private $systemCredentials = [];
     private $clientVersion;
     private $method;
-    private $files = array();
+    private $files = [];
 
     /**
      * @param Client $client

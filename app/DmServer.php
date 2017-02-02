@@ -171,7 +171,7 @@ class DmServer extends AbstractController implements ControllerProviderInterface
         $config = self::getAppConfig($forTest)[$dbKey];
 
         $metaDataConfig = Setup::createAnnotationMetadataConfiguration(
-            array(__DIR__ . "/models/".$config['models_path']), true, null, null, false
+            [__DIR__ . "/models/".$config['models_path']], true, null, null, false
         );
         $connectionParams = self::getConnectionParams($config);
         $conn = DriverManager::getConnection($connectionParams, $metaDataConfig, $evm);

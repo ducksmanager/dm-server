@@ -101,7 +101,7 @@ class TestCommon extends WebTestCase {
      * @return TestServiceCallCommon
      */
     protected function buildService(
-        $path, $userCredentials, $parameters = array(), $systemCredentials = array(), $method = 'POST', $files = array()
+        $path, $userCredentials, $parameters = [], $systemCredentials = [], $method = 'POST', $files = []
     ) {
         $service = new TestServiceCallCommon(static::createClient());
         $service->setPath($path);
@@ -113,11 +113,11 @@ class TestCommon extends WebTestCase {
         return $service;
     }
     
-    protected function buildAuthenticatedService($path, $appUser, $userCredentials, $parameters = array(), $method = 'POST') {
+    protected function buildAuthenticatedService($path, $appUser, $userCredentials, $parameters = [], $method = 'POST') {
         return $this->buildService($path, $userCredentials, $parameters, self::getSystemCredentials($appUser), $method, []);
     }
 
-    protected function buildAuthenticatedServiceWithTestUser($path, $appUser, $method = 'GET', $parameters = array(), $files = array()) {
+    protected function buildAuthenticatedServiceWithTestUser($path, $appUser, $method = 'GET', $parameters = [], $files = []) {
         return $this->buildService(
             $path, [
             'username' => self::$defaultTestDmUserName,
@@ -129,7 +129,7 @@ class TestCommon extends WebTestCase {
     protected function getCurrentUserIssues() {
         $dmEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_DM];
         return $dmEntityManager->getRepository(Numeros::class)->findBy(
-            array('idUtilisateur' => AbstractController::getSessionUser($this->app)['id'])
+            ['idUtilisateur' => AbstractController::getSessionUser($this->app)['id']]
         );
     }
 
@@ -181,7 +181,7 @@ class TestCommon extends WebTestCase {
 
         $dmEntityManager->flush();
 
-        return array('username' => $user->getUsername(), 'id' => $user->getId());
+        return ['username' => $user->getUsername(), 'id' => $user->getId()];
     }
 
     protected static function createCoaData() {
@@ -301,7 +301,7 @@ class TestCommon extends WebTestCase {
     }
 
     protected static function getPathToFileToUpload($fileName) {
-        return implode(DIRECTORY_SEPARATOR, array(__DIR__, 'fixtures', $fileName));
+        return implode(DIRECTORY_SEPARATOR, [__DIR__, 'fixtures', $fileName]);
     }
 
     /**

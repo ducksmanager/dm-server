@@ -20,7 +20,7 @@ class CollectionTest extends TestCommon
 
         /** @var Users[] $usersWithUsername */
         $usersWithUsername = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->getRepository(Users::class)->findBy(
-            array('username' => self::$defaultTestDmUserName)
+            ['username' => self::$defaultTestDmUserName]
         );
 
         $this->assertEquals(1, count($usersWithUsername));

@@ -41,7 +41,7 @@ abstract class AbstractController
      * @param $userId
      */
     protected static function setSessionUser(Application $app, $username, $userId) {
-        $app['session']->set('user', array('username' => $username, 'id' => $userId));
+        $app['session']->set('user', ['username' => $username, 'id' => $userId]);
     }
 
     /**
@@ -70,7 +70,6 @@ abstract class AbstractController
 
     public function authenticateUser(Application $app, Request $request) {
         if (preg_match('#^/collection/((?!new/?).)+$#', $request->getPathInfo())) {
-            $authHeader = $request->headers->get('authorization');
             $username = $request->headers->get('x-dm-user');
             $password = $request->headers->get('x-dm-pass');
             if (isset($username) && isset($password)) {

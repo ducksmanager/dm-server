@@ -23,18 +23,18 @@ class CoverIdTest extends TestCommon
         @unlink(implode(DIRECTORY_SEPARATOR, self::$uploadDestination));
         copy(self::getPathToFileToUpload(self::$exampleImage), self::getPathToFileToUpload(self::$exampleImageToUpload));
 
-        SimilarImagesHelper::$mockedResults = array(
-            "bounding_rects" => array(
+        SimilarImagesHelper::$mockedResults = [
+            "bounding_rects" => [
                 "height" => 846,
                 "width"  => 625,
                 "x" => 67,
                 "y" => 44
-            ),
-            "image_ids" => array(2),
-            "scores" => array(58.0),
-            "tags" => array(''),
+            ],
+            "image_ids" => [2],
+            "scores" => [58.0],
+            "tags" => [''],
             "type" => "SEARCH_RESULTS"
-        );
+        ];
     }
 
     public function tearDown()
@@ -63,10 +63,10 @@ class CoverIdTest extends TestCommon
 
     public function testCoverIdSearchMultipleUploads() {
         $service = $this->buildAuthenticatedServiceWithTestUser(
-            '/cover-id/search', TestCommon::$dmUser, 'POST', array(), array(
+            '/cover-id/search', TestCommon::$dmUser, 'POST', [], [
                 'wtd_jpg' => self::getCoverIdSearchUploadImage(),
                 'wtd_jpg2' => self::getCoverIdSearchUploadImage()
-            )
+            ]
         );
         $response = $service->call();
 
@@ -78,9 +78,9 @@ class CoverIdTest extends TestCommon
         $this->assertFileNotExists(implode(DIRECTORY_SEPARATOR, self::$uploadDestination));
 
         $service = $this->buildAuthenticatedServiceWithTestUser(
-            '/cover-id/search', TestCommon::$dmUser, 'POST', array(), array(
+            '/cover-id/search', TestCommon::$dmUser, 'POST', [], [
                 'wtd_jpg' => self::getCoverIdSearchUploadImage()
-            )
+            ]
         );
         $response = $service->call();
 
@@ -92,9 +92,9 @@ class CoverIdTest extends TestCommon
         $this->assertFileNotExists(implode(DIRECTORY_SEPARATOR, self::$uploadDestination));
 
         $service = $this->buildAuthenticatedServiceWithTestUser(
-            '/cover-id/search', TestCommon::$dmUser, 'POST', array(), array(
+            '/cover-id/search', TestCommon::$dmUser, 'POST', [], [
                 'wtd_invalid_jpg' => self::getCoverIdSearchUploadImage()
-            )
+            ]
         );
         $response = $service->call();
 

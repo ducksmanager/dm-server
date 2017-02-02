@@ -21,9 +21,9 @@ class InternalController extends AbstractController
             '/internal/user/exists/{username}',
             function (Request $request, Application $app, $username) {
                 return AbstractController::return500ErrorOnException($app, function() use ($username) {
-                    $existingUser = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->getRepository(Users::class)->findBy(array(
+                    $existingUser = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->getRepository(Users::class)->findBy([
                         'username' => $username
-                    ));
+                    ]);
                     if (count($existingUser) > 0) {
                         return new Response('', Response::HTTP_CONFLICT);
                     }
@@ -67,10 +67,10 @@ class InternalController extends AbstractController
             function (Request $request, Application $app, $username, $password) {
                 return AbstractController::return500ErrorOnException($app, function() use ($username, $password) {
                     /** @var Users $existingUser */
-                    $existingUser = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->getRepository(Users::class)->findOneBy(array(
+                    $existingUser = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->getRepository(Users::class)->findOneBy([
                         'username' => $username,
                         'password' => $password
-                    ));
+                    ]);
                     if (!is_null($existingUser)) {
                         return new Response($existingUser->getId(), Response::HTTP_OK);
                     } else {
