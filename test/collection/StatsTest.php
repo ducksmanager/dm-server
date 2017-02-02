@@ -13,11 +13,6 @@ class StatsTest extends TestCommon
         self::createStatsData();
     }
 
-    public function tearDown()
-    {
-        parent::tearDown();
-    }
-
     public function testGetWatchedAuthors() {
         $service = $this->buildAuthenticatedServiceWithTestUser('/collection/stats/watchedauthorsstorycount', TestCommon::$dmUser);
         $response = $service->call();
