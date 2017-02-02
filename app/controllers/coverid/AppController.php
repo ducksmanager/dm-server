@@ -20,8 +20,6 @@ class AppController extends AbstractController
     static $uploadFileName = 'wtd_jpg';
     static $uploadDestination = ['/tmp', 'test.jpg'];
 
-    static $similarImagesEngine = 'default';
-
     /**
      * @param $routing ControllerCollection
      */
@@ -63,13 +61,8 @@ class AppController extends AbstractController
                             $file = $uploadedFile->move(self::$uploadDestination[0], self::$uploadDestination[1]);
                             $app['monolog']->addInfo('Cover ID search: upload file moving done');
 
-                            switch(self::$similarImagesEngine) {
-                                case 'mocked':
-                                    $engineResponse = SimilarImagesHelper::getSimilarImagesMocked($file);
-                                break;
-                                default:
-                                    $engineResponse = SimilarImagesHelper::getSimilarImages($file);
-                            }
+                            $engineResponse = SimilarImagesHelper::getSimilarImages($file);
+
                             $app['monolog']->addInfo('Cover ID search: processing done');
 
                             if (!is_null($engineResponse) && !empty($engineResponse['image_ids'])) {

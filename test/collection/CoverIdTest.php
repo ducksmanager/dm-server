@@ -1,10 +1,10 @@
 <?php
 namespace DmServer\Test;
 
+use DmServer\SimilarImagesHelper;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
-use DmServer\Controllers\Coverid\AppController;
 
 class CoverIdTest extends TestCommon
 {
@@ -23,7 +23,18 @@ class CoverIdTest extends TestCommon
         @unlink(implode(DIRECTORY_SEPARATOR, self::$uploadDestination));
         copy(self::getPathToFileToUpload(self::$exampleImage), self::getPathToFileToUpload(self::$exampleImageToUpload));
 
-        AppController::$similarImagesEngine = 'mocked';
+        SimilarImagesHelper::$mockedResults = array(
+            "bounding_rects" => array(
+                "height" => 846,
+                "width"  => 625,
+                "x" => 67,
+                "y" => 44
+            ),
+            "image_ids" => array(2),
+            "scores" => array(58.0),
+            "tags" => array(''),
+            "type" => "SEARCH_RESULTS"
+        );
     }
 
     public function tearDown()
