@@ -10,7 +10,9 @@ RUN a2enmod rewrite
 
 RUN apt-get update && apt-get install -y git wget unzip mariadb-client
 
-RUN docker-php-ext-install pdo pdo_mysql opcache
+RUN pecl install xdebug-2.5.0
+
+RUN docker-php-ext-install pdo pdo_mysql opcache && docker-php-ext-enable xdebug
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
