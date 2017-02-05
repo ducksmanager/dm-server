@@ -28,6 +28,9 @@ class InternalController extends AbstractController
                     if (is_null($em)) {
                         return new Response('Invalid parameter : db='.$db, Response::HTTP_BAD_REQUEST);
                     }
+                    if (strpos($query, ';') !== false) { // In lack of something better
+                        return new Response('Raw queries shouldn\'t contain the ";" symbol', Response::HTTP_BAD_REQUEST);
+                    }
 
                     if (isset($app['monolog'])) {
                         $app['monolog']->addInfo('Raw sql sent : '.$query);

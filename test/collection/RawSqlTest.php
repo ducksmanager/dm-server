@@ -48,4 +48,15 @@ class RawSqlTest extends TestCommon
         $this->assertEquals('fr', $objectResponse[0]['Pays']);
         $this->assertEquals('DDD', $objectResponse[0]['Magazine']);
     }
+
+    public function testRawSqlMultipleStatements() {
+        $service = $this->buildAuthenticatedServiceWithTestUser('/rawsql', TestCommon::$rawSqlUser, 'POST', [
+            'query' => 'SELECT * FROM numeros; DELETE FROM numeros',
+            'db'    => 'db'
+        ]);
+        $response = $service->call();
+
+        $this->assertEquals(400, $response->getStatusCode());
+        $this->assertEquals($response->getContent(), 'Raw queries shouldn\'t contain the ";" symbol');
+    }
 }
