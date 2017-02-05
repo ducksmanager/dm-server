@@ -17,9 +17,9 @@ class InducksStory extends \Coa\Models\BaseModel
      *
      * @ORM\Column(name="storycode", type="string", length=19, nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\GeneratedValue(strategy="NONE")
      */
-    private $storycode;
+    private $storycode = '';
 
     /**
      * @var string
@@ -120,6 +120,19 @@ class InducksStory extends \Coa\Models\BaseModel
     private $maintenanceteamcode;
 
 
+    /**
+     * Set storycode
+     *
+     * @param string $storycode
+     *
+     * @return InducksStory
+     */
+    public function setStorycode($storycode)
+    {
+        $this->storycode = $storycode;
+
+        return $this;
+    }
 
     /**
      * Get storycode

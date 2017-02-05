@@ -109,7 +109,7 @@ class CoverIdTest extends TestCommon
         $response = $service->call();
 
         file_put_contents('/tmp/test.jpg', $response->getContent());
-        $type=exif_imagetype('/tmp/test.jpg');
+        $type=\exif_imagetype('/tmp/test.jpg');
         $this->assertEquals(IMAGETYPE_JPEG, $type);   //A specific image type
 
     }

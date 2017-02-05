@@ -47,7 +47,7 @@ class UtilisateursPublicationsSuggerees extends \DmStats\Models\BaseModel
      *   @ORM\JoinColumn(name="ID_User", referencedColumnName="ID_User")
      * })
      */
-    private $idUser;
+    private $user;
 
 
 
@@ -126,13 +126,13 @@ class UtilisateursPublicationsSuggerees extends \DmStats\Models\BaseModel
     /**
      * Set idUser
      *
-     * @param \DmStats\Models\AuteursPseudosSimple $idUser
+     * @param \DmStats\Models\AuteursPseudosSimple $user
      *
      * @return UtilisateursPublicationsSuggerees
      */
-    public function setIdUser(\DmStats\Models\AuteursPseudosSimple $idUser)
+    public function setUser(\DmStats\Models\AuteursPseudosSimple $user)
     {
-        $this->idUser = $idUser;
+        $this->user = $user;
 
         return $this;
     }
@@ -142,8 +142,8 @@ class UtilisateursPublicationsSuggerees extends \DmStats\Models\BaseModel
      *
      * @return \DmStats\Models\AuteursPseudosSimple
      */
-    public function getIdUser()
+    public function getUser()
     {
-        return $this->idUser;
+        return $this->user;
     }
 }

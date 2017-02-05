@@ -5,11 +5,14 @@ use Coa\Models\InducksCountryname;
 use Coa\Models\InducksIssue;
 use Coa\Models\InducksPerson;
 use Coa\Models\InducksPublication;
+use Coa\Models\InducksStory;
 use CoverId\Models\Covers;
 use DmServer\Controllers\AbstractController;
 use DmStats\Models\AuteursHistoires;
 use DmStats\Models\AuteursPseudosSimple;
 use DmStats\Models\UtilisateursHistoiresManquantes;
+use DmStats\Models\UtilisateursPublicationsManquantes;
+use DmStats\Models\UtilisateursPublicationsSuggerees;
 use Silex\Application;
 use Silex\WebTestCase;
 use Dm\Models\Numeros;
@@ -229,6 +232,18 @@ class TestCommon extends WebTestCase {
         $issue3->setIssuecode('fr/MP 300');
         $coaEntityManager->persist($issue3);
 
+        $story1 = new InducksStory();
+        $story1->setTitle('Title of story W WDC  31-05');
+        $story1->setStorycomment('Comment of story W WDC  31-05');
+        $story1->setStorycode('W WDC  31-05');
+        $coaEntityManager->persist($story1);
+
+        $story2 = new InducksStory();
+        $story2->setTitle('Title of story W WDC  32-02');
+        $story2->setStorycomment('Comment of story W WDC  32-02');
+        $story2->setStorycode('W WDC  32-02');
+        $coaEntityManager->persist($story2);
+
         $coaEntityManager->flush();
         $coaEntityManager->clear();
     }
@@ -236,10 +251,13 @@ class TestCommon extends WebTestCase {
     public function createStatsData() {
         $dmStatsEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_DM_STATS];
 
+        $userId = AbstractController::getSessionUser($this->app)['id'];
+
         $authorUser = new AuteursPseudosSimple();
-        $authorUser->setIdUser(AbstractController::getSessionUser($this->app)['id']);
+        $authorUser->setIdUser($userId);
         $authorUser->setNomauteurabrege('CB');
         $dmStatsEntityManager->persist($authorUser);
+        $dmStatsEntityManager->flush();
 
         $authorStory1 = new AuteursHistoires();
         $authorStory1->setPersoncode('CB');
@@ -251,13 +269,50 @@ class TestCommon extends WebTestCase {
         $authorStory2->setStorycode('ARC CBL 6B');
         $dmStatsEntityManager->persist($authorStory2);
 
-        $missingStoryForUser = new UtilisateursHistoiresManquantes();
-        $missingStoryForUser->setPersoncode('CB');
-        $missingStoryForUser->setStorycode('ARC CBL 6B');
-        $missingStoryForUser->setIdUser(AbstractController::getSessionUser($this->app)['id']);
-        $dmStatsEntityManager->persist($missingStoryForUser);
+        $authorStory3 = new AuteursHistoires();
+        $authorStory3->setPersoncode('CB');
+        $authorStory3->setStorycode('W WDC  33-01');
+        $dmStatsEntityManager->persist($authorStory3);
+
+        $missingStory1ForUser = new UtilisateursHistoiresManquantes();
+        $missingStory1ForUser->setPersoncode($authorStory1->getPersoncode());
+        $missingStory1ForUser->setStorycode($authorStory1->getStorycode());
+        $missingStory1ForUser->setIdUser($userId);
+        $dmStatsEntityManager->persist($missingStory1ForUser);
+
+        $missingStory2ForUser = new UtilisateursHistoiresManquantes();
+        $missingStory2ForUser->setPersoncode($authorStory2->getPersoncode());
+        $missingStory2ForUser->setStorycode($authorStory2->getStorycode());
+        $missingStory2ForUser->setIdUser($userId);
+        $dmStatsEntityManager->persist($missingStory2ForUser);
+
+        $missingPublicationOfStory1ForUser = new UtilisateursPublicationsManquantes();
+        $missingPublicationOfStory1ForUser->setPersoncode($authorStory1->getPersoncode());
+        $missingPublicationOfStory1ForUser->setStorycode($authorStory1->getStorycode());
+        $missingPublicationOfStory1ForUser->setIdUser($userId);
+        $missingPublicationOfStory1ForUser->setPublicationcode('us/CBL');
+        $missingPublicationOfStory1ForUser->setIssuenumber('7');
+        $missingPublicationOfStory1ForUser->setNotation(2);
+        $dmStatsEntityManager->persist($missingPublicationOfStory1ForUser);
+
+        $missingPublicationOfStory2ForUser = new UtilisateursPublicationsManquantes();
+        $missingPublicationOfStory2ForUser->setPersoncode($authorStory2->getPersoncode());
+        $missingPublicationOfStory2ForUser->setStorycode($authorStory2->getStorycode());
+        $missingPublicationOfStory2ForUser->setIdUser($userId);
+        $missingPublicationOfStory2ForUser->setPublicationcode('us/CBL');
+        $missingPublicationOfStory2ForUser->setIssuenumber('7');
+        $missingPublicationOfStory2ForUser->setNotation(2);
+        $dmStatsEntityManager->persist($missingPublicationOfStory2ForUser);
+
+        $suggestedPublicationForUser = new UtilisateursPublicationsSuggerees();
+        $suggestedPublicationForUser->setPublicationcode('us/CBL');
+        $suggestedPublicationForUser->setIssuenumber('7');
+        $suggestedPublicationForUser->setUser($authorUser);
+        $suggestedPublicationForUser->setScore(4);
+        $dmStatsEntityManager->persist($suggestedPublicationForUser);
 
         $dmStatsEntityManager->flush();
+        $dmStatsEntityManager->clear();
 
         $coaEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_COA];
 
@@ -265,9 +320,8 @@ class TestCommon extends WebTestCase {
         $inducksPerson->setPersoncode("CB");
         $inducksPerson->setFullname("Carl Barks");
         $coaEntityManager->persist($inducksPerson);
-        $coaEntityManager->flush();
 
-        $dmStatsEntityManager->clear();
+        $coaEntityManager->flush();
         $coaEntityManager->clear();
     }
 
