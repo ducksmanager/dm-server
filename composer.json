@@ -1,7 +1,7 @@
 {
-    "name": "bperel/whattheduck-server",
+    "name": "bperel/dm-server",
     "license": "Apache-2.0",
-    "description": "WhatTheDuck server REST API endpoint",
+    "description": "DucksManager server REST API endpoint",
     "version": "0.0.1",
     "type": "library",
     "keywords": ["ducksmanager", "whattheduck"],
@@ -13,7 +13,7 @@
         }
     ],
     "support": {
-        "issues": "https://github.com/bperel/wtd-server/issues"
+        "issues": "https://github.com/bperel/dm-server/issues"
     },
     "autoload": {
         "psr-4": {
