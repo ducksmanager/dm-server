@@ -38,16 +38,11 @@ class UtilisateursPublicationsSuggerees extends \DmStats\Models\BaseModel
     private $score;
 
     /**
-     * @var \DmStats\Models\AuteursPseudosSimple
+     * @var integer
      *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
-     * @ORM\OneToOne(targetEntity="DmStats\Models\AuteursPseudosSimple")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="ID_User", referencedColumnName="ID_User")
-     * })
+     * @ORM\Column(name="ID_User", type="integer", nullable=false)
      */
-    private $user;
+    private $idUser;
 
 
 
@@ -126,13 +121,13 @@ class UtilisateursPublicationsSuggerees extends \DmStats\Models\BaseModel
     /**
      * Set idUser
      *
-     * @param \DmStats\Models\AuteursPseudosSimple $user
+     * @param integer $idUser
      *
      * @return UtilisateursPublicationsSuggerees
      */
-    public function setUser(\DmStats\Models\AuteursPseudosSimple $user)
+    public function setIdUser($idUser)
     {
-        $this->user = $user;
+        $this->idUser = $idUser;
 
         return $this;
     }
@@ -140,10 +135,10 @@ class UtilisateursPublicationsSuggerees extends \DmStats\Models\BaseModel
     /**
      * Get idUser
      *
-     * @return \DmStats\Models\AuteursPseudosSimple
+     * @return integer
      */
-    public function getUser()
+    public function getIdUser()
     {
-        return $this->user;
+        return $this->idUser;
     }
 }

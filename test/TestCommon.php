@@ -307,7 +307,7 @@ class TestCommon extends WebTestCase {
         $suggestedPublicationForUser = new UtilisateursPublicationsSuggerees();
         $suggestedPublicationForUser->setPublicationcode('us/CBL');
         $suggestedPublicationForUser->setIssuenumber('7');
-        $suggestedPublicationForUser->setUser($authorUser);
+        $suggestedPublicationForUser->setIdUser($userId);
         $suggestedPublicationForUser->setScore(4);
         $dmStatsEntityManager->persist($suggestedPublicationForUser);
 
