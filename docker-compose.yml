@@ -8,49 +8,38 @@ services:
      - ./app/config:/var/www/html/dm-server/app/config
   db_coa:
     image: "bperel/coa-box"
+    extends:
+      file: docker-compose-db-with-healthcheck.yml
+      service: db-with-healthcheck
     ports:
      - "64000:3306"
     environment:
       MYSQL_ROOT_PASSWORD: changeme
       MYSQL_DATABASE: coa
-    healthcheck:
-      test: grep 'Server socket created' /var/log/mysql/error.log
-      interval: 2s
-      timeout: 30s
-    command: mysqld --log-error=/var/log/mysql/error.log
   db_cover_id:
-    image: "bperel/mariadb-with-external-access"
+    extends:
+      file: docker-compose-db-with-healthcheck.yml
+      service: db-with-healthcheck
     ports:
      - "64001:3306"
     environment:
       MYSQL_ROOT_PASSWORD: changeme
       MYSQL_DATABASE: cover_info
-    healthcheck:
-      test: grep 'Server socket created' /var/log/mysql/error.log
-      interval: 2s
-      timeout: 30s
-    command: mysqld --log-error=/var/log/mysql/error.log
   db_dm:
-    image: "bperel/mariadb-with-external-access"
+    extends:
+      file: docker-compose-db-with-healthcheck.yml
+      service: db-with-healthcheck
     ports:
      - "64002:3306"
     environment:
       MYSQL_ROOT_PASSWORD: changeme
       MYSQL_DATABASE: dm
-    healthcheck:
-      test: grep 'Server socket created' /var/log/mysql/error.log
-      interval: 2s
-      timeout: 30s
-    command: mysqld --log-error=/var/log/mysql/error.log
   db_dm_stats:
-    image: "bperel/mariadb-with-external-access"
+    extends:
+      file: docker-compose-db-with-healthcheck.yml
+      service: db-with-healthcheck
     ports:
      - "64010:3306"
     environment:
       MYSQL_ROOT_PASSWORD: changeme
       MYSQL_DATABASE: dm_stats
-    healthcheck:
-      test: grep 'Server socket created' /var/log/mysql/error.log
-      interval: 2s
-      timeout: 30s
-    command: mysqld --log-error=/var/log/mysql/error.log
