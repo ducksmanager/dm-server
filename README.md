@@ -1,26 +1,42 @@
 ### Setup
 
-Clone the repo, `cd` into it.
+The fastest way to start the project is to use the docker-compose template. In that case, Docker Compose 1.11.0-rc1+ is required.
 
-Build the image :
-``docker build -t dm-server .``
+#### Web server setup
 
-Build the network that will also contain the DBs :
-``docker network create -d bridge --subnet 172.25.0.0/16 dm_network``
+Copy `config/roles.base.ini` and rename the copy to `config/roles.ini`. Edit `config/roles.ini` to set the application role passwords:
+* The `ducksmanager` and `whattheduck` roles are only authorized to use the services prefixed with `/collection/`
+* `rawsql` is only authorized to use the services prefixed with `/rawsql`
 
-Run a container :
-``docker run -d --restart=always -v `pwd`/app/config:/var/www/html/dm-server/app/config  -p 9000:9000 -p 8001:80 --name dm-server-box --net dm_network dm-server``
+#### Database setup
+Copy `config/config.db.base.ini` and rename the copy to `config/config.db.ini`.
 
-Then run the following command to fix the Apache logfile structure :
-``docker exec -it dm-server-box /bin/bash -c 'cd /var/log/apache2 && for logfile in /var/log/apache2/*.log; do rm $logfile && touch $logfile; done && /etc/init.d/apache2 reload'``
-
-
-### Configuration
-
-Copy `config/config.db.base.ini` into `config/config.db.ini` and change the DB settings.
+Edit both `docker-compose.yml` and `config/config.db.ini` if needed. 
+The `container_name` values in `docker-compose.yml` and the `host` values in `config/config.db.ini` should match.
 
 
-### Updating the code in the container
+### Run !
+
+#### Start the project
+
+```bash
+docker-compose up --build -d && watch -n 1 'docker ps | grep " second"'
+```
+
+Creating the containers should take less than a minute. 
+
+#### Create database schemas
+
+Once the containers are started, create the schemas in the databases using the following command:
+```bash
+docker exec -it web /bin/bash -c /var/www/html/dm-server/scripts/create-schemas.sh
+```
+(considering `web` is the name of the running Web container)
+
+
+### Maintain
+
+#### Updating the code in the container
 
 Browse to the path of the source on the host, then run: 
 ```bash

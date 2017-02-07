@@ -3,6 +3,7 @@ MAINTAINER Bruno Perel
 
 ADD .htaccess /var/www/html/dm-server/.htaccess
 ADD app /var/www/html/dm-server/app
+ADD scripts /var/www/html/dm-server/scripts
 ADD index.php /var/www/html/dm-server/index.php
 ADD composer.json /var/www/html/dm-server/composer.json
 
@@ -19,4 +20,5 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN cd /var/www/html/dm-server && \
   composer install --no-plugins --no-scripts && \
   touch development.log && chown www-data:www-data development.log && \
-  touch pimple.json && chown www-data:www-data pimple.json
+  touch pimple.json && chown www-data:www-data pimple.json && \
+  chmod +x scripts/*

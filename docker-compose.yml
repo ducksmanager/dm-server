@@ -1,12 +1,19 @@
 version: '2.1'
 services:
   web:
+    container_name: web
     build: .
     ports:
      - "10001:80"
     volumes:
      - ./app/config:/var/www/html/dm-server/app/config
+    depends_on:
+     - db_coa
+     - db_cover_id
+     - db_dm
+     - db_dm_stats
   db_coa:
+    container_name: db_coa
     image: "bperel/coa-box"
     extends:
       file: docker-compose-db-with-healthcheck.yml
@@ -17,6 +24,7 @@ services:
       MYSQL_ROOT_PASSWORD: changeme
       MYSQL_DATABASE: coa
   db_cover_id:
+    container_name: db_cover_id
     extends:
       file: docker-compose-db-with-healthcheck.yml
       service: db-with-healthcheck
@@ -26,6 +34,7 @@ services:
       MYSQL_ROOT_PASSWORD: changeme
       MYSQL_DATABASE: cover_info
   db_dm:
+    container_name: db_dm
     extends:
       file: docker-compose-db-with-healthcheck.yml
       service: db-with-healthcheck
@@ -35,6 +44,7 @@ services:
       MYSQL_ROOT_PASSWORD: changeme
       MYSQL_DATABASE: dm
   db_dm_stats:
+    container_name: db_dm_stats
     extends:
       file: docker-compose-db-with-healthcheck.yml
       service: db-with-healthcheck
