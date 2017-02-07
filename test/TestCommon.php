@@ -244,6 +244,12 @@ class TestCommon extends WebTestCase {
         $story2->setStorycode('W WDC  32-02');
         $coaEntityManager->persist($story2);
 
+        $story3 = new InducksStory();
+        $story3->setTitle('Title of story ARC CBL 5B');
+        $story3->setStorycomment('Comment of story ARC CBL 5B');
+        $story3->setStorycode('ARC CBL 5B');
+        $coaEntityManager->persist($story3);
+
         $coaEntityManager->flush();
         $coaEntityManager->clear();
     }
@@ -266,12 +272,12 @@ class TestCommon extends WebTestCase {
 
         $authorStory2 = new AuteursHistoires();
         $authorStory2->setPersoncode('CB');
-        $authorStory2->setStorycode('ARC CBL 6B');
+        $authorStory2->setStorycode('W WDC  32-02');
         $dmStatsEntityManager->persist($authorStory2);
 
         $authorStory3 = new AuteursHistoires();
         $authorStory3->setPersoncode('CB');
-        $authorStory3->setStorycode('W WDC  33-01');
+        $authorStory3->setStorycode('W WDC  31-05');
         $dmStatsEntityManager->persist($authorStory3);
 
         $missingStory1ForUser = new UtilisateursHistoiresManquantes();

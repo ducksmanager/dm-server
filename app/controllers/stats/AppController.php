@@ -4,6 +4,7 @@ namespace DmServer\Controllers\Stats;
 
 use DmServer\Controllers\AbstractController;
 use DmServer\ModelHelper;
+use DmStats\Contracts\Results\IssueListWithSuggestionDetails;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -40,6 +41,43 @@ class AppController extends AbstractController
                     });
 
                     return new JsonResponse($watchedAuthorsStoryCount);
+                });
+            }
+        );
+        $routing->get(
+            '/collection/stats/suggestedpublications',
+            function (Application $app, Request $request) {
+                return AbstractController::return500ErrorOnException($app, function() use ($app) {
+                    $suggestedPublications = ModelHelper::getUnserializedArrayFromJson(
+                        self::callInternal($app, '/stats/suggestedpublications', 'GET')->getContent()
+                    );
+
+                    $publicationAuthors = array_map(function ($publication) {
+                        return $publication['personcode'];
+                    }, $suggestedPublications);
+
+                    IssueListWithSuggestionDetails::$authors = ModelHelper::getUnserializedArrayFromJson(
+                        self::callInternal(
+                            $app, '/coa/authorsfullnames', 'GET', [implode(',', $publicationAuthors)]
+                        )->getContent()
+                    );
+
+                    $storyCodes = array_map(function ($publication) {
+                        return $publication['storycode'];
+                    }, $suggestedPublications);
+
+                    IssueListWithSuggestionDetails::$storyDetails = ModelHelper::getUnserializedArrayFromJson(
+                        self::callInternal(
+                            $app, '/coa/storydetails', 'GET', [implode(',', $storyCodes)]
+                        )->getContent()
+                    );
+
+                    $publicationList = new IssueListWithSuggestionDetails();
+                    foreach($suggestedPublications as $publication) {
+                        $publicationList->addStory($publication['publicationcode'], $publication['issuenumber'], $publication['personcode'], $publication['storycode']);
+                    }
+
+                    return new JsonResponse($publicationList->getStories());
                 });
             }
         );

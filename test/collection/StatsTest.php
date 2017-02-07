@@ -34,12 +34,12 @@ class StatsTest extends TestCommon
 
         $this->assertEquals('us/CBL 7', array_keys(get_object_vars($objectResponse))[0]);
 
-        $this->assertEquals('W WDC  31-05', array_keys(get_object_vars($objectResponse->{'us/CBL 7'}))[0]);
-        $story1 = $objectResponse->{'us/CBL 7'}->{'W WDC  31-05'};
+        $this->assertEquals('ARC CBL 5B', array_keys(get_object_vars($objectResponse->{'us/CBL 7'}))[0]);
+        $story1 = $objectResponse->{'us/CBL 7'}->{'ARC CBL 5B'};
         $this->assertEquals('CB', $story1->author->personcode);
         $this->assertEquals('Carl Barks', $story1->author->fullname);
-        $this->assertEquals('Title of story W WDC  31-05', $story1->story->title);
-        $this->assertEquals('Comment of story W WDC  31-05', $story1->story->storycomment);
+        $this->assertEquals('Title of story ARC CBL 5B', $story1->story->title);
+        $this->assertEquals('Comment of story ARC CBL 5B', $story1->story->storycomment);
 
         $this->assertEquals('W WDC  32-02', array_keys(get_object_vars($objectResponse->{'us/CBL 7'}))[1]);
         $story2 = $objectResponse->{'us/CBL 7'}->{'W WDC  32-02'};
