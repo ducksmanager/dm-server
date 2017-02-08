@@ -11,9 +11,8 @@ Copy `config/roles.base.ini` and rename the copy to `config/roles.ini`. Edit `co
 #### Database setup
 Copy `config/config.db.base.ini` and rename the copy to `config/config.db.ini`.
 
-Edit both `docker-compose.yml` and `config/config.db.ini` if needed. 
-The `container_name` values in `docker-compose.yml` and the `host` values in `config/config.db.ini` should match.
-
+In order to customize the names of the containers, the port bindings or the database credentials, edit `docker-compose.yml` and `config/config.db.ini`. 
+The `container_name` values in `docker-compose.yml` and the `host` values in `config/config.db.ini` must match.
 
 ### Run !
 
