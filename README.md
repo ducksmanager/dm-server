@@ -18,3 +18,11 @@ Then run the following command to fix the Apache logfile structure :
 ### Configuration
 
 Copy `config/config.db.base.ini` into `config/config.db.ini` and change the DB settings.
+
+
+### Updating the code in the container
+
+Browse to the path of the source on the host, then run: 
+```bash
+scripts/deploy-server.sh dm-server-box
+```
