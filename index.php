@@ -80,7 +80,7 @@ $app['security.default_encoder'] = function () use ($passwordEncoder) {
     return $passwordEncoder;
 };
 
-$roles = DmServer::getAppRoles(array_key_exists('test', $conf));
+$roles = DmServer::getAppRoles(false);
 
 $users = array();
 array_walk($roles, function($role, $user) use ($passwordEncoder, &$users) {
