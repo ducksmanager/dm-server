@@ -32,6 +32,9 @@
             "Dm\\Models\\": [
                 "app/models/Dm/Models"
             ],
+            "DmStats\\Contracts\\": [
+                "app/models/DmStats/Contracts"
+            ],
             "DmStats\\Models\\": [
                 "app/models/DmStats/Models"
             ],
