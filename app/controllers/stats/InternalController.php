@@ -69,25 +69,46 @@ class InternalController extends AbstractController
             '/internal/stats/suggestedpublications',
             function (Request $request, Application $app) {
                 return AbstractController::return500ErrorOnException($app, function() use ($app) {
-                    $qbGetSuggestions = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM_STATS)->createQueryBuilder();
 
-                    $qbGetSuggestions
-                        ->select('missing_publications.personcode, missing_publications.storycode, ' .
-                                 'suggested_publications.publicationcode, suggested_publications.issuenumber, suggested_publications.score')
-                        ->from(UtilisateursPublicationsSuggerees::class, 'suggested_publications')
-                        ->join(UtilisateursPublicationsManquantes::class, 'missing_publications', Join::WITH, $qbGetSuggestions->expr()->andX(
-                            $qbGetSuggestions->expr()->eq('suggested_publications.idUser', 'missing_publications.idUser'),
-                            $qbGetSuggestions->expr()->eq('suggested_publications.publicationcode', 'missing_publications.publicationcode'),
-                            $qbGetSuggestions->expr()->eq('suggested_publications.issuenumber', 'missing_publications.issuenumber')
+                    $qbGetMostWantedSuggestions = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM_STATS)->createQueryBuilder();
+
+                    $qbGetMostWantedSuggestions
+                        ->select('most_suggested_inner.publicationcode', 'most_suggested_inner.issuenumber')
+                        ->from(UtilisateursPublicationsSuggerees::class, 'most_suggested_inner')
+                        ->where($qbGetMostWantedSuggestions->expr()->in('most_suggested_inner.idUser', ':userId'))
+                        ->setParameter(':userId', self::getSessionUser($app)['id'])
+                        ->orderBy(new OrderBy('most_suggested_inner.score', 'DESC'))
+                        ->setMaxResults(20);
+
+                    $mostWantedSuggestionsResults = $qbGetMostWantedSuggestions->getQuery()->getResult();
+
+                    $mostWantedSuggestions = array_map(function($suggestion) {
+                        return implode('', [$suggestion['publicationcode'], $suggestion['issuenumber']]);
+                    }, $mostWantedSuggestionsResults);
+
+                    $qbGetSuggestionDetails = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM_STATS)->createQueryBuilder();
+
+                    $qbGetSuggestionDetails
+                        ->select('missing.personcode, missing.storycode, ' .
+                                 'suggested.publicationcode, suggested.issuenumber, suggested.score')
+                        ->from(UtilisateursPublicationsSuggerees::class, 'suggested')
+                        ->join(UtilisateursPublicationsManquantes::class, 'missing', Join::WITH,  $qbGetSuggestionDetails->expr()->andX(
+                            $qbGetSuggestionDetails->expr()->eq('suggested.idUser', 'missing.idUser'),
+                            $qbGetSuggestionDetails->expr()->eq('suggested.publicationcode', 'missing.publicationcode'),
+                            $qbGetSuggestionDetails->expr()->eq('suggested.issuenumber', 'missing.issuenumber')
                         ))
 
-                        ->where($qbGetSuggestions->expr()->in('suggested_publications.idUser', ':userId'))
+                        ->where($qbGetSuggestionDetails->expr()->in('suggested.idUser', ':userId'))
                         ->setParameter(':userId', self::getSessionUser($app)['id'])
-                        ->orderBy(new OrderBy('suggested_publications.score', 'DESC'))
-                        ->setMaxResults(20)
-                        ;
-                    $sql = $qbGetSuggestions->getQuery()->getSQL();
-                    $suggestionResults = $qbGetSuggestions->getQuery()->getResult();
+
+                        ->andWhere($qbGetSuggestionDetails->expr()->in($qbGetSuggestionDetails->expr()->concat('suggested.publicationcode', 'suggested.issuenumber'), ':mostSuggestedPublications'))
+                        ->setParameter(':mostSuggestedPublications', $mostWantedSuggestions)
+
+                        ->addOrderBy(new OrderBy('suggested.score', 'DESC'))
+                        ->addOrderBy(new OrderBy('suggested.publicationcode', 'ASC'))
+                        ->addOrderBy(new OrderBy('suggested.issuenumber', 'ASC'));
+
+                    $suggestionResults = $qbGetSuggestionDetails->getQuery()->getResult();
 
                     return new JsonResponse(ModelHelper::getSerializedArray($suggestionResults));
                 });
