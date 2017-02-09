@@ -23,6 +23,17 @@ class CoaListsTest extends TestCommon
         $this->assertEquals('Espagne', $objectResponse->es);
     }
 
+    public function testGetCountryListFromCountryCodes() {
+        $service = $this->buildAuthenticatedServiceWithTestUser('/coa/list/countries/fr,us', TestCommon::$dmUser);
+        $response = $service->call();
+
+        $objectResponse = json_decode($response->getContent());
+
+        $this->assertInternalType('object', $objectResponse);
+        $this->assertEquals('France', $objectResponse->fr);
+        $this->assertEquals('USA', $objectResponse->us);
+    }
+
     public function testGetPublicationListFromCountry() {
         $service = $this->buildAuthenticatedServiceWithTestUser('/coa/list/publications/fr', TestCommon::$dmUser);
         $response = $service->call();

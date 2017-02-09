@@ -36,7 +36,7 @@ class InternalController extends AbstractController
                         ->select('inducks_countryname.countrycode, inducks_countryname.countryname')
                         ->from(InducksCountryname::class, 'inducks_countryname');
 
-                    if ($countryCodes !== null) {
+                    if (!empty($countryCodes)) {
                         $qb->where($qb->expr()->in('inducks_countryname.countrycode', explode(',', $countryCodes)));
                     }
 

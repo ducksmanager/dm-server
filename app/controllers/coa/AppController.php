@@ -18,15 +18,16 @@ class AppController extends AbstractController
     public static function addRoutes($routing)
     {
         $routing->get(
-            '/coa/list/countries',
-            function (Application $app, Request $request) {
+            '/coa/list/countries/{countries}',
+            function (Application $app, Request $request, $countries) {
                 return new JsonResponse(
                     ModelHelper::getUnserializedArrayFromJson(
-                        self::callInternal($app, '/coa/countrynames', 'GET', [])->getContent()
+                        self::callInternal($app, '/coa/countrynames', 'GET', empty($countries) ? [] : [$countries])->getContent()
                     )
                 );
             }
-        );
+        )->assert('countries', self::getParamAssertRegex(BaseModel::COUNTRY_CODE_VALIDATION, 50))
+         ->value('countries', '');
 
         $routing->get(
             '/coa/list/publications/{country}',

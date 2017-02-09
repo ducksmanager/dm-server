@@ -242,6 +242,14 @@ class TestCommon extends WebTestCase {
                 ->setCountryname('Espagne')
         );
 
+        self::$testCountries['us'] = new InducksCountryname();
+        $coaEntityManager->persist(
+            self::$testCountries['us']
+                ->setCountrycode('us')
+                ->setLanguagecode('fr')
+                ->setCountryname('USA')
+        );
+
         self::$testPublications['fr/DDD'] = new InducksPublication();
         $coaEntityManager->persist(
             self::$testPublications['fr/DDD']
