@@ -8,8 +8,8 @@ class IssueListWithSuggestionDetails
     /** @var SuggestedStory[] $stories */
     private $stories = [];
 
-    static $authors;
-    static $storyDetails;
+    static $authors = [];
+    static $storyDetails = [];
 
     public function __construct()
     {

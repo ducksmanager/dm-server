@@ -66,11 +66,18 @@ class AppController extends AbstractController
                         return $story['storycode'];
                     }, $suggestedStories);
 
-                    IssueListWithSuggestionDetails::$storyDetails = ModelHelper::getUnserializedArrayFromJson(
-                        self::callInternal(
-                            $app, '/coa/storydetails', 'GET', [implode(',', $storyCodes)]
-                        )->getContent()
-                    );
+                    $storyCodesChunks = array_chunk($storyCodes, 50);
+
+                    foreach($storyCodesChunks as $storyCodesChunk) {
+                        IssueListWithSuggestionDetails::$storyDetails = array_merge(
+                            IssueListWithSuggestionDetails::$storyDetails,
+                            ModelHelper::getUnserializedArrayFromJson(
+                                self::callInternal(
+                                    $app, '/coa/storydetails', 'GET', [implode(',', $storyCodesChunk)]
+                                )->getContent()
+                            )
+                        );
+                    }
 
                     $storyList = new IssueListWithSuggestionDetails();
                     foreach($suggestedStories as $story) {
