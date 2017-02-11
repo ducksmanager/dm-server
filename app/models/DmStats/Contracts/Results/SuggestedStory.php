@@ -9,9 +9,8 @@ class SuggestedStory {
     var $title;
     var $personcode;
     var $personfullname;
-    var $score;
 
-    public static function build($storycode, $storycomment, $title, $personcode, $personfullname, $score)
+    public static function build($storycode, $storycomment, $title, $personcode, $personfullname)
     {
         $o = new SuggestedStory();
         $o->storycode = $storycode;
@@ -19,7 +18,6 @@ class SuggestedStory {
         $o->title = $title;
         $o->personcode = $personcode;
         $o->personfullname = $personfullname;
-        $o->score = $score;
 
         return $o;
     }
@@ -35,8 +33,7 @@ class SuggestedStory {
             'author' => [
                 'personcode' => $this->personcode,
                 'fullname' => $this->personfullname
-            ],
-            'score' => $this->score
+            ]
         ];
     }
 }

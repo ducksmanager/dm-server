@@ -84,7 +84,11 @@ class AppController extends AbstractController
                         $storyList->addStory($story['publicationcode'], $story['issuenumber'], $story['personcode'], $story['storycode'], $story['score']);
                     }
 
-                    return new JsonResponse($storyList->getStories());
+                    return new JsonResponse([
+                        'minScore' => $suggestedStories[0]['score'],
+                        'maxScore' => $suggestedStories[count($suggestedStories) -1]['score'],
+                        'stories' => json_decode(json_encode($storyList->getStories()))
+                    ]);
                 });
             }
         );

@@ -16,16 +16,20 @@ class IssueListWithSuggestionDetails
     }
 
     public function addStory($publicationcode, $issuenumber, $personcode, $storycode, $score) {
+        $issueCode = implode(' ', [$publicationcode, $issuenumber]);
         $this->stories
-            [implode(' ', [$publicationcode, $issuenumber])]
-                [$storycode] = SuggestedStory::build(
-                    $storycode,
-                    self::$storyDetails[$storycode]['storycomment'],
-                    self::$storyDetails[$storycode]['title'],
-                    $personcode,
-                    self::$authors[$personcode],
-                    $score
-                )->toArray();
+            [$issueCode]
+                ['stories']
+                    [$storycode] = SuggestedStory::build(
+                        $storycode,
+                        self::$storyDetails[$storycode]['storycomment'],
+                        self::$storyDetails[$storycode]['title'],
+                        $personcode,
+                        self::$authors[$personcode]
+                    )->toArray();
+        $this->stories
+            [$issueCode]
+                ['score'] = $score;
     }
 
     public function getStories()
