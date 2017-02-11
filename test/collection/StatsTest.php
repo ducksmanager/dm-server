@@ -26,7 +26,7 @@ class StatsTest extends TestCommon
     }
 
     public function testGetSuggestions() {
-        $service = $this->buildAuthenticatedServiceWithTestUser('/collection/stats/suggestedpublications', TestCommon::$dmUser);
+        $service = $this->buildAuthenticatedServiceWithTestUser('/collection/stats/suggestedissues', TestCommon::$dmUser);
         $response = $service->call();
 
         $objectResponse = json_decode($response->getContent());
@@ -47,5 +47,7 @@ class StatsTest extends TestCommon
         $this->assertEquals('Carl Barks', $story2->author->fullname);
         $this->assertEquals('Title of story W WDC  32-02', $story2->story->title);
         $this->assertEquals('Comment of story W WDC  32-02', $story2->story->storycomment);
+
+        $this->assertEquals(4, $story2->score);
     }
 }

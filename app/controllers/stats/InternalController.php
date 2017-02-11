@@ -66,7 +66,7 @@ class InternalController extends AbstractController
         );
 
         $routing->get(
-            '/internal/stats/suggestedpublications',
+            '/internal/stats/suggestedissues',
             function (Request $request, Application $app) {
                 return AbstractController::return500ErrorOnException($app, function() use ($app) {
 
@@ -101,8 +101,8 @@ class InternalController extends AbstractController
                         ->where($qbGetSuggestionDetails->expr()->in('suggested.idUser', ':userId'))
                         ->setParameter(':userId', self::getSessionUser($app)['id'])
 
-                        ->andWhere($qbGetSuggestionDetails->expr()->in($qbGetSuggestionDetails->expr()->concat('suggested.publicationcode', 'suggested.issuenumber'), ':mostSuggestedPublications'))
-                        ->setParameter(':mostSuggestedPublications', $mostWantedSuggestions)
+                        ->andWhere($qbGetSuggestionDetails->expr()->in($qbGetSuggestionDetails->expr()->concat('suggested.publicationcode', 'suggested.issuenumber'), ':mostSuggestedIssues'))
+                        ->setParameter(':mostSuggestedIssues', $mostWantedSuggestions)
 
                         ->addOrderBy(new OrderBy('suggested.score', 'DESC'))
                         ->addOrderBy(new OrderBy('suggested.publicationcode', 'ASC'))

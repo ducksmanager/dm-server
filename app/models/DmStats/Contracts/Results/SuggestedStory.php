@@ -3,21 +3,23 @@
 namespace DmStats\Contracts\Results;
 
 
-class Story {
+class SuggestedStory {
     var $storycode;
     var $storycomment;
     var $title;
     var $personcode;
     var $personfullname;
+    var $score;
 
-    public static function build($storycode, $storycomment, $title, $personcode, $personfullname)
+    public static function build($storycode, $storycomment, $title, $personcode, $personfullname, $score)
     {
-        $o = new Story();
+        $o = new SuggestedStory();
         $o->storycode = $storycode;
         $o->storycomment = $storycomment;
         $o->title = $title;
         $o->personcode = $personcode;
         $o->personfullname = $personfullname;
+        $o->score = $score;
 
         return $o;
     }
@@ -33,7 +35,8 @@ class Story {
             'author' => [
                 'personcode' => $this->personcode,
                 'fullname' => $this->personfullname
-            ]
+            ],
+            'score' => $this->score
         ];
     }
 }

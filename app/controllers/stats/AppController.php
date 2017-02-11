@@ -45,26 +45,26 @@ class AppController extends AbstractController
             }
         );
         $routing->get(
-            '/collection/stats/suggestedpublications',
+            '/collection/stats/suggestedissues',
             function (Application $app, Request $request) {
                 return AbstractController::return500ErrorOnException($app, function() use ($app) {
-                    $suggestedPublications = ModelHelper::getUnserializedArrayFromJson(
-                        self::callInternal($app, '/stats/suggestedpublications', 'GET')->getContent()
+                    $suggestedStories = ModelHelper::getUnserializedArrayFromJson(
+                        self::callInternal($app, '/stats/suggestedissues', 'GET')->getContent()
                     );
 
-                    $publicationAuthors = array_map(function ($publication) {
-                        return $publication['personcode'];
-                    }, $suggestedPublications);
+                    $storyAuthors = array_map(function ($story) {
+                        return $story['personcode'];
+                    }, $suggestedStories);
 
                     IssueListWithSuggestionDetails::$authors = ModelHelper::getUnserializedArrayFromJson(
                         self::callInternal(
-                            $app, '/coa/authorsfullnames', 'GET', [implode(',', $publicationAuthors)]
+                            $app, '/coa/authorsfullnames', 'GET', [implode(',', $storyAuthors)]
                         )->getContent()
                     );
 
-                    $storyCodes = array_map(function ($publication) {
-                        return $publication['storycode'];
-                    }, $suggestedPublications);
+                    $storyCodes = array_map(function ($story) {
+                        return $story['storycode'];
+                    }, $suggestedStories);
 
                     IssueListWithSuggestionDetails::$storyDetails = ModelHelper::getUnserializedArrayFromJson(
                         self::callInternal(
@@ -72,12 +72,12 @@ class AppController extends AbstractController
                         )->getContent()
                     );
 
-                    $publicationList = new IssueListWithSuggestionDetails();
-                    foreach($suggestedPublications as $publication) {
-                        $publicationList->addStory($publication['publicationcode'], $publication['issuenumber'], $publication['personcode'], $publication['storycode']);
+                    $storyList = new IssueListWithSuggestionDetails();
+                    foreach($suggestedStories as $story) {
+                        $storyList->addStory($story['publicationcode'], $story['issuenumber'], $story['personcode'], $story['storycode'], $story['score']);
                     }
 
-                    return new JsonResponse($publicationList->getStories());
+                    return new JsonResponse($storyList->getStories());
                 });
             }
         );
