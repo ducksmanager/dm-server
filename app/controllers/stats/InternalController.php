@@ -49,11 +49,13 @@ class InternalController extends AbstractController
         $routing->get(
             '/internal/stats/authorsstorycount/usercollection/missing',
             function (Request $request, Application $app) {
-                return AbstractController::return500ErrorOnException($app, function() {
+                return AbstractController::return500ErrorOnException($app, function() use($app) {
                     $qbMissingStoryCountPerAuthor = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM_STATS)->createQueryBuilder();
                     $qbMissingStoryCountPerAuthor
                         ->select('author_stories_missing_for_user.personcode, COUNT(author_stories_missing_for_user.storycode) AS storyNumber')
-                        ->from(UtilisateursHistoiresManquantes::class, 'author_stories_missing_for_user');
+                        ->from(UtilisateursHistoiresManquantes::class, 'author_stories_missing_for_user')
+                        ->where($qbMissingStoryCountPerAuthor->expr()->eq('author_stories_missing_for_user.idUser', ':userId'))
+                        ->setParameter(':userId', self::getSessionUser($app)['id']);
 
                     $missingStoryCountResults = $qbMissingStoryCountPerAuthor->getQuery()->getResult();
 
