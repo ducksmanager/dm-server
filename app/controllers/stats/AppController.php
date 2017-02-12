@@ -85,7 +85,7 @@ class AppController extends AbstractController
 
                     $storyList = new IssueListWithSuggestionDetails();
                     foreach($suggestedStories as $story) {
-                        $storyList->addStory($story['publicationcode'], $story['issuenumber'], $story['storycode'], $story['score']);
+                        $storyList->addStory($story['publicationcode'], $story['issuenumber'], $story['storycode'], $story['personcode'], $story['score']);
                     }
 
                     return new JsonResponse([

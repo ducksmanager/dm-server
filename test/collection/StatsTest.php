@@ -43,14 +43,15 @@ class StatsTest extends TestCommon
         $this->assertEquals('7', $issue1->issuenumber);
 
         $story1 = 'ARC CBL 5B';
-        $this->assertEquals($story1, $issue1->stories[0]);
+        $this->assertEquals($story1, $issue1->stories->CB[0]);
+        $this->assertEquals('CB', $objectResponse->storyDetails->$story1->personcode);
         $this->assertEquals('Title of story ARC CBL 5B', $objectResponse->storyDetails->$story1->title);
         $this->assertEquals('Comment of story ARC CBL 5B', $objectResponse->storyDetails->$story1->storycomment);
         $this->assertEquals('CB', $objectResponse->storyDetails->$story1->personcode);
         $this->assertEquals('Carl Barks', $objectResponse->authors->CB);
 
         $story2 = 'W WDC  32-02';
-        $this->assertEquals($story2, $issue1->stories[1]);
+        $this->assertEquals($story2, $issue1->stories->CB[1]);
         $this->assertEquals('Title of story W WDC  32-02', $objectResponse->storyDetails->$story2->title);
         $this->assertEquals('Comment of story W WDC  32-02', $objectResponse->storyDetails->$story2->storycomment);
         $this->assertEquals('CB', $objectResponse->storyDetails->$story2->personcode);
