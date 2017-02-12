@@ -28,6 +28,9 @@ class IssueListWithSuggestionDetails
         $this->issues
             [$issueCode]
                 ['publicationcode'] = $publicationcode;
+        $this->issues
+            [$issueCode]
+                ['issuenumber'] = $issuenumber;
     }
 
     public function getIssues()
