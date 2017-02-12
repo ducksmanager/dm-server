@@ -39,6 +39,7 @@ class StatsTest extends TestCommon
 
         $issue1 = $objectResponse->issues->{'us/CBL 7'};
         $this->assertEquals(4, $issue1->score);
+        $this->assertEquals('us/CBL', $issue1->publicationcode);
 
         $story1 = 'ARC CBL 5B';
         $this->assertEquals($story1, $issue1->stories[0]);
