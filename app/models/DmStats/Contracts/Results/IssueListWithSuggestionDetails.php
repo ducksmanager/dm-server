@@ -5,8 +5,8 @@ namespace DmStats\Contracts\Results;
 
 class IssueListWithSuggestionDetails
 {
-    /** @var SuggestedStory[] $stories */
-    private $stories = [];
+    /** @var SuggestedIssue[] $issues */
+    private $issues = [];
 
     static $authors = [];
     static $storyDetails = [];
@@ -17,23 +17,23 @@ class IssueListWithSuggestionDetails
 
     public function addStory($publicationcode, $issuenumber, $personcode, $storycode, $score) {
         $issueCode = implode(' ', [$publicationcode, $issuenumber]);
-        $this->stories
+        $this->issues
             [$issueCode]
                 ['stories']
-                    [$storycode] = SuggestedStory::build(
+                    [$storycode] = SuggestedIssue::build(
                         $storycode,
                         self::$storyDetails[$storycode]['storycomment'],
                         self::$storyDetails[$storycode]['title'],
                         $personcode,
                         self::$authors[$personcode]
                     )->toArray();
-        $this->stories
+        $this->issues
             [$issueCode]
                 ['score'] = $score;
     }
 
-    public function getStories()
+    public function getIssues()
     {
-        return $this->stories;
+        return $this->issues;
     }
 }

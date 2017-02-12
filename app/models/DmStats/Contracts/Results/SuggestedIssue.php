@@ -3,7 +3,7 @@
 namespace DmStats\Contracts\Results;
 
 
-class SuggestedStory {
+class SuggestedIssue {
     var $storycode;
     var $storycomment;
     var $title;
@@ -12,7 +12,7 @@ class SuggestedStory {
 
     public static function build($storycode, $storycomment, $title, $personcode, $personfullname)
     {
-        $o = new SuggestedStory();
+        $o = new SuggestedIssue();
         $o->storycode = $storycode;
         $o->storycomment = $storycomment;
         $o->title = $title;
