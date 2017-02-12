@@ -265,42 +265,48 @@ class TestCommon extends WebTestCase {
 
         $userId = AbstractController::getSessionUser($this->app)['id'];
 
-        $authorUser = new AuteursPseudosSimple();
-        $authorUser->setIdUser($userId);
-        $authorUser->setNomauteurabrege('CB');
-        $dmStatsEntityManager->persist($authorUser);
+        $authorUser1 = new AuteursPseudosSimple();
+        $authorUser1->setIdUser($userId);
+        $authorUser1->setNomauteurabrege('CB');
+        $dmStatsEntityManager->persist($authorUser1);
+
         $dmStatsEntityManager->flush();
 
-        $authorStory1 = new AuteursHistoires();
-        $authorStory1->setPersoncode('CB');
-        $authorStory1->setStorycode('ARC CBL 5B');
-        $dmStatsEntityManager->persist($authorStory1);
+        $author1Story1 = new AuteursHistoires();
+        $author1Story1->setPersoncode('CB');
+        $author1Story1->setStorycode('ARC CBL 5B');
+        $dmStatsEntityManager->persist($author1Story1);
 
-        $authorStory2 = new AuteursHistoires();
-        $authorStory2->setPersoncode('CB');
-        $authorStory2->setStorycode('W WDC  32-02');
-        $dmStatsEntityManager->persist($authorStory2);
+        $author1Story2 = new AuteursHistoires();
+        $author1Story2->setPersoncode('CB');
+        $author1Story2->setStorycode('W WDC  32-02');
+        $dmStatsEntityManager->persist($author1Story2);
 
-        $authorStory3 = new AuteursHistoires();
-        $authorStory3->setPersoncode('CB');
-        $authorStory3->setStorycode('W WDC  31-05');
-        $dmStatsEntityManager->persist($authorStory3);
+        $author1Story3 = new AuteursHistoires();
+        $author1Story3->setPersoncode('CB');
+        $author1Story3->setStorycode('W WDC  31-05');
+        $dmStatsEntityManager->persist($author1Story3);
+
+        $author2Story1 = new AuteursHistoires();
+        $author2Story1->setPersoncode('DR');
+        $author2Story1->setStorycode('AR 201');
+        $dmStatsEntityManager->persist($author2Story1);
 
         $missingStory1ForUser = new UtilisateursHistoiresManquantes();
-        $missingStory1ForUser->setPersoncode($authorStory1->getPersoncode());
-        $missingStory1ForUser->setStorycode($authorStory1->getStorycode());
+        $missingStory1ForUser->setPersoncode($author1Story1->getPersoncode());
+        $missingStory1ForUser->setStorycode($author1Story1->getStorycode());
         $missingStory1ForUser->setIdUser($userId);
         $dmStatsEntityManager->persist($missingStory1ForUser);
 
         $missingStory2ForUser = new UtilisateursHistoiresManquantes();
-        $missingStory2ForUser->setPersoncode($authorStory2->getPersoncode());
-        $missingStory2ForUser->setStorycode($authorStory2->getStorycode());
+        $missingStory2ForUser->setPersoncode($author1Story2->getPersoncode());
+        $missingStory2ForUser->setStorycode($author1Story2->getStorycode());
         $missingStory2ForUser->setIdUser($userId);
         $dmStatsEntityManager->persist($missingStory2ForUser);
 
         $missingIssue1ofStory1ForUser = new UtilisateursPublicationsManquantes();
-        $missingIssue1ofStory1ForUser->setPersoncode($authorStory1->getPersoncode());
-        $missingIssue1ofStory1ForUser->setStorycode($authorStory1->getStorycode());
+        $missingIssue1ofStory1ForUser->setPersoncode($author1Story1->getPersoncode());
+        $missingIssue1ofStory1ForUser->setStorycode($author1Story1->getStorycode());
         $missingIssue1ofStory1ForUser->setIdUser($userId);
         $missingIssue1ofStory1ForUser->setPublicationcode('us/CBL');
         $missingIssue1ofStory1ForUser->setIssuenumber('7');
@@ -308,8 +314,8 @@ class TestCommon extends WebTestCase {
         $dmStatsEntityManager->persist($missingIssue1ofStory1ForUser);
 
         $missingIssue1ofStory2ForUser = new UtilisateursPublicationsManquantes();
-        $missingIssue1ofStory2ForUser->setPersoncode($authorStory2->getPersoncode());
-        $missingIssue1ofStory2ForUser->setStorycode($authorStory2->getStorycode());
+        $missingIssue1ofStory2ForUser->setPersoncode($author1Story2->getPersoncode());
+        $missingIssue1ofStory2ForUser->setStorycode($author1Story2->getStorycode());
         $missingIssue1ofStory2ForUser->setIdUser($userId);
         $missingIssue1ofStory2ForUser->setPublicationcode('us/CBL');
         $missingIssue1ofStory2ForUser->setIssuenumber('7');
@@ -317,8 +323,8 @@ class TestCommon extends WebTestCase {
         $dmStatsEntityManager->persist($missingIssue1ofStory2ForUser);
 
         $missingIssue2ofStory2ForUser = new UtilisateursPublicationsManquantes();
-        $missingIssue2ofStory2ForUser->setPersoncode($authorStory2->getPersoncode());
-        $missingIssue2ofStory2ForUser->setStorycode($authorStory2->getStorycode());
+        $missingIssue2ofStory2ForUser->setPersoncode($author1Story2->getPersoncode());
+        $missingIssue2ofStory2ForUser->setStorycode($author1Story2->getStorycode());
         $missingIssue2ofStory2ForUser->setIdUser($userId);
         $missingIssue2ofStory2ForUser->setPublicationcode('fr/DDD');
         $missingIssue2ofStory2ForUser->setIssuenumber('1');
@@ -347,6 +353,11 @@ class TestCommon extends WebTestCase {
         $inducksPerson = new InducksPerson();
         $inducksPerson->setPersoncode("CB");
         $inducksPerson->setFullname("Carl Barks");
+        $coaEntityManager->persist($inducksPerson);
+
+        $inducksPerson = new InducksPerson();
+        $inducksPerson->setPersoncode("DR");
+        $inducksPerson->setFullname("Don Rosa");
         $coaEntityManager->persist($inducksPerson);
 
         $coaEntityManager->flush();

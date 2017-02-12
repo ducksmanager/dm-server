@@ -21,11 +21,11 @@ class AppController extends AbstractController
             '/collection/stats/watchedauthorsstorycount',
             function (Application $app, Request $request) {
                 return AbstractController::return500ErrorOnException($app, function() use ($app) {
-                    $authorsAndStoryCount = ModelHelper::getUnserializedArrayFromJson(
-                        self::callInternal($app, '/stats/authorsstorycount', 'GET')->getContent()
-                    );
                     $authorsAndStoryMissingForUserCount = ModelHelper::getUnserializedArrayFromJson(
                         self::callInternal($app, '/stats/authorsstorycount/usercollection/missing', 'GET')->getContent()
+                    );
+                    $authorsAndStoryCount = ModelHelper::getUnserializedArrayFromJson(
+                        self::callInternal($app, '/stats/authorsstorycount/'.implode(',', array_keys($authorsAndStoryMissingForUserCount)), 'GET')->getContent()
                     );
                     $authorsFullNames = ModelHelper::getUnserializedArrayFromJson(
                         self::callInternal($app, '/coa/authorsfullnames', 'GET', [implode(',', array_keys($authorsAndStoryCount))])->getContent()

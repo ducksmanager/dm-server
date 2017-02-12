@@ -19,6 +19,7 @@ class StatsTest extends TestCommon
 
         $objectResponse = json_decode($response->getContent());
         $this->assertInternalType('object', $objectResponse);
+        $this->assertEquals(1, count(get_object_vars($objectResponse)));
         $this->assertEquals('CB', array_keys(get_object_vars($objectResponse))[0]);
         $this->assertEquals('Carl Barks', $objectResponse->CB->fullname);
         $this->assertEquals(3, $objectResponse->CB->storycount);

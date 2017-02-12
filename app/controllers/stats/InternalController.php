@@ -24,13 +24,15 @@ class InternalController extends AbstractController
     public static function addRoutes($routing)
     {
         $routing->get(
-            '/internal/stats/authorsstorycount',
-            function (Request $request, Application $app) {
-                return AbstractController::return500ErrorOnException($app, function() {
+            '/internal/stats/authorsstorycount/{personCodes}',
+            function (Request $request, Application $app, $personCodes) {
+                return AbstractController::return500ErrorOnException($app, function() use ($personCodes) {
                     $qbStoryCountPerAuthor = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM_STATS)->createQueryBuilder();
                     $qbStoryCountPerAuthor
                         ->select('author_stories.personcode, COUNT(author_stories.storycode) AS storyNumber')
-                        ->from(AuteursHistoires::class, 'author_stories');
+                        ->from(AuteursHistoires::class, 'author_stories')
+                        ->where($qbStoryCountPerAuthor->expr()->in('author_stories.personcode', ':personCodes'))
+                        ->setParameter('personCodes', explode(',', $personCodes));
 
                     $storyCountResults = $qbStoryCountPerAuthor->getQuery()->getResult();
 
