@@ -85,8 +85,8 @@ class AppController extends AbstractController
                     }
 
                     return new JsonResponse([
-                        'minScore' => $suggestedStories[0]['score'],
-                        'maxScore' => $suggestedStories[count($suggestedStories) -1]['score'],
+                        'maxScore' => $suggestedStories[0]['score'],
+                        'minScore' => $suggestedStories[count($suggestedStories) -1]['score'],
                         'stories' => json_decode(json_encode($storyList->getStories()))
                     ]);
                 });
