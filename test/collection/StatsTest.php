@@ -35,22 +35,22 @@ class StatsTest extends TestCommon
         $this->assertEquals(4, $objectResponse->minScore);
         $this->assertEquals(4, $objectResponse->maxScore);
 
-        $this->assertEquals(1, count($objectResponse->stories));
+        $this->assertEquals(1, count($objectResponse->issues));
 
-        $issue1 = $objectResponse->stories->{'us/CBL 7'};
+        $issue1 = $objectResponse->issues->{'us/CBL 7'};
         $this->assertEquals(4, $issue1->score);
 
-        $this->assertEquals('ARC CBL 5B', array_keys(get_object_vars($issue1->stories))[0]);
-        $story1 = $issue1->stories->{'ARC CBL 5B'};
-        $this->assertEquals('CB', $story1->author->personcode);
-        $this->assertEquals('Carl Barks', $story1->author->fullname);
-        $this->assertEquals('Title of story ARC CBL 5B', $story1->story->title);
-        $this->assertEquals('Comment of story ARC CBL 5B', $story1->story->storycomment);
+        $story1 = 'ARC CBL 5B';
+        $this->assertEquals($story1, $issue1->stories[0]);
+        $this->assertEquals('Title of story ARC CBL 5B', $objectResponse->storyDetails->$story1->title);
+        $this->assertEquals('Comment of story ARC CBL 5B', $objectResponse->storyDetails->$story1->storycomment);
+        $this->assertEquals('CB', $objectResponse->storyDetails->$story1->personcode);
+        $this->assertEquals('Carl Barks', $objectResponse->authors->CB);
 
-        $story2 = $issue1->stories->{'W WDC  32-02'};
-        $this->assertEquals('CB', $story2->author->personcode);
-        $this->assertEquals('Carl Barks', $story2->author->fullname);
-        $this->assertEquals('Title of story W WDC  32-02', $story2->story->title);
-        $this->assertEquals('Comment of story W WDC  32-02', $story2->story->storycomment);
+        $story2 = 'W WDC  32-02';
+        $this->assertEquals($story2, $issue1->stories[1]);
+        $this->assertEquals('Title of story W WDC  32-02', $objectResponse->storyDetails->$story2->title);
+        $this->assertEquals('Comment of story W WDC  32-02', $objectResponse->storyDetails->$story2->storycomment);
+        $this->assertEquals('CB', $objectResponse->storyDetails->$story2->personcode);
     }
 }

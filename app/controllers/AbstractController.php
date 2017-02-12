@@ -1,6 +1,7 @@
 <?php
 namespace DmServer\Controllers;
 
+use DmServer\ModelHelper;
 use Silex\Application;
 use Silex\Application\TranslationTrait;
 use Symfony\Component\Config\Definition\Exception\Exception;
@@ -33,6 +34,35 @@ abstract class AbstractController
             $subRequest = Request::create('/internal' . $url, $type, $parameters);
         }
         return $app->handle($subRequest, HttpKernelInterface::SUB_REQUEST, false);
+    }
+
+    /**
+     * @param Application $app
+     * @param string $url
+     * @param string $type
+     * @param array $parameterList
+     * @param int $chunkSize
+     * @return Response
+     */
+    public static function callInternalSingleParameter(Application $app, $url, $type, $parameterList, $chunkSize = 0) {
+        if ($chunkSize === 0) {
+            $parameterListChunks = [$parameterList];
+        }
+        else {
+            $parameterListChunks = array_chunk($parameterList, $chunkSize);
+        }
+        $results = [];
+        foreach($parameterListChunks as $parameterListChunk) {
+            $results = array_merge(
+                $results,
+                ModelHelper::getUnserializedArrayFromJson(
+                    self::callInternal(
+                        $app, $url, $type, [implode(',', $parameterListChunk)]
+                    )->getContent()
+                )
+            );
+        }
+        return $results;
     }
 
     /**

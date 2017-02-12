@@ -214,6 +214,12 @@ class TestCommon extends WebTestCase {
         $publication2->setTitle('Parade');
         $coaEntityManager->persist($publication2);
 
+        $publication3 = new InducksPublication();
+        $publication3->setPublicationCode('us/CBL');
+        $publication3->setCountrycode('us');
+        $publication3->setTitle('Carl Barks Library');
+        $coaEntityManager->persist($publication3);
+
         $issue1 = new InducksIssue();
         $issue1->setPublicationcode('fr/DDD');
         $issue1->setIssuenumber('1');

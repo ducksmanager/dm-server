@@ -52,42 +52,49 @@ class AppController extends AbstractController
                         self::callInternal($app, '/stats/suggestedissues', 'GET')->getContent()
                     );
 
+                    // Get author names
                     $storyAuthors = array_map(function ($story) {
                         return $story['personcode'];
                     }, $suggestedStories);
 
-                    IssueListWithSuggestionDetails::$authors = ModelHelper::getUnserializedArrayFromJson(
-                        self::callInternal(
-                            $app, '/coa/authorsfullnames', 'GET', [implode(',', $storyAuthors)]
-                        )->getContent()
-                    );
+                    IssueListWithSuggestionDetails::$authors = self::callInternalSingleParameter($app, '/coa/authorsfullnames', 'GET', $storyAuthors, 50);
 
+                    // Get author names - END
+
+                    // Get story details
                     $storyCodes = array_map(function ($story) {
                         return $story['storycode'];
                     }, $suggestedStories);
 
-                    $storyCodesChunks = array_chunk($storyCodes, 50);
-
-                    foreach($storyCodesChunks as $storyCodesChunk) {
-                        IssueListWithSuggestionDetails::$storyDetails = array_merge(
-                            IssueListWithSuggestionDetails::$storyDetails,
-                            ModelHelper::getUnserializedArrayFromJson(
-                                self::callInternal(
-                                    $app, '/coa/storydetails', 'GET', [implode(',', $storyCodesChunk)]
-                                )->getContent()
-                            )
-                        );
+                    IssueListWithSuggestionDetails::$storyDetails = self::callInternalSingleParameter($app, '/coa/storydetails', 'GET', $storyCodes, 50);
+                    // Add author to story details
+                    foreach($suggestedStories as $suggestedStory) {
+                        IssueListWithSuggestionDetails::$storyDetails[$suggestedStory['storycode']]['personcode'] = $suggestedStory['personcode'];
                     }
+
+                    // Get story details - END
+
+                    // Get publication titles
+                    $publicationTitles = array_map(function ($story) {
+                        return $story['publicationcode'];
+                    }, $suggestedStories);
+
+                    IssueListWithSuggestionDetails::$publicationTitles = self::callInternalSingleParameter($app, '/coa/publicationtitles', 'GET', $publicationTitles, 50);
+
+                    // Get publication titles - END
 
                     $storyList = new IssueListWithSuggestionDetails();
                     foreach($suggestedStories as $story) {
-                        $storyList->addStory($story['publicationcode'], $story['issuenumber'], $story['personcode'], $story['storycode'], $story['score']);
+                        $storyList->addStory($story['publicationcode'], $story['issuenumber'], $story['storycode'], $story['score']);
                     }
 
                     return new JsonResponse([
                         'maxScore' => $suggestedStories[0]['score'],
                         'minScore' => $suggestedStories[count($suggestedStories) -1]['score'],
-                        'issues' => json_decode(json_encode($storyList->getIssues()))
+                        'issues' => json_decode(json_encode($storyList->getIssues())),
+                        'authors' => IssueListWithSuggestionDetails::$authors,
+                        'publicationTitles' => IssueListWithSuggestionDetails::$publicationTitles,
+                        'storyDetails' => IssueListWithSuggestionDetails::$storyDetails
                     ]);
                 });
             }
