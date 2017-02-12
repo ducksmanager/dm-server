@@ -66,19 +66,25 @@ class InternalController extends AbstractController
         );
 
         $routing->get(
-            '/internal/stats/suggestedissues',
-            function (Request $request, Application $app) {
-                return AbstractController::return500ErrorOnException($app, function() use ($app) {
+            '/internal/stats/suggestedissues/{countrycode}',
+            function (Request $request, Application $app, $countrycode) {
+                return AbstractController::return500ErrorOnException($app, function() use ($app, $countrycode) {
 
                     $qbGetMostWantedSuggestions = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM_STATS)->createQueryBuilder();
 
                     $qbGetMostWantedSuggestions
-                        ->select('most_suggested_inner.publicationcode', 'most_suggested_inner.issuenumber')
-                        ->from(UtilisateursPublicationsSuggerees::class, 'most_suggested_inner')
-                        ->where($qbGetMostWantedSuggestions->expr()->in('most_suggested_inner.idUser', ':userId'))
+                        ->select('most_suggested.publicationcode', 'most_suggested.issuenumber')
+                        ->from(UtilisateursPublicationsSuggerees::class, 'most_suggested')
+                        ->where($qbGetMostWantedSuggestions->expr()->in('most_suggested.idUser', ':userId'))
                         ->setParameter(':userId', self::getSessionUser($app)['id'])
-                        ->orderBy(new OrderBy('most_suggested_inner.score', 'DESC'))
+                        ->orderBy(new OrderBy('most_suggested.score', 'DESC'))
                         ->setMaxResults(20);
+                    
+                    if ($countrycode !== 'ALL') {
+                        $qbGetMostWantedSuggestions
+                            ->andWhere($qbGetMostWantedSuggestions->expr()->like('most_suggested.publicationcode', ':countrycodePrefix'))
+                            ->setParameter(':countrycodePrefix', $countrycode.'/%');
+                    }
 
                     $mostWantedSuggestionsResults = $qbGetMostWantedSuggestions->getQuery()->getResult();
 
@@ -113,6 +119,6 @@ class InternalController extends AbstractController
                     return new JsonResponse(ModelHelper::getSerializedArray($suggestionResults));
                 });
             }
-        );
+        )->value('countrycode', 'ALL');
     }
 }

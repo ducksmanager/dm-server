@@ -45,11 +45,11 @@ class AppController extends AbstractController
             }
         );
         $routing->get(
-            '/collection/stats/suggestedissues',
-            function (Application $app, Request $request) {
-                return AbstractController::return500ErrorOnException($app, function() use ($app) {
+            '/collection/stats/suggestedissues/{countrycode}',
+            function (Application $app, Request $request, $countrycode) {
+                return AbstractController::return500ErrorOnException($app, function() use ($app, $countrycode) {
                     $suggestedStories = ModelHelper::getUnserializedArrayFromJson(
-                        self::callInternal($app, '/stats/suggestedissues', 'GET')->getContent()
+                        self::callInternal($app, '/stats/suggestedissues/'.$countrycode, 'GET')->getContent()
                     );
 
                     // Get author names
@@ -98,6 +98,6 @@ class AppController extends AbstractController
                     ]);
                 });
             }
-        );
+        )->value('countrycode', 'ALL');
     }
 }
