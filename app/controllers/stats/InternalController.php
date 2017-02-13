@@ -24,13 +24,15 @@ class InternalController extends AbstractController
     public static function addRoutes($routing)
     {
         $routing->get(
-            '/internal/stats/authorsstorycount',
-            function (Request $request, Application $app) {
-                return AbstractController::return500ErrorOnException($app, function() {
+            '/internal/stats/authorsstorycount/{personCodes}',
+            function (Request $request, Application $app, $personCodes) {
+                return AbstractController::return500ErrorOnException($app, function() use ($personCodes) {
                     $qbStoryCountPerAuthor = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM_STATS)->createQueryBuilder();
                     $qbStoryCountPerAuthor
                         ->select('author_stories.personcode, COUNT(author_stories.storycode) AS storyNumber')
-                        ->from(AuteursHistoires::class, 'author_stories');
+                        ->from(AuteursHistoires::class, 'author_stories')
+                        ->where($qbStoryCountPerAuthor->expr()->in('author_stories.personcode', ':personCodes'))
+                        ->setParameter('personCodes', explode(',', $personCodes));
 
                     $storyCountResults = $qbStoryCountPerAuthor->getQuery()->getResult();
 
@@ -47,11 +49,13 @@ class InternalController extends AbstractController
         $routing->get(
             '/internal/stats/authorsstorycount/usercollection/missing',
             function (Request $request, Application $app) {
-                return AbstractController::return500ErrorOnException($app, function() {
+                return AbstractController::return500ErrorOnException($app, function() use($app) {
                     $qbMissingStoryCountPerAuthor = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM_STATS)->createQueryBuilder();
                     $qbMissingStoryCountPerAuthor
                         ->select('author_stories_missing_for_user.personcode, COUNT(author_stories_missing_for_user.storycode) AS storyNumber')
-                        ->from(UtilisateursHistoiresManquantes::class, 'author_stories_missing_for_user');
+                        ->from(UtilisateursHistoiresManquantes::class, 'author_stories_missing_for_user')
+                        ->where($qbMissingStoryCountPerAuthor->expr()->eq('author_stories_missing_for_user.idUser', ':userId'))
+                        ->setParameter(':userId', self::getSessionUser($app)['id']);
 
                     $missingStoryCountResults = $qbMissingStoryCountPerAuthor->getQuery()->getResult();
 
@@ -66,32 +70,59 @@ class InternalController extends AbstractController
         );
 
         $routing->get(
-            '/internal/stats/suggestedpublications',
-            function (Request $request, Application $app) {
-                return AbstractController::return500ErrorOnException($app, function() use ($app) {
-                    $qbGetSuggestions = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM_STATS)->createQueryBuilder();
+            '/internal/stats/suggestedissues/{countrycode}',
+            function (Request $request, Application $app, $countrycode) {
+                return AbstractController::return500ErrorOnException($app, function() use ($app, $countrycode) {
 
-                    $qbGetSuggestions
-                        ->select('missing_publications.personcode, missing_publications.storycode, ' .
-                                 'suggested_publications.publicationcode, suggested_publications.issuenumber, suggested_publications.score')
-                        ->from(UtilisateursPublicationsSuggerees::class, 'suggested_publications')
-                        ->join(UtilisateursPublicationsManquantes::class, 'missing_publications', Join::WITH, $qbGetSuggestions->expr()->andX(
-                            $qbGetSuggestions->expr()->eq('suggested_publications.idUser', 'missing_publications.idUser'),
-                            $qbGetSuggestions->expr()->eq('suggested_publications.publicationcode', 'missing_publications.publicationcode'),
-                            $qbGetSuggestions->expr()->eq('suggested_publications.issuenumber', 'missing_publications.issuenumber')
+                    $qbGetMostWantedSuggestions = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM_STATS)->createQueryBuilder();
+
+                    $qbGetMostWantedSuggestions
+                        ->select('most_suggested.publicationcode', 'most_suggested.issuenumber')
+                        ->from(UtilisateursPublicationsSuggerees::class, 'most_suggested')
+                        ->where($qbGetMostWantedSuggestions->expr()->in('most_suggested.idUser', ':userId'))
+                        ->setParameter(':userId', self::getSessionUser($app)['id'])
+                        ->orderBy(new OrderBy('most_suggested.score', 'DESC'))
+                        ->setMaxResults(20);
+                    
+                    if ($countrycode !== 'ALL') {
+                        $qbGetMostWantedSuggestions
+                            ->andWhere($qbGetMostWantedSuggestions->expr()->like('most_suggested.publicationcode', ':countrycodePrefix'))
+                            ->setParameter(':countrycodePrefix', $countrycode.'/%');
+                    }
+
+                    $mostWantedSuggestionsResults = $qbGetMostWantedSuggestions->getQuery()->getResult();
+
+                    $mostWantedSuggestions = array_map(function($suggestion) {
+                        return implode('', [$suggestion['publicationcode'], $suggestion['issuenumber']]);
+                    }, $mostWantedSuggestionsResults);
+
+                    $qbGetSuggestionDetails = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM_STATS)->createQueryBuilder();
+
+                    $qbGetSuggestionDetails
+                        ->select('missing.personcode, missing.storycode, ' .
+                                 'suggested.publicationcode, suggested.issuenumber, suggested.score')
+                        ->from(UtilisateursPublicationsSuggerees::class, 'suggested')
+                        ->join(UtilisateursPublicationsManquantes::class, 'missing', Join::WITH,  $qbGetSuggestionDetails->expr()->andX(
+                            $qbGetSuggestionDetails->expr()->eq('suggested.idUser', 'missing.idUser'),
+                            $qbGetSuggestionDetails->expr()->eq('suggested.publicationcode', 'missing.publicationcode'),
+                            $qbGetSuggestionDetails->expr()->eq('suggested.issuenumber', 'missing.issuenumber')
                         ))
 
-                        ->where($qbGetSuggestions->expr()->in('suggested_publications.idUser', ':userId'))
+                        ->where($qbGetSuggestionDetails->expr()->in('suggested.idUser', ':userId'))
                         ->setParameter(':userId', self::getSessionUser($app)['id'])
-                        ->orderBy(new OrderBy('suggested_publications.score', 'DESC'))
-                        ->setMaxResults(20)
-                        ;
-                    $sql = $qbGetSuggestions->getQuery()->getSQL();
-                    $suggestionResults = $qbGetSuggestions->getQuery()->getResult();
+
+                        ->andWhere($qbGetSuggestionDetails->expr()->in($qbGetSuggestionDetails->expr()->concat('suggested.publicationcode', 'suggested.issuenumber'), ':mostSuggestedIssues'))
+                        ->setParameter(':mostSuggestedIssues', $mostWantedSuggestions)
+
+                        ->addOrderBy(new OrderBy('suggested.score', 'DESC'))
+                        ->addOrderBy(new OrderBy('suggested.publicationcode', 'ASC'))
+                        ->addOrderBy(new OrderBy('suggested.issuenumber', 'ASC'));
+
+                    $suggestionResults = $qbGetSuggestionDetails->getQuery()->getResult();
 
                     return new JsonResponse(ModelHelper::getSerializedArray($suggestionResults));
                 });
             }
-        );
+        )->value('countrycode', 'ALL');
     }
 }

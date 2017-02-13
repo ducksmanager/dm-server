@@ -3,6 +3,7 @@
 namespace DmServer\Controllers\Coa;
 
 use Coa\Contracts\Results\SimpleIssueWithUrl;
+use Coa\Models\BaseModel;
 use Coa\Models\InducksCountryname;
 use Coa\Models\InducksIssue;
 use Coa\Models\InducksPerson;
@@ -205,6 +206,6 @@ class InternalController extends AbstractController
                     return new JsonResponse(ModelHelper::getSerializedArray($storyDetails));
                 });
             }
-        );
+        )->assert('storyCodes', self::getParamAssertRegex(BaseModel::STORY_CODE_VALIDATION, 50));
     }
 }

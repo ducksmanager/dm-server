@@ -19,6 +19,7 @@ class StatsTest extends TestCommon
 
         $objectResponse = json_decode($response->getContent());
         $this->assertInternalType('object', $objectResponse);
+        $this->assertEquals(1, count(get_object_vars($objectResponse)));
         $this->assertEquals('CB', array_keys(get_object_vars($objectResponse))[0]);
         $this->assertEquals('Carl Barks', $objectResponse->CB->fullname);
         $this->assertEquals(3, $objectResponse->CB->storycount);
@@ -26,26 +27,65 @@ class StatsTest extends TestCommon
     }
 
     public function testGetSuggestions() {
-        $service = $this->buildAuthenticatedServiceWithTestUser('/collection/stats/suggestedpublications', TestCommon::$dmUser);
+        $service = $this->buildAuthenticatedServiceWithTestUser('/collection/stats/suggestedissues', TestCommon::$dmUser);
         $response = $service->call();
 
         $objectResponse = json_decode($response->getContent());
         $this->assertInternalType('object', $objectResponse);
 
-        $this->assertEquals('us/CBL 7', array_keys(get_object_vars($objectResponse))[0]);
+        $this->assertEquals(2, $objectResponse->minScore);
+        $this->assertEquals(4, $objectResponse->maxScore);
 
-        $this->assertEquals('ARC CBL 5B', array_keys(get_object_vars($objectResponse->{'us/CBL 7'}))[0]);
-        $story1 = $objectResponse->{'us/CBL 7'}->{'ARC CBL 5B'};
-        $this->assertEquals('CB', $story1->author->personcode);
-        $this->assertEquals('Carl Barks', $story1->author->fullname);
-        $this->assertEquals('Title of story ARC CBL 5B', $story1->story->title);
-        $this->assertEquals('Comment of story ARC CBL 5B', $story1->story->storycomment);
+        $this->assertEquals(2, count(get_object_vars($objectResponse->issues)));
 
-        $this->assertEquals('W WDC  32-02', array_keys(get_object_vars($objectResponse->{'us/CBL 7'}))[1]);
-        $story2 = $objectResponse->{'us/CBL 7'}->{'W WDC  32-02'};
-        $this->assertEquals('CB', $story2->author->personcode);
-        $this->assertEquals('Carl Barks', $story2->author->fullname);
-        $this->assertEquals('Title of story W WDC  32-02', $story2->story->title);
-        $this->assertEquals('Comment of story W WDC  32-02', $story2->story->storycomment);
+        $issue1 = $objectResponse->issues->{'us/CBL 7'};
+        $this->assertEquals(4, $issue1->score);
+        $this->assertEquals('us/CBL', $issue1->publicationcode);
+        $this->assertEquals('7', $issue1->issuenumber);
+
+        $story1 = 'ARC CBL 5B';
+        $this->assertEquals($story1, $issue1->stories->CB[0]);
+
+        $story2 = 'W WDC  32-02';
+        $this->assertEquals($story2, $issue1->stories->CB[1]);
+
+
+        $issue2 = $objectResponse->issues->{'fr/DDD 1'};
+        $this->assertEquals(2, $issue2->score);
+        $this->assertEquals('fr/DDD', $issue2->publicationcode);
+        $this->assertEquals('1', $issue2->issuenumber);
+
+        $this->assertEquals($story2, $issue2->stories->CB[0]);
+
+        // Story details assertions
+
+        $this->assertEquals('CB', $objectResponse->storyDetails->$story1->personcode);
+        $this->assertEquals('Title of story ARC CBL 5B', $objectResponse->storyDetails->$story1->title);
+        $this->assertEquals('Comment of story ARC CBL 5B', $objectResponse->storyDetails->$story1->storycomment);
+
+        $this->assertEquals('CB', $objectResponse->storyDetails->$story2->personcode);
+        $this->assertEquals('Title of story W WDC  32-02', $objectResponse->storyDetails->$story2->title);
+        $this->assertEquals('Comment of story W WDC  32-02', $objectResponse->storyDetails->$story2->storycomment);
+
+        // Author details assertions
+
+        $this->assertEquals('Carl Barks', $objectResponse->authors->CB);
+    }
+
+    public function testGetSuggestionsCountryFilter() {
+        $service = $this->buildAuthenticatedServiceWithTestUser('/collection/stats/suggestedissues/fr', TestCommon::$dmUser);
+        $response = $service->call();
+
+        $objectResponse = json_decode($response->getContent());
+        $this->assertInternalType('object', $objectResponse);
+        $this->assertEquals(1, count(get_object_vars($objectResponse->issues)));
+
+        $issue1 = $objectResponse->issues->{'fr/DDD 1'};
+        $this->assertEquals(2, $issue1->score);
+        $this->assertEquals('fr/DDD', $issue1->publicationcode);
+        $this->assertEquals('1', $issue1->issuenumber);
+
+        $story1 = 'W WDC  32-02';
+        $this->assertEquals($story1, $issue1->stories->CB[0]);
     }
 }

@@ -214,6 +214,12 @@ class TestCommon extends WebTestCase {
         $publication2->setTitle('Parade');
         $coaEntityManager->persist($publication2);
 
+        $publication3 = new InducksPublication();
+        $publication3->setPublicationCode('us/CBL');
+        $publication3->setCountrycode('us');
+        $publication3->setTitle('Carl Barks Library');
+        $coaEntityManager->persist($publication3);
+
         $issue1 = new InducksIssue();
         $issue1->setPublicationcode('fr/DDD');
         $issue1->setIssuenumber('1');
@@ -259,63 +265,85 @@ class TestCommon extends WebTestCase {
 
         $userId = AbstractController::getSessionUser($this->app)['id'];
 
-        $authorUser = new AuteursPseudosSimple();
-        $authorUser->setIdUser($userId);
-        $authorUser->setNomauteurabrege('CB');
-        $dmStatsEntityManager->persist($authorUser);
+        $authorUser1 = new AuteursPseudosSimple();
+        $authorUser1->setIdUser($userId);
+        $authorUser1->setNomauteurabrege('CB');
+        $dmStatsEntityManager->persist($authorUser1);
+
         $dmStatsEntityManager->flush();
 
-        $authorStory1 = new AuteursHistoires();
-        $authorStory1->setPersoncode('CB');
-        $authorStory1->setStorycode('ARC CBL 5B');
-        $dmStatsEntityManager->persist($authorStory1);
+        $author1Story1 = new AuteursHistoires();
+        $author1Story1->setPersoncode('CB');
+        $author1Story1->setStorycode('ARC CBL 5B');
+        $dmStatsEntityManager->persist($author1Story1);
 
-        $authorStory2 = new AuteursHistoires();
-        $authorStory2->setPersoncode('CB');
-        $authorStory2->setStorycode('W WDC  32-02');
-        $dmStatsEntityManager->persist($authorStory2);
+        $author1Story2 = new AuteursHistoires();
+        $author1Story2->setPersoncode('CB');
+        $author1Story2->setStorycode('W WDC  32-02');
+        $dmStatsEntityManager->persist($author1Story2);
 
-        $authorStory3 = new AuteursHistoires();
-        $authorStory3->setPersoncode('CB');
-        $authorStory3->setStorycode('W WDC  31-05');
-        $dmStatsEntityManager->persist($authorStory3);
+        $author1Story3 = new AuteursHistoires();
+        $author1Story3->setPersoncode('CB');
+        $author1Story3->setStorycode('W WDC  31-05');
+        $dmStatsEntityManager->persist($author1Story3);
+
+        $author2Story1 = new AuteursHistoires();
+        $author2Story1->setPersoncode('DR');
+        $author2Story1->setStorycode('AR 201');
+        $dmStatsEntityManager->persist($author2Story1);
 
         $missingStory1ForUser = new UtilisateursHistoiresManquantes();
-        $missingStory1ForUser->setPersoncode($authorStory1->getPersoncode());
-        $missingStory1ForUser->setStorycode($authorStory1->getStorycode());
+        $missingStory1ForUser->setPersoncode($author1Story1->getPersoncode());
+        $missingStory1ForUser->setStorycode($author1Story1->getStorycode());
         $missingStory1ForUser->setIdUser($userId);
         $dmStatsEntityManager->persist($missingStory1ForUser);
 
         $missingStory2ForUser = new UtilisateursHistoiresManquantes();
-        $missingStory2ForUser->setPersoncode($authorStory2->getPersoncode());
-        $missingStory2ForUser->setStorycode($authorStory2->getStorycode());
+        $missingStory2ForUser->setPersoncode($author1Story2->getPersoncode());
+        $missingStory2ForUser->setStorycode($author1Story2->getStorycode());
         $missingStory2ForUser->setIdUser($userId);
         $dmStatsEntityManager->persist($missingStory2ForUser);
 
-        $missingPublicationOfStory1ForUser = new UtilisateursPublicationsManquantes();
-        $missingPublicationOfStory1ForUser->setPersoncode($authorStory1->getPersoncode());
-        $missingPublicationOfStory1ForUser->setStorycode($authorStory1->getStorycode());
-        $missingPublicationOfStory1ForUser->setIdUser($userId);
-        $missingPublicationOfStory1ForUser->setPublicationcode('us/CBL');
-        $missingPublicationOfStory1ForUser->setIssuenumber('7');
-        $missingPublicationOfStory1ForUser->setNotation(2);
-        $dmStatsEntityManager->persist($missingPublicationOfStory1ForUser);
+        $missingIssue1ofStory1ForUser = new UtilisateursPublicationsManquantes();
+        $missingIssue1ofStory1ForUser->setPersoncode($author1Story1->getPersoncode());
+        $missingIssue1ofStory1ForUser->setStorycode($author1Story1->getStorycode());
+        $missingIssue1ofStory1ForUser->setIdUser($userId);
+        $missingIssue1ofStory1ForUser->setPublicationcode('us/CBL');
+        $missingIssue1ofStory1ForUser->setIssuenumber('7');
+        $missingIssue1ofStory1ForUser->setNotation(2);
+        $dmStatsEntityManager->persist($missingIssue1ofStory1ForUser);
 
-        $missingPublicationOfStory2ForUser = new UtilisateursPublicationsManquantes();
-        $missingPublicationOfStory2ForUser->setPersoncode($authorStory2->getPersoncode());
-        $missingPublicationOfStory2ForUser->setStorycode($authorStory2->getStorycode());
-        $missingPublicationOfStory2ForUser->setIdUser($userId);
-        $missingPublicationOfStory2ForUser->setPublicationcode('us/CBL');
-        $missingPublicationOfStory2ForUser->setIssuenumber('7');
-        $missingPublicationOfStory2ForUser->setNotation(2);
-        $dmStatsEntityManager->persist($missingPublicationOfStory2ForUser);
+        $missingIssue1ofStory2ForUser = new UtilisateursPublicationsManquantes();
+        $missingIssue1ofStory2ForUser->setPersoncode($author1Story2->getPersoncode());
+        $missingIssue1ofStory2ForUser->setStorycode($author1Story2->getStorycode());
+        $missingIssue1ofStory2ForUser->setIdUser($userId);
+        $missingIssue1ofStory2ForUser->setPublicationcode('us/CBL');
+        $missingIssue1ofStory2ForUser->setIssuenumber('7');
+        $missingIssue1ofStory2ForUser->setNotation(2);
+        $dmStatsEntityManager->persist($missingIssue1ofStory2ForUser);
 
-        $suggestedPublicationForUser = new UtilisateursPublicationsSuggerees();
-        $suggestedPublicationForUser->setPublicationcode('us/CBL');
-        $suggestedPublicationForUser->setIssuenumber('7');
-        $suggestedPublicationForUser->setIdUser($userId);
-        $suggestedPublicationForUser->setScore(4);
-        $dmStatsEntityManager->persist($suggestedPublicationForUser);
+        $missingIssue2ofStory2ForUser = new UtilisateursPublicationsManquantes();
+        $missingIssue2ofStory2ForUser->setPersoncode($author1Story2->getPersoncode());
+        $missingIssue2ofStory2ForUser->setStorycode($author1Story2->getStorycode());
+        $missingIssue2ofStory2ForUser->setIdUser($userId);
+        $missingIssue2ofStory2ForUser->setPublicationcode('fr/DDD');
+        $missingIssue2ofStory2ForUser->setIssuenumber('1');
+        $missingIssue2ofStory2ForUser->setNotation(2);
+        $dmStatsEntityManager->persist($missingIssue2ofStory2ForUser);
+
+        $suggestedIssue1ForUser = new UtilisateursPublicationsSuggerees();
+        $suggestedIssue1ForUser->setPublicationcode('us/CBL');
+        $suggestedIssue1ForUser->setIssuenumber('7');
+        $suggestedIssue1ForUser->setIdUser($userId);
+        $suggestedIssue1ForUser->setScore(4);
+        $dmStatsEntityManager->persist($suggestedIssue1ForUser);
+
+        $suggestedIssue2ForUser = new UtilisateursPublicationsSuggerees();
+        $suggestedIssue2ForUser->setPublicationcode('fr/DDD');
+        $suggestedIssue2ForUser->setIssuenumber('1');
+        $suggestedIssue2ForUser->setIdUser($userId);
+        $suggestedIssue2ForUser->setScore(2);
+        $dmStatsEntityManager->persist($suggestedIssue2ForUser);
 
         $dmStatsEntityManager->flush();
         $dmStatsEntityManager->clear();
@@ -325,6 +353,11 @@ class TestCommon extends WebTestCase {
         $inducksPerson = new InducksPerson();
         $inducksPerson->setPersoncode("CB");
         $inducksPerson->setFullname("Carl Barks");
+        $coaEntityManager->persist($inducksPerson);
+
+        $inducksPerson = new InducksPerson();
+        $inducksPerson->setPersoncode("DR");
+        $inducksPerson->setFullname("Don Rosa");
         $coaEntityManager->persist($inducksPerson);
 
         $coaEntityManager->flush();

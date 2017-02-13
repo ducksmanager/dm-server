@@ -21,11 +21,11 @@ class AppController extends AbstractController
             '/collection/stats/watchedauthorsstorycount',
             function (Application $app, Request $request) {
                 return AbstractController::return500ErrorOnException($app, function() use ($app) {
-                    $authorsAndStoryCount = ModelHelper::getUnserializedArrayFromJson(
-                        self::callInternal($app, '/stats/authorsstorycount', 'GET')->getContent()
-                    );
                     $authorsAndStoryMissingForUserCount = ModelHelper::getUnserializedArrayFromJson(
                         self::callInternal($app, '/stats/authorsstorycount/usercollection/missing', 'GET')->getContent()
+                    );
+                    $authorsAndStoryCount = ModelHelper::getUnserializedArrayFromJson(
+                        self::callInternal($app, '/stats/authorsstorycount/'.implode(',', array_keys($authorsAndStoryMissingForUserCount)), 'GET')->getContent()
                     );
                     $authorsFullNames = ModelHelper::getUnserializedArrayFromJson(
                         self::callInternal($app, '/coa/authorsfullnames', 'GET', [implode(',', array_keys($authorsAndStoryCount))])->getContent()
@@ -45,41 +45,59 @@ class AppController extends AbstractController
             }
         );
         $routing->get(
-            '/collection/stats/suggestedpublications',
-            function (Application $app, Request $request) {
-                return AbstractController::return500ErrorOnException($app, function() use ($app) {
-                    $suggestedPublications = ModelHelper::getUnserializedArrayFromJson(
-                        self::callInternal($app, '/stats/suggestedpublications', 'GET')->getContent()
+            '/collection/stats/suggestedissues/{countrycode}',
+            function (Application $app, Request $request, $countrycode) {
+                return AbstractController::return500ErrorOnException($app, function() use ($app, $countrycode) {
+                    $suggestedStories = ModelHelper::getUnserializedArrayFromJson(
+                        self::callInternal($app, '/stats/suggestedissues/'.$countrycode, 'GET')->getContent()
                     );
 
-                    $publicationAuthors = array_map(function ($publication) {
-                        return $publication['personcode'];
-                    }, $suggestedPublications);
+                    // Get author names
+                    $storyAuthors = array_map(function ($story) {
+                        return $story['personcode'];
+                    }, $suggestedStories);
 
-                    IssueListWithSuggestionDetails::$authors = ModelHelper::getUnserializedArrayFromJson(
-                        self::callInternal(
-                            $app, '/coa/authorsfullnames', 'GET', [implode(',', $publicationAuthors)]
-                        )->getContent()
-                    );
+                    IssueListWithSuggestionDetails::$authors = self::callInternalSingleParameter($app, '/coa/authorsfullnames', 'GET', $storyAuthors, 50);
 
-                    $storyCodes = array_map(function ($publication) {
-                        return $publication['storycode'];
-                    }, $suggestedPublications);
+                    // Get author names - END
 
-                    IssueListWithSuggestionDetails::$storyDetails = ModelHelper::getUnserializedArrayFromJson(
-                        self::callInternal(
-                            $app, '/coa/storydetails', 'GET', [implode(',', $storyCodes)]
-                        )->getContent()
-                    );
+                    // Get story details
+                    $storyCodes = array_map(function ($story) {
+                        return $story['storycode'];
+                    }, $suggestedStories);
 
-                    $publicationList = new IssueListWithSuggestionDetails();
-                    foreach($suggestedPublications as $publication) {
-                        $publicationList->addStory($publication['publicationcode'], $publication['issuenumber'], $publication['personcode'], $publication['storycode']);
+                    IssueListWithSuggestionDetails::$storyDetails = self::callInternalSingleParameter($app, '/coa/storydetails', 'GET', $storyCodes, 50);
+                    // Add author to story details
+                    foreach($suggestedStories as $suggestedStory) {
+                        IssueListWithSuggestionDetails::$storyDetails[$suggestedStory['storycode']]['personcode'] = $suggestedStory['personcode'];
                     }
 
-                    return new JsonResponse($publicationList->getStories());
+                    // Get story details - END
+
+                    // Get publication titles
+                    $publicationTitles = array_map(function ($story) {
+                        return $story['publicationcode'];
+                    }, $suggestedStories);
+
+                    IssueListWithSuggestionDetails::$publicationTitles = self::callInternalSingleParameter($app, '/coa/publicationtitles', 'GET', $publicationTitles, 50);
+
+                    // Get publication titles - END
+
+                    $storyList = new IssueListWithSuggestionDetails();
+                    foreach($suggestedStories as $story) {
+                        $storyList->addStory($story['publicationcode'], $story['issuenumber'], $story['storycode'], $story['personcode'], $story['score']);
+                    }
+
+                    return new JsonResponse([
+                        'maxScore' => $suggestedStories[0]['score'],
+                        'minScore' => $suggestedStories[count($suggestedStories) -1]['score'],
+                        'issues' => json_decode(json_encode($storyList->getIssues())),
+                        'authors' => IssueListWithSuggestionDetails::$authors,
+                        'publicationTitles' => IssueListWithSuggestionDetails::$publicationTitles,
+                        'storyDetails' => IssueListWithSuggestionDetails::$storyDetails
+                    ]);
                 });
             }
-        );
+        )->value('countrycode', 'ALL');
     }
 }

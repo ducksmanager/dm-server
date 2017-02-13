@@ -7,10 +7,17 @@ if [ -z "$container_name" ]; then
 	exit 1
 fi
 
-docker exec ${container_name} rm -rf /var/www/html/dm-server/app /var/www/html/dm-server/test \
-&& docker cp app ${container_name}:/var/www/html/dm-server \
-&& docker cp test ${container_name}:/var/www/html/dm-server \
-&& docker cp index.php ${container_name}:/var/www/html/dm-server \
-&& docker cp composer.json ${container_name}:/var/www/html/dm-server \
+webdir=/var/www/html/dm-server
+
+docker exec ${container_name} /bin/bash -c "\
+  mkdir -p ${webdir}_old && rm -rf ${webdir}_old/{app,test} \
+  && cp -rp ${webdir}/{app,test} ${webdir}_old \
+  && cp     ${webdir}/{index.php,composer.json,deployment_commit_id.txt} ${webdir}_old" \
 \
-&& docker exec ${container_name} /bin/bash -c "cd /var/www/html/dm-server && composer dumpautoload && echo '`git rev-parse HEAD`' > deployment_commit_id.txt"
+&& docker exec ${container_name} rm -rf ${webdir}/app ${webdir}/test \
+&& docker cp app ${container_name}:${webdir} \
+&& docker cp test ${container_name}:${webdir} \
+&& docker cp index.php ${container_name}:${webdir} \
+&& docker cp composer.json ${container_name}:${webdir} \
+\
+&& docker exec ${container_name} /bin/bash -c "cd ${webdir} && composer dumpautoload && echo '`git rev-parse HEAD`' > deployment_commit_id.txt && echo \"Deployed:\" && cat deployment_commit_id.txt"
