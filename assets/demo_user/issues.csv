@@ -1,0 +1,10 @@
+country;publication;condition;purchaseid;issuenumbers
+fr;CB;bon;-2;P 88
+fr;DDD;bon;1003;1,2,3
+fr;MCO;bon;1000;1,2,3,4
+fr;MP;bon;-2;190,191,192,193,213,214,215,216,217
+fr;MP;moyen;-2;309,310
+fr;MP;bon;-2;313,314,317,318,319,320,321,322
+fr;PM;bon;1001;381,382,383,384,386,387
+us;WDC;bon;1001;375
+es;BCB;bon;1002;1

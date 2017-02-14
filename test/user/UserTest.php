@@ -1,11 +1,12 @@
 <?php
 namespace DmServer\Test;
 
+use Dm\Models\Numeros;
 use Dm\Models\Users;
 use DmServer\DmServer;
 use Symfony\Component\HttpFoundation\Response;
 
-class AuthTest extends TestCommon
+class UserTest extends TestCommon
 {
     public function testCallServiceWithoutSystemCredentials() {
         $response = $this->buildService('/collection/issues', [], [], [], 'POST')->call();
@@ -98,5 +99,64 @@ class AuthTest extends TestCommon
             'email' => 'test@ducksmanager.net'
         ])->call();
         $this->assertEquals(Response::HTTP_CONFLICT, $response->getStatusCode());
+    }
+
+    public function testResetDemoDataWrongUser() {
+        $response = $this->buildAuthenticatedService('/user/resetDemo', TestCommon::$dmUser, [])->call();
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+
+    public function testResetDemoDataNoDemoUser() {
+        $response = $this->buildAuthenticatedService('/user/resetDemo', TestCommon::$adminUser, [])->call();
+        $this->assertEquals(Response::HTTP_EXPECTATION_FAILED, $response->getStatusCode());
+    }
+
+    public function testResetDemoData() {
+        self::createTestCollection('demo');
+
+        $dmEm = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM);
+
+        $demoUser = $dmEm->getRepository(Users::class)->findOneBy([
+            'username' => 'demo'
+        ]);
+
+        $issuesOfDemoUser = $dmEm->getRepository(Numeros::class)->findBy([
+            'idUtilisateur' => $demoUser->getId()
+        ]);
+        $this->assertEquals(1, count(array_filter($issuesOfDemoUser, function(Numeros $issue) {
+            return $issue->getPays() === 'fr' && $issue->getMagazine() === 'MP' && $issue->getNumero() === '300';
+        })));
+
+        $demoUser->setBibliothequeTexture1('A');
+        $demoUser->setBibliothequeSousTexture1('B');
+        $demoUser->setBibliothequeTexture2('C');
+        $demoUser->setBibliothequeSousTexture2('D');
+        $demoUser->setBibliothequeGrossissement(1);
+        $demoUser->setBetauser(true);
+        $dmEm->flush($demoUser);
+
+        $response = $this->buildAuthenticatedService('/user/resetDemo', TestCommon::$adminUser, [])->call();
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+
+        $demoUser = $dmEm->getRepository(Users::class)->findOneBy([
+            'username' => 'demo'
+        ]);
+
+        $this->assertEquals('bois', $demoUser->getBibliothequeTexture1());
+        $this->assertEquals('HONDURAS MAHOGANY', $demoUser->getBibliothequeSousTexture1());
+        $this->assertEquals('bois', $demoUser->getBibliothequeTexture2());
+        $this->assertEquals('KNOTTY PINE', $demoUser->getBibliothequeSousTexture2());
+        $this->assertEquals(1.5, $demoUser->getBibliothequeGrossissement());
+
+        $this->assertEquals(true, $demoUser->getBetauser()); // This property shouldn't have reset
+
+        $issuesOfDemoUser = $dmEm->getRepository(Numeros::class)->findBy([
+            'idUtilisateur' => $demoUser->getId()
+        ]);
+
+        $this->assertEquals(35, count($issuesOfDemoUser));
+        $this->assertEquals(0, count(array_filter($issuesOfDemoUser, function(Numeros $issue) {
+            return $issue->getPays() === 'fr' && $issue->getMagazine() === 'MP' && $issue->getNumero() === '300';
+        }))); // Previous issue has been reset
     }
 }
