@@ -30,6 +30,7 @@ class TestCommon extends WebTestCase {
     ];
     protected static $dmUser = 'dm_test';
     protected static $rawSqlUser = 'rawsql';
+    protected static $adminUser = 'admin';
     protected static $uploadBase = '/tmp/dm-server';
 
     protected static $exampleImage = 'cover_example.jpg';
@@ -136,16 +137,11 @@ class TestCommon extends WebTestCase {
         );
     }
 
-    /**
-     * @param string $username
-     * @return array user info
-     */
-    protected static function createTestCollection($username = 'dm_test_user') {
-        $password = self::$testDmUsers[$username];
-
+    protected static function createUser($username, $password) {
         $dmEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_DM];
 
         $user = new Users();
+        $user->setBetauser(false);
         $user->setUsername($username);
         $user->setPassword(sha1($password));
         $user->setEmail('test@ducksmanager.net');
@@ -153,6 +149,18 @@ class TestCommon extends WebTestCase {
         $dmEntityManager->persist($user);
 
         $dmEntityManager->flush();
+
+        return $user;
+    }
+
+    /**
+     * @param string $username
+     * @return array user info
+     */
+    protected static function createTestCollection($username = 'dm_test_user') {
+        $dmEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_DM];
+
+        $user = self::createUser($username, self::$testDmUsers[$username] ?? 'password');
 
         $numero1 = new Numeros();
         $numero1->setPays('fr');
@@ -183,6 +191,7 @@ class TestCommon extends WebTestCase {
         $dmEntityManager->persist($numero3);
 
         $dmEntityManager->flush();
+        $dmEntityManager->clear();
 
         return ['username' => $user->getUsername(), 'id' => $user->getId()];
     }

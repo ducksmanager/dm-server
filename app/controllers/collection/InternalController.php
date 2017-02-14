@@ -72,6 +72,8 @@ class InternalController extends AbstractController
             function (Request $request, Application $app) {
                 return AbstractController::return500ErrorOnException($app, function() use ($app, $request) {
 
+                    $dmEm = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM);
+
                     $country = $request->request->get('country');
                     $publication = $request->request->get('publication');
                     $issuenumbers = $request->request->get('issuenumbers');
@@ -85,7 +87,7 @@ class InternalController extends AbstractController
                     $purchaseid = $request->request->get('purchaseid');
                     $purchaseidNewIssues = is_null($purchaseid) ? -2 : $purchaseid; // TODO allow NULL
 
-                    $qb = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->createQueryBuilder();
+                    $qb = $dmEm->createQueryBuilder();
                     $qb
                         ->select('issues')
                         ->from(Numeros::class, 'issues')
@@ -117,7 +119,7 @@ class InternalController extends AbstractController
                         if (!is_null($purchaseid)) {
                             $existingIssue->setIdAcquisition($purchaseid);
                         }
-                        DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->persist($existingIssue);
+                        $dmEm->persist($existingIssue);
                     }
 
                     $issueNumbersToCreate = array_diff($issuenumbers, array_keys($existingIssues));
@@ -131,10 +133,11 @@ class InternalController extends AbstractController
                         $newIssue->setIdAcquisition($purchaseidNewIssues);
                         $newIssue->setIdUtilisateur(self::getSessionUser($app)['id']);
 
-                        DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->persist($newIssue);
+                        $dmEm->persist($newIssue);
                     }
 
-                    DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->flush();
+                    $dmEm->flush();
+                    $dmEm->clear();
 
                     $updateResult = new UpdateCollectionResult('UPDATE', count($existingIssues));
                     $creationResult = new UpdateCollectionResult('CREATE', count($issueNumbersToCreate));
