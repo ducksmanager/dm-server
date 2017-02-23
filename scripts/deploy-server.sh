@@ -10,12 +10,13 @@ fi
 webdir=/var/www/html/dm-server
 
 docker exec ${container_name} /bin/bash -c "\
-  mkdir -p ${webdir}_old && rm -rf ${webdir}_old/{app,test} \
-  && cp -rp ${webdir}/{app,test} ${webdir}_old \
+  mkdir -p ${webdir}_old && rm -rf ${webdir}_old/{app,assets,test} \
+  && cp -rp ${webdir}/{app,assets,test} ${webdir}_old \
   && cp     ${webdir}/{index.php,composer.json,deployment_commit_id.txt} ${webdir}_old" \
 \
-&& docker exec ${container_name} rm -rf ${webdir}/app ${webdir}/test \
+&& docker exec ${container_name} rm -rf ${webdir}/app ${webdir}/assets ${webdir}/test \
 && docker cp app ${container_name}:${webdir} \
+&& docker cp assets ${container_name}:${webdir} \
 && docker cp test ${container_name}:${webdir} \
 && docker cp index.php ${container_name}:${webdir} \
 && docker cp composer.json ${container_name}:${webdir} \
