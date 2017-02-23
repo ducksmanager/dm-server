@@ -16,4 +16,4 @@ do \
   docker exec ${container_name} rm -rf ${webdir}/${f} && docker cp ${f} ${container_name}:${webdir}; \
 done \
 \
-&& docker exec ${container_name} /bin/bash ${webdir}/scripts/apply-app.sh
+&& docker exec ${container_name} /bin/bash ${webdir}/scripts/apply-app.sh `git rev-parse HEAD`
