@@ -18,21 +18,9 @@ abstract class AbstractController
         self::$translator = $app['translator'];
     }
 
-    /**
-     * @param Application $app
-     * @param string $url
-     * @param string $type
-     * @param array $parameters
-     * @return Response
-     */
-    public static function callInternal(Application $app, $url, $type, $parameters = [])
-    {
-        if ($type === 'GET') {
-            $subRequest = Request::create('/internal' . $url . (count($parameters) === 0 ? '' : '/' . implode('/', array_values($parameters))));
-        }
-        else {
-            $subRequest = Request::create('/internal' . $url, $type, $parameters);
-        }
+    private static function callInternalGetRequest(Application $app, $url, $parameters = []) {
+        $subRequest = Request::create('/internal' . $url . (count($parameters) === 0 ? '' : '/' . implode('/', array_values($parameters))));
+
         return $app->handle($subRequest, HttpKernelInterface::SUB_REQUEST, false);
     }
 
@@ -40,29 +28,42 @@ abstract class AbstractController
      * @param Application $app
      * @param string $url
      * @param string $type
-     * @param array $parameterList
+     * @param array $parameters
      * @param int $chunkSize
-     * @return Response
+     * @return Response|array
      */
-    public static function callInternalSingleParameter(Application $app, $url, $type, $parameterList, $chunkSize = 0) {
-        if ($chunkSize === 0) {
-            $parameterListChunks = [$parameterList];
+    public static function callInternal(Application $app, $url, $type, $parameters = [], $chunkSize = 0) {
+        if ($chunkSize > 1) {
+            if (count($parameters) > 1) {
+                return new Response('Attempt to call callInternal with chunkSize > 1 and more than one parameter', Response::HTTP_INTERNAL_SERVER_ERROR);
+            } elseif (count($parameters) === 1) {
+                if ($type !== 'GET') {
+                    return new Response('Attempt to call callInternal with chunkSize > 1 and non-GET method', Response::HTTP_INTERNAL_SERVER_ERROR);
+                }
+                $parameterListChunks = array_chunk($parameters[0], $chunkSize);
+                $results = [];
+                foreach ($parameterListChunks as $parameterListChunk) {
+                    $results = array_merge(
+                        $results,
+                        ModelHelper::getUnserializedArrayFromJson(
+                            self::callInternalGetRequest(
+                                $app, $url, [implode(',', $parameterListChunk)]
+                            )->getContent()
+                        )
+                    );
+                }
+
+                return $results;
+            }
+        }
+
+        if ($type === 'GET') {
+            return self::callInternalGetRequest($app, $url, $parameters);
         }
         else {
-            $parameterListChunks = array_chunk($parameterList, $chunkSize);
+            $subRequest = Request::create('/internal' . $url, $type, $parameters);
+            return $app->handle($subRequest, HttpKernelInterface::SUB_REQUEST, false);
         }
-        $results = [];
-        foreach($parameterListChunks as $parameterListChunk) {
-            $results = array_merge(
-                $results,
-                ModelHelper::getUnserializedArrayFromJson(
-                    self::callInternal(
-                        $app, $url, $type, [implode(',', $parameterListChunk)]
-                    )->getContent()
-                )
-            );
-        }
-        return $results;
     }
 
     /**
