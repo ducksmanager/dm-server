@@ -9,13 +9,11 @@ fi
 
 webdir=/var/www/html/dm-server
 
-docker exec ${container_name} /bin/bash ${webdir}/scripts/backup-app.sh \
+docker exec ${container_name} /bin/bash ${webdir}/scripts/backup-app.sh && \
 \
-&& docker exec ${container_name} rm -rf ${webdir}/app ${webdir}/assets ${webdir}/test \
-&& docker cp app ${container_name}:${webdir} \
-&& docker cp assets ${container_name}:${webdir} \
-&& docker cp test ${container_name}:${webdir} \
-&& docker cp index.php ${container_name}:${webdir} \
-&& docker cp composer.json ${container_name}:${webdir} \
+for f in app assets scripts test index.php composer.json; \
+do \
+  docker exec ${container_name} rm -rf ${webdir}/${f} && docker cp ${f} ${container_name}:${webdir}; \
+done \
 \
 && docker exec ${container_name} /bin/bash ${webdir}/scripts/apply-app.sh
