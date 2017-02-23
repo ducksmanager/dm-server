@@ -24,5 +24,5 @@ Copy `config/config.db.base.ini` into `config/config.db.ini` and change the DB s
 
 Browse to the path of the source on the host, then run: 
 ```bash
-scripts/deploy-server.sh dm-server-box
+scripts/deploy-app.sh dm-server-box
 ```

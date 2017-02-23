@@ -9,7 +9,7 @@ fi
 
 webdir=/var/www/html/dm-server
 
-docker exec ${container_name} /bin/bash /var/www/html/dm-server/scripts/backup-app.sh
+docker exec ${container_name} /bin/bash ${webdir}/scripts/backup-app.sh \
 \
 && docker exec ${container_name} rm -rf ${webdir}/app ${webdir}/assets ${webdir}/test \
 && docker cp app ${container_name}:${webdir} \
@@ -18,4 +18,4 @@ docker exec ${container_name} /bin/bash /var/www/html/dm-server/scripts/backup-a
 && docker cp index.php ${container_name}:${webdir} \
 && docker cp composer.json ${container_name}:${webdir} \
 \
-&& docker exec ${container_name} /bin/bash /var/www/html/dm-server/scripts/apply-app.sh
+&& docker exec ${container_name} /bin/bash ${webdir}/scripts/apply-app.sh

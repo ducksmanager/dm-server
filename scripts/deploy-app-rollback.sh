@@ -7,4 +7,6 @@ if [ -z "$container_name" ]; then
 	exit 1
 fi
 
-docker exec ${container_name} /bin/bash /var/www/html/dm-server/scripts/restore-app.sh
+webdir=/var/www/html/dm-server
+
+docker exec ${container_name} /bin/bash ${webdir}/scripts/restore-app.sh
