@@ -4,6 +4,7 @@ MAINTAINER Bruno Perel
 ADD .htaccess /var/www/html/dm-server/.htaccess
 ADD app /var/www/html/dm-server/app
 ADD assets /var/www/html/dm-server/assets
+ADD scripts /var/www/html/dm-server/scripts
 ADD index.php /var/www/html/dm-server/index.php
 ADD composer.json /var/www/html/dm-server/composer.json
 

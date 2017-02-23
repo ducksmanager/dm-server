@@ -9,10 +9,7 @@ fi
 
 webdir=/var/www/html/dm-server
 
-docker exec ${container_name} /bin/bash -c "\
-  mkdir -p ${webdir}_old && rm -rf ${webdir}_old/{app,assets,test} \
-  && cp -rp ${webdir}/{app,assets,test} ${webdir}_old 2>/dev/null \
-  && cp     ${webdir}/{index.php,composer.json,deployment_commit_id.txt} ${webdir}_old 2>/dev/null" \
+docker exec ${container_name} /bin/bash /var/www/html/dm-server/scripts/backup-app.sh
 \
 && docker exec ${container_name} rm -rf ${webdir}/app ${webdir}/assets ${webdir}/test \
 && docker cp app ${container_name}:${webdir} \
@@ -21,4 +18,4 @@ docker exec ${container_name} /bin/bash -c "\
 && docker cp index.php ${container_name}:${webdir} \
 && docker cp composer.json ${container_name}:${webdir} \
 \
-&& docker exec ${container_name} /bin/bash -c "cd ${webdir} && composer dumpautoload && echo '`git rev-parse HEAD`' > deployment_commit_id.txt && echo \"Deployed:\" && cat deployment_commit_id.txt"
+&& docker exec ${container_name} /bin/bash /var/www/html/dm-server/scripts/apply-app.sh
