@@ -1,6 +1,7 @@
 <?php
 namespace DmServer\Test;
 
+use Dm\Models\Achats;
 use Dm\Models\Numeros;
 use Dm\Models\Users;
 use DmServer\DmServer;
@@ -120,6 +121,14 @@ class UserTest extends TestCommon
             'username' => 'demo'
         ]);
 
+        $purchasesOfDemoUser = $dmEm->getRepository(Achats::class)->findBy([
+            'idUser' => $demoUser->getId()
+        ]);
+
+        $this->assertEquals(1, count(array_filter($purchasesOfDemoUser, function(Achats $purchase) {
+            return $purchase->getDate()->format('Y-m-d') === '2010-01-01' && $purchase->getDescription() === 'Purchase';
+        })));
+
         $issuesOfDemoUser = $dmEm->getRepository(Numeros::class)->findBy([
             'idUtilisateur' => $demoUser->getId()
         ]);
@@ -158,5 +167,15 @@ class UserTest extends TestCommon
         $this->assertEquals(0, count(array_filter($issuesOfDemoUser, function(Numeros $issue) {
             return $issue->getPays() === 'fr' && $issue->getMagazine() === 'MP' && $issue->getNumero() === '300';
         }))); // Previous issue has been reset
+
+        $purchasesOfDemoUser = $dmEm->getRepository(Achats::class)->findBy([
+            'idUser' => $demoUser->getId()
+        ]);
+
+        $this->assertEquals(4, count($purchasesOfDemoUser));
+        $this->assertEquals(0, count(array_filter($purchasesOfDemoUser, function(Achats $purchase) {
+            return $purchase->getDate()->format('Y-m-d') === '2010-01-01' && $purchase->getDescription() === 'Purchase';
+        }))); // Previous issue has been reset
+
     }
 }

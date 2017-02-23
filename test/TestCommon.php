@@ -7,6 +7,7 @@ use Coa\Models\InducksPerson;
 use Coa\Models\InducksPublication;
 use Coa\Models\InducksStory;
 use CoverId\Models\Covers;
+use Dm\Models\Achats;
 use DmServer\Controllers\AbstractController;
 use DmStats\Models\AuteursHistoires;
 use DmStats\Models\AuteursPseudosSimple;
@@ -189,6 +190,12 @@ class TestCommon extends WebTestCase {
         $numero3->setEtat('mauvais');
         $numero3->setIdUtilisateur($user->getId());
         $dmEntityManager->persist($numero3);
+
+        $purchase1 = new Achats();
+        $purchase1->setDate(\DateTime::createFromFormat('Y-m-d', '2010-01-01'));
+        $purchase1->setDescription('Purchase');
+        $purchase1->setIdUser($user->getId());
+        $dmEntityManager->persist($purchase1);
 
         $dmEntityManager->flush();
         $dmEntityManager->clear();

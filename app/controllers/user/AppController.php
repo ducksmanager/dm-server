@@ -55,12 +55,22 @@ class AppController extends AbstractController
                             $bookcaseOptionsResetResponse = self::callInternal($app, '/user/' . $demoUserId . '/data/bookcase/reset', 'POST');
 
                             if ($bookcaseOptionsResetResponse->getStatusCode() === Response::HTTP_OK) {
-                                $demoUserIssueData = CsvHelper::readCsv(implode(DIRECTORY_SEPARATOR, [getcwd(), 'assets', 'demo_user', 'issues.csv']));
-
                                 self::setSessionUser($app, 'demo', $demoUserId);
+
+                                $demoUserIssueData = CsvHelper::readCsv(implode(DIRECTORY_SEPARATOR, [getcwd(), 'assets', 'demo_user', 'issues.csv']));
 
                                 foreach ($demoUserIssueData as $publicationData) {
                                     $response = self::callInternal($app, '/collection/issues', 'POST', $publicationData);
+
+                                    if ($response->getStatusCode() !== Response::HTTP_OK) {
+                                        return $response;
+                                    }
+                                }
+
+                                $demoUserPurchaseData = CsvHelper::readCsv(implode(DIRECTORY_SEPARATOR, [getcwd(), 'assets', 'demo_user', 'purchases.csv']));
+
+                                foreach ($demoUserPurchaseData as $purchaseData) {
+                                    $response = self::callInternal($app, '/collection/purchases', 'POST', $purchaseData);
 
                                     if ($response->getStatusCode() !== Response::HTTP_OK) {
                                         return $response;

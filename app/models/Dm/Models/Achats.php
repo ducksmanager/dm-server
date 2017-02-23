@@ -17,7 +17,7 @@ class Achats extends \Dm\Models\BaseModel
      *
      * @ORM\Column(name="ID_Acquisition", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $idAcquisition;
 
@@ -32,8 +32,6 @@ class Achats extends \Dm\Models\BaseModel
      * @var \DateTime
      *
      * @ORM\Column(name="Date", type="date", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
      */
     private $date;
 

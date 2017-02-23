@@ -3,12 +3,14 @@
 namespace DmServer\Controllers\Collection;
 
 use Dm\Contracts\Results\UpdateCollectionResult;
+use Dm\Models\Achats;
 use Dm\Models\Numeros;
 use DmServer\Controllers\AbstractController;
 use DmServer\DmServer;
 use DmServer\ModelHelper;
 use Silex\Application;
 use Silex\ControllerCollection;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -66,6 +68,36 @@ class InternalController extends AbstractController
                 });
             }
         );
+
+        $routing->post(
+            '/internal/collection/purchases/{id}',
+            function (Request $request, Application $app) {
+                return AbstractController::return500ErrorOnException($app, function () use ($app, $request) {
+
+                    $dmEm = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM);
+
+                    $purchaseId = $request->request->get('id');
+                    $purchaseDate = $request->request->get('date');
+                    $purchaseDescription = $request->request->get('description');
+
+                    if (!is_null($purchaseId)) {
+                        $purchase = $dmEm->getRepository(Achats::class)->findOneBy(['id' => $purchaseId]);
+                    }
+                    else {
+                        $purchase = new Achats();
+                    }
+
+                    $purchase->setIdUser(self::getSessionUser($app)['id']);
+                    $purchase->setDate(\DateTime::createFromFormat('Y-m-d', $purchaseDate));
+                    $purchase->setDescription($purchaseDescription);
+
+                    $dmEm->persist($purchase);
+                    $dmEm->flush();
+
+                    return new Response();
+                });
+            }
+        )->value('id', null);
 
         $routing->post(
             '/internal/collection/issues',
