@@ -9,11 +9,11 @@ fi
 
 webdir=/var/www/html/dm-server
 
-docker exec ${container_name} /bin/bash ${webdir}/scripts/backup-app.sh && \
+docker exec ${container_name} /bin/bash ${webdir}/scripts/deploy/backup-app.sh && \
 \
 for f in app assets scripts test index.php composer.json; \
 do \
   docker exec ${container_name} rm -rf ${webdir}/${f} && docker cp ${f} ${container_name}:${webdir}; \
 done \
 \
-&& docker exec ${container_name} /bin/bash ${webdir}/scripts/apply-app.sh `git rev-parse HEAD`
+&& docker exec ${container_name} /bin/bash ${webdir}/scripts/deploy/apply-app.sh `git rev-parse HEAD`

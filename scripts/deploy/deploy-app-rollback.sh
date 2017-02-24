@@ -9,4 +9,4 @@ fi
 
 webdir=/var/www/html/dm-server
 
-docker exec ${container_name} /bin/bash ${webdir}/scripts/restore-app.sh
+docker exec ${container_name} /bin/bash ${webdir}/scripts/deploy/restore-app.sh
