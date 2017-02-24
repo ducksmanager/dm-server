@@ -26,3 +26,12 @@ Browse to the path of the source on the host, then run:
 ```bash
 scripts/deploy-app.sh dm-server-box
 ```
+
+
+### Tasks
+
+#### Reset the demo user
+
+```bash
+docker exec -i dm-server-box /bin/bash dm-server/scripts/call-service.sh admin /user/resetDemo
+```
