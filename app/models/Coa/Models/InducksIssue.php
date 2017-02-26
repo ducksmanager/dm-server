@@ -153,6 +153,8 @@ class InducksIssue extends \Coa\Models\BaseModel
     public function setPublicationcode($publicationcode)
     {
         $this->publicationcode = $publicationcode;
+
+        return $this;
     }
 
     /**

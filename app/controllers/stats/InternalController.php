@@ -32,7 +32,8 @@ class InternalController extends AbstractController
                         ->select('author_stories.personcode, COUNT(author_stories.storycode) AS storyNumber')
                         ->from(AuteursHistoires::class, 'author_stories')
                         ->where($qbStoryCountPerAuthor->expr()->in('author_stories.personcode', ':personCodes'))
-                        ->setParameter('personCodes', explode(',', $personCodes));
+                        ->setParameter('personCodes', explode(',', $personCodes))
+                        ->groupBy('author_stories.personcode');
 
                     $storyCountResults = $qbStoryCountPerAuthor->getQuery()->getResult();
 
@@ -55,7 +56,8 @@ class InternalController extends AbstractController
                         ->select('author_stories_missing_for_user.personcode, COUNT(author_stories_missing_for_user.storycode) AS storyNumber')
                         ->from(UtilisateursHistoiresManquantes::class, 'author_stories_missing_for_user')
                         ->where($qbMissingStoryCountPerAuthor->expr()->eq('author_stories_missing_for_user.idUser', ':userId'))
-                        ->setParameter(':userId', self::getSessionUser($app)['id']);
+                        ->setParameter(':userId', self::getSessionUser($app)['id'])
+                        ->groupBy('author_stories_missing_for_user.personcode');
 
                     $missingStoryCountResults = $qbMissingStoryCountPerAuthor->getQuery()->getResult();
 

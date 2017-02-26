@@ -42,6 +42,22 @@ class TestCommon extends WebTestCase {
     /** @var Application $app */
     protected $app;
 
+    // Test data
+
+    /** @var InducksCountryname[] $testCountries */
+    private static $testCountries = [];
+
+    /** @var InducksPublication[] $testPublications */
+    private static $testPublications = [];
+
+    /** @var InducksIssue[] $testIssues */
+    private static $testIssues = [];
+
+    /** @var InducksStory[] $testStories */
+    private static $testStories = [];
+
+    // Test data - end
+
     public static function setUpBeforeClass()
     {
         DmServer::initSettings('settings.test.ini');
@@ -206,71 +222,137 @@ class TestCommon extends WebTestCase {
     protected static function createCoaData() {
         $coaEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_COA];
         
-        $country1 = new InducksCountryname();
-        $country1->setCountrycode('fr');
-        $country1->setLanguagecode('fr');
-        $country1->setCountryname('France');
-        $coaEntityManager->persist($country1);
+        self::$testCountries['fr'] = new InducksCountryname();
+        $coaEntityManager->persist(
+            self::$testCountries['fr']
+                ->setCountrycode('fr')
+                ->setLanguagecode('fr')
+                ->setCountryname('France')
+        );
 
-        $country2 = new InducksCountryname();
-        $country2->setCountrycode('es');
-        $country2->setLanguagecode('fr');
-        $country2->setCountryname('Espagne');
-        $coaEntityManager->persist($country2);
+        self::$testCountries['es'] = new InducksCountryname();
+        $coaEntityManager->persist(
+            self::$testCountries['es']
+                ->setCountrycode('es')
+                ->setLanguagecode('fr')
+                ->setCountryname('Espagne')
+        );
 
-        $publication1 = new InducksPublication();
-        $publication1->setPublicationCode('fr/DDD');
-        $publication1->setCountrycode('fr');
-        $publication1->setTitle('Dynastie');
-        $coaEntityManager->persist($publication1);
+        self::$testPublications['fr/DDD'] = new InducksPublication();
+        $coaEntityManager->persist(
+            self::$testPublications['fr/DDD']
+                ->setPublicationCode('fr/DDD')
+                ->setCountrycode('fr')
+                ->setTitle('Dynastie')
+        );
 
-        $publication2 = new InducksPublication();
-        $publication2->setPublicationCode('fr/MP');
-        $publication2->setCountrycode('fr');
-        $publication2->setTitle('Parade');
-        $coaEntityManager->persist($publication2);
+        self::$testPublications['fr/MP'] = new InducksPublication();
+        $coaEntityManager->persist(
+            self::$testPublications['fr/MP']
+                ->setPublicationCode('fr/MP')
+                ->setCountrycode('fr')
+                ->setTitle('Parade')
+        );
 
-        $publication3 = new InducksPublication();
-        $publication3->setPublicationCode('us/CBL');
-        $publication3->setCountrycode('us');
-        $publication3->setTitle('Carl Barks Library');
-        $coaEntityManager->persist($publication3);
+        self::$testPublications['us/CBL'] = new InducksPublication();
+        $coaEntityManager->persist(
+            self::$testPublications['us/CBL']
+                ->setPublicationCode('us/CBL')
+                ->setCountrycode('us')
+                ->setTitle('Carl Barks Library')
+        );
 
-        $issue1 = new InducksIssue();
-        $issue1->setPublicationcode('fr/DDD');
-        $issue1->setIssuenumber('1');
-        $issue1->setIssuecode('fr/DDD 1');
-        $coaEntityManager->persist($issue1);
+        self::$testIssues['fr/DDD 1'] = new InducksIssue();
+        $coaEntityManager->persist(
+            self::$testIssues['fr/DDD 1']
+                ->setPublicationcode('fr/DDD')
+                ->setIssuenumber('1')
+                ->setIssuecode('fr/DDD 1'));
 
-        $issue2 = new InducksIssue();
-        $issue2->setPublicationcode('fr/DDD');
-        $issue2->setIssuenumber('2');
-        $issue2->setIssuecode('fr/DDD 2');
-        $coaEntityManager->persist($issue2);
+        self::$testIssues['fr/DDD 2'] = new InducksIssue();
+        $coaEntityManager->persist(
+            self::$testIssues['fr/DDD 2']
+                ->setPublicationcode('fr/DDD')
+                ->setIssuenumber('2')
+                ->setIssuecode('fr/DDD 2')
+        );
 
-        $issue3 = new InducksIssue();
-        $issue3->setPublicationcode('fr/MP');
-        $issue3->setIssuenumber('300');
-        $issue3->setIssuecode('fr/MP 300');
-        $coaEntityManager->persist($issue3);
+        self::$testIssues['fr/MP 300'] = new InducksIssue();
+        $coaEntityManager->persist(
+            self::$testIssues['fr/MP 300']
+                ->setPublicationcode('fr/MP')
+                ->setIssuenumber('300')
+                ->setIssuecode('fr/MP 300')
+        );
 
-        $story1 = new InducksStory();
-        $story1->setTitle('Title of story W WDC  31-05');
-        $story1->setStorycomment('Comment of story W WDC  31-05');
-        $story1->setStorycode('W WDC  31-05');
-        $coaEntityManager->persist($story1);
+        self::$testIssues['fr/PM 315'] = new InducksIssue();
+        $coaEntityManager->persist(
+            self::$testIssues['fr/PM 315']
+                ->setPublicationcode('fr/PM')
+                ->setIssuenumber('315')
+                ->setIssuecode('fr/PM 315')
+        );
 
-        $story2 = new InducksStory();
-        $story2->setTitle('Title of story W WDC  32-02');
-        $story2->setStorycomment('Comment of story W WDC  32-02');
-        $story2->setStorycode('W WDC  32-02');
-        $coaEntityManager->persist($story2);
+        self::$testIssues['us/CBL 7'] = new InducksIssue();
+        $coaEntityManager->persist(
+            self::$testIssues['us/CBL 7']
+                ->setPublicationcode('us/CBL')
+                ->setIssuenumber('7')
+                ->setIssuecode('us/CBL 7')
+        );
 
-        $story3 = new InducksStory();
-        $story3->setTitle('Title of story ARC CBL 5B');
-        $story3->setStorycomment('Comment of story ARC CBL 5B');
-        $story3->setStorycode('ARC CBL 5B');
-        $coaEntityManager->persist($story3);
+        self::$testStories['W WDC  31-05'] = new InducksStory();
+        $coaEntityManager->persist(
+            self::$testStories['W WDC  31-05']
+                ->setTitle('Title of story W WDC  31-05')
+                ->setStorycomment('Comment of story W WDC  31-05')
+                ->setStorycode('W WDC  31-05')
+        );
+
+        self::$testStories['W WDC  32-02'] = new InducksStory();
+        $coaEntityManager->persist(
+            self::$testStories['W WDC  32-02']
+                ->setTitle('Title of story W WDC  32-02')
+                ->setStorycomment('Comment of story W WDC  32-02')
+                ->setStorycode('W WDC  32-02')
+        );
+
+        self::$testStories['ARC CBL 5B'] = new InducksStory();
+        $coaEntityManager->persist(
+        self::$testStories['ARC CBL 5B']
+            ->setTitle('Title of story ARC CBL 5B')
+            ->setStorycomment('Comment of story ARC CBL 5B')
+            ->setStorycode('ARC CBL 5B')
+        );
+
+        self::$testStories['W WDC 130-02'] = new InducksStory();
+        $coaEntityManager->persist(
+            self::$testStories['W WDC 130-02']
+                ->setTitle('Title of story W WDC 130-02')
+                ->setStorycomment('Comment of story W WDC 130-02')
+                ->setStorycode('W WDC 130-02')
+        );
+
+        self::$testStories['AR 201'] = new InducksStory();
+        $coaEntityManager->persist(
+            self::$testStories['AR 201']
+                ->setTitle('Title of story AR 201')
+                ->setStorycomment('Comment of story AR 201')
+                ->setStorycode('AR 201')
+        );
+
+        $inducksPerson = new InducksPerson();
+        $coaEntityManager->persist(
+            $inducksPerson
+                ->setPersoncode("CB")
+                ->setFullname("Carl Barks")
+        );
+
+        $inducksPerson = new InducksPerson();
+        $coaEntityManager->persist(
+            $inducksPerson->setPersoncode("DR")
+                ->setFullname("Don Rosa")
+        );
 
         $coaEntityManager->flush();
         $coaEntityManager->clear();
@@ -281,103 +363,178 @@ class TestCommon extends WebTestCase {
 
         $userId = AbstractController::getSessionUser($this->app)['id'];
 
+        // Author 1
+
         $authorUser1 = new AuteursPseudosSimple();
-        $authorUser1->setIdUser($userId);
-        $authorUser1->setNomauteurabrege('CB');
-        $dmStatsEntityManager->persist($authorUser1);
+        $dmStatsEntityManager->persist(
+            $authorUser1
+                ->setIdUser($userId)
+                ->setNomauteurabrege('CB')
+                ->setNotation(2)
+        );
+
+        $author1Story1 = new AuteursHistoires();
+        $dmStatsEntityManager->persist(
+            $author1Story1
+                ->setPersoncode('CB')
+                ->setStorycode(self::$testStories['ARC CBL 5B']->getStorycode())
+        ); // Missing, 1 issue suggested
+
+        $author1Story2 = new AuteursHistoires();
+        $dmStatsEntityManager->persist(
+            $author1Story2
+                ->setPersoncode('CB')
+                ->setStorycode(self::$testStories['W WDC  32-02']->getStorycode())
+        ); // Missing, 2 issue suggested (the same as story 1 + another one)
+
+        $author1Story3 = new AuteursHistoires();
+        $dmStatsEntityManager->persist(
+            $author1Story3
+                ->setPersoncode('CB')
+                ->setStorycode(self::$testStories['W WDC  31-05']->getStorycode())
+        ); // Not missing for user
+
+        $author1Story4 = new AuteursHistoires();
+        $dmStatsEntityManager->persist(
+            $author1Story4
+                ->setPersoncode('CB')
+                ->setStorycode(self::$testStories['W WDC 130-02']->getStorycode())
+        ); // Missing, 2 issues suggested
+
+        $missingAuthor1Story1ForUser = new UtilisateursHistoiresManquantes();
+        $dmStatsEntityManager->persist(
+            $missingAuthor1Story1ForUser
+                ->setPersoncode($author1Story1->getPersoncode())
+                ->setStorycode($author1Story1->getStorycode())
+                ->setIdUser($userId)
+        );
+
+        $missingAuthor1Story2ForUser = new UtilisateursHistoiresManquantes();
+        $dmStatsEntityManager->persist(
+            $missingAuthor1Story2ForUser
+                ->setPersoncode($author1Story2->getPersoncode())
+                ->setStorycode($author1Story2->getStorycode())
+                ->setIdUser($userId)
+        );
+
+        $missingAuthor1Story4ForUser = new UtilisateursHistoiresManquantes();
+        $dmStatsEntityManager->persist(
+            $missingAuthor1Story4ForUser
+                ->setPersoncode($author1Story4->getPersoncode())
+                ->setStorycode($author1Story4->getStorycode())
+                ->setIdUser($userId)
+        );
+
+        $missingAuthor1Issue1Story1ForUser = new UtilisateursPublicationsManquantes();
+        $dmStatsEntityManager->persist(
+            $missingAuthor1Issue1Story1ForUser
+                ->setPersoncode($author1Story1->getPersoncode())
+                ->setStorycode($author1Story1->getStorycode())
+                ->setIdUser($userId)
+                ->setPublicationcode(self::$testIssues['us/CBL 7']->getPublicationcode())
+                ->setIssuenumber(self::$testIssues['us/CBL 7']->getIssuenumber())
+                ->setNotation($authorUser1->getNotation())
+        );
+
+        $missingAuthor1Issue1Story2ForUser = new UtilisateursPublicationsManquantes();
+        $dmStatsEntityManager->persist(
+            $missingAuthor1Issue1Story2ForUser->setPersoncode($author1Story2->getPersoncode())
+            ->setStorycode($author1Story2->getStorycode())
+            ->setIdUser($userId)
+            ->setPublicationcode(self::$testIssues['us/CBL 7']->getPublicationcode())
+            ->setIssuenumber(self::$testIssues['us/CBL 7']->getIssuenumber())
+            ->setNotation($authorUser1->getNotation()));
+
+        $missingAuthor1Issue2Story2ForUser = new UtilisateursPublicationsManquantes();
+        $dmStatsEntityManager->persist(
+            $missingAuthor1Issue2Story2ForUser->setPersoncode($author1Story2->getPersoncode())
+                ->setStorycode($author1Story2->getStorycode())
+                ->setIdUser($userId)
+                ->setPublicationcode(self::$testIssues['fr/DDD 1']->getPublicationcode())
+                ->setIssuenumber(self::$testIssues['fr/DDD 1']->getIssuenumber())
+                ->setNotation($authorUser1->getNotation())
+        );
+
+        $missingAuthor1Issue1Story4ForUser = new UtilisateursPublicationsManquantes();
+        $dmStatsEntityManager->persist(
+            $missingAuthor1Issue1Story4ForUser->setPersoncode($author1Story4->getPersoncode())
+                ->setStorycode($author1Story4->getStorycode())
+                ->setIdUser($userId)
+                ->setPublicationcode(self::$testIssues['fr/PM 315']->getPublicationcode())
+                ->setIssuenumber(self::$testIssues['fr/PM 315']->getIssuenumber())
+                ->setNotation($authorUser1->getNotation())
+        );
 
         $dmStatsEntityManager->flush();
 
-        $author1Story1 = new AuteursHistoires();
-        $author1Story1->setPersoncode('CB');
-        $author1Story1->setStorycode('ARC CBL 5B');
-        $dmStatsEntityManager->persist($author1Story1);
+        // Author 2
 
-        $author1Story2 = new AuteursHistoires();
-        $author1Story2->setPersoncode('CB');
-        $author1Story2->setStorycode('W WDC  32-02');
-        $dmStatsEntityManager->persist($author1Story2);
+        $authorUser2 = new AuteursPseudosSimple();
+        $dmStatsEntityManager->persist(
+            $authorUser2
+                ->setIdUser($userId)
+                ->setNomauteurabrege('DR')
+                ->setNotation(4)
+        );
 
-        $author1Story3 = new AuteursHistoires();
-        $author1Story3->setPersoncode('CB');
-        $author1Story3->setStorycode('W WDC  31-05');
-        $dmStatsEntityManager->persist($author1Story3);
+        $author2Story5 = new AuteursHistoires();
+        $dmStatsEntityManager->persist(
+            $author2Story5
+                ->setPersoncode('DR')
+                ->setStorycode(self::$testStories['AR 201']->getStorycode())
+        );  // Missing, 1 issue suggested
 
-        $author2Story1 = new AuteursHistoires();
-        $author2Story1->setPersoncode('DR');
-        $author2Story1->setStorycode('AR 201');
-        $dmStatsEntityManager->persist($author2Story1);
+        $missingAuthor2Story1ForUser = new UtilisateursHistoiresManquantes();
+        $dmStatsEntityManager->persist(
+            $missingAuthor2Story1ForUser
+                ->setPersoncode($author2Story5->getPersoncode())
+                ->setStorycode($author2Story5->getStorycode())
+                ->setIdUser($userId)
+        );
 
-        $missingStory1ForUser = new UtilisateursHistoiresManquantes();
-        $missingStory1ForUser->setPersoncode($author1Story1->getPersoncode());
-        $missingStory1ForUser->setStorycode($author1Story1->getStorycode());
-        $missingStory1ForUser->setIdUser($userId);
-        $dmStatsEntityManager->persist($missingStory1ForUser);
+        $missingAuthor2Issue5Story5ForUser = new UtilisateursPublicationsManquantes();
+        $dmStatsEntityManager->persist(
+            $missingAuthor2Issue5Story5ForUser
+                ->setPersoncode($author2Story5->getPersoncode())
+                ->setStorycode($author2Story5->getStorycode())
+                ->setIdUser($userId)
+                ->setPublicationcode(self::$testIssues['fr/PM 315']->getPublicationcode())
+                ->setIssuenumber(self::$testIssues['fr/PM 315']->getIssuenumber())
+                ->setNotation($authorUser2->getNotation())
+        );
 
-        $missingStory2ForUser = new UtilisateursHistoiresManquantes();
-        $missingStory2ForUser->setPersoncode($author1Story2->getPersoncode());
-        $missingStory2ForUser->setStorycode($author1Story2->getStorycode());
-        $missingStory2ForUser->setIdUser($userId);
-        $dmStatsEntityManager->persist($missingStory2ForUser);
 
-        $missingIssue1ofStory1ForUser = new UtilisateursPublicationsManquantes();
-        $missingIssue1ofStory1ForUser->setPersoncode($author1Story1->getPersoncode());
-        $missingIssue1ofStory1ForUser->setStorycode($author1Story1->getStorycode());
-        $missingIssue1ofStory1ForUser->setIdUser($userId);
-        $missingIssue1ofStory1ForUser->setPublicationcode('us/CBL');
-        $missingIssue1ofStory1ForUser->setIssuenumber('7');
-        $missingIssue1ofStory1ForUser->setNotation(2);
-        $dmStatsEntityManager->persist($missingIssue1ofStory1ForUser);
-
-        $missingIssue1ofStory2ForUser = new UtilisateursPublicationsManquantes();
-        $missingIssue1ofStory2ForUser->setPersoncode($author1Story2->getPersoncode());
-        $missingIssue1ofStory2ForUser->setStorycode($author1Story2->getStorycode());
-        $missingIssue1ofStory2ForUser->setIdUser($userId);
-        $missingIssue1ofStory2ForUser->setPublicationcode('us/CBL');
-        $missingIssue1ofStory2ForUser->setIssuenumber('7');
-        $missingIssue1ofStory2ForUser->setNotation(2);
-        $dmStatsEntityManager->persist($missingIssue1ofStory2ForUser);
-
-        $missingIssue2ofStory2ForUser = new UtilisateursPublicationsManquantes();
-        $missingIssue2ofStory2ForUser->setPersoncode($author1Story2->getPersoncode());
-        $missingIssue2ofStory2ForUser->setStorycode($author1Story2->getStorycode());
-        $missingIssue2ofStory2ForUser->setIdUser($userId);
-        $missingIssue2ofStory2ForUser->setPublicationcode('fr/DDD');
-        $missingIssue2ofStory2ForUser->setIssuenumber('1');
-        $missingIssue2ofStory2ForUser->setNotation(2);
-        $dmStatsEntityManager->persist($missingIssue2ofStory2ForUser);
+        // Suggested issues
 
         $suggestedIssue1ForUser = new UtilisateursPublicationsSuggerees();
-        $suggestedIssue1ForUser->setPublicationcode('us/CBL');
-        $suggestedIssue1ForUser->setIssuenumber('7');
-        $suggestedIssue1ForUser->setIdUser($userId);
-        $suggestedIssue1ForUser->setScore(4);
-        $dmStatsEntityManager->persist($suggestedIssue1ForUser);
+        $dmStatsEntityManager->persist(
+            $suggestedIssue1ForUser
+                ->setPublicationcode(self::$testIssues['us/CBL 7']->getPublicationcode())
+                ->setIssuenumber(self::$testIssues['us/CBL 7']->getIssuenumber())
+                ->setIdUser($userId)
+                ->setScore($missingAuthor1Issue1Story2ForUser->getNotation() + $missingAuthor1Issue1Story2ForUser->getNotation())
+        );
 
         $suggestedIssue2ForUser = new UtilisateursPublicationsSuggerees();
-        $suggestedIssue2ForUser->setPublicationcode('fr/DDD');
-        $suggestedIssue2ForUser->setIssuenumber('1');
-        $suggestedIssue2ForUser->setIdUser($userId);
-        $suggestedIssue2ForUser->setScore(2);
-        $dmStatsEntityManager->persist($suggestedIssue2ForUser);
+        $dmStatsEntityManager->persist(
+            $suggestedIssue2ForUser
+                ->setPublicationcode(self::$testIssues['fr/DDD 1']->getPublicationcode())
+                ->setIssuenumber(self::$testIssues['fr/DDD 1']->getIssuenumber())
+                ->setIdUser($userId)
+                ->setScore($missingAuthor1Issue2Story2ForUser->getNotation())
+        );
+
+        $suggestedIssue3ForUser = new UtilisateursPublicationsSuggerees();
+        $dmStatsEntityManager->persist(
+            $suggestedIssue3ForUser
+                ->setPublicationcode(self::$testIssues['fr/PM 315']->getPublicationcode())
+                ->setIssuenumber(self::$testIssues['fr/PM 315']->getIssuenumber())
+                ->setIdUser($userId)
+                ->setScore($missingAuthor1Issue1Story4ForUser->getNotation() + $missingAuthor2Issue5Story5ForUser->getNotation())
+        );
 
         $dmStatsEntityManager->flush();
         $dmStatsEntityManager->clear();
-
-        $coaEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_COA];
-
-        $inducksPerson = new InducksPerson();
-        $inducksPerson->setPersoncode("CB");
-        $inducksPerson->setFullname("Carl Barks");
-        $coaEntityManager->persist($inducksPerson);
-
-        $inducksPerson = new InducksPerson();
-        $inducksPerson->setPersoncode("DR");
-        $inducksPerson->setFullname("Don Rosa");
-        $coaEntityManager->persist($inducksPerson);
-
-        $coaEntityManager->flush();
-        $coaEntityManager->clear();
     }
 
     protected static function createCoverIds()
