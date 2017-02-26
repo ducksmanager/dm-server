@@ -9,10 +9,8 @@ Copy `config/roles.base.ini` and rename the copy to `config/roles.ini`. Edit `co
 * `rawsql` is only authorized to use the services prefixed with `/rawsql`
 
 #### Database setup
-Copy `config/config.db.base.ini` and rename the copy to `config/config.db.ini`.
 
-In order to customize the names of the containers, the port bindings or the database credentials, edit `docker-compose.yml` and `config/config.db.ini`. 
-The `container_name` values in `docker-compose.yml` and the `host` values in `config/config.db.ini` must match.
+If you wish to customize the names of the containers, the port bindings or the database credentials, edit `docker-compose.yml`. 
 
 ### Run !
 
@@ -26,7 +24,7 @@ Creating the containers should take less than a minute.
 
 #### Create database schemas
 
-Once the containers are started, create the schemas in the databases using the following command:
+Once the containers are started, run the following command to generate the DB config files and create the schemas in the databases :
 ```bash
 docker exec -it web /bin/bash -c /var/www/html/dm-server/scripts/create-schemas.sh
 ```
