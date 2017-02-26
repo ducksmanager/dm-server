@@ -26,7 +26,7 @@ class DmServer extends AbstractController implements ControllerProviderInterface
     /** @var EntityManager[] $entityManagers */
     public static $entityManagers = [];
 
-    const CONFIG_DB_KEY_DM = 'db';
+    const CONFIG_DB_KEY_DM = 'db_dm';
     const CONFIG_DB_KEY_COA = 'db_coa';
     const CONFIG_DB_KEY_COVER_ID = 'db_cover_id';
     const CONFIG_DB_KEY_DM_STATS = 'db_dm_stats';
