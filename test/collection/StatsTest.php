@@ -19,11 +19,16 @@ class StatsTest extends TestCommon
 
         $objectResponse = json_decode($response->getContent());
         $this->assertInternalType('object', $objectResponse);
-        $this->assertEquals(1, count(get_object_vars($objectResponse)));
+        $this->assertEquals(2, count(get_object_vars($objectResponse)));
         $this->assertEquals('CB', array_keys(get_object_vars($objectResponse))[0]);
         $this->assertEquals('Carl Barks', $objectResponse->CB->fullname);
-        $this->assertEquals(3, $objectResponse->CB->storycount);
-        $this->assertEquals(2, $objectResponse->CB->missingstorycount);
+        $this->assertEquals(4, $objectResponse->CB->storycount);
+        $this->assertEquals(3, $objectResponse->CB->missingstorycount);
+
+        $this->assertEquals('DR', array_keys(get_object_vars($objectResponse))[1]);
+        $this->assertEquals('Don Rosa', $objectResponse->DR->fullname);
+        $this->assertEquals(1, $objectResponse->DR->storycount);
+        $this->assertEquals(1, $objectResponse->DR->missingstorycount);
     }
 
     public function testGetSuggestions() {
@@ -34,9 +39,9 @@ class StatsTest extends TestCommon
         $this->assertInternalType('object', $objectResponse);
 
         $this->assertEquals(2, $objectResponse->minScore);
-        $this->assertEquals(4, $objectResponse->maxScore);
+        $this->assertEquals(6, $objectResponse->maxScore); // fr/PM 315 : 1xDR + 1xCB = 1x4 + 1x2
 
-        $this->assertEquals(2, count(get_object_vars($objectResponse->issues)));
+        $this->assertEquals(3, count(get_object_vars($objectResponse->issues)));
 
         $issue1 = $objectResponse->issues->{'us/CBL 7'};
         $this->assertEquals(4, $issue1->score);
@@ -56,6 +61,17 @@ class StatsTest extends TestCommon
         $this->assertEquals('1', $issue2->issuenumber);
 
         $this->assertEquals($story2, $issue2->stories->CB[0]);
+
+        $issue3 = $objectResponse->issues->{'fr/PM 315'};
+        $this->assertEquals(6, $issue3->score);
+        $this->assertEquals('fr/PM', $issue3->publicationcode);
+        $this->assertEquals('315', $issue3->issuenumber);
+
+        $story3 = 'AR 201';
+        $this->assertEquals($story3, $issue3->stories->DR[0]);
+
+        $story4 = 'W WDC 130-02';
+        $this->assertEquals($story4, $issue3->stories->CB[0]);
 
         // Story details assertions
 
@@ -78,7 +94,7 @@ class StatsTest extends TestCommon
 
         $objectResponse = json_decode($response->getContent());
         $this->assertInternalType('object', $objectResponse);
-        $this->assertEquals(1, count(get_object_vars($objectResponse->issues)));
+        $this->assertEquals(2, count(get_object_vars($objectResponse->issues)));
 
         $issue1 = $objectResponse->issues->{'fr/DDD 1'};
         $this->assertEquals(2, $issue1->score);

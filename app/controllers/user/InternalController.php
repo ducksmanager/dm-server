@@ -2,6 +2,9 @@
 
 namespace DmServer\Controllers\User;
 
+use Dm\Models\Achats;
+use Dm\Models\AuteursPseudos;
+use Dm\Models\Numeros;
 use Dm\Models\Users;
 use DmServer\Controllers\AbstractController;
 use DmServer\DmServer;
@@ -92,6 +95,53 @@ class InternalController extends AbstractController
                 DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->flush();
 
                 return new Response('OK', Response::HTTP_CREATED);
+            });
+        });
+
+        $routing->delete('/internal/user/{userId}/data', function (Request $request, Application $app, $userId) {
+            return AbstractController::return500ErrorOnException($app, function() use ($userId) {
+
+                $qb = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->createQueryBuilder();
+
+                $qb->delete(Numeros::class, 'issues')
+                    ->where($qb->expr()->eq('issues.idUtilisateur', ':userId'))
+                    ->setParameter(':userId', $userId);
+                $qb->getQuery()->execute();
+
+                $qb = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->createQueryBuilder();
+                $qb->delete(Achats::class, 'purchases')
+                    ->where($qb->expr()->eq('purchases.idUser', ':userId'))
+                    ->setParameter(':userId', $userId);
+                $qb->getQuery()->execute();
+
+                $qb = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->createQueryBuilder();
+                $qb->delete(AuteursPseudos::class, 'authorsUsers')
+                    ->where($qb->expr()->eq('authorsUsers.idUser', ':userId'))
+                    ->setParameter(':userId', $userId);
+                $qb->getQuery()->execute();
+
+                return new Response('OK');
+            });
+        });
+
+        $routing->post('/internal/user/{userId}/data/bookcase/reset', function (Request $request, Application $app, $userId) {
+            return AbstractController::return500ErrorOnException($app, function() use ($userId) {
+                $em = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM);
+
+                $user = $em->getRepository(Users::class)->findOneBy([
+                    'id' => $userId
+                ]);
+
+                $user->setBibliothequeTexture1('bois');
+                $user->setBibliothequeSousTexture1('HONDURAS MAHOGANY');
+                $user->setBibliothequeTexture2('bois');
+                $user->setBibliothequeSousTexture2('KNOTTY PINE');
+                $user->setBibliothequeGrossissement(1.5);
+
+                $em->persist($user);
+                $em->flush();
+
+                return new Response('OK');
             });
         });
     }

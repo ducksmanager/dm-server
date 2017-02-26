@@ -39,5 +39,14 @@ docker exec -it web /bin/bash -c /var/www/html/dm-server/scripts/create-schemas.
 
 Browse to the path of the source on the host, then run: 
 ```bash
-scripts/deploy-server.sh dm-server-box
+scripts/deploy-app.sh dm-server-box
+```
+
+
+### Tasks
+
+#### Reset the demo user
+
+```bash
+docker exec -i dm-server-box /bin/bash dm-server/scripts/call-service.sh admin /user/resetDemo
 ```

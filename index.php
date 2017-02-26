@@ -95,6 +95,11 @@ $app->register(new Silex\Provider\SecurityServiceProvider(), array(
             'http' => true,
             'users' => ['rawsql' => $users['rawsql']]
         ),
+        'admin' => array(
+            'pattern' => '^/user/resetDemo',
+            'http' => true,
+            'users' => ['admin' => $users['admin']]
+        ),
         'collection' => array(
             'pattern' => '^/collection/',
             'http' => true,

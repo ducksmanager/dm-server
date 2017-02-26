@@ -3,12 +3,14 @@
 namespace DmServer\Controllers\Collection;
 
 use Dm\Contracts\Results\UpdateCollectionResult;
+use Dm\Models\Achats;
 use Dm\Models\Numeros;
 use DmServer\Controllers\AbstractController;
 use DmServer\DmServer;
 use DmServer\ModelHelper;
 use Silex\Application;
 use Silex\ControllerCollection;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -68,9 +70,41 @@ class InternalController extends AbstractController
         );
 
         $routing->post(
+            '/internal/collection/purchases/{id}',
+            function (Request $request, Application $app) {
+                return AbstractController::return500ErrorOnException($app, function () use ($app, $request) {
+
+                    $dmEm = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM);
+
+                    $purchaseId = $request->request->get('id');
+                    $purchaseDate = $request->request->get('date');
+                    $purchaseDescription = $request->request->get('description');
+
+                    if (!is_null($purchaseId)) {
+                        $purchase = $dmEm->getRepository(Achats::class)->findOneBy(['id' => $purchaseId]);
+                    }
+                    else {
+                        $purchase = new Achats();
+                    }
+
+                    $purchase->setIdUser(self::getSessionUser($app)['id']);
+                    $purchase->setDate(\DateTime::createFromFormat('Y-m-d', $purchaseDate));
+                    $purchase->setDescription($purchaseDescription);
+
+                    $dmEm->persist($purchase);
+                    $dmEm->flush();
+
+                    return new Response();
+                });
+            }
+        )->value('id', null);
+
+        $routing->post(
             '/internal/collection/issues',
             function (Request $request, Application $app) {
                 return AbstractController::return500ErrorOnException($app, function() use ($app, $request) {
+
+                    $dmEm = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM);
 
                     $country = $request->request->get('country');
                     $publication = $request->request->get('publication');
@@ -85,7 +119,7 @@ class InternalController extends AbstractController
                     $purchaseid = $request->request->get('purchaseid');
                     $purchaseidNewIssues = is_null($purchaseid) ? -2 : $purchaseid; // TODO allow NULL
 
-                    $qb = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->createQueryBuilder();
+                    $qb = $dmEm->createQueryBuilder();
                     $qb
                         ->select('issues')
                         ->from(Numeros::class, 'issues')
@@ -117,7 +151,7 @@ class InternalController extends AbstractController
                         if (!is_null($purchaseid)) {
                             $existingIssue->setIdAcquisition($purchaseid);
                         }
-                        DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->persist($existingIssue);
+                        $dmEm->persist($existingIssue);
                     }
 
                     $issueNumbersToCreate = array_diff($issuenumbers, array_keys($existingIssues));
@@ -131,10 +165,11 @@ class InternalController extends AbstractController
                         $newIssue->setIdAcquisition($purchaseidNewIssues);
                         $newIssue->setIdUtilisateur(self::getSessionUser($app)['id']);
 
-                        DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->persist($newIssue);
+                        $dmEm->persist($newIssue);
                     }
 
-                    DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->flush();
+                    $dmEm->flush();
+                    $dmEm->clear();
 
                     $updateResult = new UpdateCollectionResult('UPDATE', count($existingIssues));
                     $creationResult = new UpdateCollectionResult('CREATE', count($issueNumbersToCreate));

@@ -57,7 +57,7 @@ class AppController extends AbstractController
                         return $story['personcode'];
                     }, $suggestedStories);
 
-                    IssueListWithSuggestionDetails::$authors = self::callInternalSingleParameter($app, '/coa/authorsfullnames', 'GET', $storyAuthors, 50);
+                    IssueListWithSuggestionDetails::$authors = self::callInternal($app, '/coa/authorsfullnames', 'GET', [$storyAuthors], 50);
 
                     // Get author names - END
 
@@ -66,7 +66,7 @@ class AppController extends AbstractController
                         return $story['storycode'];
                     }, $suggestedStories);
 
-                    IssueListWithSuggestionDetails::$storyDetails = self::callInternalSingleParameter($app, '/coa/storydetails', 'GET', $storyCodes, 50);
+                    IssueListWithSuggestionDetails::$storyDetails = self::callInternal($app, '/coa/storydetails', 'GET', [$storyCodes], 50);
                     // Add author to story details
                     foreach($suggestedStories as $suggestedStory) {
                         IssueListWithSuggestionDetails::$storyDetails[$suggestedStory['storycode']]['personcode'] = $suggestedStory['personcode'];
@@ -79,7 +79,7 @@ class AppController extends AbstractController
                         return $story['publicationcode'];
                     }, $suggestedStories);
 
-                    IssueListWithSuggestionDetails::$publicationTitles = self::callInternalSingleParameter($app, '/coa/publicationtitles', 'GET', $publicationTitles, 50);
+                    IssueListWithSuggestionDetails::$publicationTitles = self::callInternal($app, '/coa/publicationtitles', 'GET', [$publicationTitles], 50);
 
                     // Get publication titles - END
 

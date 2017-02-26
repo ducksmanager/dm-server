@@ -172,6 +172,8 @@ class InducksPerson extends \Coa\Models\BaseModel
     public function setPersoncode($personcode)
     {
         $this->personcode = $personcode;
+
+        return $this;
     }
 
     /**
