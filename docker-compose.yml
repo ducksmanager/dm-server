@@ -43,6 +43,16 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: changeme
       MYSQL_DATABASE: dm
+  db_edgecreator:
+    container_name: db_edgecreator
+    extends:
+      file: docker-compose-db-with-healthcheck.yml
+      service: db-with-healthcheck
+    ports:
+     - "64003:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: changeme
+      MYSQL_DATABASE: edgecreator
   db_dm_stats:
     container_name: db_dm_stats
     extends:

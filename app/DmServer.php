@@ -30,8 +30,9 @@ class DmServer extends AbstractController implements ControllerProviderInterface
     const CONFIG_DB_KEY_COA = 'db_coa';
     const CONFIG_DB_KEY_COVER_ID = 'db_cover_id';
     const CONFIG_DB_KEY_DM_STATS = 'db_dm_stats';
+    const CONFIG_DB_KEY_EDGECREATOR = 'db_edgecreator';
 
-    public static $configuredEntityManagerNames = [self::CONFIG_DB_KEY_DM, self::CONFIG_DB_KEY_COA, self::CONFIG_DB_KEY_COVER_ID, self::CONFIG_DB_KEY_DM_STATS];
+    public static $configuredEntityManagerNames = [self::CONFIG_DB_KEY_DM, self::CONFIG_DB_KEY_COA, self::CONFIG_DB_KEY_COVER_ID, self::CONFIG_DB_KEY_DM_STATS, self::CONFIG_DB_KEY_EDGECREATOR];
 
     public static $settings;
 
