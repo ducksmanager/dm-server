@@ -2,6 +2,7 @@ FROM php:7.0-apache
 MAINTAINER Bruno Perel
 
 ADD .htaccess /var/www/html/dm-server/.htaccess
+ADD docker-compose.yml /var/www/html/dm-server/docker-compose.yml
 ADD app /var/www/html/dm-server/app
 ADD assets /var/www/html/dm-server/assets
 ADD scripts /var/www/html/dm-server/scripts
