@@ -10,6 +10,7 @@ services:
      - db_cover_id
      - db_dm
      - db_dm_stats
+     - db_edgecreator
   db_coa:
     container_name: db_coa
     image: "bperel/coa-box"
