@@ -38,9 +38,6 @@
             "DmStats\\Models\\": [
                 "app/models/DmStats/Models"
             ],
-            "EdgeCreator\\Contracts\\": [
-                "app/models/EdgeCreator/Contracts"
-            ],
             "EdgeCreator\\Models\\": [
                 "app/models/EdgeCreator/Models"
             ],
