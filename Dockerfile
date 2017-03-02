@@ -1,13 +1,13 @@
 FROM php:7.0-apache
 MAINTAINER Bruno Perel
 
-ADD .htaccess /var/www/html/dm-server/.htaccess
-ADD docker-compose.yml /var/www/html/dm-server/docker-compose.yml
-ADD app /var/www/html/dm-server/app
-ADD assets /var/www/html/dm-server/assets
-ADD scripts /var/www/html/dm-server/scripts
-ADD index.php /var/www/html/dm-server/index.php
-ADD composer.json /var/www/html/dm-server/composer.json
+COPY .htaccess /var/www/html/dm-server/.htaccess
+COPY docker-compose.yml /var/www/html/dm-server/docker-compose.yml
+COPY app /var/www/html/dm-server/app
+COPY assets /var/www/html/dm-server/assets
+COPY scripts /var/www/html/dm-server/scripts
+COPY index.php /var/www/html/dm-server/index.php
+COPY composer.json /var/www/html/dm-server/composer.json
 
 RUN a2enmod rewrite
 
