@@ -41,6 +41,9 @@ class AppController extends AbstractController
                         ], [
                             'db' => DmServer::CONFIG_DB_KEY_DM_STATS,
                             'query' => 'SELECT * FROM utilisateurs_histoires_manquantes LIMIT 1'
+                        ], [
+                            'db' => DmServer::CONFIG_DB_KEY_EDGECREATOR,
+                            'query' => 'SELECT * FROM edgecreator_modeles2 LIMIT 1'
                         ]
                     ];
 
