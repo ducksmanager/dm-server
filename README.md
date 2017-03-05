@@ -37,7 +37,7 @@ docker exec -it web /bin/bash -c /var/www/html/dm-server/scripts/create-schemas.
 
 Browse to the path of the source on the host, then run: 
 ```bash
-scripts/deploy-app.sh dm-server-box
+scripts/deploy/deploy-app.sh dm-server-box
 ```
 
 
