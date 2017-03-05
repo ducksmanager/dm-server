@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * EdgecreatorIntervalles
  *
- * @ORM\Table(name="edgecreator_intervalles", indexes={@ORM\Index(name="Index 1", columns={"ID_Valeur", "Numero_debut", "Numero_fin", "username"})})
+ * @ORM\Table(name="edgecreator_intervalles", indexes={@ORM\Index(name="index_intervalles", columns={"ID_Valeur", "Numero_debut", "Numero_fin", "username"})})
  * @ORM\Entity
  */
 class EdgecreatorIntervalles extends \EdgeCreator\Models\BaseModel
