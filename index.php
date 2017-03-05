@@ -44,14 +44,6 @@ $app->register(new Silex\Provider\TranslationServiceProvider(), array(
     'locale_fallbacks' => array('en'),
 ));
 
-$app->register(new Silex\Provider\DoctrineServiceProvider(), [
-    'db.options' => DmServer::getConnectionParams($conf['db'])
-]);
-
-$app->register(new Silex\Provider\DoctrineServiceProvider(), [
-    'db.options' => DmServer::getConnectionParams($conf['db_coa'])
-]);
-
 @unlink($conf['db']['path']);
 
 $app->register(new Silex\Provider\SessionServiceProvider());
