@@ -1,6 +1,7 @@
 <?php
 namespace DmServer\Test;
 
+use DmServer\DmServer;
 use Symfony\Component\HttpFoundation\Response;
 
 class RawSqlTest extends TestCommon
@@ -14,7 +15,7 @@ class RawSqlTest extends TestCommon
     public function testRawSqlWithUserWithoutPermission() {
         $service = $this->buildAuthenticatedServiceWithTestUser('/rawsql', TestCommon::$dmUser, 'POST', [
             'query' => 'SELECT * FROM numeros',
-            'db'    => 'db'
+            'db'    => DmServer::CONFIG_DB_KEY_DM
         ]);
         $response = $service->call();
 
@@ -36,7 +37,7 @@ class RawSqlTest extends TestCommon
     public function testRawSql() {
         $service = $this->buildAuthenticatedServiceWithTestUser('/rawsql', TestCommon::$rawSqlUser, 'POST', [
             'query' => 'SELECT * FROM numeros',
-            'db'    => 'db'
+            'db'    => DmServer::CONFIG_DB_KEY_DM
         ]);
         $response = $service->call();
 
@@ -52,7 +53,7 @@ class RawSqlTest extends TestCommon
     public function testRawSqlMultipleStatements() {
         $service = $this->buildAuthenticatedServiceWithTestUser('/rawsql', TestCommon::$rawSqlUser, 'POST', [
             'query' => 'SELECT * FROM numeros; DELETE FROM numeros',
-            'db'    => 'db'
+            'db'    => DmServer::CONFIG_DB_KEY_DM
         ]);
         $response = $service->call();
 
