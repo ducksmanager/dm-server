@@ -133,7 +133,7 @@ abstract class AbstractController
         try {
             return call_user_func($function);
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             if (isset($app['monolog'])) {
                 $app['monolog']->addError($e->getMessage());
             }
