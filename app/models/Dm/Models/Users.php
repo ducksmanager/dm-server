@@ -59,13 +59,6 @@ class Users extends \Dm\Models\BaseModel
     /**
      * @var boolean
      *
-     * @ORM\Column(name="RecommandationsListeMags", type="boolean", nullable=false)
-     */
-    private $recommandationslistemags = '1';
-
-    /**
-     * @var boolean
-     *
      * @ORM\Column(name="BetaUser", type="boolean", nullable=false)
      */
     private $betauser = '0';
@@ -249,30 +242,6 @@ class Users extends \Dm\Models\BaseModel
     public function getEmail()
     {
         return $this->email;
-    }
-
-    /**
-     * Set recommandationslistemags
-     *
-     * @param boolean $recommandationslistemags
-     *
-     * @return Users
-     */
-    public function setRecommandationslistemags($recommandationslistemags)
-    {
-        $this->recommandationslistemags = $recommandationslistemags;
-
-        return $this;
-    }
-
-    /**
-     * Get recommandationslistemags
-     *
-     * @return boolean
-     */
-    public function getRecommandationslistemags()
-    {
-        return $this->recommandationslistemags;
     }
 
     /**
