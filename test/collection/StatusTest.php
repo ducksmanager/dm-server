@@ -3,12 +3,14 @@ namespace DmServer\Test;
 
 class StatusTest extends TestCommon
 {
+
     public function testGetStatus() {
         self::createCoaData();
         $collectionUserInfo = self::createTestCollection();
         self::setSessionUser($this->app, $collectionUserInfo);
         self::createCoverIds();
         self::createStatsData();
+        self::createEdgeCreatorData();
 
         $service = $this->buildAuthenticatedService('/status', TestCommon::$dmUser, [], [], 'GET');
         $response = $service->call();

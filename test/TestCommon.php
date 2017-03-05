@@ -14,6 +14,9 @@ use DmStats\Models\AuteursPseudosSimple;
 use DmStats\Models\UtilisateursHistoiresManquantes;
 use DmStats\Models\UtilisateursPublicationsManquantes;
 use DmStats\Models\UtilisateursPublicationsSuggerees;
+use EdgeCreator\Models\EdgecreatorIntervalles;
+use EdgeCreator\Models\EdgecreatorModeles2;
+use EdgeCreator\Models\EdgecreatorValeurs;
 use Silex\Application;
 use Silex\WebTestCase;
 use Dm\Models\Numeros;
@@ -535,6 +538,40 @@ class TestCommon extends WebTestCase {
 
         $dmStatsEntityManager->flush();
         $dmStatsEntityManager->clear();
+    }
+
+    public function createEdgeCreatorData()
+    {
+        $edgeCreatorEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_EDGECREATOR];
+
+        $edgeCreatorUser = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_DM]->getRepository(Users::class)->find(
+            AbstractController::getSessionUser($this->app)['id']
+        );
+
+        $model = new EdgecreatorModeles2();
+        $model->setPays('fr');
+        $model->setMagazine('DDD');
+        $model->setOrdre(1);
+        $model->setNomFonction('Remplir');
+        $model->setOptionNom('Couleur');
+        $edgeCreatorEntityManager->persist($model);
+        $edgeCreatorEntityManager->flush();
+        $idOption = $model->getId();
+
+        $value = new EdgecreatorValeurs();
+        $value->setIdOption($idOption);
+        $value->setOptionValeur('#FF0000');
+        $edgeCreatorEntityManager->persist($value);
+        $edgeCreatorEntityManager->flush();
+        $valueId = $value->getId();
+
+        $interval = new EdgecreatorIntervalles();
+        $interval->setIdValeur($valueId);
+        $interval->setNumeroDebut(1);
+        $interval->setNumeroFin(3);
+        $interval->setUsername($edgeCreatorUser->getUsername());
+        $edgeCreatorEntityManager->persist($interval);
+        $edgeCreatorEntityManager->flush();
     }
 
     protected static function createCoverIds()
