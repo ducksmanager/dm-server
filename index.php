@@ -9,9 +9,11 @@ use DmServer\DmServer;
 
 require_once __DIR__.'/vendor/autoload.php';
 
-if (!isset($conf)) {
+$forTest = isset($conf);
+
+if (!$forTest) {
     $conf = DmServer::getAppConfig('config.db.ini');
-    $settings = DmServer::initSettings('settings.ini');
+    DmServer::initSettings('settings.ini');
 }
 
 $app = new \Silex\Application();
@@ -24,7 +26,7 @@ $app->match('/', function () {
 
 $app->before(function (Request $request) {
     if (strpos($request->getRequestUri(), '/internal') === 0) {
-        return new Response('Unauthorized', 403);
+        return new Response('Unauthorized', Response::HTTP_FORBIDDEN);
     }
     return true;
 });
@@ -44,10 +46,11 @@ $app->register(new Silex\Provider\TranslationServiceProvider(), array(
     'locale_fallbacks' => array('en'),
 ));
 
-@unlink($conf['db']['path']);
-
 $app->register(new Silex\Provider\SessionServiceProvider());
-$app['session.test'] = true;
+
+if ($forTest) {
+    $app['session.test'] = true;
+}
 
 
 $app->extend(
@@ -57,13 +60,15 @@ $app->extend(
      * @return Translator
      */
     'translator', function(Translator $translator) {
-    $translator->addLoader('yaml', new YamlFileLoader());
+        $translator->addLoader('yaml', new YamlFileLoader());
 
-    $translator->addResource('yaml', __DIR__.'/app/locales/en.yml', 'en');
-    $translator->addResource('yaml', __DIR__.'/app/locales/fr.yml', 'fr');
+        foreach(['en', 'fr'] as $l10n) {
+            $translator->addResource('yaml', __DIR__.'/app/locales/'.$l10n.'.yml', $l10n);
+        }
 
-    return $translator;
-});
+        return $translator;
+    }
+);
 AbstractController::initTranslation($app);
 
 $passwordEncoder = new \Symfony\Component\Security\Core\Encoder\BCryptPasswordEncoder(5);
@@ -72,7 +77,7 @@ $app['security.default_encoder'] = function () use ($passwordEncoder) {
     return $passwordEncoder;
 };
 
-$roles = DmServer::getAppRoles(false);
+$roles = DmServer::getAppRoles($forTest);
 
 $users = array();
 array_walk($roles, function($role, $user) use ($passwordEncoder, &$users) {

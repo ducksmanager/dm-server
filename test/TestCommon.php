@@ -100,6 +100,7 @@ class TestCommon extends WebTestCase {
         require __DIR__ . '/../index.php';
 
         self::$users = $users;
+        $app['session.test'] = true;
         return $app;
     }
 
