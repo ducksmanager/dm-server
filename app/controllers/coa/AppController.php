@@ -40,6 +40,17 @@ class AppController extends AbstractController
         )->assert('country', self::getParamAssertRegex(BaseModel::COUNTRY_CODE_VALIDATION));
 
         $routing->get(
+            '/coa/list/publications/{publicationcodes}',
+            function (Application $app, Request $request, $publicationcodes) {
+                return new JsonResponse(
+                    ModelHelper::getUnserializedArrayFromJson(
+                        self::callInternal($app, '/coa/publicationtitles', 'GET', [$publicationcodes])->getContent()
+                    )
+                );
+            }
+        )->assert('publicationcodes', self::getParamAssertRegex(BaseModel::PUBLICATION_CODE_VALIDATION, 10));
+
+        $routing->get(
             '/coa/list/issues/{publicationcode}',
             function (Application $app, Request $request, $publicationcode) {
                 return new JsonResponse(

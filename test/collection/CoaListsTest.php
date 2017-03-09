@@ -23,7 +23,7 @@ class CoaListsTest extends TestCommon
         $this->assertEquals('Espagne', $objectResponse->es);
     }
 
-    public function testGetPublicationList() {
+    public function testGetPublicationListFromCountry() {
         $service = $this->buildAuthenticatedServiceWithTestUser('/coa/list/publications/fr', TestCommon::$dmUser);
         $response = $service->call();
 
@@ -32,6 +32,17 @@ class CoaListsTest extends TestCommon
         $this->assertInternalType('object', $objectResponse);
         $this->assertEquals('Dynastie', $objectResponse->{'fr/DDD'});
         $this->assertEquals('Parade', $objectResponse->{'fr/MP'});
+    }
+
+    public function testGetPublicationListFromPublicationCodes() {
+        $service = $this->buildAuthenticatedServiceWithTestUser('/coa/list/publications/fr/DDD,us/CBL', TestCommon::$dmUser);
+        $response = $service->call();
+
+        $objectResponse = json_decode($response->getContent());
+
+        $this->assertInternalType('object', $objectResponse);
+        $this->assertEquals('Dynastie', $objectResponse->{'fr/DDD'});
+        $this->assertEquals('Carl Barks Library', $objectResponse->{'us/CBL'});
     }
 
     public function testGetPublicationListInvalidCountry() {
