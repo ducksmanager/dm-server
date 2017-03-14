@@ -68,6 +68,7 @@ class InternalController extends AbstractController
                     else {
                         $qb->where($qb->expr()->in('inducks_publication.publicationcode', explode(',', $publicationCodes)));
                     }
+                    $qb->orderBy('inducks_publication.title');
 
                     $results = $qb->getQuery()->getResult();
                     $publicationTitles = [];
