@@ -48,6 +48,10 @@ $app->register(new Silex\Provider\TranslationServiceProvider(), array(
 
 $app->register(new Silex\Provider\SessionServiceProvider());
 
+$app->error(function (\Exception $e, Request $request, $code) {
+    return new Response($e->getMessage()."\n\n".$e->getTraceAsString(), $code);
+});
+
 if ($forTest) {
     $app['session.test'] = true;
 }

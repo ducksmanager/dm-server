@@ -245,6 +245,8 @@ class DmServer extends AbstractController implements ControllerProviderInterface
         Controllers\Stats\AppController::addRoutes($routing);
         Controllers\Stats\InternalController::addRoutes($routing);
 
+        Controllers\EdgeCreator\AppController::addRoutes($routing);
+        Controllers\EdgeCreator\InternalController::addRoutes($routing);
 
         return $routing;
     }

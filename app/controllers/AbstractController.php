@@ -32,7 +32,7 @@ abstract class AbstractController
      * @param int $chunkSize
      * @return Response|array
      */
-    public static function callInternal(Application $app, $url, $type, $parameters = [], $chunkSize = 0) {
+    public static function callInternal(Application $app, $url, $type = 'GET', $parameters = [], $chunkSize = 0) {
         if ($chunkSize > 1) {
             if (count($parameters) > 1) {
                 return new Response('Attempt to call callInternal with chunkSize > 1 and more than one parameter', Response::HTTP_INTERNAL_SERVER_ERROR);
