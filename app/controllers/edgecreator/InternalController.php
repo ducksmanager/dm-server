@@ -4,9 +4,13 @@ namespace DmServer\Controllers\EdgeCreator;
 
 use DmServer\Controllers\AbstractController;
 use DmServer\DmServer;
+use DmServer\ModelHelper;
+use Doctrine\ORM\Query\Expr\Join;
 use EdgeCreator\Models\EdgecreatorIntervalles;
 use EdgeCreator\Models\EdgecreatorModeles2;
 use EdgeCreator\Models\EdgecreatorValeurs;
+use EdgeCreator\Models\TranchesEnCoursModeles;
+use EdgeCreator\Models\TranchesEnCoursValeurs;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -20,19 +24,19 @@ class InternalController extends AbstractController
     public static function addRoutes($routing)
     {
         $routing->put(
-            '/internal/edgecreator/step/{publicationcode}/{stepnumber}',
-            function (Request $request, Application $app, $publicationcode, $stepnumber) {
-                return AbstractController::return500ErrorOnException($app, function() use ($request, $publicationcode, $stepnumber) {
+            '/internal/edgecreator/step/{publicationCode}/{stepNumber}',
+            function (Request $request, Application $app, $publicationCode, $stepNumber) {
+                return AbstractController::return500ErrorOnException($app, function() use ($request, $publicationCode, $stepNumber) {
                     $em = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR);
 
-                    list($country, $magazine) = explode('/', $publicationcode);
+                    list($country, $publication) = explode('/', $publicationCode);
                     $functionName = $request->request->get('functionname');
                     $optionName = $request->request->get('optionname');
 
                     $model = new EdgecreatorModeles2();
                     $model->setPays($country);
-                    $model->setMagazine($magazine);
-                    $model->setOrdre($stepnumber);
+                    $model->setMagazine($publication);
+                    $model->setOrdre($stepNumber);
                     $model->setNomFonction($functionName);
                     $model->setOptionNom($optionName);
 
@@ -87,5 +91,62 @@ class InternalController extends AbstractController
                 });
             }
         );
+
+        $routing->post(
+            '/internal/edgecreator/step/clone/{modelId}/{stepNumber}/{newStepNumber}',
+            function (Request $request, Application $app, $modelId, $stepNumber, $newStepNumber) {
+                $em = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR);
+
+                $values = $em->getRepository(TranchesEnCoursValeurs::class)->findBy([
+                    'idModele' => $modelId,
+                    'ordre' => $stepNumber
+                ]);
+
+                $newValues = array_map(function(TranchesEnCoursValeurs $value) use ($newStepNumber) {
+                    $newValue = new TranchesEnCoursValeurs();
+                    $newValue->setIdModele($value->getIdModele());
+                    $newValue->setNomFonction($value->getNomFonction());
+                    $newValue->setOptionNom($value->getOptionNom());
+                    $newValue->setOptionValeur($value->getOptionValeur());
+                    $newValue->setOrdre($newStepNumber);
+                }, $values);
+
+
+            }
+        )
+            ->assert('stepNumber', self::getParamAssertRegex('\\d+'))
+            ->assert('newStepNumber', self::getParamAssertRegex('\\d+'));
+
+        $routing->get(
+            '/internal/edgecreator/step/{publicationCode}/{issueNumber}/{stepNumber}/{byCurrentUser}',
+            function (Request $request, Application $app, $publicationCode, $issueNumber, $stepNumber, $byCurrentUser) {
+                return AbstractController::return500ErrorOnException($app, function() use ($app, $publicationCode, $issueNumber, $stepNumber, $byCurrentUser) {
+                    $em = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR);
+
+                    list($country, $publication) = explode('/', $publicationCode);
+
+                    $filter = [
+                        'pays' => $country,
+                        'magazine' => $publication,
+                        'numero' => $issueNumber
+                    ];
+
+                    if ($byCurrentUser === '1') {
+                        $filter = array_merge($filter, [
+                            'username' => self::getSessionUser($app)['username'],
+                            'active' => 1
+                        ]);
+                    }
+
+                    $model = $em->getRepository(TranchesEnCoursModeles::class)->findOneBy($filter);
+
+                    return new JsonResponse(json_encode($model));
+                });
+            }
+        )
+            ->assert('publicationCode', self::getParamAssertRegex(\Coa\Models\BaseModel::PUBLICATION_CODE_VALIDATION))
+            ->assert('issueNumber', self::getParamAssertRegex(\Coa\Models\BaseModel::ISSUE_CODE_VALIDATION))
+            ->assert('stepNumber', self::getParamAssertRegex('\\d+'))
+            ->value('byCurrentUser', false);
     }
 }

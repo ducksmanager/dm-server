@@ -49,4 +49,11 @@ class EdgeCreatorTest extends TestCommon
 
         $this->assertEquals($createdInterval->getId(), $objectResponse->intervalid);
     }
+
+    public function testCloneStep() {
+        $service = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/step/clone/fr/DDD/1/1/to/2', TestCommon::$dmUser, 'POST');
+        $response = $service->call();
+
+        $objectResponse = json_decode($response->getContent());
+    }
 }
