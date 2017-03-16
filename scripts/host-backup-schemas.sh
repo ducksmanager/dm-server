@@ -16,7 +16,6 @@ fi
 
 docker exec ${container_name} grep -Po '^(host|dbname|username|password)=\K.+' ${config_file_path} | sed '$!N;$!N;$!N;s/\n/\t/g' | \
   while read -r host dbname username password; do
-    echo $host $dbname $username $password
     backup_file=${backup_dir}/backup_${container_name}_${dbname}.sql
     echo "Backing up $dbname from $host to $backup_file"
     docker exec ${container_name} mysqldump -u${username} -p${password} -h ${host} ${dbname} > ${backup_file}
