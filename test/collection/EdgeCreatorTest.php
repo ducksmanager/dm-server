@@ -19,7 +19,7 @@ class EdgeCreatorTest extends TestCommon
     }
 
     public function testCreateStepWithOptionValue() {
-        $service = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/step/fr/PM/1', TestCommon::$dmUser, 'PUT', [
+        $service = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/step/fr/PM/1', TestCommon::$edgecreatorUser, 'PUT', [
             'functionname' => 'TexteMyFonts',
             'optionname' => 'Chaine',
             'optionvalue' => 'hello',
@@ -52,14 +52,14 @@ class EdgeCreatorTest extends TestCommon
     }
 
     public function testCloneStep() {
-        $service = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/step/clone/fr/DDD/1/1/to/2', TestCommon::$dmUser, 'POST');
+        $service = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/step/clone/fr/DDD/1/1/to/2', TestCommon::$edgecreatorUser, 'POST');
         $response = $service->call();
 
         $objectResponse = json_decode($response->getContent());
     }
 
     public function testCreateMyfontsPreview() {
-        $service = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/myfontspreview', TestCommon::$dmUser, 'PUT', [
+        $service = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/myfontspreview', TestCommon::$edgecreatorUser, 'PUT', [
             'font' => 'Arial',
             'fgColor' => '#000000',
             'bgColor' => '#FFFFFF',
@@ -76,5 +76,20 @@ class EdgeCreatorTest extends TestCommon
         ]);
 
         $this->assertEquals($createdPreview->getId(), $objectResponse->previewid);
+    }
+
+    public function testDeleteMyFontsPreview() {
+        $em = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR);
+
+        $newPreview = new ImagesMyfonts();
+        $em->persist($newPreview);
+        $em->flush();
+
+        $newPreviewId = $newPreview->getId();
+
+        $service = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/myfontspreview/'.$newPreviewId, TestCommon::$edgecreatorUser, 'DELETE');
+        $response = $service->call();
+
+        $this->assertNull($em->getRepository(ImagesMyfonts::class)->find($newPreviewId));
     }
 }

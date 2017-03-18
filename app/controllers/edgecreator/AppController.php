@@ -98,5 +98,12 @@ class AppController extends AbstractController
                 return new JsonResponse(['previewid' => $previewId]);
             }
         );
+
+        $routing->delete(
+            '/edgecreator/myfontspreview/{previewid}',
+            function (Application $app, Request $request, $previewid) {
+                return self::callInternal($app, "/edgecreator/myfontspreview/$previewid", 'DELETE');
+            }
+        );
     }
 }

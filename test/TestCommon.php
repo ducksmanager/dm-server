@@ -32,7 +32,8 @@ class TestCommon extends WebTestCase {
     protected static $testDmUsers = [
         'dm_test_user' => 'test'
     ];
-    protected static $dmUser = 'dm_test';
+    protected static $dmUser = 'ducksmanager';
+    protected static $edgecreatorUser = 'edgecreator';
     protected static $rawSqlUser = 'rawsql';
     protected static $adminUser = 'admin';
     protected static $uploadBase = '/tmp/dm-server';

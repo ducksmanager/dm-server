@@ -12,6 +12,7 @@ use EdgeCreator\Models\TranchesEnCoursModeles;
 use EdgeCreator\Models\TranchesEnCoursValeurs;
 use Silex\Application;
 use Silex\ControllerCollection;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -168,6 +169,19 @@ class InternalController extends AbstractController
                 $em->flush();
 
                 return new JsonResponse(['previewid' => $preview->getId()]);
+            }
+        );
+
+        $routing->delete(
+            '/internal/edgecreator/myfontspreview/{previewId}',
+            function (Application $app, Request $request, $previewId) {
+                $em = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR);
+
+                $preview = $em->getRepository(ImagesMyfonts::class)->find($previewId);
+                $em->remove($preview);
+                $em->flush();
+
+                return new Response();
             }
         );
     }
