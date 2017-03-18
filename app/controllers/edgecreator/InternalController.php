@@ -4,8 +4,6 @@ namespace DmServer\Controllers\EdgeCreator;
 
 use DmServer\Controllers\AbstractController;
 use DmServer\DmServer;
-use DmServer\ModelHelper;
-use Doctrine\ORM\Query\Expr\Join;
 use EdgeCreator\Models\EdgecreatorIntervalles;
 use EdgeCreator\Models\EdgecreatorModeles2;
 use EdgeCreator\Models\EdgecreatorValeurs;
@@ -47,8 +45,8 @@ class InternalController extends AbstractController
                 });
             }
         )
-            ->assert('publicationcode', self::getParamAssertRegex(\Coa\Models\BaseModel::PUBLICATION_CODE_VALIDATION))
-            ->assert('stepnumber', self::getParamAssertRegex('\\d+'));
+            ->assert('publicationCode', self::getParamAssertRegex(\Coa\Models\BaseModel::PUBLICATION_CODE_VALIDATION))
+            ->assert('stepNumber', self::getParamAssertRegex('\\d+'));
 
         $routing->put(
             '/internal/edgecreator/value',
@@ -102,15 +100,17 @@ class InternalController extends AbstractController
                     'ordre' => $stepNumber
                 ]);
 
-                $newValues = array_map(function(TranchesEnCoursValeurs $value) use ($newStepNumber) {
+                $newValues = array_map(function(TranchesEnCoursValeurs $value) use ($em, $newStepNumber) {
                     $newValue = new TranchesEnCoursValeurs();
                     $newValue->setIdModele($value->getIdModele());
                     $newValue->setNomFonction($value->getNomFonction());
                     $newValue->setOptionNom($value->getOptionNom());
                     $newValue->setOptionValeur($value->getOptionValeur());
                     $newValue->setOrdre($newStepNumber);
+                    $em->persist($newValue);
                 }, $values);
 
+                $em->flush();
 
             }
         )
