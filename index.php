@@ -109,6 +109,13 @@ $app->register(new Silex\Provider\SecurityServiceProvider(), array(
                 'whattheduck' => $users['whattheduck'],
                 'dm_test' => $users['dm_test']
             ]
+        ),
+        'edgecreator' => array(
+            'pattern' => '^/edgecreator/',
+            'http' => true,
+            'users' => [
+                'edgecreator' => $users['edgecreator']
+            ]
         )
     )
 ));
