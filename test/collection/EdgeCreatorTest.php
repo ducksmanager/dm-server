@@ -5,6 +5,7 @@ use DmServer\DmServer;
 use EdgeCreator\Models\EdgecreatorIntervalles;
 use EdgeCreator\Models\EdgecreatorModeles2;
 use EdgeCreator\Models\EdgecreatorValeurs;
+use EdgeCreator\Models\ImagesMyfonts;
 
 class EdgeCreatorTest extends TestCommon
 {
@@ -55,5 +56,25 @@ class EdgeCreatorTest extends TestCommon
         $response = $service->call();
 
         $objectResponse = json_decode($response->getContent());
+    }
+
+    public function testCreateMyfontsPreview() {
+        $service = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/myfontspreview', TestCommon::$dmUser, 'PUT', [
+            'font' => 'Arial',
+            'fgColor' => '#000000',
+            'bgColor' => '#FFFFFF',
+            'width' => 200,
+            'text' => 'Hello preview',
+            'precision' => 18,
+        ]);
+        $response = $service->call();
+
+        $objectResponse = json_decode($response->getContent());
+
+        $createdPreview = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR)->getRepository(ImagesMyfonts::class)->findOneBy([
+            'texte' => 'Hello preview'
+        ]);
+
+        $this->assertEquals($createdPreview->getId(), $objectResponse->previewid);
     }
 }

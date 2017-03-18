@@ -69,8 +69,34 @@ class AppController extends AbstractController
                 return self::callInternal($app, "/edgecreator/step/clone/$publicationcode/$issuenumber/$stepnumber/$newstepnumber", 'POST');
             }
         )
-            ->assert('publicationcode', self::getParamAssertRegex(\Coa\Models\BaseModel::PUBLICATION_CODE_VALIDATION))
-            ->assert('stepnumber', self::getParamAssertRegex('\\d+'))
-            ->assert('newstepnumber', self::getParamAssertRegex('\\d+'));
+        ->assert('publicationcode', self::getParamAssertRegex(\Coa\Models\BaseModel::PUBLICATION_CODE_VALIDATION))
+        ->assert('stepnumber', self::getParamAssertRegex('\\d+'))
+        ->assert('newstepnumber', self::getParamAssertRegex('\\d+'));
+
+
+        $routing->put(
+            '/edgecreator/myfontspreview',
+            function (Application $app, Request $request) {
+                $font = $request->request->get('font');
+                $fgColor = $request->request->get('fgColor');
+                $bgColor = $request->request->get('bgColor');
+                $width = $request->request->get('width');
+                $text = $request->request->get('text');
+                $precision = $request->request->get('precision');
+
+                $previewIdResponse = self::callInternal($app, "/edgecreator/myfontspreview", 'PUT', [
+                    'font' => $font,
+                    'fgColor' => $fgColor,
+                    'bgColor' => $bgColor,
+                    'width' => $width,
+                    'text' => $text,
+                    'precision' => $precision,
+                ]);
+
+                $previewId = json_decode($previewIdResponse->getContent())->previewid;
+
+                return new JsonResponse(['previewid' => $previewId]);
+            }
+        );
     }
 }

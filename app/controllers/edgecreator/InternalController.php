@@ -7,6 +7,7 @@ use DmServer\DmServer;
 use EdgeCreator\Models\EdgecreatorIntervalles;
 use EdgeCreator\Models\EdgecreatorModeles2;
 use EdgeCreator\Models\EdgecreatorValeurs;
+use EdgeCreator\Models\ImagesMyfonts;
 use EdgeCreator\Models\TranchesEnCoursModeles;
 use EdgeCreator\Models\TranchesEnCoursValeurs;
 use Silex\Application;
@@ -148,5 +149,26 @@ class InternalController extends AbstractController
             ->assert('issueNumber', self::getParamAssertRegex(\Coa\Models\BaseModel::ISSUE_CODE_VALIDATION))
             ->assert('stepNumber', self::getParamAssertRegex('\\d+'))
             ->value('byCurrentUser', false);
+
+
+        $routing->put(
+            '/internal/edgecreator/myfontspreview',
+            function (Application $app, Request $request) {
+                $preview = new ImagesMyfonts();
+
+                $preview->setFont($request->request->get('font'));
+                $preview->setColor($request->request->get('fgColor'));
+                $preview->setColorbg($request->request->get('bgColor'));
+                $preview->setWidth($request->request->get('width'));
+                $preview->setTexte($request->request->get('text'));
+                $preview->setPrecision($request->request->get('precision'));
+
+                $em = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR);
+                $em->persist($preview);
+                $em->flush();
+
+                return new JsonResponse(['previewid' => $preview->getId()]);
+            }
+        );
     }
 }
