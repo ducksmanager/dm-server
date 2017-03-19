@@ -8,7 +8,10 @@ use Coa\Models\InducksPublication;
 use Coa\Models\InducksStory;
 use CoverId\Models\Covers;
 use Dm\Models\Achats;
+use Dm\Models\Numeros;
+use Dm\Models\Users;
 use DmServer\Controllers\AbstractController;
+use DmServer\DmServer;
 use DmStats\Models\AuteursHistoires;
 use DmStats\Models\AuteursPseudosSimple;
 use DmStats\Models\UtilisateursHistoiresManquantes;
@@ -17,11 +20,10 @@ use DmStats\Models\UtilisateursPublicationsSuggerees;
 use EdgeCreator\Models\EdgecreatorIntervalles;
 use EdgeCreator\Models\EdgecreatorModeles2;
 use EdgeCreator\Models\EdgecreatorValeurs;
+use EdgeCreator\Models\TranchesEnCoursModeles;
+use EdgeCreator\Models\TranchesEnCoursValeurs;
 use Silex\Application;
 use Silex\WebTestCase;
-use Dm\Models\Numeros;
-use Dm\Models\Users;
-use DmServer\DmServer;
 
 class TestCommon extends WebTestCase {
 
@@ -554,6 +556,7 @@ class TestCommon extends WebTestCase {
     {
         $edgeCreatorEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_EDGECREATOR];
 
+        /** @var Users $edgeCreatorUser */
         $edgeCreatorUser = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_DM]->getRepository(Users::class)->find(
             AbstractController::getSessionUser($this->app)['id']
         );
@@ -581,6 +584,24 @@ class TestCommon extends WebTestCase {
         $interval->setNumeroFin(3);
         $interval->setUsername($edgeCreatorUser->getUsername());
         $edgeCreatorEntityManager->persist($interval);
+
+        $edgeCreatorEntityManager->flush();
+
+        $ongoingModel1 = new TranchesEnCoursModeles();
+        $ongoingModel1->setPays('fr');
+        $ongoingModel1->setMagazine('PM');
+        $ongoingModel1->setNumero('502');
+        $ongoingModel1->setUsername($edgeCreatorUser->getUsername());
+        $edgeCreatorEntityManager->persist($ongoingModel1);
+        $edgeCreatorEntityManager->flush();
+
+        $ongoingModel1Value1 = new TranchesEnCoursValeurs();
+        $ongoingModel1Value1->setIdModele($ongoingModel1);
+        $ongoingModel1Value1->setOrdre(1);
+        $ongoingModel1Value1->setNomFonction('Remplir');
+        $ongoingModel1Value1->setOptionNom('Couleur');
+        $ongoingModel1Value1->setOptionValeur('#FF00FF');
+        $edgeCreatorEntityManager->persist($ongoingModel1Value1);
         $edgeCreatorEntityManager->flush();
     }
 

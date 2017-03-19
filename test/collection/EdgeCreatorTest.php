@@ -52,10 +52,19 @@ class EdgeCreatorTest extends TestCommon
     }
 
     public function testCloneStep() {
-        $service = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/step/clone/fr/DDD/1/1/to/2', TestCommon::$edgecreatorUser, 'POST');
+        $service = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/step/clone/fr/PM/502/1/to/2', TestCommon::$edgecreatorUser, 'POST');
         $response = $service->call();
 
         $objectResponse = json_decode($response->getContent());
+    }
+
+    public function testShiftStep() {
+        $service = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/step/shift/fr/PM/502/1/inclusive', TestCommon::$edgecreatorUser, 'POST');
+        $response = $service->call();
+
+        $objectResponse = json_decode($response->getContent());
+
+        $this->assertEquals([json_decode(json_encode(['old' => 1, 'new' => 2]))], $objectResponse->shifts);
     }
 
     public function testCreateMyfontsPreview() {

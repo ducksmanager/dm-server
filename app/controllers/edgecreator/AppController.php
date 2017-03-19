@@ -64,6 +64,20 @@ class AppController extends AbstractController
 
 
         $routing->post(
+            '/edgecreator/step/shift/{publicationcode}/{issuenumber}/{stepnumber}/{isincludingthisstep}',
+            function (Application $app, Request $request, $publicationcode, $issuenumber, $stepnumber, $isincludingthisstep) {
+
+                $modelIdResponse = self::callInternal($app, "/edgecreator/step/$publicationcode/$issuenumber/1");
+                $modelId = json_decode($modelIdResponse->getContent())->modelid;
+
+                return self::callInternal($app, "/edgecreator/step/shift/$modelId/$stepnumber/$isincludingthisstep", 'POST');
+            }
+        )
+            ->assert('publicationcode', self::getParamAssertRegex(\Coa\Models\BaseModel::PUBLICATION_CODE_VALIDATION))
+            ->assert('stepnumber', self::getParamAssertRegex('\\d+'))
+            ->assert('newstepnumber', self::getParamAssertRegex('\\d+'));
+
+        $routing->post(
             '/edgecreator/step/clone/{publicationcode}/{issuenumber}/{stepnumber}/to/{newstepnumber}',
             function (Application $app, Request $request, $publicationcode, $issuenumber, $stepnumber, $newstepnumber) {
                 return self::callInternal($app, "/edgecreator/step/clone/$publicationcode/$issuenumber/$stepnumber/$newstepnumber", 'POST');

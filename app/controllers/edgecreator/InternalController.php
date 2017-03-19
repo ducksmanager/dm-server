@@ -4,6 +4,7 @@ namespace DmServer\Controllers\EdgeCreator;
 
 use DmServer\Controllers\AbstractController;
 use DmServer\DmServer;
+use Doctrine\Common\Collections\Criteria;
 use EdgeCreator\Models\EdgecreatorIntervalles;
 use EdgeCreator\Models\EdgecreatorModeles2;
 use EdgeCreator\Models\EdgecreatorValeurs;
@@ -12,7 +13,6 @@ use EdgeCreator\Models\TranchesEnCoursModeles;
 use EdgeCreator\Models\TranchesEnCoursValeurs;
 use Silex\Application;
 use Silex\ControllerCollection;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -119,10 +119,45 @@ class InternalController extends AbstractController
             ->assert('stepNumber', self::getParamAssertRegex('\\d+'))
             ->assert('newStepNumber', self::getParamAssertRegex('\\d+'));
 
+        $routing->post(
+            '/internal/edgecreator/step/shift/{modelId}/{stepNumber}/{isIncludingThisStep}',
+            function (Request $request, Application $app, $modelId, $stepNumber, $isIncludingThisStep) {
+                $em = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR);
+
+                $model = $em->getRepository(TranchesEnCoursModeles::class)->find($modelId);
+
+                $criteria = new Criteria();
+                $criteria
+                    ->where($criteria->expr()->andX(
+                        $criteria->expr()->eq('idModele', $model)),
+                        $isIncludingThisStep ==='inclusive'
+                            ? $criteria->expr()->gte('ordre', $stepNumber)
+                            : $criteria->expr()->gt ('ordre', $stepNumber)
+                    );
+
+                $values = $em->getRepository(TranchesEnCoursValeurs::class)->matching($criteria);
+
+                $shifts = array_map(
+                    function(TranchesEnCoursValeurs $value) use ($em) {
+                        $shift = ['old' => $value->getOrdre(), 'new' => $value->getOrdre() + 1];
+                        $value->setOrdre($value->getOrdre() + 1);
+                        $em->persist($value);
+
+                        return $shift;
+                }, $values->toArray());
+
+                $em->flush();
+
+                return new JsonResponse(['shifts' => $shifts]);
+            }
+        )
+            ->assert('stepNumber', self::getParamAssertRegex('\\d+'))
+            ->assert('newStepNumber', self::getParamAssertRegex('\\d+'));
+
         $routing->get(
-            '/internal/edgecreator/step/{publicationCode}/{issueNumber}/{stepNumber}/{byCurrentUser}',
-            function (Request $request, Application $app, $publicationCode, $issueNumber, $stepNumber, $byCurrentUser) {
-                return AbstractController::return500ErrorOnException($app, function() use ($app, $publicationCode, $issueNumber, $stepNumber, $byCurrentUser) {
+            '/internal/edgecreator/step/{publicationCode}/{issueNumber}/{byCurrentUser}',
+            function (Request $request, Application $app, $publicationCode, $issueNumber, $byCurrentUser) {
+                return AbstractController::return500ErrorOnException($app, function() use ($app, $publicationCode, $issueNumber, $byCurrentUser) {
                     $em = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR);
 
                     list($country, $publication) = explode('/', $publicationCode);
@@ -142,13 +177,12 @@ class InternalController extends AbstractController
 
                     $model = $em->getRepository(TranchesEnCoursModeles::class)->findOneBy($filter);
 
-                    return new JsonResponse(json_encode($model));
+                    return new JsonResponse(['modelid' => $model->getId()]);
                 });
             }
         )
             ->assert('publicationCode', self::getParamAssertRegex(\Coa\Models\BaseModel::PUBLICATION_CODE_VALIDATION))
-            ->assert('issueNumber', self::getParamAssertRegex(\Coa\Models\BaseModel::ISSUE_CODE_VALIDATION))
-            ->assert('stepNumber', self::getParamAssertRegex('\\d+'))
+            ->assert('issueNumber', self::getParamAssertRegex(\Coa\Models\BaseModel::ISSUE_NUMBER_VALIDATION))
             ->value('byCurrentUser', false);
 
 
@@ -181,7 +215,7 @@ class InternalController extends AbstractController
                 $em->remove($preview);
                 $em->flush();
 
-                return new Response();
+                return new JsonResponse(['removed' => [$preview->getId()]]);
             }
         );
     }
