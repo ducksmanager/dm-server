@@ -50,6 +50,17 @@ class RawSqlTest extends TestCommon
         $this->assertEquals('DDD', $objectResponse[0]['Magazine']);
     }
 
+    public function testRawSqlInvalidSelect() {
+        $service = $this->buildAuthenticatedServiceWithTestUser('/rawsql', TestCommon::$rawSqlUser, 'POST', [
+            'query' => 'SELECT invalid FROM numeros',
+            'db'    => DmServer::CONFIG_DB_KEY_DM
+        ]);
+        $response = $service->call();
+
+        $this->assertEquals(500, $response->getStatusCode());
+        $this->assertStringStartsWith('An exception occurred while executing', $response->getContent());
+    }
+
     public function testRawSqlMultipleStatements() {
         $service = $this->buildAuthenticatedServiceWithTestUser('/rawsql', TestCommon::$rawSqlUser, 'POST', [
             'query' => 'SELECT * FROM numeros; DELETE FROM numeros',
