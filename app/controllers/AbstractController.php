@@ -4,7 +4,6 @@ namespace DmServer\Controllers;
 use DmServer\ModelHelper;
 use Silex\Application;
 use Silex\Application\TranslationTrait;
-use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -122,6 +121,20 @@ abstract class AbstractController
                 return new Response('', Response::HTTP_UNAUTHORIZED);
             }
         }
+    }
+
+    /**
+     * @param Response $response
+     * @param string $idKey
+     * @return int
+     * @throws UnexpectedInternalCallResponseException
+     */
+    protected static function getResponseIdFromServiceResponse($response, $idKey) {
+        if ($response->getStatusCode() !== Response::HTTP_OK) {
+            throw new UnexpectedInternalCallResponseException($response->getContent(), $response->getStatusCode());
+        }
+
+        return json_decode($response->getContent())->$idKey;
     }
 
     /**

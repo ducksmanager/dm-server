@@ -3,6 +3,7 @@
 namespace DmServer\Controllers\EdgeCreator;
 
 use DmServer\Controllers\AbstractController;
+use DmServer\Controllers\UnexpectedInternalCallResponseException;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -26,37 +27,32 @@ class AppController extends AbstractController
                 $firstIssueNumber = $request->request->get('firstissuenumber');
                 $lastIssueNumber = $request->request->get('lastissuenumber');
 
-                $optionIdResponse = self::callInternal($app, "/edgecreator/step/$publicationcode/$stepnumber", 'PUT', [
-                    'functionname' => $functionName,
-                    'optionName' => $optionName
-                ]);
+                try {
+                    $optionId = self::getResponseIdFromServiceResponse(
+                        self::callInternal($app, "/edgecreator/step/$publicationcode/$stepnumber", 'PUT', [
+                            'functionname' => $functionName,
+                            'optionname' => $optionName
+                        ]),
+                        'optionid');
 
-                if ($optionIdResponse->getStatusCode() !== Response::HTTP_OK) {
-                    return new Response($optionIdResponse->getContent(), $optionIdResponse->getStatusCode());
+                    $valueId = self::getResponseIdFromServiceResponse(
+                        self::callInternal($app, "/edgecreator/value", 'PUT', [
+                            'optionid' => $optionId,
+                            'optionvalue' => $optionValue
+                        ]),
+                        'valueid'
+                    );
+
+                    $intervalId = self::getResponseIdFromServiceResponse(
+                        self::callInternal($app, "/edgecreator/interval/$valueId/$firstIssueNumber/$lastIssueNumber", 'PUT'),
+                        'intervalid'
+                    );
+
+                    return new JsonResponse(['optionid' => $optionId, 'valueid' => $valueId, 'intervalid' => $intervalId]);
                 }
-
-                $optionId = json_decode($optionIdResponse->getContent())->optionid;
-
-                $valueIdResponse = self::callInternal($app, "/edgecreator/value", 'PUT', [
-                    'optionid' => $optionId,
-                    'optionvalue' => $optionValue
-                ]);
-
-                if ($valueIdResponse->getStatusCode() !== Response::HTTP_OK) {
-                    return new Response($valueIdResponse->getContent(), $valueIdResponse->getStatusCode());
+                catch (UnexpectedInternalCallResponseException $e) {
+                    return new Response($e->getContent(), $e->getStatusCode());
                 }
-
-                $valueId = json_decode($valueIdResponse->getContent())->valueid;
-
-                $intervalIdResponse = self::callInternal($app, "/edgecreator/interval/$valueId/$firstIssueNumber/$lastIssueNumber", 'PUT');
-
-                if ($intervalIdResponse->getStatusCode() !== Response::HTTP_OK) {
-                    return new Response($intervalIdResponse->getContent(), $intervalIdResponse->getStatusCode());
-                }
-
-                $intervalId = json_decode($intervalIdResponse->getContent())->intervalid;
-
-                return new JsonResponse(['optionid' => $optionId, 'valueid' => $valueId, 'intervalid' => $intervalId]);
             }
         )
             ->assert('publicationcode', self::getParamAssertRegex(\Coa\Models\BaseModel::PUBLICATION_CODE_VALIDATION))

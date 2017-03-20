@@ -6,6 +6,7 @@ use EdgeCreator\Models\EdgecreatorIntervalles;
 use EdgeCreator\Models\EdgecreatorModeles2;
 use EdgeCreator\Models\EdgecreatorValeurs;
 use EdgeCreator\Models\ImagesMyfonts;
+use Symfony\Component\HttpFoundation\Response;
 
 class EdgeCreatorTest extends TestCommon
 {
@@ -49,6 +50,21 @@ class EdgeCreatorTest extends TestCommon
         ]);
 
         $this->assertEquals($createdInterval->getId(), $objectResponse->intervalid);
+    }
+
+    public function testCreateStepWithOptionValueExistingInterval()
+    {
+        $service = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/step/fr/DDD/1',
+            TestCommon::$edgecreatorUser, 'PUT', [
+                'functionname' => 'Remplir',
+                'optionname' => 'Couleur',
+                'optionvalue' => '#FF0000',
+                'firstissuenumber' => '1',
+                'lastissuenumber' => '3'
+            ]);
+        $response = $service->call();
+
+        $this->assertEquals(Response::HTTP_INTERNAL_SERVER_ERROR, $response->getStatusCode());
     }
 
     public function testCloneStep() {

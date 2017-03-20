@@ -4,6 +4,7 @@ namespace DmServer\Controllers\EdgeCreator;
 
 use DmServer\Controllers\AbstractController;
 use DmServer\DmServer;
+use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Collections\Criteria;
 use EdgeCreator\Models\EdgecreatorIntervalles;
 use EdgeCreator\Models\EdgecreatorModeles2;
@@ -36,7 +37,7 @@ class InternalController extends AbstractController
                     $model = new EdgecreatorModeles2();
                     $model->setPays($country);
                     $model->setMagazine($publication);
-                    $model->setOrdre($stepNumber);
+                    $model->setOrdre((int) $stepNumber);
                     $model->setNomFonction($functionName);
                     $model->setOptionNom($optionName);
 

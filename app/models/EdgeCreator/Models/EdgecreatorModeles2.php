@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * EdgecreatorModeles2
  *
- * @ORM\Table(name="edgecreator_modeles2")
+ * @ORM\Table(name="edgecreator_modeles2", uniqueConstraints={@ORM\UniqueConstraint(name="models_unique", columns={"Pays", "Magazine", "Ordre", "Nom_fonction", "Option_nom"})})
  * @ORM\Entity
  */
 class EdgecreatorModeles2 extends \EdgeCreator\Models\BaseModel
@@ -36,9 +36,9 @@ class EdgecreatorModeles2 extends \EdgeCreator\Models\BaseModel
     private $magazine;
 
     /**
-     * @var float
+     * @var integer
      *
-     * @ORM\Column(name="Ordre", type="float", precision=10, scale=0, nullable=false)
+     * @ORM\Column(name="Ordre", type="integer", precision=10, scale=0, nullable=false)
      */
     private $ordre;
 
@@ -119,7 +119,7 @@ class EdgecreatorModeles2 extends \EdgeCreator\Models\BaseModel
     /**
      * Set ordre
      *
-     * @param float $ordre
+     * @param integer $ordre
      *
      * @return EdgecreatorModeles2
      */
@@ -133,7 +133,7 @@ class EdgecreatorModeles2 extends \EdgeCreator\Models\BaseModel
     /**
      * Get ordre
      *
-     * @return float
+     * @return integer
      */
     public function getOrdre()
     {

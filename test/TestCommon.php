@@ -69,13 +69,15 @@ class TestCommon extends WebTestCase {
         DmServer::initSettings('settings.test.ini');
         self::$conf = DmServer::getAppConfig(true);
         self::$roles = DmServer::getAppRoles(true);
+    }
+
+    public function setUp() {
+        DmServer::$entityManagers = [];
 
         foreach(DmServer::$configuredEntityManagerNames as $emName) {
             self::$schemas[$emName] = SchemaWithClasses::createFromEntityManager(DmServer::getEntityManager($emName, true));
         }
-    }
 
-    public function setUp() {
         self::initDatabase();
         @rmdir(DmServer::$settings['image_local_root']);
         @mkdir(DmServer::$settings['image_local_root'], 0777, true);
