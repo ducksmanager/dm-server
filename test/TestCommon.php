@@ -589,6 +589,8 @@ class TestCommon extends WebTestCase {
 
         $edgeCreatorEntityManager->flush();
 
+        // Models v2
+
         $ongoingModel1 = new TranchesEnCoursModeles();
         $ongoingModel1->setPays('fr');
         $ongoingModel1->setMagazine('PM');
@@ -597,13 +599,29 @@ class TestCommon extends WebTestCase {
         $edgeCreatorEntityManager->persist($ongoingModel1);
         $edgeCreatorEntityManager->flush();
 
-        $ongoingModel1Value1 = new TranchesEnCoursValeurs();
-        $ongoingModel1Value1->setIdModele($ongoingModel1);
-        $ongoingModel1Value1->setOrdre(1);
-        $ongoingModel1Value1->setNomFonction('Remplir');
-        $ongoingModel1Value1->setOptionNom('Couleur');
-        $ongoingModel1Value1->setOptionValeur('#FF00FF');
-        $edgeCreatorEntityManager->persist($ongoingModel1Value1);
+        $ongoingModel1Step1Value1 = new TranchesEnCoursValeurs();
+        $ongoingModel1Step1Value1->setIdModele($ongoingModel1);
+        $ongoingModel1Step1Value1->setOrdre(1);
+        $ongoingModel1Step1Value1->setNomFonction('Remplir');
+        $ongoingModel1Step1Value1->setOptionNom('Couleur');
+        $ongoingModel1Step1Value1->setOptionValeur('#FF00FF');
+        $edgeCreatorEntityManager->persist($ongoingModel1Step1Value1);
+
+        $ongoingModel1Step1Value2 = new TranchesEnCoursValeurs();
+        $ongoingModel1Step1Value2->setIdModele($ongoingModel1);
+        $ongoingModel1Step1Value2->setOrdre(1);
+        $ongoingModel1Step1Value2->setNomFonction('Remplir');
+        $ongoingModel1Step1Value2->setOptionNom('Pos_x');
+        $ongoingModel1Step1Value2->setOptionValeur('0');
+        $edgeCreatorEntityManager->persist($ongoingModel1Step1Value2);
+
+        $ongoingModel1Step2Value1 = new TranchesEnCoursValeurs();
+        $ongoingModel1Step2Value1->setIdModele($ongoingModel1);
+        $ongoingModel1Step2Value1->setOrdre(2);
+        $ongoingModel1Step2Value1->setNomFonction('TexteMyFonts');
+        $ongoingModel1Step2Value1->setOptionNom('Couleur_texte');
+        $ongoingModel1Step2Value1->setOptionValeur('#000000');
+        $edgeCreatorEntityManager->persist($ongoingModel1Step2Value1);
         $edgeCreatorEntityManager->flush();
     }
 

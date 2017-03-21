@@ -109,15 +109,17 @@ class InternalController extends AbstractController
                     $newValue->setNomFonction($value->getNomFonction());
                     $newValue->setOptionNom($value->getOptionNom());
                     $newValue->setOptionValeur($value->getOptionValeur());
-                    $newValue->setOrdre($newStepNumber);
+                    $newValue->setOrdre((int)$newStepNumber);
                     $em->persist($newValue);
                     
                     return [['old' => $oldStepNumber, 'new' => $newValue->getOrdre()]];
                 }, $values);
 
+                $uniqueStepChanges = array_values(array_unique($newStepNumbers, SORT_REGULAR ));
+
                 $em->flush();
 
-                return new JsonResponse(['newStepNumbers' => $newStepNumbers]);
+                return new JsonResponse(['newStepNumbers' => array_unique($uniqueStepChanges)]);
 
             }
         )
@@ -151,9 +153,11 @@ class InternalController extends AbstractController
                         return $shift;
                 }, $values->toArray());
 
+                $uniqueStepShifts = array_values(array_unique($shifts, SORT_REGULAR ));
+
                 $em->flush();
 
-                return new JsonResponse(['shifts' => $shifts]);
+                return new JsonResponse(['shifts' => $uniqueStepShifts ]);
             }
         )
             ->assert('stepNumber', self::getParamAssertRegex('\\d+'))

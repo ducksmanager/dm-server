@@ -80,7 +80,10 @@ class EdgeCreatorTest extends TestCommon
         $response = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/step/shift/fr/PM/502/1/inclusive', TestCommon::$edgecreatorUser, 'POST')->call();
         $objectResponse = json_decode($response->getContent());
 
-        $this->assertEquals([json_decode(json_encode(['old' => 1, 'new' => 2]))], $objectResponse->shifts);
+        $this->assertEquals(json_decode(json_encode([
+            ['old' => 1, 'new' => 2],
+            ['old' => 2, 'new' => 3]
+        ])), $objectResponse->shifts);
     }
 
     public function testCreateMyfontsPreview() {
