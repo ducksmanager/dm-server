@@ -72,6 +72,64 @@ class InternalController extends AbstractController
         );
 
         $routing->put(
+            '/internal/edgecreator/v2/model/{publicationCode}/{issueNumber}',
+            function (Request $request, Application $app, $publicationCode, $issueNumber) {
+                return AbstractController::return500ErrorOnException($app, function() use ($request, $app, $publicationCode, $issueNumber) {
+                    $em = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR);
+
+                    list($country, $publication) = explode('/', $publicationCode);
+
+                    $model = new TranchesEnCoursModeles();
+                    $model->setPays($country);
+                    $model->setMagazine($publication);
+                    $model->setUsername(self::getSessionUser($app)['username']);
+                    $model->setActive(true);
+
+                    $em->persist($model);
+                    $em->flush();
+
+                    return new JsonResponse(['modelid' => $model->getId()]);
+                });
+            }
+        )
+            ->assert('publicationCode', self::getParamAssertRegex(\Coa\Models\BaseModel::PUBLICATION_CODE_VALIDATION))
+            ->assert('issueNumber', self::getParamAssertRegex(\Coa\Models\BaseModel::ISSUE_NUMBER_VALIDATION));
+
+        $routing->put(
+            '/internal/edgecreator/v2/model/{modelId}/value/multiple',
+            function (Request $request, Application $app, $modelId) {
+                return AbstractController::return500ErrorOnException($app, function() use ($request, $modelId) {
+                    $em = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR);
+
+                    $modelAndOptions = json_decode($request->request->get('options'));
+
+                    if (is_null($modelAndOptions)) {
+                        throw new \Exception('Invalid options output');
+                    }
+
+                    $modelId = $modelAndOptions->modelid;
+
+                    $createdOptions = array_map(function($option) use ($em, $modelId) {
+                        $optionToCreate = new TranchesEnCoursValeurs();
+                        $optionToCreate->setIdModele($modelId);
+                        $optionToCreate->setOrdre($option->Ordre);
+                        $optionToCreate->setNomFonction($option->Nom_fonction);
+                        $optionToCreate->setOptionNom($option->Option_nom);
+                        $optionToCreate->setOptionValeur($option->Option_valeur);
+
+                        $em->persist($optionToCreate);
+                        return ['step' => $optionToCreate->getOrdre(), 'option' => $optionToCreate->getOptionNom()];
+
+                    }, $modelAndOptions->options);
+
+                    $em->flush();
+
+                    return new JsonResponse(['valueids' => $createdOptions]);
+                });
+            }
+        );
+
+        $routing->put(
             '/internal/edgecreator/interval/{valueId}/{firstIssueNumber}/{lastIssueNumber}',
             function (Request $request, Application $app, $valueId, $firstIssueNumber, $lastIssueNumber) {
                 return AbstractController::return500ErrorOnException($app, function() use ($app, $valueId, $firstIssueNumber, $lastIssueNumber) {
@@ -82,7 +140,7 @@ class InternalController extends AbstractController
                     $interval->setIdValeur($valueId);
                     $interval->setNumeroDebut($firstIssueNumber);
                     $interval->setNumeroFin($lastIssueNumber);
-                    $interval->setUsername(self::getSessionUser($app)['id']);
+                    $interval->setUsername(self::getSessionUser($app)['username']);
 
                     $em->persist($interval);
                     $em->flush();

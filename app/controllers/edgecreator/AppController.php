@@ -58,6 +58,31 @@ class AppController extends AbstractController
             ->assert('publicationcode', self::getParamAssertRegex(\Coa\Models\BaseModel::PUBLICATION_CODE_VALIDATION))
             ->assert('stepnumber', self::getParamAssertRegex('\\d+'));
 
+        $routing->put(
+            '/edgecreator/v2/step/{publicationcode}/{issuenumber}',
+            function (Application $app, Request $request, $publicationcode, $issuenumber) {
+                $optionValues = $request->request->get('options');
+
+                try {
+                    $modelId = self::getResponseIdFromServiceResponse(
+                        self::callInternal($app, "/edgecreator/v2/model/$publicationcode/$issuenumber", 'PUT'),
+                        'modelid');
+
+                    $valueIds = self::getResponseIdFromServiceResponse(
+                        self::callInternal($app, "/edgecreator/v2/model/$modelId/value/multiple", 'PUT', $optionValues),
+                        'valueids'
+                    );
+
+                    return new JsonResponse(['modelid' => $modelId, 'valueids' => $valueIds]);
+                }
+                catch (UnexpectedInternalCallResponseException $e) {
+                    return new Response($e->getContent(), $e->getStatusCode());
+                }
+            }
+        )
+            ->assert('publicationcode', self::getParamAssertRegex(\Coa\Models\BaseModel::PUBLICATION_CODE_VALIDATION))
+            ->assert('issuenumber', self::getParamAssertRegex(\Coa\Models\BaseModel::ISSUE_NUMBER_VALIDATION));
+
 
         $routing->post(
             '/edgecreator/step/shift/{publicationcode}/{issuenumber}/{stepnumber}/{isincludingthisstep}',
