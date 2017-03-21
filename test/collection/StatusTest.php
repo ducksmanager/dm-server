@@ -12,8 +12,7 @@ class StatusTest extends TestCommon
         self::createStatsData();
         self::createEdgeCreatorData();
 
-        $service = $this->buildAuthenticatedService('/status', TestCommon::$dmUser, [], [], 'GET');
-        $response = $service->call();
+        $response = $this->buildAuthenticatedService('/status', TestCommon::$dmUser, [], [], 'GET')->call();
 
         $this->assertEquals('OK for all databases', $response->getContent());
     }
@@ -24,8 +23,7 @@ class StatusTest extends TestCommon
         self::createCoverIds();
         self::createStatsData();
 
-        $service = $this->buildAuthenticatedService('/status', TestCommon::$dmUser, [], [], 'GET');
-        $response = $service->call();
+        $response = $this->buildAuthenticatedService('/status', TestCommon::$dmUser, [], [], 'GET')->call();
 
         $this->assertContains('Error for db_coa', $response->getContent());
     }

@@ -21,14 +21,13 @@ class EdgeCreatorTest extends TestCommon
     }
 
     public function testCreateStepWithOptionValue() {
-        $service = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/step/fr/PM/1', TestCommon::$edgecreatorUser, 'PUT', [
+        $response = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/step/fr/PM/1', TestCommon::$edgecreatorUser, 'PUT', [
             'functionname' => 'TexteMyFonts',
             'optionname' => 'Chaine',
             'optionvalue' => 'hello',
             'firstissuenumber' => '1',
             'lastissuenumber' => '2'
-        ]);
-        $response = $service->call();
+        ])->call();
 
         $objectResponse = json_decode($response->getContent());
 
@@ -55,22 +54,20 @@ class EdgeCreatorTest extends TestCommon
 
     public function testCreateStepWithOptionValueExistingInterval()
     {
-        $service = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/step/fr/DDD/1',
+        $response = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/step/fr/DDD/1',
             TestCommon::$edgecreatorUser, 'PUT', [
                 'functionname' => 'Remplir',
                 'optionname' => 'Couleur',
                 'optionvalue' => '#FF0000',
                 'firstissuenumber' => '1',
                 'lastissuenumber' => '3'
-            ]);
-        $response = $service->call();
+            ])->call();
 
         $this->assertEquals(Response::HTTP_INTERNAL_SERVER_ERROR, $response->getStatusCode());
     }
 
     public function testCloneStep() {
-        $service = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/step/clone/fr/PM/502/1/to/2', TestCommon::$edgecreatorUser, 'POST');
-        $response = $service->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/step/clone/fr/PM/502/1/to/2', TestCommon::$edgecreatorUser, 'POST')->call();
 
         $objectResponse = json_decode($response->getContent());
 
@@ -80,24 +77,21 @@ class EdgeCreatorTest extends TestCommon
     }
 
     public function testShiftStep() {
-        $service = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/step/shift/fr/PM/502/1/inclusive', TestCommon::$edgecreatorUser, 'POST');
-        $response = $service->call();
-
+        $response = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/step/shift/fr/PM/502/1/inclusive', TestCommon::$edgecreatorUser, 'POST')->call();
         $objectResponse = json_decode($response->getContent());
 
         $this->assertEquals([json_decode(json_encode(['old' => 1, 'new' => 2]))], $objectResponse->shifts);
     }
 
     public function testCreateMyfontsPreview() {
-        $service = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/myfontspreview', TestCommon::$edgecreatorUser, 'PUT', [
+        $response = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/myfontspreview', TestCommon::$edgecreatorUser, 'PUT', [
             'font' => 'Arial',
             'fgColor' => '#000000',
             'bgColor' => '#FFFFFF',
             'width' => 200,
             'text' => 'Hello preview',
             'precision' => 18,
-        ]);
-        $response = $service->call();
+        ])->call();
 
         $objectResponse = json_decode($response->getContent());
 
@@ -117,8 +111,7 @@ class EdgeCreatorTest extends TestCommon
 
         $newPreviewId = $newPreview->getId();
 
-        $service = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/myfontspreview/$newPreviewId", TestCommon::$edgecreatorUser, 'DELETE');
-        $response = $service->call();
+        $this->buildAuthenticatedServiceWithTestUser("/edgecreator/myfontspreview/$newPreviewId", TestCommon::$edgecreatorUser, 'DELETE')->call();
 
         $this->assertNull($em->getRepository(ImagesMyfonts::class)->find($newPreviewId));
     }
@@ -132,8 +125,8 @@ class EdgeCreatorTest extends TestCommon
             'numero' => '502'
         ])->getId();
 
-        $service = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/$modelId/deactivate", TestCommon::$edgecreatorUser, 'POST');
-        $response = $service->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/$modelId/deactivate", TestCommon::$edgecreatorUser, 'POST')
+            ->call();
 
         $objectResponse = json_decode($response->getContent());
 
@@ -157,8 +150,8 @@ class EdgeCreatorTest extends TestCommon
             'numero' => '502'
         ])->getId();
 
-        $serviceSetReadyToPublish = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/$modelId/readytopublish/1", TestCommon::$edgecreatorUser, 'POST');
-        $response = $serviceSetReadyToPublish->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/$modelId/readytopublish/1", TestCommon::$edgecreatorUser, 'POST')
+            ->call();
 
         $objectResponse = json_decode($response->getContent());
 
@@ -172,8 +165,8 @@ class EdgeCreatorTest extends TestCommon
 
         $this->assertEquals(true, $newModel->getPretepourpublication());
 
-        $serviceSetNotReadyToPublish = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/$modelId/readytopublish/0", TestCommon::$edgecreatorUser, 'POST');
-        $response = $serviceSetNotReadyToPublish->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/$modelId/readytopublish/0", TestCommon::$edgecreatorUser, 'POST')
+            ->call();
 
         $objectResponse = json_decode($response->getContent());
 
@@ -199,10 +192,9 @@ class EdgeCreatorTest extends TestCommon
             'numero' => '502'
         ])->getId();
 
-        $service = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/$modelId/photo/main", TestCommon::$edgecreatorUser, 'PUT', [
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/$modelId/photo/main", TestCommon::$edgecreatorUser, 'PUT', [
             'photoname' => $photoName
-        ]);
-        $response = $service->call();
+        ])->call();
 
         $objectResponse = json_decode($response->getContent());
 

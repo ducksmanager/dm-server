@@ -15,8 +15,7 @@ class FetchCollectionTest extends TestCommon
     }
 
     public function testFetchCollection() {
-        $service = $this->buildAuthenticatedServiceWithTestUser('/collection/issues', TestCommon::$dmUser);
-        $response = $service->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/issues', TestCommon::$dmUser)->call();
 
         $objectResponse = json_decode($response->getContent());
 

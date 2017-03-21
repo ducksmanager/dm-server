@@ -13,8 +13,7 @@ class CoaListsTest extends TestCommon
     }
 
     public function testGetCountryList() {
-        $service = $this->buildAuthenticatedServiceWithTestUser('/coa/list/countries', TestCommon::$dmUser);
-        $response = $service->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/countries', TestCommon::$dmUser)->call();
 
         $objectResponse = json_decode($response->getContent());
 
@@ -24,8 +23,7 @@ class CoaListsTest extends TestCommon
     }
 
     public function testGetCountryListFromCountryCodes() {
-        $service = $this->buildAuthenticatedServiceWithTestUser('/coa/list/countries/fr,us', TestCommon::$dmUser);
-        $response = $service->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/countries/fr,us', TestCommon::$dmUser)->call();
 
         $objectResponse = json_decode($response->getContent());
 
@@ -35,8 +33,7 @@ class CoaListsTest extends TestCommon
     }
 
     public function testGetPublicationListFromCountry() {
-        $service = $this->buildAuthenticatedServiceWithTestUser('/coa/list/publications/fr', TestCommon::$dmUser);
-        $response = $service->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/publications/fr', TestCommon::$dmUser)->call();
 
         $objectResponse = json_decode($response->getContent());
 
@@ -46,8 +43,7 @@ class CoaListsTest extends TestCommon
     }
 
     public function testGetPublicationListFromPublicationCodes() {
-        $service = $this->buildAuthenticatedServiceWithTestUser('/coa/list/publications/fr/DDD,us/CBL', TestCommon::$dmUser);
-        $response = $service->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/publications/fr/DDD,us/CBL', TestCommon::$dmUser)->call();
 
         $objectResponse = json_decode($response->getContent());
 
@@ -57,15 +53,13 @@ class CoaListsTest extends TestCommon
     }
 
     public function testGetPublicationListInvalidCountry() {
-        $service = $this->buildAuthenticatedServiceWithTestUser('/coa/list/publications/fr0', TestCommon::$dmUser);
-        $response = $service->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/publications/fr0', TestCommon::$dmUser)->call();
 
         $this->assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
     }
 
     public function testGetIssueList() {
-        $service = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issues/fr/DDD', TestCommon::$dmUser);
-        $response = $service->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issues/fr/DDD', TestCommon::$dmUser)->call();
 
         $arrayResponse = json_decode($response->getContent());
 
@@ -75,8 +69,7 @@ class CoaListsTest extends TestCommon
     }
 
     public function testGetIssueListEmptyList() {
-        $service = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issues/fr/DD', TestCommon::$dmUser);
-        $response = $service->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issues/fr/DD', TestCommon::$dmUser)->call();
 
         $arrayResponse = json_decode($response->getContent());
 
@@ -85,15 +78,13 @@ class CoaListsTest extends TestCommon
     }
 
     public function testGetIssueListInvalidPublicationCode() {
-        $service = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issues/fr/DD_', TestCommon::$dmUser);
-        $response = $service->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issues/fr/DD_', TestCommon::$dmUser)->call();
 
         $this->assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
     }
 
     public function testGetIssueListByIssueCodes() {
-        $service = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issuesbycodes/fr/DDD 1', TestCommon::$dmUser);
-        $response = $service->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issuesbycodes/fr/DDD 1', TestCommon::$dmUser)->call();
 
         $arrayResponse = json_decode($response->getContent());
 

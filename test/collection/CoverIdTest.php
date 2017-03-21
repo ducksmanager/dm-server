@@ -44,10 +44,9 @@ class CoverIdTest extends TestCommon
     }
 
     public function testGetIssueListByIssueCodes() {
-        $service = $this->buildAuthenticatedServiceWithTestUser(
+        $response = $this->buildAuthenticatedServiceWithTestUser(
             '/cover-id/issuecodes/'
-            . implode(',', [self::$coverIds[0], self::$coverIds[2]]), TestCommon::$dmUser);
-        $response = $service->call();
+            . implode(',', [self::$coverIds[0], self::$coverIds[2]]), TestCommon::$dmUser)->call();
 
         $objectResponse = json_decode($response->getContent());
 
@@ -62,13 +61,12 @@ class CoverIdTest extends TestCommon
     }
 
     public function testCoverIdSearchMultipleUploads() {
-        $service = $this->buildAuthenticatedServiceWithTestUser(
+        $response = $this->buildAuthenticatedServiceWithTestUser(
             '/cover-id/search', TestCommon::$dmUser, 'POST', [], [
                 'wtd_jpg' => self::getCoverIdSearchUploadImage(),
                 'wtd_jpg2' => self::getCoverIdSearchUploadImage()
             ]
-        );
-        $response = $service->call();
+        )->call();
 
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
         $this->assertEquals('Invalid number of uploaded files : should be 1, was 2', $response->getContent());
@@ -77,12 +75,11 @@ class CoverIdTest extends TestCommon
     public function testCoverIdSearch() {
         $this->assertFileNotExists(implode(DIRECTORY_SEPARATOR, self::$uploadDestination));
 
-        $service = $this->buildAuthenticatedServiceWithTestUser(
+        $response = $this->buildAuthenticatedServiceWithTestUser(
             '/cover-id/search', TestCommon::$dmUser, 'POST', [], [
                 'wtd_jpg' => self::getCoverIdSearchUploadImage()
             ]
-        );
-        $response = $service->call();
+        )->call();
 
         $this->assertFileExists(implode(DIRECTORY_SEPARATOR, self::$uploadDestination));
         $this->assertJson($response->getContent());
@@ -91,22 +88,20 @@ class CoverIdTest extends TestCommon
     public function testCoverIdSearchInvalidFileName() {
         $this->assertFileNotExists(implode(DIRECTORY_SEPARATOR, self::$uploadDestination));
 
-        $service = $this->buildAuthenticatedServiceWithTestUser(
+        $response = $this->buildAuthenticatedServiceWithTestUser(
             '/cover-id/search', TestCommon::$dmUser, 'POST', [], [
                 'wtd_invalid_jpg' => self::getCoverIdSearchUploadImage()
             ]
-        );
-        $response = $service->call();
+        )->call();
 
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
         $this->assertEquals('Invalid upload file : expected file name wtd_jpg', $response->getContent());
     }
 
     public function testDownloadCover() {
-        $service = $this->buildAuthenticatedServiceWithTestUser(
-            '/cover-id/download/webusers/2010/12/fr_ddd_001a_001.jpg', TestCommon::$dmUser);
         /** @var BinaryFileResponse $response */
-        $response = $service->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser('/cover-id/download/webusers/2010/12/fr_ddd_001a_001.jpg', TestCommon::$dmUser)
+            ->call();
 
         file_put_contents('/tmp/test.jpg', $response->getContent());
         $type=\exif_imagetype('/tmp/test.jpg');
