@@ -63,8 +63,15 @@ class AppController extends AbstractController
             '/edgecreator/step/shift/{publicationcode}/{issuenumber}/{stepnumber}/{isincludingthisstep}',
             function (Application $app, Request $request, $publicationcode, $issuenumber, $stepnumber, $isincludingthisstep) {
 
-                $modelIdResponse = self::callInternal($app, "/edgecreator/step/$publicationcode/$issuenumber/1");
-                $modelId = json_decode($modelIdResponse->getContent())->modelid;
+                try {
+                    $modelId = self::getResponseIdFromServiceResponse(
+                        self::callInternal($app, "/edgecreator/step/$publicationcode/$issuenumber/1"),
+                        'modelid'
+                    );
+                }
+                catch (UnexpectedInternalCallResponseException $e) {
+                    return new Response($e->getContent(), $e->getStatusCode());
+                }
 
                 return self::callInternal($app, "/edgecreator/step/shift/$modelId/$stepnumber/$isincludingthisstep", 'POST');
             }
@@ -76,7 +83,17 @@ class AppController extends AbstractController
         $routing->post(
             '/edgecreator/step/clone/{publicationcode}/{issuenumber}/{stepnumber}/to/{newstepnumber}',
             function (Application $app, Request $request, $publicationcode, $issuenumber, $stepnumber, $newstepnumber) {
-                return self::callInternal($app, "/edgecreator/step/clone/$publicationcode/$issuenumber/$stepnumber/$newstepnumber", 'POST');
+                try {
+                    $modelId = self::getResponseIdFromServiceResponse(
+                        self::callInternal($app, "/edgecreator/step/$publicationcode/$issuenumber/1"),
+                        'modelid'
+                    );
+                }
+                catch (UnexpectedInternalCallResponseException $e) {
+                    return new Response($e->getContent(), $e->getStatusCode());
+                }
+
+                return self::callInternal($app, "/edgecreator/step/clone/$modelId/$stepnumber/$newstepnumber", 'POST');
             }
         )
         ->assert('publicationcode', self::getParamAssertRegex(\Coa\Models\BaseModel::PUBLICATION_CODE_VALIDATION))

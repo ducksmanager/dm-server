@@ -72,6 +72,10 @@ class EdgeCreatorTest extends TestCommon
         $response = $service->call();
 
         $objectResponse = json_decode($response->getContent());
+
+        $this->assertEquals([json_decode(json_encode([
+            ['old' => 1, 'new' => 2]
+        ]))], $objectResponse->newStepNumbers);
     }
 
     public function testShiftStep() {

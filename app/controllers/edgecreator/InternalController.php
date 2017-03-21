@@ -103,7 +103,8 @@ class InternalController extends AbstractController
                     'ordre' => $stepNumber
                 ]);
 
-                $newValues = array_map(function(TranchesEnCoursValeurs $value) use ($em, $newStepNumber) {
+                $newStepNumbers = array_map(function(TranchesEnCoursValeurs $value) use ($em, $newStepNumber) {
+                    $oldStepNumber = $value->getOrdre();
                     $newValue = new TranchesEnCoursValeurs();
                     $newValue->setIdModele($value->getIdModele());
                     $newValue->setNomFonction($value->getNomFonction());
@@ -111,9 +112,13 @@ class InternalController extends AbstractController
                     $newValue->setOptionValeur($value->getOptionValeur());
                     $newValue->setOrdre($newStepNumber);
                     $em->persist($newValue);
+                    
+                    return [['old' => $oldStepNumber, 'new' => $newValue->getOrdre()]];
                 }, $values);
 
                 $em->flush();
+
+                return new JsonResponse(['newStepNumbers' => $newStepNumbers]);
 
             }
         )
