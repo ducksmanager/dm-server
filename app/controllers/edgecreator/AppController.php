@@ -127,16 +127,25 @@ class AppController extends AbstractController
         );
 
         $routing->post(
-            '/edgecreator/model/v2/deactivate/{modelid}',
+            '/edgecreator/model/v2/{modelid}/deactivate',
             function (Application $app, Request $request, $modelid) {
-                return self::callInternal($app, "/edgecreator/model/v2/deactivate/$modelid", 'POST');
+                return self::callInternal($app, "/edgecreator/model/v2/$modelid/deactivate", 'POST');
             }
         );
 
         $routing->post(
-            '/edgecreator/model/v2/setreadytopublish/{modelid}/{isreadytopublish}',
+            '/edgecreator/model/v2/{modelid}/readytopublish/{isreadytopublish}',
             function (Application $app, Request $request, $modelid, $isreadytopublish) {
-                return self::callInternal($app, "/edgecreator/model/v2/setreadytopublish/$modelid/$isreadytopublish", 'POST');
+                return self::callInternal($app, "/edgecreator/model/v2/$modelid/readytopublish/$isreadytopublish", 'POST');
+            }
+        );
+
+        $routing->put(
+            '/edgecreator/model/v2/{modelid}/photo/main',
+            function (Application $app, Request $request, $modelid) {
+                return self::callInternal($app, "/edgecreator/model/v2/$modelid/photo/main", 'PUT', [
+                    'photoname' => $request->request->get('photoname')
+                ]);
             }
         );
 

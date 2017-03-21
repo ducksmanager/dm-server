@@ -117,7 +117,7 @@ class EdgeCreatorTest extends TestCommon
 
         $newPreviewId = $newPreview->getId();
 
-        $service = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/myfontspreview/'.$newPreviewId, TestCommon::$edgecreatorUser, 'DELETE');
+        $service = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/myfontspreview/$newPreviewId", TestCommon::$edgecreatorUser, 'DELETE');
         $response = $service->call();
 
         $this->assertNull($em->getRepository(ImagesMyfonts::class)->find($newPreviewId));
@@ -132,7 +132,7 @@ class EdgeCreatorTest extends TestCommon
             'numero' => '502'
         ])->getId();
 
-        $service = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/model/v2/deactivate/'.$modelId, TestCommon::$edgecreatorUser, 'POST');
+        $service = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/$modelId/deactivate", TestCommon::$edgecreatorUser, 'POST');
         $response = $service->call();
 
         $objectResponse = json_decode($response->getContent());
@@ -157,12 +157,12 @@ class EdgeCreatorTest extends TestCommon
             'numero' => '502'
         ])->getId();
 
-        $serviceSetReadyToPublish = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/model/v2/setreadytopublish/'.$modelId.'/1', TestCommon::$edgecreatorUser, 'POST');
+        $serviceSetReadyToPublish = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/$modelId/readytopublish/1", TestCommon::$edgecreatorUser, 'POST');
         $response = $serviceSetReadyToPublish->call();
 
         $objectResponse = json_decode($response->getContent());
 
-        $this->assertEquals(['modelid' => '1', 'readytopublish' => true], (array) $objectResponse->readytopublish);
+        $this->assertEquals(['modelid' => $modelId, 'readytopublish' => true], (array) $objectResponse->readytopublish);
 
         $newModel = $modelRepository->findOneBy([
             'pays' => 'fr',
@@ -172,12 +172,12 @@ class EdgeCreatorTest extends TestCommon
 
         $this->assertEquals(true, $newModel->getPretepourpublication());
 
-        $serviceSetNotReadyToPublish = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/model/v2/setreadytopublish/'.$modelId.'/0', TestCommon::$edgecreatorUser, 'POST');
+        $serviceSetNotReadyToPublish = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/$modelId/readytopublish/0", TestCommon::$edgecreatorUser, 'POST');
         $response = $serviceSetNotReadyToPublish->call();
 
         $objectResponse = json_decode($response->getContent());
 
-        $this->assertEquals(['modelid' => '1', 'readytopublish' => false], (array) $objectResponse->readytopublish);
+        $this->assertEquals(['modelid' => $modelId, 'readytopublish' => false], (array) $objectResponse->readytopublish);
 
         $newModel = $modelRepository->findOneBy([
             'pays' => 'fr',
@@ -186,5 +186,34 @@ class EdgeCreatorTest extends TestCommon
         ]);
 
         $this->assertEquals(false, $newModel->getPretepourpublication());
+    }
+
+    public function testSetMainPhoto() {
+        $photoName = 'myphoto.jpg';
+
+        $modelRepository = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR)->getRepository(TranchesEnCoursModeles::class);
+
+        $modelId = $modelRepository->findOneBy([
+            'pays' => 'fr',
+            'magazine' => 'PM',
+            'numero' => '502'
+        ])->getId();
+
+        $service = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/$modelId/photo/main", TestCommon::$edgecreatorUser, 'PUT', [
+            'photoname' => $photoName
+        ]);
+        $response = $service->call();
+
+        $objectResponse = json_decode($response->getContent());
+
+        $this->assertEquals(['modelid' => $modelId, 'photoname' => $photoName], (array) $objectResponse->mainphoto);
+
+        $newModel = $modelRepository->findOneBy([
+            'pays' => 'fr',
+            'magazine' => 'PM',
+            'numero' => '502'
+        ]);
+
+        $this->assertEquals($photoName, $newModel->getNomphotoprincipale());
     }
 }

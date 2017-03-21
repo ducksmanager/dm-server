@@ -4,7 +4,6 @@ namespace DmServer\Controllers\EdgeCreator;
 
 use DmServer\Controllers\AbstractController;
 use DmServer\DmServer;
-use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Collections\Criteria;
 use EdgeCreator\Models\EdgecreatorIntervalles;
 use EdgeCreator\Models\EdgecreatorModeles2;
@@ -226,7 +225,7 @@ class InternalController extends AbstractController
         );
 
         $routing->post(
-            '/internal/edgecreator/model/v2/deactivate/{modelId}',
+            '/internal/edgecreator/model/v2/{modelId}/deactivate',
             function (Application $app, Request $request, $modelId) {
                 $em = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR);
 
@@ -240,7 +239,7 @@ class InternalController extends AbstractController
         );
 
         $routing->post(
-            '/internal/edgecreator/model/v2/setreadytopublish/{modelId}/{isReadyToPublish}',
+            '/internal/edgecreator/model/v2/{modelId}/readytopublish/{isReadyToPublish}',
             function (Application $app, Request $request, $modelId, $isReadyToPublish) {
                 $em = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR);
 
@@ -251,6 +250,22 @@ class InternalController extends AbstractController
                 $em->flush();
 
                 return new JsonResponse(['readytopublish' => ['modelid' => $model->getId(), 'readytopublish' => $isReadyToPublish === '1']]);
+            }
+        );
+
+        $routing->put(
+            '/internal/edgecreator/model/v2/{modelId}/photo/main',
+            function (Application $app, Request $request, $modelId) {
+                $em = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR);
+
+                $photoName = $request->request->get('photoname');
+
+                $model = $em->getRepository(TranchesEnCoursModeles::class)->find($modelId);
+                $model->setNomphotoprincipale($photoName);
+                $em->persist($model);
+                $em->flush();
+
+                return new JsonResponse(['mainphoto' => ['modelid' => $model->getId(), 'photoname' => $photoName]]);
             }
         );
     }
