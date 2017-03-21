@@ -224,5 +224,34 @@ class InternalController extends AbstractController
                 return new JsonResponse(['removed' => [$preview->getId()]]);
             }
         );
+
+        $routing->post(
+            '/internal/edgecreator/model/v2/deactivate/{modelId}',
+            function (Application $app, Request $request, $modelId) {
+                $em = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR);
+
+                $model = $em->getRepository(TranchesEnCoursModeles::class)->find($modelId);
+                $model->setActive(false);
+                $em->persist($model);
+                $em->flush();
+
+                return new JsonResponse(['deactivated' => $model->getId()]);
+            }
+        );
+
+        $routing->post(
+            '/internal/edgecreator/model/v2/setreadytopublish/{modelId}/{isReadyToPublish}',
+            function (Application $app, Request $request, $modelId, $isReadyToPublish) {
+                $em = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR);
+
+                $model = $em->getRepository(TranchesEnCoursModeles::class)->find($modelId);
+                $model->setActive(false);
+                $model->setPretepourpublication($isReadyToPublish === '1');
+                $em->persist($model);
+                $em->flush();
+
+                return new JsonResponse(['readytopublish' => ['modelid' => $model->getId(), 'readytopublish' => $isReadyToPublish === '1']]);
+            }
+        );
     }
 }

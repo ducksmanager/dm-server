@@ -126,6 +126,20 @@ class AppController extends AbstractController
             }
         );
 
+        $routing->post(
+            '/edgecreator/model/v2/deactivate/{modelid}',
+            function (Application $app, Request $request, $modelid) {
+                return self::callInternal($app, "/edgecreator/model/v2/deactivate/$modelid", 'POST');
+            }
+        );
+
+        $routing->post(
+            '/edgecreator/model/v2/setreadytopublish/{modelid}/{isreadytopublish}',
+            function (Application $app, Request $request, $modelid, $isreadytopublish) {
+                return self::callInternal($app, "/edgecreator/model/v2/setreadytopublish/$modelid/$isreadytopublish", 'POST');
+            }
+        );
+
         $routing->delete(
             '/edgecreator/myfontspreview/{previewid}',
             function (Application $app, Request $request, $previewid) {

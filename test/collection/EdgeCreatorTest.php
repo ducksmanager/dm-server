@@ -6,6 +6,7 @@ use EdgeCreator\Models\EdgecreatorIntervalles;
 use EdgeCreator\Models\EdgecreatorModeles2;
 use EdgeCreator\Models\EdgecreatorValeurs;
 use EdgeCreator\Models\ImagesMyfonts;
+use EdgeCreator\Models\TranchesEnCoursModeles;
 use Symfony\Component\HttpFoundation\Response;
 
 class EdgeCreatorTest extends TestCommon
@@ -120,5 +121,70 @@ class EdgeCreatorTest extends TestCommon
         $response = $service->call();
 
         $this->assertNull($em->getRepository(ImagesMyfonts::class)->find($newPreviewId));
+    }
+
+    public function testDeactivateModel() {
+        $modelRepository = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR)->getRepository(TranchesEnCoursModeles::class);
+
+        $modelId = $modelRepository->findOneBy([
+            'pays' => 'fr',
+            'magazine' => 'PM',
+            'numero' => '502'
+        ])->getId();
+
+        $service = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/model/v2/deactivate/'.$modelId, TestCommon::$edgecreatorUser, 'POST');
+        $response = $service->call();
+
+        $objectResponse = json_decode($response->getContent());
+
+        $this->assertEquals($modelId, $objectResponse->deactivated);
+
+        $newModel = $modelRepository->findOneBy([
+            'pays' => 'fr',
+            'magazine' => 'PM',
+            'numero' => '502'
+        ]);
+
+        $this->assertEquals(false, $newModel->getActive());
+    }
+
+    public function testSetModelReadyForPublication() {
+        $modelRepository = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR)->getRepository(TranchesEnCoursModeles::class);
+
+        $modelId = $modelRepository->findOneBy([
+            'pays' => 'fr',
+            'magazine' => 'PM',
+            'numero' => '502'
+        ])->getId();
+
+        $serviceSetReadyToPublish = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/model/v2/setreadytopublish/'.$modelId.'/1', TestCommon::$edgecreatorUser, 'POST');
+        $response = $serviceSetReadyToPublish->call();
+
+        $objectResponse = json_decode($response->getContent());
+
+        $this->assertEquals(['modelid' => '1', 'readytopublish' => true], (array) $objectResponse->readytopublish);
+
+        $newModel = $modelRepository->findOneBy([
+            'pays' => 'fr',
+            'magazine' => 'PM',
+            'numero' => '502'
+        ]);
+
+        $this->assertEquals(true, $newModel->getPretepourpublication());
+
+        $serviceSetNotReadyToPublish = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/model/v2/setreadytopublish/'.$modelId.'/0', TestCommon::$edgecreatorUser, 'POST');
+        $response = $serviceSetNotReadyToPublish->call();
+
+        $objectResponse = json_decode($response->getContent());
+
+        $this->assertEquals(['modelid' => '1', 'readytopublish' => false], (array) $objectResponse->readytopublish);
+
+        $newModel = $modelRepository->findOneBy([
+            'pays' => 'fr',
+            'magazine' => 'PM',
+            'numero' => '502'
+        ]);
+
+        $this->assertEquals(false, $newModel->getPretepourpublication());
     }
 }
