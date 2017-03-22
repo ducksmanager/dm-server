@@ -102,8 +102,8 @@ class AppController extends AbstractController
             }
         )
             ->assert('publicationcode', self::getParamAssertRegex(\Coa\Models\BaseModel::PUBLICATION_CODE_VALIDATION))
-            ->assert('stepnumber', self::getParamAssertRegex('\\d+'))
-            ->assert('newstepnumber', self::getParamAssertRegex('\\d+'));
+            ->assert('issuenumber', self::getParamAssertRegex(\Coa\Models\BaseModel::ISSUE_NUMBER_VALIDATION))
+            ->assert('stepnumber', self::getParamAssertRegex('\\d+'));
 
         $routing->post(
             '/edgecreator/step/clone/{publicationcode}/{issuenumber}/{stepnumber}/to/{newstepnumber}',

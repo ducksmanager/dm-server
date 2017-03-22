@@ -99,7 +99,10 @@ abstract class AbstractController
     }
 
     public function authenticateUser(Application $app, Request $request) {
-        if (preg_match('#^/collection/((?!new/?).)+$#', $request->getPathInfo())) {
+        if (
+            preg_match('#^/collection/((?!new/?).)+$#', $request->getPathInfo())
+         || preg_match('#^/edgecreator/.+$#',           $request->getPathInfo())
+        ) {
             $username = $request->headers->get('x-dm-user');
             $password = $request->headers->get('x-dm-pass');
             if (isset($username) && isset($password)) {

@@ -191,14 +191,16 @@ class InternalController extends AbstractController
 
                 $model = $em->getRepository(TranchesEnCoursModeles::class)->find($modelId);
 
+                $stepNumber = (int) $stepNumber;
+
                 $criteria = new Criteria();
                 $criteria
                     ->where($criteria->expr()->andX(
-                        $criteria->expr()->eq('idModele', $model)),
+                        $criteria->expr()->eq('idModele', $model),
                         $isIncludingThisStep ==='inclusive'
                             ? $criteria->expr()->gte('ordre', $stepNumber)
                             : $criteria->expr()->gt ('ordre', $stepNumber)
-                    );
+                    ));
 
                 $values = $em->getRepository(TranchesEnCoursValeurs::class)->matching($criteria);
 
