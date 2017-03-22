@@ -155,10 +155,18 @@ class InternalController extends AbstractController
             function (Request $request, Application $app, $modelId, $stepNumber, $newStepNumber) {
                 $em = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR);
 
-                $values = $em->getRepository(TranchesEnCoursValeurs::class)->findBy([
+                $criteria = [
                     'idModele' => $modelId,
                     'ordre' => $stepNumber
-                ]);
+                ];
+                /** @var TranchesEnCoursValeurs[] $values */
+                $values = $em->getRepository(TranchesEnCoursValeurs::class)->findBy($criteria);
+
+                if (count($values) === 0) {
+                    throw new \Exception('No values to clone for '.print_r($criteria, true));
+                }
+
+                $functionName = $values[0]->getNomFonction();
 
                 $newStepNumbers = array_map(function(TranchesEnCoursValeurs $value) use ($em, $newStepNumber) {
                     $oldStepNumber = $value->getOrdre();
@@ -177,7 +185,7 @@ class InternalController extends AbstractController
 
                 $em->flush();
 
-                return new JsonResponse(['newStepNumbers' => array_unique($uniqueStepChanges)]);
+                return new JsonResponse(['newStepNumbers' => array_unique($uniqueStepChanges), 'functionName' => $functionName]);
 
             }
         )
