@@ -58,8 +58,9 @@ class AppController extends AbstractController
             ->assert('publicationcode', self::getParamAssertRegex(\Coa\Models\BaseModel::PUBLICATION_CODE_VALIDATION))
             ->assert('stepnumber', self::getParamAssertRegex('\\d+'));
 
+        // Obsolete ?
         $routing->put(
-            '/edgecreator/v2/step/{publicationcode}/{issuenumber}',
+            '/edgecreator/v2/model/{publicationcode}/{issuenumber}',
             function (Application $app, Request $request, $publicationcode, $issuenumber) {
                 $optionValues = $request->request->get('options');
 
@@ -83,6 +84,35 @@ class AppController extends AbstractController
             ->assert('publicationcode', self::getParamAssertRegex(\Coa\Models\BaseModel::PUBLICATION_CODE_VALIDATION))
             ->assert('issuenumber', self::getParamAssertRegex(\Coa\Models\BaseModel::ISSUE_NUMBER_VALIDATION));
 
+        $routing->post(
+            '/edgecreator/v2/step/{publicationcode}/{issuenumber}/{step}',
+            function (Application $app, Request $request, $publicationcode, $issuenumber, $step) {
+                $optionValues = $request->request->get('options');
+
+                try {
+                    $modelId = self::getResponseIdFromServiceResponse(
+                        self::callInternal($app, "/edgecreator/v2/model/$publicationcode/$issuenumber/1", 'GET'),
+                        'modelid');
+
+                    self::callInternal($app, "/edgecreator/v2/model/$modelId/$step/values", 'DELETE');
+
+                    $valueIds = self::getResponseIdFromServiceResponse(
+                        self::callInternal($app, "/edgecreator/v2/model/$modelId/value/multiple", 'PUT', [
+                            'options' => $optionValues
+                        ]),
+                        'valueids'
+                    );
+
+                    return new JsonResponse(['modelid' => $modelId, 'valueids' => $valueIds]);
+                }
+                catch (UnexpectedInternalCallResponseException $e) {
+                    return new Response($e->getContent(), $e->getStatusCode());
+                }
+            }
+        )
+            ->assert('publicationcode', self::getParamAssertRegex(\Coa\Models\BaseModel::PUBLICATION_CODE_VALIDATION))
+            ->assert('issuenumber', self::getParamAssertRegex(\Coa\Models\BaseModel::ISSUE_NUMBER_VALIDATION));
+
 
         $routing->post(
             '/edgecreator/step/shift/{publicationcode}/{issuenumber}/{stepnumber}/{isincludingthisstep}',
@@ -90,7 +120,7 @@ class AppController extends AbstractController
 
                 try {
                     $modelId = self::getResponseIdFromServiceResponse(
-                        self::callInternal($app, "/edgecreator/step/$publicationcode/$issuenumber/1"),
+                        self::callInternal($app, "/edgecreator/model/$publicationcode/$issuenumber/1"),
                         'modelid'
                     );
                 }
@@ -110,7 +140,7 @@ class AppController extends AbstractController
             function (Application $app, Request $request, $publicationcode, $issuenumber, $stepnumber, $newstepnumber) {
                 try {
                     $modelId = self::getResponseIdFromServiceResponse(
-                        self::callInternal($app, "/edgecreator/step/$publicationcode/$issuenumber/1"),
+                        self::callInternal($app, "/edgecreator/model/$publicationcode/$issuenumber/1"),
                         'modelid'
                     );
                 }

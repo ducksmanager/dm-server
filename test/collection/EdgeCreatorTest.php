@@ -76,6 +76,26 @@ class EdgeCreatorTest extends TestCommon
         ]))], $objectResponse->newStepNumbers);
     }
 
+    public function testUpdateStep() {
+        $model = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR)->getRepository(TranchesEnCoursModeles::class)->findOneBy([
+            'pays' => 'fr',
+            'magazine' => 'PM',
+            'numero' => '502',
+        ]);
+
+        $response = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/v2/step/fr/PM/502/1', TestCommon::$edgecreatorUser, 'POST', [
+            'options' => [
+                'Couleur' => '#000000',
+                'Pos_x' => '1',
+                'Pos_y' => '2'
+            ]
+        ])->call();
+
+        $objectResponse = json_decode($response->getContent());
+
+        $this->assertEquals($model->getId(),$objectResponse->modelid);
+    }
+
     public function testShiftStep() {
         $response = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/step/shift/fr/PM/502/1/inclusive', TestCommon::$edgecreatorUser, 'POST')->call();
         $objectResponse = json_decode($response->getContent());

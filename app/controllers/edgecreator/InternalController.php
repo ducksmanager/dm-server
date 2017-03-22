@@ -95,32 +95,49 @@ class InternalController extends AbstractController
             ->assert('publicationCode', self::getParamAssertRegex(\Coa\Models\BaseModel::PUBLICATION_CODE_VALIDATION))
             ->assert('issueNumber', self::getParamAssertRegex(\Coa\Models\BaseModel::ISSUE_NUMBER_VALIDATION));
 
+        $routing->delete(
+            '/internal/edgecreator/v2/model/{modelId}/{step}/values',
+            function (Request $request, Application $app, $modelId, $step) {
+                return AbstractController::return500ErrorOnException($app, function() use ($request, $modelId, $step) {
+                    $qb = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->createQueryBuilder();
+                    $qb
+                        ->delete(TranchesEnCoursValeurs::class, 'values')
+                        ->andWhere($qb->expr()->eq('values.idModele', ':modelId'))
+                        ->setParameter(':modelId', $modelId);
+
+                    $nbRemoved = $qb->getQuery()->getResult();
+
+                    return new JsonResponse(['nbremovedvalues' => $nbRemoved]);
+                });
+            }
+        );
+
         $routing->put(
-            '/internal/edgecreator/v2/model/{modelId}/value/multiple',
-            function (Request $request, Application $app, $modelId) {
-                return AbstractController::return500ErrorOnException($app, function() use ($request, $modelId) {
+            '/internal/edgecreator/v2/model/{modelId}/{step}/{functionName}',
+            function (Request $request, Application $app, $modelId, $step, $functionName) {
+                return AbstractController::return500ErrorOnException($app, function() use ($request, $modelId, $step, $functionName) {
                     $em = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR);
 
-                    $modelAndOptions = json_decode($request->request->get('options'));
+                    $model = $em->getRepository(TranchesEnCoursModeles::class)->find($modelId);
+                    $options = $request->request->get('options');
 
-                    if (is_null($modelAndOptions)) {
-                        throw new \Exception('Invalid options output');
+                    if (is_null($options)) {
+                        throw new \Exception('Invalid options input');
                     }
 
-                    $modelId = $modelAndOptions->modelid;
+                    $createdOptions = [];
 
-                    $createdOptions = array_map(function($option) use ($em, $modelId) {
+                    array_walk($options, function($optionName, $optionValue) use ($em, $model, $step, $functionName, &$createdOptions) {
                         $optionToCreate = new TranchesEnCoursValeurs();
-                        $optionToCreate->setIdModele($modelId);
-                        $optionToCreate->setOrdre($option->Ordre);
-                        $optionToCreate->setNomFonction($option->Nom_fonction);
-                        $optionToCreate->setOptionNom($option->Option_nom);
-                        $optionToCreate->setOptionValeur($option->Option_valeur);
+                        $optionToCreate->setIdModele($model);
+                        $optionToCreate->setOrdre($step);
+                        $optionToCreate->setNomFonction($functionName);
+                        $optionToCreate->setOptionNom($optionName);
+                        $optionToCreate->setOptionValeur($optionValue);
 
                         $em->persist($optionToCreate);
-                        return ['step' => $optionToCreate->getOrdre(), 'option' => $optionToCreate->getOptionNom()];
-
-                    }, $modelAndOptions->options);
+                        $createdOptions[] = ['name' => $optionName, 'value' => $optionValue];
+                    });
 
                     $em->flush();
 
@@ -232,7 +249,7 @@ class InternalController extends AbstractController
             ->assert('newStepNumber', self::getParamAssertRegex('\\d+'));
 
         $routing->get(
-            '/internal/edgecreator/step/{publicationCode}/{issueNumber}/{byCurrentUser}',
+            '/internal/edgecreator/v2/model/{publicationCode}/{issueNumber}/{byCurrentUser}',
             function (Request $request, Application $app, $publicationCode, $issueNumber, $byCurrentUser) {
                 return AbstractController::return500ErrorOnException($app, function() use ($app, $publicationCode, $issueNumber, $byCurrentUser) {
                     $em = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR);
