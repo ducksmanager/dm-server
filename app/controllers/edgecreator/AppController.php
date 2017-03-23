@@ -120,7 +120,7 @@ class AppController extends AbstractController
 
                 try {
                     $modelId = self::getResponseIdFromServiceResponse(
-                        self::callInternal($app, "/edgecreator/model/$publicationcode/$issuenumber/1"),
+                        self::callInternal($app, "/edgecreator/v2/model/$publicationcode/$issuenumber/1"),
                         'modelid'
                     );
                 }
@@ -140,7 +140,7 @@ class AppController extends AbstractController
             function (Application $app, Request $request, $publicationcode, $issuenumber, $stepnumber, $newstepnumber) {
                 try {
                     $modelId = self::getResponseIdFromServiceResponse(
-                        self::callInternal($app, "/edgecreator/model/$publicationcode/$issuenumber/1"),
+                        self::callInternal($app, "/edgecreator/v2/model/$publicationcode/$issuenumber/1"),
                         'modelid'
                     );
                 }
