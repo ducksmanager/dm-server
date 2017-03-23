@@ -7,6 +7,7 @@ use EdgeCreator\Models\EdgecreatorModeles2;
 use EdgeCreator\Models\EdgecreatorValeurs;
 use EdgeCreator\Models\ImagesMyfonts;
 use EdgeCreator\Models\TranchesEnCoursModeles;
+use EdgeCreator\Models\TranchesEnCoursValeurs;
 use Symfony\Component\HttpFoundation\Response;
 
 class EdgeCreatorTest extends TestCommon
@@ -77,7 +78,9 @@ class EdgeCreatorTest extends TestCommon
     }
 
     public function testUpdateStep() {
-        $model = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR)->getRepository(TranchesEnCoursModeles::class)->findOneBy([
+        $em = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR);
+
+        $model = $em->getRepository(TranchesEnCoursModeles::class)->findOneBy([
             'pays' => 'fr',
             'magazine' => 'PM',
             'numero' => '502',
@@ -85,7 +88,7 @@ class EdgeCreatorTest extends TestCommon
 
         $response = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/v2/step/fr/PM/502/1', TestCommon::$edgecreatorUser, 'POST', [
             'options' => [
-                'Couleur' => '#000000',
+                'Couleur' => '#DDDDDD',
                 'Pos_x' => '1',
                 'Pos_y' => '2'
             ]
@@ -94,6 +97,28 @@ class EdgeCreatorTest extends TestCommon
         $objectResponse = json_decode($response->getContent());
 
         $this->assertEquals($model->getId(),$objectResponse->modelid);
+
+        /** @var TranchesEnCoursValeurs[] $values */
+        $values = $em->getRepository(TranchesEnCoursValeurs::class)->findBy([
+            'idModele' => $objectResponse->modelid,
+        ]);
+
+        // Unchanged
+        $this->assertEquals(2, $values[0]->getOrdre());
+        $this->assertEquals('Couleur_texte', $values[0]->getOptionNom());
+        $this->assertEquals('#000000', $values[0]->getOptionValeur());
+
+        $this->assertEquals(1, $values[1]->getOrdre());
+        $this->assertEquals('Couleur', $values[1]->getOptionNom());
+        $this->assertEquals('#DDDDDD', $values[1]->getOptionValeur());
+
+        $this->assertEquals(1, $values[2]->getOrdre());
+        $this->assertEquals('Pos_x', $values[2]->getOptionNom());
+        $this->assertEquals('1', $values[2]->getOptionValeur());
+
+        $this->assertEquals(1, $values[3]->getOrdre());
+        $this->assertEquals('Pos_y', $values[3]->getOptionNom());
+        $this->assertEquals('2', $values[3]->getOptionValeur());
     }
 
     public function testShiftStep() {

@@ -96,42 +96,76 @@ class InternalController extends AbstractController
             ->assert('issueNumber', self::getParamAssertRegex(\Coa\Models\BaseModel::ISSUE_NUMBER_VALIDATION));
 
         $routing->delete(
-            '/internal/edgecreator/v2/model/{modelId}/{step}/values',
-            function (Request $request, Application $app, $modelId, $step) {
-                return AbstractController::return500ErrorOnException($app, function() use ($request, $modelId, $step) {
-                    $qb = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->createQueryBuilder();
+            '/internal/edgecreator/v2/model/{modelId}/{stepNumber}',
+            function (Request $request, Application $app, $modelId, $stepNumber) {
+                return AbstractController::return500ErrorOnException($app, function() use ($request, $modelId, $stepNumber) {
+                    $em = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR);
+
+                    $qb = $em->createQueryBuilder();
+
+                    /** @var TranchesEnCoursValeurs $existingStep */
+                    $existingStep = $em->getRepository(TranchesEnCoursValeurs::class)->findOneBy([
+                        'idModele' => $modelId,
+                        'ordre' => $stepNumber
+                    ]);
+
+                    if (is_null($existingStep)) {
+                        $stepFunctionName = null;
+                    }
+                    else {
+                        $stepFunctionName = $existingStep->getNomFonction();
+                    }
+
                     $qb
                         ->delete(TranchesEnCoursValeurs::class, 'values')
+
                         ->andWhere($qb->expr()->eq('values.idModele', ':modelId'))
-                        ->setParameter(':modelId', $modelId);
+                        ->setParameter(':modelId', $modelId)
+
+                        ->andWhere($qb->expr()->eq('values.ordre', ':stepNumber'))
+                        ->setParameter(':stepNumber', $stepNumber);
 
                     $nbRemoved = $qb->getQuery()->getResult();
 
-                    return new JsonResponse(['nbremovedvalues' => $nbRemoved]);
+                    return new JsonResponse(['nbremovedvalues' => $nbRemoved, 'functionname' => $stepFunctionName]);
                 });
             }
         );
 
         $routing->put(
-            '/internal/edgecreator/v2/model/{modelId}/{step}/{functionName}',
-            function (Request $request, Application $app, $modelId, $step, $functionName) {
-                return AbstractController::return500ErrorOnException($app, function() use ($request, $modelId, $step, $functionName) {
+            '/internal/edgecreator/v2/model/{modelId}/{stepNumber}',
+            function (Request $request, Application $app, $modelId, $stepNumber) {
+                return AbstractController::return500ErrorOnException($app, function() use ($request, $modelId, $stepNumber) {
                     $em = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR);
 
                     $model = $em->getRepository(TranchesEnCoursModeles::class)->find($modelId);
                     $options = $request->request->get('options');
+                    $newFunctionName = $request->request->get('newFunctionName');
 
                     if (is_null($options)) {
                         throw new \Exception('Invalid options input');
                     }
 
+                    if (is_null($newFunctionName)) {
+                        /** @var TranchesEnCoursValeurs $existingValue */
+                        $existingValue = $em->getRepository(TranchesEnCoursValeurs::class)->findOneBy([
+                            'idModele' => $modelId,
+                            'ordre' => $stepNumber
+                        ]);
+
+                        if (is_null($existingValue)) {
+                            throw new \Exception('No option exists for this step and no function name was provided');
+                        }
+                        $newFunctionName = $existingValue->getNomFonction();
+                    }
+
                     $createdOptions = [];
 
-                    array_walk($options, function($optionName, $optionValue) use ($em, $model, $step, $functionName, &$createdOptions) {
+                    array_walk($options, function($optionValue, $optionName) use ($em, $model, $stepNumber, $newFunctionName, &$createdOptions) {
                         $optionToCreate = new TranchesEnCoursValeurs();
                         $optionToCreate->setIdModele($model);
-                        $optionToCreate->setOrdre($step);
-                        $optionToCreate->setNomFonction($functionName);
+                        $optionToCreate->setOrdre((int)$stepNumber);
+                        $optionToCreate->setNomFonction($newFunctionName);
                         $optionToCreate->setOptionNom($optionName);
                         $optionToCreate->setOptionValeur($optionValue);
 

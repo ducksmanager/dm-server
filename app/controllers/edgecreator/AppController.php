@@ -85,19 +85,24 @@ class AppController extends AbstractController
             ->assert('issuenumber', self::getParamAssertRegex(\Coa\Models\BaseModel::ISSUE_NUMBER_VALIDATION));
 
         $routing->post(
-            '/edgecreator/v2/step/{publicationcode}/{issuenumber}/{step}',
-            function (Application $app, Request $request, $publicationcode, $issuenumber, $step) {
+            '/edgecreator/v2/step/{publicationcode}/{issuenumber}/{stepnumber}',
+            function (Application $app, Request $request, $publicationcode, $issuenumber, $stepnumber) {
                 $optionValues = $request->request->get('options');
+                $newFunctionName = $request->request->get('newfunctionname');
 
                 try {
                     $modelId = self::getResponseIdFromServiceResponse(
                         self::callInternal($app, "/edgecreator/v2/model/$publicationcode/$issuenumber/1", 'GET'),
                         'modelid');
 
-                    self::callInternal($app, "/edgecreator/v2/model/$modelId/$step/values", 'DELETE');
+                    $stepFunctionName = self::getResponseIdFromServiceResponse(
+                        self::callInternal($app, "/edgecreator/v2/model/$modelId/$stepnumber", 'DELETE'),
+                        'functionname'
+                    );
 
                     $valueIds = self::getResponseIdFromServiceResponse(
-                        self::callInternal($app, "/edgecreator/v2/model/$modelId/value/multiple", 'PUT', [
+                        self::callInternal($app, "/edgecreator/v2/model/$modelId/$stepnumber", 'PUT', [
+                            'newFunctionName' => $stepFunctionName,
                             'options' => $optionValues
                         ]),
                         'valueids'
@@ -111,8 +116,8 @@ class AppController extends AbstractController
             }
         )
             ->assert('publicationcode', self::getParamAssertRegex(\Coa\Models\BaseModel::PUBLICATION_CODE_VALIDATION))
-            ->assert('issuenumber', self::getParamAssertRegex(\Coa\Models\BaseModel::ISSUE_NUMBER_VALIDATION));
-
+            ->assert('issuenumber', self::getParamAssertRegex(\Coa\Models\BaseModel::ISSUE_NUMBER_VALIDATION))
+;
 
         $routing->post(
             '/edgecreator/step/shift/{publicationcode}/{issuenumber}/{stepnumber}/{isincludingthisstep}',
