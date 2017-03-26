@@ -8,6 +8,16 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
+/**
+ * @SWG\Swagger(
+ *     schemes={"http","https"},
+ *     basePath="/dm-server",
+ *     @SWG\Info(
+ *         version="1.0.0",
+ *         title="DM server API"
+ *     )
+ * )
+ */
 abstract class AbstractController
 {
     /** @var $translator TranslationTrait */
