@@ -46,6 +46,17 @@ $app->register(new Silex\Provider\TranslationServiceProvider(), array(
     'locale_fallbacks' => array('en'),
 ));
 
+$app->register(new \Basster\Silex\Provider\Swagger\SwaggerProvider(), [
+    "swagger.servicePath" => __DIR__ . "/app/controllers"
+]);
+
+// swagger-php doesn't follow PSR-0 directory structure so we can't import the annotation namespace directly
+foreach (new \DirectoryIterator(__DIR__ . "/vendor/zircote/swagger-php/src/Annotations") as $annotationDefinitionFile) {
+    if (!$annotationDefinitionFile->isDot()) {
+        \Doctrine\Common\Annotations\AnnotationRegistry::registerFile($annotationDefinitionFile->getPathname());
+    }
+}
+
 $app->register(new Silex\Provider\SessionServiceProvider());
 
 $app->error(function (\Exception $e, Request $request, $code) {
