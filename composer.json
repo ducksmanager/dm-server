@@ -41,6 +41,9 @@
             "EdgeCreator\\Models\\": [
                 "app/models/EdgeCreator/Models"
             ],
+            "Generic\\Contracts\\Results\\": [
+                "app/models"
+            ],
             "DmServer\\Controllers\\": [
                 "app/controllers"
             ],

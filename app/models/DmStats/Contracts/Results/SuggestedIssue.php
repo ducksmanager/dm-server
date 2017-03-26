@@ -3,7 +3,9 @@
 namespace DmStats\Contracts\Results;
 
 
-class SuggestedIssue {
+use Generic\Contracts\Results\GenericReturnObject;
+
+class SuggestedIssue implements GenericReturnObject {
     var $storycode;
     var $storycomment;
     var $title;

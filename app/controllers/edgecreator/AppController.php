@@ -88,7 +88,6 @@ class AppController extends AbstractController
             '/edgecreator/v2/step/{publicationcode}/{issuenumber}/{stepnumber}',
             function (Application $app, Request $request, $publicationcode, $issuenumber, $stepnumber) {
                 $optionValues = $request->request->get('options');
-                $newFunctionName = $request->request->get('newfunctionname');
 
                 try {
                     $modelId = self::getResponseIdFromServiceResponse(

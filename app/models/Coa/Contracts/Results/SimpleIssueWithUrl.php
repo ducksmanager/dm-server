@@ -3,7 +3,9 @@
 namespace Coa\Contracts\Results;
 
 
-class SimpleIssueWithUrl
+use Generic\Contracts\Results\GenericReturnObject;
+
+class SimpleIssueWithUrl implements GenericReturnObject
 {
     private $countrycode;
     private $publicationtitle;

@@ -1,6 +1,8 @@
 <?php
 namespace DmServer;
 
+use Generic\Contracts\Results\GenericReturnObject;
+
 class ModelHelper {
     /**
      * @param array $array
@@ -14,6 +16,7 @@ class ModelHelper {
 
     static function getSimpleArray($objectArray) {
         return array_map(function($object) {
+            /** @var GenericReturnObject $object */
             return $object->toArray();
         }, $objectArray);
     }

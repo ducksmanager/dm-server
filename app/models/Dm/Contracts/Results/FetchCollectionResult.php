@@ -3,8 +3,9 @@ namespace Dm\Contracts\Results;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Dm\Contracts\Dtos\PublicationCollection;
+use Generic\Contracts\Results\GenericReturnObject;
 
-class FetchCollectionResult
+class FetchCollectionResult implements GenericReturnObject
 {
     /** @var PublicationCollection $numeros */
     private $numeros;
