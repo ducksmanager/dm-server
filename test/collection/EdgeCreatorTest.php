@@ -96,7 +96,16 @@ class EdgeCreatorTest extends TestCommon
     }
 
     public function testCloneStep() {
-        $response = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/step/clone/fr/PM/502/1/to/2', TestCommon::$edgecreatorUser, 'POST')->call();
+        $em = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR);
+
+        $modelId = $em->getRepository(TranchesEnCoursModeles::class)->findOneBy([
+            'pays' => 'fr',
+            'magazine' => 'PM',
+            'numero' => '502',
+        ])->getId();
+
+
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/step/clone/$modelId/1/to/2", TestCommon::$edgecreatorUser, 'POST')->call();
 
         $objectResponse = json_decode($response->getContent());
 
@@ -108,13 +117,13 @@ class EdgeCreatorTest extends TestCommon
     public function testUpdateStep() {
         $em = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR);
 
-        $model = $em->getRepository(TranchesEnCoursModeles::class)->findOneBy([
+        $modelId = $em->getRepository(TranchesEnCoursModeles::class)->findOneBy([
             'pays' => 'fr',
             'magazine' => 'PM',
             'numero' => '502',
-        ]);
+        ])->getId();
 
-        $response = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/v2/step/fr/PM/502/1', TestCommon::$edgecreatorUser, 'POST', [
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/step/$modelId/1", TestCommon::$edgecreatorUser, 'POST', [
             'options' => [
                 'Couleur' => '#DDDDDD',
                 'Pos_x' => '1',
@@ -124,33 +133,43 @@ class EdgeCreatorTest extends TestCommon
 
         $objectResponse = json_decode($response->getContent());
 
-        $this->assertEquals($model->getId(),$objectResponse->modelid);
-
+        $this->assertEquals(
+            [
+                [
+                    'name' => 'Couleur',
+                    'value' => '#DDDDDD'
+                ],[
+                    'name' => 'Pos_x',
+                    'value' => '1'
+                ],[
+                    'name' => 'Pos_y',
+                    'value' => '2'
+                ]
+            ],
+            json_decode(json_encode($objectResponse->valueids), true)
+        );
         /** @var TranchesEnCoursValeurs[] $values */
         $values = $em->getRepository(TranchesEnCoursValeurs::class)->findBy([
-            'idModele' => $objectResponse->modelid,
+            'idModele' => $modelId,
+            'ordre' => 2
         ]);
 
         // Unchanged
         $this->assertEquals(2, $values[0]->getOrdre());
         $this->assertEquals('Couleur_texte', $values[0]->getOptionNom());
         $this->assertEquals('#000000', $values[0]->getOptionValeur());
-
-        $this->assertEquals(1, $values[1]->getOrdre());
-        $this->assertEquals('Couleur', $values[1]->getOptionNom());
-        $this->assertEquals('#DDDDDD', $values[1]->getOptionValeur());
-
-        $this->assertEquals(1, $values[2]->getOrdre());
-        $this->assertEquals('Pos_x', $values[2]->getOptionNom());
-        $this->assertEquals('1', $values[2]->getOptionValeur());
-
-        $this->assertEquals(1, $values[3]->getOrdre());
-        $this->assertEquals('Pos_y', $values[3]->getOptionNom());
-        $this->assertEquals('2', $values[3]->getOptionValeur());
     }
 
     public function testShiftStep() {
-        $response = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/step/shift/fr/PM/502/1/inclusive', TestCommon::$edgecreatorUser, 'POST')->call();
+        $modelRepository = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR)->getRepository(TranchesEnCoursModeles::class);
+
+        $modelId = $modelRepository->findOneBy([
+            'pays' => 'fr',
+            'magazine' => 'PM',
+            'numero' => '502'
+        ])->getId();
+
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/step/shift/$modelId/1/inclusive", TestCommon::$edgecreatorUser, 'POST')->call();
         $objectResponse = json_decode($response->getContent());
 
         $this->assertEquals(json_decode(json_encode([

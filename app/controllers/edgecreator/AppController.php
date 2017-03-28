@@ -94,29 +94,25 @@ class AppController extends AbstractController
         );
 
         $routing->post(
-            '/edgecreator/v2/step/{publicationcode}/{issuenumber}/{stepnumber}',
-            function (Application $app, Request $request, $publicationcode, $issuenumber, $stepnumber) {
+            '/edgecreator/v2/step/{modelid}/{stepnumber}',
+            function (Application $app, Request $request, $modelid, $stepnumber) {
                 $optionValues = $request->request->get('options');
 
                 try {
-                    $modelId = self::getResponseIdFromServiceResponse(
-                        self::callInternal($app, "/edgecreator/v2/model/$publicationcode/$issuenumber/1", 'GET'),
-                        'modelid');
-
                     $stepFunctionName = self::getResponseIdFromServiceResponse(
-                        self::callInternal($app, "/edgecreator/v2/model/$modelId/$stepnumber", 'DELETE'),
+                        self::callInternal($app, "/edgecreator/v2/model/$modelid/$stepnumber", 'DELETE'),
                         'functionname'
                     );
 
                     $valueIds = self::getResponseIdFromServiceResponse(
-                        self::callInternal($app, "/edgecreator/v2/model/$modelId/$stepnumber", 'PUT', [
+                        self::callInternal($app, "/edgecreator/v2/model/$modelid/$stepnumber", 'PUT', [
                             'newFunctionName' => $stepFunctionName,
                             'options' => $optionValues
                         ]),
                         'valueids'
                     );
 
-                    return new JsonResponse(['modelid' => $modelId, 'valueids' => $valueIds]);
+                    return new JsonResponse(['valueids' => $valueIds]);
                 }
                 catch (UnexpectedInternalCallResponseException $e) {
                     return new Response($e->getContent(), $e->getStatusCode());
@@ -128,40 +124,17 @@ class AppController extends AbstractController
 ;
 
         $routing->post(
-            '/edgecreator/step/shift/{publicationcode}/{issuenumber}/{stepnumber}/{isincludingthisstep}',
-            function (Application $app, Request $request, $publicationcode, $issuenumber, $stepnumber, $isincludingthisstep) {
-
-                try {
-                    $modelId = self::getResponseIdFromServiceResponse(
-                        self::callInternal($app, "/edgecreator/v2/model/$publicationcode/$issuenumber/1"),
-                        'modelid'
-                    );
-                }
-                catch (UnexpectedInternalCallResponseException $e) {
-                    return new Response($e->getContent(), $e->getStatusCode());
-                }
-
-                return self::callInternal($app, "/edgecreator/step/shift/$modelId/$stepnumber/$isincludingthisstep", 'POST');
+            '/edgecreator/step/shift/{modelid}/{stepnumber}/{isincludingthisstep}',
+            function (Application $app, Request $request, $modelid, $stepnumber, $isincludingthisstep) {
+                return self::callInternal($app, "/edgecreator/step/shift/$modelid/$stepnumber/$isincludingthisstep", 'POST');
             }
         )
-            ->assert('publicationcode', self::getParamAssertRegex(\Coa\Models\BaseModel::PUBLICATION_CODE_VALIDATION))
-            ->assert('issuenumber', self::getParamAssertRegex(\Coa\Models\BaseModel::ISSUE_NUMBER_VALIDATION))
             ->assert('stepnumber', self::getParamAssertRegex('\\d+'));
 
         $routing->post(
-            '/edgecreator/step/clone/{publicationcode}/{issuenumber}/{stepnumber}/to/{newstepnumber}',
-            function (Application $app, Request $request, $publicationcode, $issuenumber, $stepnumber, $newstepnumber) {
-                try {
-                    $modelId = self::getResponseIdFromServiceResponse(
-                        self::callInternal($app, "/edgecreator/v2/model/$publicationcode/$issuenumber/1"),
-                        'modelid'
-                    );
-                }
-                catch (UnexpectedInternalCallResponseException $e) {
-                    return new Response($e->getContent(), $e->getStatusCode());
-                }
-
-                return self::callInternal($app, "/edgecreator/step/clone/$modelId/$stepnumber/$newstepnumber", 'POST');
+            '/edgecreator/step/clone/{modelid}/{stepnumber}/to/{newstepnumber}',
+            function (Application $app, Request $request, $modelid, $stepnumber, $newstepnumber) {
+                return self::callInternal($app, "/edgecreator/step/clone/$modelid/$stepnumber/$newstepnumber", 'POST');
             }
         )
         ->assert('publicationcode', self::getParamAssertRegex(\Coa\Models\BaseModel::PUBLICATION_CODE_VALIDATION))
@@ -191,6 +164,13 @@ class AppController extends AbstractController
                 $previewId = json_decode($previewIdResponse->getContent())->previewid;
 
                 return new JsonResponse(['previewid' => $previewId]);
+            }
+        );
+
+        $routing->delete(
+            '/edgecreator/myfontspreview/{previewid}',
+            function (Application $app, Request $request, $previewid) {
+                return self::callInternal($app, "/edgecreator/myfontspreview/$previewid", 'DELETE');
             }
         );
 
