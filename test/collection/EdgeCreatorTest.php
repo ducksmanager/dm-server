@@ -13,6 +13,22 @@ use Symfony\Component\HttpFoundation\Response;
 class EdgeCreatorTest extends TestCommon
 {
 
+    private function getEm() {
+        return DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR);
+    }
+
+    /**
+     * @return TranchesEnCoursModeles
+     */
+    private function getV2Model($countryCode, $publicationCode, $issueCode)
+    {
+        return $this->getEm()->getRepository(TranchesEnCoursModeles::class)->findOneBy([
+            'pays' => $countryCode,
+            'magazine' => $publicationCode,
+            'numero' => $issueCode,
+        ]);
+    }
+
     public function setUp()
     {
         parent::setUp();
@@ -22,18 +38,11 @@ class EdgeCreatorTest extends TestCommon
     }
 
     public function testLoadV2Model() {
+        $model = $this->getV2Model('fr', 'PM', '502');
 
-        $modelRepository = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR)->getRepository(TranchesEnCoursModeles::class);
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/model/{$model->getId()}", TestCommon::$edgecreatorUser, 'GET')->call();
 
-        $modelId = $modelRepository->findOneBy([
-            'pays' => 'fr',
-            'magazine' => 'PM',
-            'numero' => '502'
-        ])->getId();
-
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/model/$modelId", TestCommon::$edgecreatorUser, 'GET')->call();
-
-        $model = json_decode($response->getContent());
+        $responseModel = json_decode($response->getContent());
 
         $this->assertEquals(json_decode(json_encode([
             'id' => 1,
@@ -46,7 +55,7 @@ class EdgeCreatorTest extends TestCommon
             'createurs' => NULL,
             'active' => '1',
             'pretepourpublication' => '0'
-        ])), json_decode($model));
+        ])), json_decode($responseModel));
     }
 
     public function testCreateStepWithOptionValue() {
@@ -60,7 +69,7 @@ class EdgeCreatorTest extends TestCommon
 
         $objectResponse = json_decode($response->getContent());
 
-        $createdModel = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR)->getRepository(EdgecreatorModeles2::class)->findOneBy([
+        $createdModel = $this->getEm()->getRepository(EdgecreatorModeles2::class)->findOneBy([
             'pays' => 'fr',
             'magazine' => 'PM',
             'ordre' => '1'
@@ -68,13 +77,13 @@ class EdgeCreatorTest extends TestCommon
 
         $this->assertEquals($createdModel->getId(), $objectResponse->optionid);
 
-        $createdValue = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR)->getRepository(EdgecreatorValeurs::class)->findOneBy([
+        $createdValue = $this->getEm()->getRepository(EdgecreatorValeurs::class)->findOneBy([
             'optionValeur' => 'hello'
         ]);
 
         $this->assertEquals($createdValue->getId(), $objectResponse->valueid);
 
-        $createdInterval = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR)->getRepository(EdgecreatorIntervalles::class)->findOneBy([
+        $createdInterval = $this->getEm()->getRepository(EdgecreatorIntervalles::class)->findOneBy([
             'idValeur' => $createdValue->getId()
         ]);
 
@@ -96,16 +105,9 @@ class EdgeCreatorTest extends TestCommon
     }
 
     public function testCloneStep() {
-        $em = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR);
+        $model = $this->getV2Model('fr', 'PM', '502');
 
-        $modelId = $em->getRepository(TranchesEnCoursModeles::class)->findOneBy([
-            'pays' => 'fr',
-            'magazine' => 'PM',
-            'numero' => '502',
-        ])->getId();
-
-
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/step/clone/$modelId/1/to/2", TestCommon::$edgecreatorUser, 'POST')->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/step/clone/{$model->getId()}/1/to/2", TestCommon::$edgecreatorUser, 'POST')->call();
 
         $objectResponse = json_decode($response->getContent());
 
@@ -115,15 +117,9 @@ class EdgeCreatorTest extends TestCommon
     }
 
     public function testUpdateStep() {
-        $em = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR);
+        $model = $this->getV2Model('fr', 'PM', '502');
 
-        $modelId = $em->getRepository(TranchesEnCoursModeles::class)->findOneBy([
-            'pays' => 'fr',
-            'magazine' => 'PM',
-            'numero' => '502',
-        ])->getId();
-
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/step/$modelId/1", TestCommon::$edgecreatorUser, 'POST', [
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/step/{$model->getId()}/1", TestCommon::$edgecreatorUser, 'POST', [
             'options' => [
                 'Couleur' => '#DDDDDD',
                 'Pos_x' => '1',
@@ -149,8 +145,8 @@ class EdgeCreatorTest extends TestCommon
             json_decode(json_encode($objectResponse->valueids), true)
         );
         /** @var TranchesEnCoursValeurs[] $values */
-        $values = $em->getRepository(TranchesEnCoursValeurs::class)->findBy([
-            'idModele' => $modelId,
+        $values = $this->getEm()->getRepository(TranchesEnCoursValeurs::class)->findBy([
+            'idModele' => $model->getId(),
             'ordre' => 2
         ]);
 
@@ -161,15 +157,9 @@ class EdgeCreatorTest extends TestCommon
     }
 
     public function testShiftStep() {
-        $modelRepository = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR)->getRepository(TranchesEnCoursModeles::class);
+        $model = $this->getV2Model('fr', 'PM', '502');
 
-        $modelId = $modelRepository->findOneBy([
-            'pays' => 'fr',
-            'magazine' => 'PM',
-            'numero' => '502'
-        ])->getId();
-
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/step/shift/$modelId/1/inclusive", TestCommon::$edgecreatorUser, 'POST')->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/step/shift/{$model->getId()}/1/inclusive", TestCommon::$edgecreatorUser, 'POST')->call();
         $objectResponse = json_decode($response->getContent());
 
         $this->assertEquals(json_decode(json_encode([
@@ -179,29 +169,21 @@ class EdgeCreatorTest extends TestCommon
     }
 
     public function testDeleteStep() {
-        $em = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR);
-        $modelRepository = $em->getRepository(TranchesEnCoursModeles::class);
-
-        $modelId = $modelRepository->findOneBy([
-            'pays' => 'fr',
-            'magazine' => 'PM',
-            'numero' => '502'
-        ])->getId();
-
+        $model = $this->getV2Model('fr', 'PM', '502');
         $stepToRemove = 1;
 
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/step/$modelId/$stepToRemove", TestCommon::$edgecreatorUser, 'DELETE')->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/step/{$model->getId()}/$stepToRemove", TestCommon::$edgecreatorUser, 'DELETE')->call();
         $objectResponse = json_decode($response->getContent());
 
         $this->assertEquals([
             'removed' => [
-                'model' => $modelId,
+                'model' => $model->getId(),
                 'step' => $stepToRemove
             ]
         ], json_decode(json_encode($objectResponse), true));
 
-        $values = $em->getRepository(TranchesEnCoursValeurs::class)->findBy([
-            'idModele' => $modelId,
+        $values = $this->getEm()->getRepository(TranchesEnCoursValeurs::class)->findBy([
+            'idModele' => $model->getId(),
             'ordre' => $stepToRemove
         ]);
 
@@ -220,7 +202,7 @@ class EdgeCreatorTest extends TestCommon
 
         $objectResponse = json_decode($response->getContent());
 
-        $createdPreview = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR)->getRepository(ImagesMyfonts::class)->findOneBy([
+        $createdPreview = $this->getEm()->getRepository(ImagesMyfonts::class)->findOneBy([
             'texte' => 'Hello preview'
         ]);
 
@@ -228,7 +210,7 @@ class EdgeCreatorTest extends TestCommon
     }
 
     public function testDeleteMyFontsPreview() {
-        $em = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR);
+        $em = $this->getEm();
 
         $newPreview = new ImagesMyfonts();
         $em->persist($newPreview);
@@ -242,95 +224,58 @@ class EdgeCreatorTest extends TestCommon
     }
 
     public function testDeactivateModel() {
-        $modelRepository = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR)->getRepository(TranchesEnCoursModeles::class);
+        $model = $this->getV2Model('fr', 'PM', '502');
 
-        $modelId = $modelRepository->findOneBy([
-            'pays' => 'fr',
-            'magazine' => 'PM',
-            'numero' => '502'
-        ])->getId();
-
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/$modelId/deactivate", TestCommon::$edgecreatorUser, 'POST')
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/{$model->getId()}/deactivate", TestCommon::$edgecreatorUser, 'POST')
             ->call();
 
         $objectResponse = json_decode($response->getContent());
 
-        $this->assertEquals($modelId, $objectResponse->deactivated);
+        $this->assertEquals($model->getId(), $objectResponse->deactivated);
 
-        $newModel = $modelRepository->findOneBy([
-            'pays' => 'fr',
-            'magazine' => 'PM',
-            'numero' => '502'
-        ]);
-
+        $newModel = $this->getV2Model('fr', 'PM', '502');
         $this->assertEquals(false, $newModel->getActive());
     }
 
     public function testSetModelReadyForPublication() {
-        $modelRepository = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR)->getRepository(TranchesEnCoursModeles::class);
+        $model = $this->getV2Model('fr', 'PM', '502');
 
-        $modelId = $modelRepository->findOneBy([
-            'pays' => 'fr',
-            'magazine' => 'PM',
-            'numero' => '502'
-        ])->getId();
-
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/$modelId/readytopublish/1", TestCommon::$edgecreatorUser, 'POST')
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/{$model->getId()}/readytopublish/1", TestCommon::$edgecreatorUser, 'POST')
             ->call();
 
         $objectResponse = json_decode($response->getContent());
 
-        $this->assertEquals(['modelid' => $modelId, 'readytopublish' => true], (array) $objectResponse->readytopublish);
+        $this->assertEquals(['modelid' => $model->getId(), 'readytopublish' => true], (array) $objectResponse->readytopublish);
 
-        $newModel = $modelRepository->findOneBy([
-            'pays' => 'fr',
-            'magazine' => 'PM',
-            'numero' => '502'
-        ]);
-
+        $newModel = $this->getV2Model('fr', 'PM', '502');
         $this->assertEquals(true, $newModel->getPretepourpublication());
 
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/$modelId/readytopublish/0", TestCommon::$edgecreatorUser, 'POST')
+
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/{$model->getId()}/readytopublish/0", TestCommon::$edgecreatorUser, 'POST')
             ->call();
 
         $objectResponse = json_decode($response->getContent());
 
-        $this->assertEquals(['modelid' => $modelId, 'readytopublish' => false], (array) $objectResponse->readytopublish);
+        $this->assertEquals(['modelid' => $model->getId(), 'readytopublish' => false], (array) $objectResponse->readytopublish);
 
-        $newModel = $modelRepository->findOneBy([
-            'pays' => 'fr',
-            'magazine' => 'PM',
-            'numero' => '502'
-        ]);
-
+        $newModel = $this->getV2Model('fr', 'PM', '502');
         $this->assertEquals(false, $newModel->getPretepourpublication());
     }
 
     public function testSetMainPhoto() {
         $photoName = 'myphoto.jpg';
 
-        $modelRepository = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR)->getRepository(TranchesEnCoursModeles::class);
+        $model = $this->getV2Model('fr', 'PM', '502');
 
-        $modelId = $modelRepository->findOneBy([
-            'pays' => 'fr',
-            'magazine' => 'PM',
-            'numero' => '502'
-        ])->getId();
-
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/$modelId/photo/main", TestCommon::$edgecreatorUser, 'PUT', [
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/{$model->getId()}/photo/main", TestCommon::$edgecreatorUser, 'PUT', [
             'photoname' => $photoName
         ])->call();
 
         $objectResponse = json_decode($response->getContent());
 
-        $this->assertEquals(['modelid' => $modelId, 'photoname' => $photoName], (array) $objectResponse->mainphoto);
+        $this->assertEquals(['modelid' => $model->getId(), 'photoname' => $photoName], (array) $objectResponse->mainphoto);
 
-        $newModel = $modelRepository->findOneBy([
-            'pays' => 'fr',
-            'magazine' => 'PM',
-            'numero' => '502'
-        ]);
-
+        $newModel = $this->getV2Model('fr', 'PM', '502');
         $this->assertEquals($photoName, $newModel->getNomphotoprincipale());
     }
 }
