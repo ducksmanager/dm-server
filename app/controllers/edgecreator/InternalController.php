@@ -4,6 +4,7 @@ namespace DmServer\Controllers\EdgeCreator;
 
 use DmServer\Controllers\AbstractController;
 use DmServer\DmServer;
+use DmServer\ModelHelper;
 use Doctrine\Common\Collections\Criteria;
 use EdgeCreator\Models\EdgecreatorIntervalles;
 use EdgeCreator\Models\EdgecreatorModeles2;
@@ -281,6 +282,17 @@ class InternalController extends AbstractController
         )
             ->assert('stepNumber', self::getParamAssertRegex('\\d+'))
             ->assert('newStepNumber', self::getParamAssertRegex('\\d+'));
+
+        $routing->get(
+            '/internal/edgecreator/v2/model/{modelId}',
+            function (Request $request, Application $app, $modelId) {
+                return AbstractController::return500ErrorOnException($app, function () use ($app, $modelId) {
+                    $em = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR);
+                    $model = $em->getRepository(TranchesEnCoursModeles::class)->find($modelId);
+                    return new JsonResponse(self::getSerializer()->serialize($model, 'json'));
+                });
+            }
+        );
 
         $routing->get(
             '/internal/edgecreator/v2/model/{publicationCode}/{issueNumber}/{byCurrentUser}',

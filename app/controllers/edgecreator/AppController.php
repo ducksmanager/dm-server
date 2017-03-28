@@ -84,6 +84,15 @@ class AppController extends AbstractController
             ->assert('publicationcode', self::getParamAssertRegex(\Coa\Models\BaseModel::PUBLICATION_CODE_VALIDATION))
             ->assert('issuenumber', self::getParamAssertRegex(\Coa\Models\BaseModel::ISSUE_NUMBER_VALIDATION));
 
+        $routing->get(
+            '/edgecreator/v2/model/{modelId}',
+            function (Request $request, Application $app, $modelId) {
+                return AbstractController::return500ErrorOnException($app, function () use ($app, $modelId) {
+                    return self::callInternal($app, "/edgecreator/v2/model/$modelId", 'GET');
+                });
+            }
+        );
+
         $routing->post(
             '/edgecreator/v2/step/{publicationcode}/{issuenumber}/{stepnumber}',
             function (Application $app, Request $request, $publicationcode, $issuenumber, $stepnumber) {

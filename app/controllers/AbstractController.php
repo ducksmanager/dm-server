@@ -7,6 +7,9 @@ use Silex\Application\TranslationTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
 
 abstract class AbstractController
 {
@@ -15,6 +18,13 @@ abstract class AbstractController
 
     static function initTranslation($app) {
         self::$translator = $app['translator'];
+    }
+
+    protected static function getSerializer() {
+        $encoders = [new JsonEncoder()];
+        $normalizers = [new ObjectNormalizer()];
+
+        return new Serializer($normalizers, $encoders);
     }
 
     private static function callInternalGetRequest(Application $app, $url, $parameters = []) {

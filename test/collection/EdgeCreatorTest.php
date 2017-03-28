@@ -21,6 +21,34 @@ class EdgeCreatorTest extends TestCommon
         self::createEdgeCreatorData();
     }
 
+    public function testLoadV2Model() {
+
+        $modelRepository = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR)->getRepository(TranchesEnCoursModeles::class);
+
+        $modelId = $modelRepository->findOneBy([
+            'pays' => 'fr',
+            'magazine' => 'PM',
+            'numero' => '502'
+        ])->getId();
+
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/model/$modelId", TestCommon::$edgecreatorUser, 'GET')->call();
+
+        $model = json_decode($response->getContent());
+
+        $this->assertEquals(json_decode(json_encode([
+            'id' => 1,
+            'pays' => 'fr',
+            'magazine' => 'PM',
+            'numero' => '502',
+            'username' => 'dm_test_user',
+            'nomphotoprincipale' => NULL,
+            'photographes' => NULL,
+            'createurs' => NULL,
+            'active' => '1',
+            'pretepourpublication' => '0'
+        ])), json_decode($model));
+    }
+
     public function testCreateStepWithOptionValue() {
         $response = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/step/fr/PM/1', TestCommon::$edgecreatorUser, 'PUT', [
             'functionname' => 'TexteMyFonts',
