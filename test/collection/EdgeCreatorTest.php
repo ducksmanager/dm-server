@@ -178,6 +178,36 @@ class EdgeCreatorTest extends TestCommon
         ])), $objectResponse->shifts);
     }
 
+    public function testDeleteStep() {
+        $em = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR);
+        $modelRepository = $em->getRepository(TranchesEnCoursModeles::class);
+
+        $modelId = $modelRepository->findOneBy([
+            'pays' => 'fr',
+            'magazine' => 'PM',
+            'numero' => '502'
+        ])->getId();
+
+        $stepToRemove = 1;
+
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/step/$modelId/$stepToRemove", TestCommon::$edgecreatorUser, 'DELETE')->call();
+        $objectResponse = json_decode($response->getContent());
+
+        $this->assertEquals([
+            'removed' => [
+                'model' => $modelId,
+                'step' => $stepToRemove
+            ]
+        ], json_decode(json_encode($objectResponse), true));
+
+        $values = $em->getRepository(TranchesEnCoursValeurs::class)->findBy([
+            'idModele' => $modelId,
+            'ordre' => $stepToRemove
+        ]);
+
+        $this->assertEquals(0, count($values));
+    }
+
     public function testCreateMyfontsPreview() {
         $response = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/myfontspreview', TestCommon::$edgecreatorUser, 'PUT', [
             'font' => 'Arial',

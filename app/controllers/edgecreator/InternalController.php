@@ -283,6 +283,25 @@ class InternalController extends AbstractController
             ->assert('stepNumber', self::getParamAssertRegex('\\d+'))
             ->assert('newStepNumber', self::getParamAssertRegex('\\d+'));
 
+
+        $routing->delete(
+            '/internal/edgecreator/step/{modelId}/{stepNumber}',
+            function (Request $request, Application $app, $modelId, $stepNumber) {
+                $qb = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR)->createQueryBuilder();
+
+                $qb->delete(TranchesEnCoursValeurs::class, 'values')
+                    ->andWhere($qb->expr()->eq('values.idModele', ':modelId'))
+                    ->setParameter(':modelId', $modelId)
+                    ->andWhere($qb->expr()->eq('values.ordre', ':stepNumber'))
+                    ->setParameter(':stepNumber', $stepNumber);
+                $qb->getQuery()->execute();
+
+                return new JsonResponse(['removed' => ['model' => $modelId, 'step' => $stepNumber ]]);
+            }
+        )
+            ->assert('stepNumber', self::getParamAssertRegex('\\d+'))
+            ->assert('newStepNumber', self::getParamAssertRegex('\\d+'));
+
         $routing->get(
             '/internal/edgecreator/v2/model/{modelId}',
             function (Request $request, Application $app, $modelId) {
