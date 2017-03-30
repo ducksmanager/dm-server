@@ -73,77 +73,17 @@ class InternalController extends AbstractController
         );
 
         $routing->put(
-            '/internal/edgecreator/v2/model/{publicationCode}/{issueNumber}',
-            function (Request $request, Application $app, $publicationCode, $issueNumber) {
-                return AbstractController::return500ErrorOnException($app, function() use ($request, $app, $publicationCode, $issueNumber) {
-                    $em = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR);
-
-                    list($country, $publication) = explode('/', $publicationCode);
-
-                    $model = new TranchesEnCoursModeles();
-                    $model->setPays($country);
-                    $model->setMagazine($publication);
-                    $model->setUsername(self::getSessionUser($app)['username']);
-                    $model->setActive(true);
-
-                    $em->persist($model);
-                    $em->flush();
-
-                    return new JsonResponse(['modelid' => $model->getId()]);
-                });
-            }
-        )
-            ->assert('publicationCode', self::getParamAssertRegex(\Coa\Models\BaseModel::PUBLICATION_CODE_VALIDATION))
-            ->assert('issueNumber', self::getParamAssertRegex(\Coa\Models\BaseModel::ISSUE_NUMBER_VALIDATION));
-
-        $routing->delete(
             '/internal/edgecreator/v2/model/{modelId}/{stepNumber}',
             function (Request $request, Application $app, $modelId, $stepNumber) {
                 return AbstractController::return500ErrorOnException($app, function() use ($request, $modelId, $stepNumber) {
                     $em = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR);
-
                     $qb = $em->createQueryBuilder();
-
-                    /** @var TranchesEnCoursValeurs $existingStep */
-                    $existingStep = $em->getRepository(TranchesEnCoursValeurs::class)->findOneBy([
-                        'idModele' => $modelId,
-                        'ordre' => $stepNumber
-                    ]);
-
-                    if (is_null($existingStep)) {
-                        $stepFunctionName = null;
-                    }
-                    else {
-                        $stepFunctionName = $existingStep->getNomFonction();
-                    }
-
-                    $qb
-                        ->delete(TranchesEnCoursValeurs::class, 'values')
-
-                        ->andWhere($qb->expr()->eq('values.idModele', ':modelId'))
-                        ->setParameter(':modelId', $modelId)
-
-                        ->andWhere($qb->expr()->eq('values.ordre', ':stepNumber'))
-                        ->setParameter(':stepNumber', $stepNumber);
-
-                    $nbRemoved = $qb->getQuery()->getResult();
-
-                    return new JsonResponse(['nbremovedvalues' => $nbRemoved, 'functionname' => $stepFunctionName]);
-                });
-            }
-        );
-
-        $routing->put(
-            '/internal/edgecreator/v2/model/{modelId}/{stepNumber}',
-            function (Request $request, Application $app, $modelId, $stepNumber) {
-                return AbstractController::return500ErrorOnException($app, function() use ($request, $modelId, $stepNumber) {
-                    $em = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR);
 
                     $model = $em->getRepository(TranchesEnCoursModeles::class)->find($modelId);
                     $options = $request->request->get('options');
                     $newFunctionName = $request->request->get('newFunctionName');
 
-                    if (is_null($options)) {
+                    if (is_null($options) || !is_array($options) ) {
                         throw new \Exception('Invalid options input');
                     }
 
@@ -160,6 +100,17 @@ class InternalController extends AbstractController
                         $newFunctionName = $existingValue->getNomFonction();
                     }
 
+                    $qb
+                        ->delete(TranchesEnCoursValeurs::class, 'values')
+
+                        ->andWhere($qb->expr()->eq('values.idModele', ':modelId'))
+                        ->setParameter(':modelId', $modelId)
+
+                        ->andWhere($qb->expr()->eq('values.ordre', ':stepNumber'))
+                        ->setParameter(':stepNumber', $stepNumber);
+
+                    $qb->getQuery()->getResult();
+
                     $createdOptions = [];
 
                     array_walk($options, function($optionValue, $optionName) use ($em, $model, $stepNumber, $newFunctionName, &$createdOptions) {
@@ -175,6 +126,7 @@ class InternalController extends AbstractController
                     });
 
                     $em->flush();
+                    $em->clear();
 
                     return new JsonResponse(['valueids' => $createdOptions]);
                 });
@@ -280,14 +232,14 @@ class InternalController extends AbstractController
                 return new JsonResponse(['shifts' => $uniqueStepShifts ]);
             }
         )
-            ->assert('stepNumber', self::getParamAssertRegex('\\d+'))
-            ->assert('newStepNumber', self::getParamAssertRegex('\\d+'));
+            ->assert('stepNumber', self::getParamAssertRegex('\\d+'));
 
 
         $routing->delete(
             '/internal/edgecreator/step/{modelId}/{stepNumber}',
             function (Request $request, Application $app, $modelId, $stepNumber) {
-                $qb = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR)->createQueryBuilder();
+                $em = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR);
+                $qb = $em->createQueryBuilder();
 
                 $qb->delete(TranchesEnCoursValeurs::class, 'values')
                     ->andWhere($qb->expr()->eq('values.idModele', ':modelId'))
@@ -296,11 +248,12 @@ class InternalController extends AbstractController
                     ->setParameter(':stepNumber', $stepNumber);
                 $qb->getQuery()->execute();
 
+                $em->flush();
+
                 return new JsonResponse(['removed' => ['model' => $modelId, 'step' => $stepNumber ]]);
             }
         )
-            ->assert('stepNumber', self::getParamAssertRegex('\\d+'))
-            ->assert('newStepNumber', self::getParamAssertRegex('\\d+'));
+            ->assert('stepNumber', self::getParamAssertRegex('\\d+'));
 
         $routing->get(
             '/internal/edgecreator/v2/model/{modelId}',
@@ -312,38 +265,6 @@ class InternalController extends AbstractController
                 });
             }
         );
-
-        $routing->get(
-            '/internal/edgecreator/v2/model/{publicationCode}/{issueNumber}/{byCurrentUser}',
-            function (Request $request, Application $app, $publicationCode, $issueNumber, $byCurrentUser) {
-                return AbstractController::return500ErrorOnException($app, function() use ($app, $publicationCode, $issueNumber, $byCurrentUser) {
-                    $em = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR);
-
-                    list($country, $publication) = explode('/', $publicationCode);
-
-                    $filter = [
-                        'pays' => $country,
-                        'magazine' => $publication,
-                        'numero' => $issueNumber
-                    ];
-
-                    if ($byCurrentUser === '1') {
-                        $filter = array_merge($filter, [
-                            'username' => self::getSessionUser($app)['username'],
-                            'active' => 1
-                        ]);
-                    }
-
-                    $model = $em->getRepository(TranchesEnCoursModeles::class)->findOneBy($filter);
-
-                    return new JsonResponse(['modelid' => $model->getId()]);
-                });
-            }
-        )
-            ->assert('publicationCode', self::getParamAssertRegex(\Coa\Models\BaseModel::PUBLICATION_CODE_VALIDATION))
-            ->assert('issueNumber', self::getParamAssertRegex(\Coa\Models\BaseModel::ISSUE_NUMBER_VALIDATION))
-            ->value('byCurrentUser', false);
-
 
         $routing->put(
             '/internal/edgecreator/myfontspreview',

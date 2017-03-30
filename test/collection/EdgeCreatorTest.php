@@ -116,6 +116,30 @@ class EdgeCreatorTest extends TestCommon
         ]))], $objectResponse->newStepNumbers);
     }
 
+    public function testUpdateNonExistingStep() {
+        $model = $this->getV2Model('fr', 'PM', '502');
+
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/step/{$model->getId()}/3", TestCommon::$edgecreatorUser, 'POST', [
+            'options' => [
+                'Couleur' => '#DDDDDD',
+                'Pos_x' => '1',
+                'Pos_y' => '2'
+            ]
+        ])->call();
+
+        $this->assertEquals('No option exists for this step and no function name was provided', $response->getContent());
+    }
+
+    public function testUpdateStepWithInvalidOptions() {
+        $model = $this->getV2Model('fr', 'PM', '502');
+
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/step/{$model->getId()}/3", TestCommon::$edgecreatorUser, 'POST', [
+            'options' => '2'
+        ])->call();
+
+        $this->assertEquals('Invalid options input', $response->getContent());
+    }
+
     public function testUpdateStep() {
         $model = $this->getV2Model('fr', 'PM', '502');
 
@@ -154,6 +178,52 @@ class EdgeCreatorTest extends TestCommon
         $this->assertEquals(2, $values[0]->getOrdre());
         $this->assertEquals('Couleur_texte', $values[0]->getOptionNom());
         $this->assertEquals('#000000', $values[0]->getOptionValeur());
+    }
+
+    public function testInsertStep() {
+        $model = $this->getV2Model('fr', 'PM', '502');
+
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/step/{$model->getId()}/2", TestCommon::$edgecreatorUser, 'POST', [
+            'stepfunctionname' => 'Remplir',
+            'options' => [
+                'Couleur' => '#AAAAAA',
+                'Pos_x' => '5',
+                'Pos_y' => '10'
+            ]
+        ])->call();
+
+        $objectResponse = json_decode($response->getContent());
+
+        $this->assertEquals(
+            [
+                [
+                    'name' => 'Couleur',
+                    'value' => '#AAAAAA'
+                ],[
+                    'name' => 'Pos_x',
+                    'value' => '5'
+                ],[
+                    'name' => 'Pos_y',
+                    'value' => '10'
+                ]
+            ],
+            json_decode(json_encode($objectResponse->valueids), true)
+        );
+        /** @var TranchesEnCoursValeurs[] $values */
+        $values = $this->getEm()->getRepository(TranchesEnCoursValeurs::class)->findBy([
+            'idModele' => $model->getId(),
+            'ordre' => 2
+        ]);
+
+        $this->assertEquals(3, count($values));
+        $this->assertEquals('Couleur', $values[0]->getOptionNom());
+        $this->assertEquals('#AAAAAA', $values[0]->getOptionValeur());
+
+        $this->assertEquals('Pos_x', $values[1]->getOptionNom());
+        $this->assertEquals('5', $values[1]->getOptionValeur());
+
+        $this->assertEquals('Pos_y', $values[2]->getOptionNom());
+        $this->assertEquals('10', $values[2]->getOptionValeur());
     }
 
     public function testShiftStep() {

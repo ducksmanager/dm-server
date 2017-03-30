@@ -58,32 +58,6 @@ class AppController extends AbstractController
             ->assert('publicationcode', self::getParamAssertRegex(\Coa\Models\BaseModel::PUBLICATION_CODE_VALIDATION))
             ->assert('stepnumber', self::getParamAssertRegex('\\d+'));
 
-        // Obsolete ?
-        $routing->put(
-            '/edgecreator/v2/model/{publicationcode}/{issuenumber}',
-            function (Application $app, Request $request, $publicationcode, $issuenumber) {
-                $optionValues = $request->request->get('options');
-
-                try {
-                    $modelId = self::getResponseIdFromServiceResponse(
-                        self::callInternal($app, "/edgecreator/v2/model/$publicationcode/$issuenumber", 'PUT'),
-                        'modelid');
-
-                    $valueIds = self::getResponseIdFromServiceResponse(
-                        self::callInternal($app, "/edgecreator/v2/model/$modelId/value/multiple", 'PUT', $optionValues),
-                        'valueids'
-                    );
-
-                    return new JsonResponse(['modelid' => $modelId, 'valueids' => $valueIds]);
-                }
-                catch (UnexpectedInternalCallResponseException $e) {
-                    return new Response($e->getContent(), $e->getStatusCode());
-                }
-            }
-        )
-            ->assert('publicationcode', self::getParamAssertRegex(\Coa\Models\BaseModel::PUBLICATION_CODE_VALIDATION))
-            ->assert('issuenumber', self::getParamAssertRegex(\Coa\Models\BaseModel::ISSUE_NUMBER_VALIDATION));
-
         $routing->get(
             '/edgecreator/v2/model/{modelId}',
             function (Request $request, Application $app, $modelId) {
@@ -96,13 +70,10 @@ class AppController extends AbstractController
         $routing->post(
             '/edgecreator/v2/step/{modelid}/{stepnumber}',
             function (Application $app, Request $request, $modelid, $stepnumber) {
+                $stepFunctionName = $request->request->get('stepfunctionname');
                 $optionValues = $request->request->get('options');
 
                 try {
-                    $stepFunctionName = self::getResponseIdFromServiceResponse(
-                        self::callInternal($app, "/edgecreator/v2/model/$modelid/$stepnumber", 'DELETE'),
-                        'functionname'
-                    );
 
                     $valueIds = self::getResponseIdFromServiceResponse(
                         self::callInternal($app, "/edgecreator/v2/model/$modelid/$stepnumber", 'PUT', [
@@ -195,13 +166,6 @@ class AppController extends AbstractController
                 return self::callInternal($app, "/edgecreator/model/v2/$modelid/photo/main", 'PUT', [
                     'photoname' => $request->request->get('photoname')
                 ]);
-            }
-        );
-
-        $routing->delete(
-            '/edgecreator/myfontspreview/{previewid}',
-            function (Application $app, Request $request, $previewid) {
-                return self::callInternal($app, "/edgecreator/myfontspreview/$previewid", 'DELETE');
             }
         );
     }
