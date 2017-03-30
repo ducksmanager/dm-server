@@ -10,7 +10,7 @@
          stopOnFailure="false"
          syntaxCheck="false">
     <testsuites>
-        <testsuite name="WTD Server Test Suite">
+        <testsuite name="DM Server Test Suite">
             <directory>./test/</directory>
         </testsuite>
     </testsuites>

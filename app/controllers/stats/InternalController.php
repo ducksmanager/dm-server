@@ -9,6 +9,7 @@ use DmStats\Models\AuteursHistoires;
 use DmStats\Models\UtilisateursHistoiresManquantes;
 use DmStats\Models\UtilisateursPublicationsManquantes;
 use DmStats\Models\UtilisateursPublicationsSuggerees;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\Query\Expr\OrderBy;
 use Silex\Application;
@@ -18,6 +19,10 @@ use Symfony\Component\HttpFoundation\Request;
 
 class InternalController extends AbstractController
 {
+    protected static function wrapInternalService($app, $function) {
+        return parent::return500ErrorOnException($app, DmServer::CONFIG_DB_KEY_DM_STATS, $function);
+    }
+    
     /**
      * @param $routing ControllerCollection
      */
@@ -26,8 +31,8 @@ class InternalController extends AbstractController
         $routing->get(
             '/internal/stats/authorsstorycount/{personCodes}',
             function (Request $request, Application $app, $personCodes) {
-                return AbstractController::return500ErrorOnException($app, function() use ($personCodes) {
-                    $qbStoryCountPerAuthor = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM_STATS)->createQueryBuilder();
+                return self::wrapInternalService($app, function(EntityManager $statsEm) use ($personCodes) {
+                    $qbStoryCountPerAuthor = $statsEm->createQueryBuilder();
                     $qbStoryCountPerAuthor
                         ->select('author_stories.personcode, COUNT(author_stories.storycode) AS storyNumber')
                         ->from(AuteursHistoires::class, 'author_stories')
@@ -50,8 +55,8 @@ class InternalController extends AbstractController
         $routing->get(
             '/internal/stats/authorsstorycount/usercollection/missing',
             function (Request $request, Application $app) {
-                return AbstractController::return500ErrorOnException($app, function() use($app) {
-                    $qbMissingStoryCountPerAuthor = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM_STATS)->createQueryBuilder();
+                return self::wrapInternalService($app, function(EntityManager $statsEm) use($app) {
+                    $qbMissingStoryCountPerAuthor = $statsEm->createQueryBuilder();
                     $qbMissingStoryCountPerAuthor
                         ->select('author_stories_missing_for_user.personcode, COUNT(author_stories_missing_for_user.storycode) AS storyNumber')
                         ->from(UtilisateursHistoiresManquantes::class, 'author_stories_missing_for_user')
@@ -74,9 +79,8 @@ class InternalController extends AbstractController
         $routing->get(
             '/internal/stats/suggestedissues/{countrycode}',
             function (Request $request, Application $app, $countrycode) {
-                return AbstractController::return500ErrorOnException($app, function() use ($app, $countrycode) {
-
-                    $qbGetMostWantedSuggestions = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM_STATS)->createQueryBuilder();
+                return self::wrapInternalService($app, function(EntityManager $statsEm) use ($app, $countrycode) {
+                    $qbGetMostWantedSuggestions = $statsEm->createQueryBuilder();
 
                     $qbGetMostWantedSuggestions
                         ->select('most_suggested.publicationcode', 'most_suggested.issuenumber')

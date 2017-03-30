@@ -23,7 +23,7 @@ class AppController extends AbstractController
              * @codeCoverageIgnore
              */
             function (Application $app, Request $request) {
-                return AbstractController::return500ErrorOnException($app, function() use ($app) {
+                return AbstractController::return500ErrorOnException($app, null, function () use ($app) {
 
                     self::setClientVersion($app, '1.0.0');
 
@@ -31,24 +31,27 @@ class AppController extends AbstractController
                         [
                             'db' => DmServer::CONFIG_DB_KEY_DM,
                             'query' => 'SELECT * FROM users LIMIT 1'
-
-                        ], [
+                        ],
+                        [
                             'db' => DmServer::CONFIG_DB_KEY_COA,
                             'query' => 'SELECT * FROM inducks_countryname LIMIT 1'
-                        ], [
+                        ],
+                        [
                             'db' => DmServer::CONFIG_DB_KEY_COVER_ID,
                             'query' => 'SELECT ID, issuecode, url FROM covers LIMIT 1'
-                        ], [
+                        ],
+                        [
                             'db' => DmServer::CONFIG_DB_KEY_DM_STATS,
                             'query' => 'SELECT * FROM utilisateurs_histoires_manquantes LIMIT 1'
-                        ], [
+                        ],
+                        [
                             'db' => DmServer::CONFIG_DB_KEY_EDGECREATOR,
                             'query' => 'SELECT * FROM edgecreator_modeles2 LIMIT 1'
                         ]
                     ];
 
                     $errors = [];
-                    foreach($databaseChecks as $dbCheck) {
+                    foreach ($databaseChecks as $dbCheck) {
                         $response = DatabaseCheckHelper::checkDatabase($app, $dbCheck['query'], $dbCheck['db']);
                         if ($response->getStatusCode() !== Response::HTTP_OK) {
                             $errors[] = $response->getContent();
@@ -57,8 +60,7 @@ class AppController extends AbstractController
 
                     if (count($errors) > 0) {
                         return new Response(implode('<br />', $errors));
-                    }
-                    else {
+                    } else {
                         return new Response('OK for all databases');
                     }
                 });

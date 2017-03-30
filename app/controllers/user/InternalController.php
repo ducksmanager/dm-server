@@ -8,6 +8,7 @@ use Dm\Models\Numeros;
 use Dm\Models\Users;
 use DmServer\Controllers\AbstractController;
 use DmServer\DmServer;
+use Doctrine\ORM\EntityManager;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,6 +16,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class InternalController extends AbstractController
 {
+    protected static function wrapInternalService($app, $function) {
+        return parent::return500ErrorOnException($app, DmServer::CONFIG_DB_KEY_DM, $function);
+    }
+    
     /**
      * @param $routing ControllerCollection
      */
@@ -23,8 +28,8 @@ class InternalController extends AbstractController
         $routing->get(
             '/internal/user/exists/{username}',
             function (Request $request, Application $app, $username) {
-                return AbstractController::return500ErrorOnException($app, function() use ($username) {
-                    $existingUser = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->getRepository(Users::class)->findBy([
+                return self::wrapInternalService($app, function(EntityManager $dmEm) use ($username) {
+                    $existingUser = $dmEm->getRepository(Users::class)->findBy([
                         'username' => $username
                     ]);
                     if (count($existingUser) > 0) {
@@ -68,9 +73,9 @@ class InternalController extends AbstractController
         $routing->get(
             '/internal/user/check/{username}/{password}',
             function (Request $request, Application $app, $username, $password) {
-                return AbstractController::return500ErrorOnException($app, function() use ($username, $password) {
+                return self::wrapInternalService($app, function(EntityManager $dmEm) use ($username, $password) {
                     /** @var Users $existingUser */
-                    $existingUser = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->getRepository(Users::class)->findOneBy([
+                    $existingUser = $dmEm->getRepository(Users::class)->findOneBy([
                         'username' => $username,
                         'password' => $password
                     ]);
@@ -84,37 +89,37 @@ class InternalController extends AbstractController
         );
 
         $routing->put('/internal/user/new', function (Request $request, Application $app) {
-            return AbstractController::return500ErrorOnException($app, function() use ($request) {
+            return self::wrapInternalService($app, function(EntityManager $dmEm) use ($request) {
                 $user = new Users();
                 $user->setUsername($request->request->get('username'));
                 $user->setPassword(sha1($request->request->get('password')));
                 $user->setEmail($request->request->get('email'));
                 $user->setDateinscription(new \DateTime());
 
-                DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->persist($user);
-                DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->flush();
+                $dmEm->persist($user);
+                $dmEm->flush();
 
                 return new Response('OK', Response::HTTP_CREATED);
             });
         });
 
         $routing->delete('/internal/user/{userId}/data', function (Request $request, Application $app, $userId) {
-            return AbstractController::return500ErrorOnException($app, function() use ($userId) {
+            return self::wrapInternalService($app, function(EntityManager $dmEm) use ($userId) {
 
-                $qb = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->createQueryBuilder();
+                $qb = $dmEm->createQueryBuilder();
 
                 $qb->delete(Numeros::class, 'issues')
                     ->where($qb->expr()->eq('issues.idUtilisateur', ':userId'))
                     ->setParameter(':userId', $userId);
                 $qb->getQuery()->execute();
 
-                $qb = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->createQueryBuilder();
+                $qb = $dmEm->createQueryBuilder();
                 $qb->delete(Achats::class, 'purchases')
                     ->where($qb->expr()->eq('purchases.idUser', ':userId'))
                     ->setParameter(':userId', $userId);
                 $qb->getQuery()->execute();
 
-                $qb = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->createQueryBuilder();
+                $qb = $dmEm->createQueryBuilder();
                 $qb->delete(AuteursPseudos::class, 'authorsUsers')
                     ->where($qb->expr()->eq('authorsUsers.idUser', ':userId'))
                     ->setParameter(':userId', $userId);
@@ -125,8 +130,8 @@ class InternalController extends AbstractController
         });
 
         $routing->post('/internal/user/{userId}/data/bookcase/reset', function (Request $request, Application $app, $userId) {
-            return AbstractController::return500ErrorOnException($app, function() use ($userId) {
-                $em = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM);
+            return self::wrapInternalService($app, function(EntityManager $dmEm) use ($userId) {
+                $em = $dmEm;
 
                 $user = $em->getRepository(Users::class)->findOneBy([
                     'id' => $userId

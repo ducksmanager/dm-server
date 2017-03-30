@@ -139,7 +139,6 @@ class DmServer extends AbstractController implements ControllerProviderInterface
      */
     static function getEntityManager($dbName, $forTest = false) {
         if (!in_array($dbName, self::$configuredEntityManagerNames)) {
-            echo 'Invalid entity manager : '.$dbName;
             return null;
         }
         else {

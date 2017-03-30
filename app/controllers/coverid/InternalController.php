@@ -6,6 +6,7 @@ use CoverId\Models\Covers;
 use DmServer\Controllers\AbstractController;
 use DmServer\DmServer;
 use DmServer\ModelHelper;
+use Doctrine\ORM\EntityManager;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -14,6 +15,10 @@ use Symfony\Component\HttpFoundation\Request;
 
 class InternalController extends AbstractController
 {
+    protected static function wrapInternalService($app, $function) {
+        return parent::return500ErrorOnException($app, DmServer::CONFIG_DB_KEY_COVER_ID, $function);
+    }
+    
     /**
      * @param $routing ControllerCollection
      */
@@ -22,10 +27,10 @@ class InternalController extends AbstractController
         $routing->get(
             '/internal/cover-id/issuecodes/{coverids}',
             function (Request $request, Application $app, $coverids) {
-                return AbstractController::return500ErrorOnException($app, function() use ($coverids) {
+                return self::wrapInternalService($app, function(EntityManager $coverEm) use ($coverids) {
                     $coveridsList = explode(',', $coverids);
 
-                    $qb = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_COVER_ID)->createQueryBuilder();
+                    $qb = $coverEm->createQueryBuilder();
                     $qb
                         ->select('covers.issuecode')
                         ->from(Covers::class, 'covers');
@@ -36,7 +41,7 @@ class InternalController extends AbstractController
 
                     array_walk(
                         $results,
-                        function($issue, $i) use ($coveridsList, &$issueCodes) {
+                        function ($issue, $i) use ($coveridsList, &$issueCodes) {
                             $issueCodes[$coveridsList[$i]] = $issue['issuecode'];
                         }
                     );
@@ -49,10 +54,10 @@ class InternalController extends AbstractController
         $routing->get(
             '/internal/cover-id/download/{coverUrl}',
             function (Request $request, Application $app, $coverUrl) {
-                return AbstractController::return500ErrorOnException($app, function() use ($coverUrl) {
+                return self::wrapInternalService($app, function() use ($coverUrl) {
                     $localFilePath = DmServer::$settings['image_local_root'] . basename($coverUrl);
 
-                    @mkdir(DmServer::$settings['image_local_root'].dirname($coverUrl), 0777, true);
+                    @mkdir(DmServer::$settings['image_local_root'] . dirname($coverUrl), 0777, true);
                     file_put_contents(
                         $localFilePath,
                         file_get_contents(DmServer::$settings['image_remote_root'] . $coverUrl)

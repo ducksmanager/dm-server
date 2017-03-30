@@ -12,6 +12,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class InternalController extends AbstractController
 {
+    protected static function wrapInternalService($app, $function) {
+        return parent::return500ErrorOnException($app, null, $function);
+    }
+
     /**
      * @param $routing ControllerCollection
      */
@@ -20,7 +24,7 @@ class InternalController extends AbstractController
         $routing->post(
             '/internal/rawsql',
             function (Request $request, Application $app) {
-                return AbstractController::return500ErrorOnException($app, function() use ($request, $app) {
+                return self::wrapInternalService($app, function() use ($request, $app) {
                     $query = $request->request->get('query');
                     $db = $request->request->get('db');
 

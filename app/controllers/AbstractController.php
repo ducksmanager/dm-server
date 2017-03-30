@@ -1,6 +1,7 @@
 <?php
 namespace DmServer\Controllers;
 
+use DmServer\DmServer;
 use DmServer\ModelHelper;
 use Silex\Application;
 use Silex\Application\TranslationTrait;
@@ -151,13 +152,24 @@ abstract class AbstractController
     }
 
     /**
-     * @param $app Application
-     * @param $function callable
+     * @param Application $app
+     * @param callable $function
+     * @return mixed|Response
+     * @throws \Exception
+     */
+    protected static function wrapInternalService($app, $function) {
+        throw new \Exception('Should not be called directly');
+    }
+
+    /**
+     * @param Application $app
+     * @param string $integratedEm
+     * @param callable $function
      * @return mixed|Response
      */
-    protected static function return500ErrorOnException($app, $function) {
+    protected static function return500ErrorOnException($app, $integratedEm, $function) {
         try {
-            return call_user_func($function);
+            return call_user_func($function, DmServer::getEntityManager($integratedEm));
         }
         catch (\Exception $e) {
             if (isset($app['monolog'])) {

@@ -61,9 +61,7 @@ class AppController extends AbstractController
         $routing->get(
             '/edgecreator/v2/model/{modelId}',
             function (Request $request, Application $app, $modelId) {
-                return AbstractController::return500ErrorOnException($app, function () use ($app, $modelId) {
-                    return self::callInternal($app, "/edgecreator/v2/model/$modelId", 'GET');
-                });
+                return self::callInternal($app, "/edgecreator/v2/model/$modelId", 'GET');
             }
         );
 

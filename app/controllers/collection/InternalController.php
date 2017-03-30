@@ -8,6 +8,7 @@ use Dm\Models\Numeros;
 use DmServer\Controllers\AbstractController;
 use DmServer\DmServer;
 use DmServer\ModelHelper;
+use Doctrine\ORM\EntityManager;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,6 +17,10 @@ use Symfony\Component\HttpFoundation\Request;
 
 class InternalController extends AbstractController
 {
+    protected static function wrapInternalService($app, $function) {
+        return parent::return500ErrorOnException($app, DmServer::CONFIG_DB_KEY_DM, $function);
+    }
+    
     /**
      * @param $routing ControllerCollection
      */
@@ -24,9 +29,9 @@ class InternalController extends AbstractController
         $routing->get(
             '/internal/collection/issues',
             function (Request $request, Application $app) {
-                return AbstractController::return500ErrorOnException($app, function() use ($app) {
+                return self::wrapInternalService($app, function(EntityManager $dmEm) use ($app) {
                     /** @var Numeros[] $issues */
-                    $issues = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->getRepository(Numeros::class)->findBy(
+                    $issues = $dmEm->getRepository(Numeros::class)->findBy(
                         ['idUtilisateur' => self::getSessionUser($app)['id']],
                         ['pays' => 'asc', 'magazine' => 'asc', 'numero' => 'asc']
                     );
@@ -39,12 +44,12 @@ class InternalController extends AbstractController
         $routing->delete(
             '/internal/collection/issues',
             function (Request $request, Application $app) {
-                return AbstractController::return500ErrorOnException($app, function() use ($app, $request) {
+                return self::wrapInternalService($app, function(EntityManager $dmEm) use ($app, $request) {
                     $country = $request->request->get('country');
                     $publication = $request->request->get('publication');
                     $issuenumbers = $request->request->get('issuenumbers');
 
-                    $qb = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->createQueryBuilder();
+                    $qb = $dmEm->createQueryBuilder();
                     $qb
                         ->delete(Numeros::class, 'issues')
 
@@ -72,10 +77,7 @@ class InternalController extends AbstractController
         $routing->post(
             '/internal/collection/purchases/{id}',
             function (Request $request, Application $app) {
-                return AbstractController::return500ErrorOnException($app, function () use ($app, $request) {
-
-                    $dmEm = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM);
-
+                return self::wrapInternalService($app, function (EntityManager $dmEm) use ($app, $request) {
                     $purchaseId = $request->request->get('id');
                     $purchaseDate = $request->request->get('date');
                     $purchaseDescription = $request->request->get('description');
@@ -102,10 +104,7 @@ class InternalController extends AbstractController
         $routing->post(
             '/internal/collection/issues',
             function (Request $request, Application $app) {
-                return AbstractController::return500ErrorOnException($app, function() use ($app, $request) {
-
-                    $dmEm = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM);
-
+                return self::wrapInternalService($app, function(EntityManager $dmEm) use ($app, $request) {
                     $country = $request->request->get('country');
                     $publication = $request->request->get('publication');
                     $issuenumbers = $request->request->get('issuenumbers');

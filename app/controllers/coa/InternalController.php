@@ -13,6 +13,7 @@ use CoverId\Models\Covers;
 use DmServer\Controllers\AbstractController;
 use DmServer\DmServer;
 use DmServer\ModelHelper;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query\Expr\Join;
 use Exception;
 use Silex\Application;
@@ -22,6 +23,10 @@ use Symfony\Component\HttpFoundation\Request;
 
 class InternalController extends AbstractController
 {
+    protected static function wrapInternalService($app, $function) {
+        return parent::return500ErrorOnException($app, DmServer::CONFIG_DB_KEY_COA, $function);
+    }
+
     /**
      * @param $routing ControllerCollection
      */
@@ -30,8 +35,8 @@ class InternalController extends AbstractController
         $routing->get(
             '/internal/coa/countrynames/{countryCodes}',
             function (Request $request, Application $app, $countryCodes) {
-                return AbstractController::return500ErrorOnException($app, function() use ($countryCodes) {
-                    $qb = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_COA)->createQueryBuilder();
+                return self::wrapInternalService($app, function(EntityManager $coaEm) use ($countryCodes) {
+                    $qb = $coaEm->createQueryBuilder();
                     $qb
                         ->select('inducks_countryname.countrycode, inducks_countryname.countryname')
                         ->from(InducksCountryname::class, 'inducks_countryname');
@@ -56,8 +61,8 @@ class InternalController extends AbstractController
         $routing->get(
             '/internal/coa/publicationtitles/{publicationCodes}',
             function (Request $request, Application $app, $publicationCodes) {
-                return AbstractController::return500ErrorOnException($app, function() use ($publicationCodes) {
-                    $qb = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_COA)->createQueryBuilder();
+                return self::wrapInternalService($app, function(EntityManager $coaEm) use ($publicationCodes) {
+                    $qb = $coaEm->createQueryBuilder();
                     $qb
                         ->select('inducks_publication.publicationcode, inducks_publication.title')
                         ->from(InducksPublication::class, 'inducks_publication');
@@ -86,8 +91,8 @@ class InternalController extends AbstractController
         $routing->get(
             '/internal/coa/issues/{publicationCode}',
             function (Request $request, Application $app, $publicationCode) {
-                return AbstractController::return500ErrorOnException($app, function() use ($publicationCode) {
-                    $qb = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_COA)->createQueryBuilder();
+                return self::wrapInternalService($app, function(EntityManager $coaEm) use ($publicationCode) {
+                    $qb = $coaEm->createQueryBuilder();
                     $qb
                         ->select('inducks_issue.issuenumber')
                         ->from(InducksIssue::class, 'inducks_issue');
@@ -109,10 +114,10 @@ class InternalController extends AbstractController
         $routing->get(
             '/internal/coa/issuesbycodes/{issuecodes}',
             function (Request $request, Application $app, $issuecodes) {
-                return AbstractController::return500ErrorOnException($app, function() use ($issuecodes) {
+                return self::wrapInternalService($app, function(EntityManager $coaEm) use ($issuecodes) {
                     $issuecodesList = explode(',', $issuecodes);
 
-                    $qbIssueInfo = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_COA)->createQueryBuilder();
+                    $qbIssueInfo = $coaEm->createQueryBuilder();
                     $qbIssueInfo
                         ->select('inducks_publication.countrycode, inducks_publication.title, inducks_issue.issuenumber, inducks_issue.issuecode')
                         ->from(InducksIssue::class, 'inducks_issue')
@@ -163,10 +168,10 @@ class InternalController extends AbstractController
         $routing->get(
             '/internal/coa/authorsfullnames/{authors}',
             function (Request $request, Application $app, $authors) {
-                return AbstractController::return500ErrorOnException($app, function() use($authors) {
+                return self::wrapInternalService($app, function(EntityManager $coaEm) use($authors) {
                     $authorsList = array_unique(explode(',', $authors));
 
-                    $qbAuthorsFullNames = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_COA)->createQueryBuilder();
+                    $qbAuthorsFullNames = $coaEm->createQueryBuilder();
                     $qbAuthorsFullNames
                         ->select('p.personcode, p.fullname')
                         ->from(InducksPerson::class, 'p')
@@ -186,10 +191,10 @@ class InternalController extends AbstractController
         $routing->get(
             '/internal/coa/storydetails/{storyCodes}',
             function (Request $request, Application $app, $storyCodes) {
-                return AbstractController::return500ErrorOnException($app, function() use($storyCodes) {
+                return self::wrapInternalService($app, function(EntityManager $coaEm) use($storyCodes) {
                     $storyList = array_unique(explode(',', $storyCodes));
 
-                    $qbStoryDetails = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_COA)->createQueryBuilder();
+                    $qbStoryDetails = $coaEm->createQueryBuilder();
                     $qbStoryDetails
                         ->select('story.storycode, story.title, story.storycomment')
                         ->from(InducksStory::class, 'story')
