@@ -116,6 +116,17 @@ class EdgeCreatorTest extends TestCommon
         ]))], $objectResponse->newStepNumbers);
     }
 
+    public function testCloneStepNothingToClone() {
+        $model = $this->getV2Model('fr', 'PM', '502');
+
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/step/clone/{$model->getId()}/3/to/4", TestCommon::$edgecreatorUser, 'POST')->call();
+
+        $this->assertEquals('No values to clone for '.json_encode([
+            'idModele' => '1',
+            'ordre' => '3'
+        ]), $response->getContent());
+    }
+
     public function testUpdateNonExistingStep() {
         $model = $this->getV2Model('fr', 'PM', '502');
 

@@ -157,40 +157,41 @@ class InternalController extends AbstractController
         $routing->post(
             '/internal/edgecreator/step/clone/{modelId}/{stepNumber}/{newStepNumber}',
             function (Request $request, Application $app, $modelId, $stepNumber, $newStepNumber) {
-                $em = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR);
+                return AbstractController::return500ErrorOnException($app, function() use ($app, $modelId, $stepNumber, $newStepNumber) {
+                    $em = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR);
 
-                $criteria = [
-                    'idModele' => $modelId,
-                    'ordre' => $stepNumber
-                ];
-                /** @var TranchesEnCoursValeurs[] $values */
-                $values = $em->getRepository(TranchesEnCoursValeurs::class)->findBy($criteria);
+                    $criteria = [
+                        'idModele' => $modelId,
+                        'ordre' => $stepNumber
+                    ];
+                    /** @var TranchesEnCoursValeurs[] $values */
+                    $values = $em->getRepository(TranchesEnCoursValeurs::class)->findBy($criteria);
 
-                if (count($values) === 0) {
-                    throw new \Exception('No values to clone for '.print_r($criteria, true));
-                }
+                    if (count($values) === 0) {
+                        throw new \Exception('No values to clone for '.json_encode($criteria, true));
+                    }
 
-                $functionName = $values[0]->getNomFonction();
+                    $functionName = $values[0]->getNomFonction();
 
-                $newStepNumbers = array_map(function(TranchesEnCoursValeurs $value) use ($em, $newStepNumber) {
-                    $oldStepNumber = $value->getOrdre();
-                    $newValue = new TranchesEnCoursValeurs();
-                    $newValue->setIdModele($value->getIdModele());
-                    $newValue->setNomFonction($value->getNomFonction());
-                    $newValue->setOptionNom($value->getOptionNom());
-                    $newValue->setOptionValeur($value->getOptionValeur());
-                    $newValue->setOrdre((int)$newStepNumber);
-                    $em->persist($newValue);
-                    
-                    return [['old' => $oldStepNumber, 'new' => $newValue->getOrdre()]];
-                }, $values);
+                    $newStepNumbers = array_map(function(TranchesEnCoursValeurs $value) use ($em, $newStepNumber) {
+                        $oldStepNumber = $value->getOrdre();
+                        $newValue = new TranchesEnCoursValeurs();
+                        $newValue->setIdModele($value->getIdModele());
+                        $newValue->setNomFonction($value->getNomFonction());
+                        $newValue->setOptionNom($value->getOptionNom());
+                        $newValue->setOptionValeur($value->getOptionValeur());
+                        $newValue->setOrdre((int)$newStepNumber);
+                        $em->persist($newValue);
 
-                $uniqueStepChanges = array_values(array_unique($newStepNumbers, SORT_REGULAR ));
+                        return [['old' => $oldStepNumber, 'new' => $newValue->getOrdre()]];
+                    }, $values);
 
-                $em->flush();
+                    $uniqueStepChanges = array_values(array_unique($newStepNumbers, SORT_REGULAR ));
 
-                return new JsonResponse(['newStepNumbers' => array_unique($uniqueStepChanges), 'functionName' => $functionName]);
+                    $em->flush();
 
+                    return new JsonResponse(['newStepNumbers' => array_unique($uniqueStepChanges), 'functionName' => $functionName]);
+                });
             }
         )
             ->assert('stepNumber', self::getParamAssertRegex('\\d+'))
