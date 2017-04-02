@@ -16,6 +16,7 @@ use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class InternalController extends AbstractController
 {
@@ -257,7 +258,7 @@ class InternalController extends AbstractController
             function (Request $request, Application $app, $modelId) {
                 return self::wrapInternalService($app, function (EntityManager $ecEm) use ($app, $modelId) {
                     $model = $ecEm->getRepository(TranchesEnCoursModeles::class)->find($modelId);
-                    return new JsonResponse(self::getSerializer()->serialize($model, 'json'));
+                    return new JsonResponse(self::getSerializer()->serialize($model, 'json'), Response::HTTP_OK, [], true);
                 });
             }
         );
@@ -313,14 +314,23 @@ class InternalController extends AbstractController
         $routing->post(
             '/internal/edgecreator/model/v2/{modelId}/readytopublish/{isReadyToPublish}',
             function (Application $app, Request $request, $modelId, $isReadyToPublish) {
-                return self::wrapInternalService($app, function (EntityManager $ecEm) use ($modelId, $isReadyToPublish) {
+                return self::wrapInternalService($app, function (EntityManager $ecEm) use ($request, $modelId, $isReadyToPublish) {
+                    $designers = $request->request->get('designers');
+                    $photographers = $request->request->get('photographers');
+
+                    /** @var TranchesEnCoursModeles $model */
                     $model = $ecEm->getRepository(TranchesEnCoursModeles::class)->find($modelId);
                     $model->setActive(false);
+                    $model->setPhotographes(implode(',', $photographers));
+                    $model->setCreateurs(implode(',', $designers));
                     $model->setPretepourpublication($isReadyToPublish === '1');
                     $ecEm->persist($model);
                     $ecEm->flush();
 
-                    return new JsonResponse(['readytopublish' => ['modelid' => $model->getId(), 'readytopublish' => $isReadyToPublish === '1']]);
+                    return new JsonResponse(self::getSerializer()->serialize([
+                        'model' => $model,
+                        'readytopublish' => $isReadyToPublish === '1'
+                    ], 'json'), 200, [], true);
                 });
             }
         );

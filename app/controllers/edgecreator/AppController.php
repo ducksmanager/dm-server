@@ -93,7 +93,7 @@ class AppController extends AbstractController
         ;
 
         $routing->post(
-            '/edgecreator/step/shift/{modelid}/{stepnumber}/{isincludingthisstep}',
+            '/edgecreator/v2/step/shift/{modelid}/{stepnumber}/{isincludingthisstep}',
             function (Application $app, Request $request, $modelid, $stepnumber, $isincludingthisstep) {
                 return self::callInternal($app, "/edgecreator/step/shift/$modelid/$stepnumber/$isincludingthisstep", 'POST');
             }
@@ -101,7 +101,7 @@ class AppController extends AbstractController
             ->assert('stepnumber', self::getParamAssertRegex('\\d+'));
 
         $routing->post(
-            '/edgecreator/step/clone/{modelid}/{stepnumber}/to/{newstepnumber}',
+            '/edgecreator/v2/step/clone/{modelid}/{stepnumber}/to/{newstepnumber}',
             function (Application $app, Request $request, $modelid, $stepnumber, $newstepnumber) {
                 return self::callInternal($app, "/edgecreator/step/clone/$modelid/$stepnumber/$newstepnumber", 'POST');
             }
@@ -111,7 +111,7 @@ class AppController extends AbstractController
         ->assert('newstepnumber', self::getParamAssertRegex('\\d+'));
 
         $routing->delete(
-            '/edgecreator/step/{modelid}/{stepnumber}',
+            '/edgecreator/v2/step/{modelid}/{stepnumber}',
             function (Application $app, Request $request, $modelid, $stepnumber) {
                 return self::callInternal($app, "/edgecreator/step/$modelid/$stepnumber", 'DELETE');
             }
@@ -154,7 +154,10 @@ class AppController extends AbstractController
         $routing->post(
             '/edgecreator/model/v2/{modelid}/readytopublish/{isreadytopublish}',
             function (Application $app, Request $request, $modelid, $isreadytopublish) {
-                return self::callInternal($app, "/edgecreator/model/v2/$modelid/readytopublish/$isreadytopublish", 'POST');
+                return self::callInternal($app, "/edgecreator/model/v2/$modelid/readytopublish/$isreadytopublish", 'POST', [
+                    'designers' => $request->request->get('designers'),
+                    'photographers' => $request->request->get('photographers')
+                ]);
             }
         );
 

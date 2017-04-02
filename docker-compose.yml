@@ -1,7 +1,7 @@
 version: '2.1'
 services:
   web:
-    container_name: web
+    container_name: dm-server
     build: .
     ports:
      - "10001:80"
@@ -11,6 +11,8 @@ services:
      - db_dm
      - db_dm_stats
      - db_edgecreator
+    volumes:
+     - .:/var/www/html/dm-server
   db_coa:
     container_name: db_coa
     image: "bperel/coa-box"
@@ -62,3 +64,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: changeme
       MYSQL_DATABASE: dm_stats
+networks:
+  default:
+    external:
+      name: dm_network

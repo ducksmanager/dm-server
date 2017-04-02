@@ -55,7 +55,7 @@ class EdgeCreatorTest extends TestCommon
             'createurs' => NULL,
             'active' => '1',
             'pretepourpublication' => '0'
-        ])), json_decode($responseModel));
+        ])), $responseModel);
     }
 
     public function testCreateStepWithOptionValue() {
@@ -321,16 +321,28 @@ class EdgeCreatorTest extends TestCommon
     public function testSetModelReadyForPublication() {
         $model = $this->getV2Model('fr', 'PM', '502');
 
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/{$model->getId()}/readytopublish/1", TestCommon::$edgecreatorUser, 'POST')
+        $designers = ['designer1'];
+        $photographers = ['photograph1', 'photograph2'];
+
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/{$model->getId()}/readytopublish/1", TestCommon::$edgecreatorUser, 'POST', [
+            'designers' => $designers,
+            'photographers' => $photographers
+        ])
             ->call();
 
-        $objectResponse = json_decode($response->getContent());
+        $objectResponse = json_decode($response->getContent(), true);
 
-        $this->assertEquals(['modelid' => $model->getId(), 'readytopublish' => true], (array) $objectResponse->readytopublish);
+        $this->assertEquals($model->getId(), $objectResponse['model']['id']);
+        $this->assertEquals(implode(',', $photographers), $objectResponse['model']['photographes']);
+        $this->assertEquals(implode(',', $designers), $objectResponse['model']['createurs']);
 
         $newModel = $this->getV2Model('fr', 'PM', '502');
         $this->assertEquals(true, $newModel->getPretepourpublication());
+    }
 
+
+    public function testSetModelNotReadyForPublication() {
+        $model = $this->getV2Model('fr', 'PM', '502');
 
         $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/{$model->getId()}/readytopublish/0", TestCommon::$edgecreatorUser, 'POST')
             ->call();
