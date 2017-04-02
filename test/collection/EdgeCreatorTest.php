@@ -37,6 +37,23 @@ class EdgeCreatorTest extends TestCommon
         self::createEdgeCreatorData();
     }
 
+    public function testCreateV2Model()
+    {
+        $response = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/v2/model/fr/DDD/10',
+            TestCommon::$edgecreatorUser, 'PUT'
+        )->call();
+
+        $createdModel = $this->getEm()->getRepository(TranchesEnCoursModeles::class)->findOneBy([
+            'pays' => 'fr',
+            'magazine' => 'DDD',
+            'numero' => '10'
+        ]);
+
+        $objectResponse = json_decode($response->getContent());
+
+        $this->assertEquals($createdModel->getId(), $objectResponse->modelid);
+    }
+
     public function testLoadV2Model() {
         $model = $this->getV2Model('fr', 'PM', '502');
 

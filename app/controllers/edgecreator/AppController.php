@@ -65,6 +65,26 @@ class AppController extends AbstractController
             }
         );
 
+        $routing->put(
+            '/edgecreator/v2/model/{publicationcode}/{issuenumber}',
+            function (Application $app, Request $request, $publicationcode, $issuenumber) {
+                try {
+                    $modelId = self::getResponseIdFromServiceResponse(
+                        self::callInternal($app, "/edgecreator/v2/model/$publicationcode/$issuenumber", 'PUT'),
+                        'modelid'
+                    );
+
+                    return new JsonResponse(['modelid' => $modelId]);
+                }
+                catch (UnexpectedInternalCallResponseException $e) {
+                    return new Response($e->getContent(), $e->getStatusCode());
+                }
+            }
+        )
+            ->assert('publicationcode', self::getParamAssertRegex(\Coa\Models\BaseModel::PUBLICATION_CODE_VALIDATION))
+            ->assert('issuenumber', self::getParamAssertRegex(\Coa\Models\BaseModel::ISSUE_NUMBER_VALIDATION))
+        ;
+
         $routing->post(
             '/edgecreator/v2/step/{modelid}/{stepnumber}',
             function (Application $app, Request $request, $modelid, $stepnumber) {

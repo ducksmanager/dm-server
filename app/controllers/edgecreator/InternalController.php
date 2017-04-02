@@ -52,7 +52,31 @@ class InternalController extends AbstractController
             }
         )
             ->assert('publicationCode', self::getParamAssertRegex(\Coa\Models\BaseModel::PUBLICATION_CODE_VALIDATION))
-            ->assert('stepNumber', self::getParamAssertRegex('\\d+'));
+            ->assert('stepNumber', self::getParamAssertRegex('[-\\d]+'));
+
+        $routing->put(
+            '/internal/edgecreator/v2/model/{publicationCode}/{issueNumber}',
+            function (Request $request, Application $app, $publicationCode, $issueNumber) {
+                return self::wrapInternalService($app, function(EntityManager $ecEm) use ($app, $publicationCode, $issueNumber) {
+                    list($country, $publication) = explode('/', $publicationCode);
+
+                    $model = new TranchesEnCoursModeles();
+                    $model->setPays($country);
+                    $model->setMagazine($publication);
+                    $model->setNumero($issueNumber);
+                    $model->setUsername(self::getSessionUser($app)['username']);
+                    $model->setActive(true);
+
+                    $ecEm->persist($model);
+                    $ecEm->flush();
+
+                    return new JsonResponse(['modelid' => $model->getId()]);
+                });
+            }
+        )
+            ->assert('publicationCode', self::getParamAssertRegex(\Coa\Models\BaseModel::PUBLICATION_CODE_VALIDATION))
+            ->assert('issueNumber', self::getParamAssertRegex(\Coa\Models\BaseModel::ISSUE_NUMBER_VALIDATION))
+        ;
 
         $routing->put(
             '/internal/edgecreator/value',
@@ -131,7 +155,9 @@ class InternalController extends AbstractController
                     return new JsonResponse(['valueids' => $createdOptions]);
                 });
             }
-        );
+        )
+            ->assert('modelId', self::getParamAssertRegex('\\d+'))
+            ->assert('stepNumber', self::getParamAssertRegex('[-\\d]+'));
 
         $routing->put(
             '/internal/edgecreator/interval/{valueId}/{firstIssueNumber}/{lastIssueNumber}',
@@ -190,7 +216,7 @@ class InternalController extends AbstractController
                 });
             }
         )
-            ->assert('stepNumber', self::getParamAssertRegex('\\d+'))
+            ->assert('stepNumber', self::getParamAssertRegex('[-\\d]+'))
             ->assert('newStepNumber', self::getParamAssertRegex('\\d+'));
 
         $routing->post(
@@ -229,7 +255,7 @@ class InternalController extends AbstractController
                 });
             }
         )
-            ->assert('stepNumber', self::getParamAssertRegex('\\d+'));
+            ->assert('stepNumber', self::getParamAssertRegex('[-\\d]+'));
 
 
         $routing->delete(
@@ -251,7 +277,7 @@ class InternalController extends AbstractController
                 });
             }
         )
-            ->assert('stepNumber', self::getParamAssertRegex('\\d+'));
+            ->assert('stepNumber', self::getParamAssertRegex('[-\\d]+'));
 
         $routing->get(
             '/internal/edgecreator/v2/model/{modelId}',
