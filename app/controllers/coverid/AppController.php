@@ -64,8 +64,8 @@ class AppController extends AbstractController
 
                         $app['monolog']->addInfo('Cover ID search: processing done');
 
-                        if (!is_null($engineResponse) && !empty($engineResponse['image_ids'])) {
-                            $coverids = implode(',', $engineResponse['image_ids']);
+                        if (!is_null($engineResponse) && !empty($engineResponse->getImageIds())) {
+                            $coverids = implode(',', $engineResponse->getImageIds());
                             $app['monolog']->addInfo('Cover ID search: matched cover IDs ' . $coverids);
                             $issueCodes = ModelHelper::getUnserializedArrayFromJson(
                                 self::callInternal($app, '/cover-id/issuecodes', 'GET', [$coverids])->getContent()

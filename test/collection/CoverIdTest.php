@@ -1,6 +1,7 @@
 <?php
 namespace DmServer\Test;
 
+use Dm\Contracts\Dtos\SimilarImagesOutput;
 use DmServer\SimilarImagesHelper;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -23,7 +24,7 @@ class CoverIdTest extends TestCommon
         @unlink(implode(DIRECTORY_SEPARATOR, self::$uploadDestination));
         copy(self::getPathToFileToUpload(self::$exampleImage), self::getPathToFileToUpload(self::$exampleImageToUpload));
 
-        SimilarImagesHelper::$mockedResults = [
+        SimilarImagesHelper::$mockedResults = json_encode([
             "bounding_rects" => [
                 "height" => 846,
                 "width"  => 625,
@@ -34,7 +35,7 @@ class CoverIdTest extends TestCommon
             "scores" => [58.0],
             "tags" => [''],
             "type" => "SEARCH_RESULTS"
-        ];
+        ]);
     }
 
     public function tearDown()

@@ -26,6 +26,9 @@
             "CoverId\\Models\\": [
                 "app/models/CoverId/Models"
             ],
+            "CoverId\\Contracts\\": [
+                "app/models/CoverId/Contracts"
+            ],
             "Dm\\Contracts\\": [
                 "app/models/Dm/Contracts"
             ],

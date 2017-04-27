@@ -18,6 +18,9 @@ class EdgeCreatorTest extends TestCommon
     }
 
     /**
+     * @param string $countryCode
+     * @param string $publicationCode
+     * @param string $issueCode
      * @return TranchesEnCoursModeles
      */
     private function getV2Model($countryCode, $publicationCode, $issueCode)
