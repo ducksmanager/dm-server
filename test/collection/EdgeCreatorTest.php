@@ -127,7 +127,7 @@ class EdgeCreatorTest extends TestCommon
     public function testCloneStep() {
         $model = $this->getV2Model('fr', 'PM', '502');
 
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/step/clone/{$model->getId()}/1/to/2", TestCommon::$edgecreatorUser, 'POST')->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/step/clone/{$model->getId()}/1/to/2", TestCommon::$edgecreatorUser, 'POST')->call();
 
         $objectResponse = json_decode($response->getContent());
 
@@ -139,7 +139,7 @@ class EdgeCreatorTest extends TestCommon
     public function testCloneStepNothingToClone() {
         $model = $this->getV2Model('fr', 'PM', '502');
 
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/step/clone/{$model->getId()}/3/to/4", TestCommon::$edgecreatorUser, 'POST')->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/step/clone/{$model->getId()}/3/to/4", TestCommon::$edgecreatorUser, 'POST')->call();
 
         $this->assertEquals('No values to clone for '.json_encode([
             'idModele' => '1',
@@ -260,7 +260,7 @@ class EdgeCreatorTest extends TestCommon
     public function testShiftStep() {
         $model = $this->getV2Model('fr', 'PM', '502');
 
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/step/shift/{$model->getId()}/1/inclusive", TestCommon::$edgecreatorUser, 'POST')->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/step/shift/{$model->getId()}/1/inclusive", TestCommon::$edgecreatorUser, 'POST')->call();
         $objectResponse = json_decode($response->getContent());
 
         $this->assertEquals(json_decode(json_encode([
@@ -273,7 +273,7 @@ class EdgeCreatorTest extends TestCommon
         $model = $this->getV2Model('fr', 'PM', '502');
         $stepToRemove = 1;
 
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/step/{$model->getId()}/$stepToRemove", TestCommon::$edgecreatorUser, 'DELETE')->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/step/{$model->getId()}/$stepToRemove", TestCommon::$edgecreatorUser, 'DELETE')->call();
         $objectResponse = json_decode($response->getContent());
 
         $this->assertEquals([
@@ -364,12 +364,16 @@ class EdgeCreatorTest extends TestCommon
     public function testSetModelNotReadyForPublication() {
         $model = $this->getV2Model('fr', 'PM', '502');
 
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/{$model->getId()}/readytopublish/0", TestCommon::$edgecreatorUser, 'POST')
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/{$model->getId()}/readytopublish/0", TestCommon::$edgecreatorUser, 'POST', [
+            'photographers' => ['brunoperel','nonoox'],
+            'designers' => ['brunoperel']
+        ])
             ->call();
 
         $objectResponse = json_decode($response->getContent());
 
-        $this->assertEquals(['modelid' => $model->getId(), 'readytopublish' => false], (array) $objectResponse->readytopublish);
+        $this->assertEquals($model->getId(), $objectResponse->model->id);
+        $this->assertEquals($model->getPretepourpublication(), $objectResponse->readytopublish);
 
         $newModel = $this->getV2Model('fr', 'PM', '502');
         $this->assertEquals(false, $newModel->getPretepourpublication());
