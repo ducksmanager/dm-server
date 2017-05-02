@@ -29,9 +29,12 @@ abstract class AbstractController
     }
 
     private static function callInternalGetRequest(Application $app, $url, $parameters = []) {
-        $subRequest = Request::create('/internal' . $url . (count($parameters) === 0 ? '' : '/' . implode('/', array_values($parameters))));
-
+        $subRequest = Request::create(self::buildUrl('/internal'.$url, $parameters));
         return $app->handle($subRequest, HttpKernelInterface::SUB_REQUEST, false);
+    }
+
+    public static function buildUrl($url, $getParameters = []) {
+        return $url . (count($getParameters) === 0 ? '' : '/' . implode('/', array_values($getParameters)));
     }
 
     /**

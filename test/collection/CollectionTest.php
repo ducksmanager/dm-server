@@ -1,6 +1,7 @@
 <?php
 namespace DmServer\Test;
 
+use Dm\Models\Achats;
 use Dm\Models\Numeros;
 use DmServer\Controllers\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -88,4 +89,71 @@ class CollectionTest extends TestCommon
         $this->assertFalse($createdIssue->getAv());
     }
 
+    public function testFetchCollection() {
+        $collectionUserInfo = self::createTestCollection('dm_test_user');
+        self::setSessionUser($this->app, $collectionUserInfo);
+
+        self::createCoaData();
+
+        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/issues', TestCommon::$dmUser)->call();
+
+        $objectResponse = json_decode($response->getContent());
+
+        $this->assertInternalType('object', $objectResponse);
+
+        $this->assertInternalType('object', $objectResponse->static);
+        $this->assertInternalType('object', $objectResponse->static->pays);
+        $this->assertEquals('France', $objectResponse->static->pays->fr);
+
+        $this->assertInternalType('object', $objectResponse->static->magazines);
+        $this->assertEquals('Dynastie', $objectResponse->static->magazines->{'fr/DDD'});
+        $this->assertEquals('Parade', $objectResponse->static->magazines->{'fr/MP'});
+
+        $this->assertInternalType('object', $objectResponse->numeros);
+        $this->assertInternalType('array', $objectResponse->numeros->{'fr/DDD'});
+        $this->assertEquals('1', $objectResponse->numeros->{'fr/DDD'}[0]->numero);
+        $this->assertEquals('indefini', $objectResponse->numeros->{'fr/DDD'}[0]->etat);
+
+        $this->assertInternalType('array', $objectResponse->numeros->{'fr/MP'});
+        $this->assertEquals('300', $objectResponse->numeros->{'fr/MP'}[0]->numero);
+        $this->assertEquals('bon', $objectResponse->numeros->{'fr/MP'}[0]->etat);
+        $this->assertEquals('301', $objectResponse->numeros->{'fr/MP'}[1]->numero);
+        $this->assertEquals('mauvais', $objectResponse->numeros->{'fr/MP'}[1]->etat);
+    }
+
+    public function testUpdatePurchase()
+    {
+        $collectionUserInfo = self::createTestCollection('dm_test_user');
+        self::setSessionUser($this->app, $collectionUserInfo);
+
+        $purchaseToUpdate = $collectionUserInfo['purchaseIds'][0];
+
+        $this->buildAuthenticatedServiceWithTestUser("/collection/purchases/$purchaseToUpdate", TestCommon::$dmUser, 'POST', [
+            'date' => '2017-01-01',
+            'description' => 'New description'
+        ])->call();
+
+        /** @var Achats $updatedPurchase */
+        $updatedPurchase = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->getRepository(Achats::class)->find(
+            $purchaseToUpdate
+        );
+
+        $this->assertEquals(\DateTime::createFromFormat('Y-m-d', '2017-01-01'), $updatedPurchase->getDate());
+        $this->assertEquals('New description', $updatedPurchase->getDescription());
+    }
+
+    public function testUpdatePurchaseOfOtherUser()
+    {
+        $collectionUserInfo = self::createTestCollection('dm_test_user');
+        self::setSessionUser($this->app, $collectionUserInfo);
+
+        $response = $this->buildAuthenticatedServiceWithTestUser("/collection/purchases/3", TestCommon::$dmUser, 'POST', [
+            'date' => '2017-01-01',
+            'description' => 'New description'
+        ])->call();
+
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+
+        $a = 1;
+    }
 }

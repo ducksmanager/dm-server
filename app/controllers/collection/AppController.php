@@ -26,9 +26,7 @@ class AppController extends AbstractController
             '/collection/issues',
             function (Application $app, Request $request) {
                 $issuesResponse = self::callInternal($app, '/collection/issues', 'GET');
-                if ($issuesResponse->getStatusCode() !== Response::HTTP_OK) {
-                    return $issuesResponse;
-                }
+
                 /** @var Numeros[] $issues */
                 $issues = ModelHelper::getUnserializedArrayFromJson($issuesResponse->getContent());
 
@@ -105,6 +103,26 @@ class AppController extends AbstractController
         )
             ->value('condition', null)
             ->value('istosell', null)
+            ->value('purchaseid', null);
+
+        $routing->post(
+            '/collection/purchases/{purchaseid}',
+            function (Application $app, Request $request, $purchaseid) {
+                $response = self::callInternal(
+                        $app,
+                        self::buildUrl('/collection/purchases', is_null($purchaseid) ? [] : [$purchaseid]),
+                        'POST', [
+                            'date' => $request->request->get('date'),
+                            'description' => $request->request->get('description')
+                        ]
+                    );
+
+                if ($response->getStatusCode() === Response::HTTP_OK) {
+                    return new JsonResponse($response->getContent(), 200, [], true);
+                }
+                else return $response;
+            }
+        )
             ->value('purchaseid', null);
     }
 }

@@ -14,6 +14,7 @@ use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 class InternalController extends AbstractController
 {
@@ -75,21 +76,25 @@ class InternalController extends AbstractController
         );
 
         $routing->post(
-            '/internal/collection/purchases/{id}',
-            function (Request $request, Application $app) {
-                return self::wrapInternalService($app, function (EntityManager $dmEm) use ($app, $request) {
-                    $purchaseId = $request->request->get('id');
+            '/internal/collection/purchases/{purchaseId}',
+            function (Request $request, Application $app, $purchaseId) {
+                return self::wrapInternalService($app, function (EntityManager $dmEm) use ($app, $request, $purchaseId) {
+
                     $purchaseDate = $request->request->get('date');
                     $purchaseDescription = $request->request->get('description');
+                    $idUser = self::getSessionUser($app)['id'];
 
                     if (!is_null($purchaseId)) {
-                        $purchase = $dmEm->getRepository(Achats::class)->findOneBy(['id' => $purchaseId]);
+                        $purchase = $dmEm->getRepository(Achats::class)->findOneBy(['idAcquisition' => $purchaseId, 'idUser' => $idUser]);
+                        if (is_null($purchase)) {
+                            return new Response('You don\'t have the rights to update this purchase', Response::HTTP_UNAUTHORIZED);
+                        }
                     }
                     else {
                         $purchase = new Achats();
                     }
 
-                    $purchase->setIdUser(self::getSessionUser($app)['id']);
+                    $purchase->setIdUser($idUser);
                     $purchase->setDate(\DateTime::createFromFormat('Y-m-d', $purchaseDate));
                     $purchase->setDescription($purchaseDescription);
 
@@ -99,7 +104,7 @@ class InternalController extends AbstractController
                     return new Response();
                 });
             }
-        )->value('id', null);
+        )->value('purchaseId', null);
 
         $routing->post(
             '/internal/collection/issues',

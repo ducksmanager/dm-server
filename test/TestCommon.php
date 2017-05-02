@@ -225,7 +225,7 @@ class TestCommon extends WebTestCase {
         $dmEntityManager->flush();
         $dmEntityManager->clear();
 
-        return ['username' => $user->getUsername(), 'id' => $user->getId()];
+        return ['username' => $user->getUsername(), 'id' => $user->getId(), 'purchaseIds' => [$purchase1->getIdAcquisition()] ];
     }
 
     protected static function createCoaData() {
