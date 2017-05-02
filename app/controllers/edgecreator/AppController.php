@@ -92,7 +92,6 @@ class AppController extends AbstractController
                 $optionValues = $request->request->get('options');
 
                 try {
-
                     $valueIds = self::getResponseIdFromServiceResponse(
                         self::callInternal($app, "/edgecreator/v2/model/$modelid/$stepnumber", 'PUT', [
                             'newFunctionName' => $stepFunctionName,

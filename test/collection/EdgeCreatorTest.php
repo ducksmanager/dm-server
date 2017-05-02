@@ -57,6 +57,21 @@ class EdgeCreatorTest extends TestCommon
         $this->assertEquals($createdModel->getId(), $objectResponse->modelid);
     }
 
+    public function testCreateV2ModelAlreadyExisting()
+    {
+        $this->buildAuthenticatedServiceWithTestUser('/edgecreator/v2/model/fr/DDD/10',
+            TestCommon::$edgecreatorUser, 'PUT'
+        )->call();
+
+        // Another time
+        $response = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/v2/model/fr/DDD/10',
+            TestCommon::$edgecreatorUser, 'PUT'
+        )->call();
+
+        $this->assertEquals(Response::HTTP_INTERNAL_SERVER_ERROR, $response->getStatusCode());
+        $this->assertContains('UNIQUE constraint failed', $response->getContent());
+    }
+
     public function testLoadV2Model() {
         $model = $this->getV2Model('fr', 'PM', '502');
 
@@ -168,7 +183,17 @@ class EdgeCreatorTest extends TestCommon
             'options' => '2'
         ])->call();
 
-        $this->assertEquals('Invalid options input', $response->getContent());
+        $this->assertEquals('Invalid options input : 2', $response->getContent());
+    }
+
+    public function testUpdateStepWithEmptyOptions() {
+        $model = $this->getV2Model('fr', 'PM', '502');
+
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/step/{$model->getId()}/3", TestCommon::$edgecreatorUser, 'POST', [
+            'options!!!' => []
+        ])->call();
+
+        $this->assertEquals('No options provided, ignoring step 3', $response->getContent());
     }
 
     public function testUpdateStep() {

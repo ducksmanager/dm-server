@@ -108,7 +108,7 @@ class InternalController extends AbstractController
                     $newFunctionName = $request->request->get('newFunctionName');
 
                     if (is_null($options)) {
-                        return new Response('No options provided, ignoring step '.$stepNumber);
+                        throw new \Exception('No options provided, ignoring step '.$stepNumber);
                     }
                     if (!is_array($options)) {
                         throw new \Exception('Invalid options input : '.print_r($options, true));
