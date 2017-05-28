@@ -2,6 +2,7 @@
 namespace DmServer;
 
 use CoverId\Contracts\Dtos\SimilarImagesOutput;
+use Monolog\Logger;
 use Symfony\Component\HttpFoundation\File\File;
 
 class SimilarImagesHelper {
@@ -13,9 +14,10 @@ class SimilarImagesHelper {
 
     /**
      * @param File $file
+     * @param Logger $monolog
      * @return SimilarImagesOutput
      */
-    public static function getSimilarImages($file)
+    public static function getSimilarImages($file, $monolog)
     {
         if (!is_null(self::$mockedResults)) {
             $response = self::$mockedResults;
@@ -31,6 +33,8 @@ class SimilarImagesHelper {
                 file_get_contents($file->getPath() . DIRECTORY_SEPARATOR . $file->getFilename()));
 
             $response = curl_exec($ch);
+            $monolog->addInfo('Received response from Pastec: ');
+            $monolog->addInfo($response);
             // @codeCoverageIgnoreEnd
         }
         return SimilarImagesOutput::createFromJsonEncodedResult($response);

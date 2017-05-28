@@ -60,7 +60,7 @@ class AppController extends AbstractController
                         $file = $uploadedFile->move(self::$uploadDestination[0], self::$uploadDestination[1]);
                         $app['monolog']->addInfo('Cover ID search: upload file moving done');
 
-                        $engineResponse = SimilarImagesHelper::getSimilarImages($file);
+                        $engineResponse = SimilarImagesHelper::getSimilarImages($file, $app['monolog']);
 
                         $app['monolog']->addInfo('Cover ID search: processing done');
 
