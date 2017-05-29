@@ -136,7 +136,7 @@ class InternalController extends AbstractController
 
                     $qbCoverInfo = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_COVER_ID)->createQueryBuilder();
                     $qbCoverInfo
-                        ->select('covers.id, covers.issuecode')
+                        ->select('covers.id AS coverid, covers.issuecode')
                         ->from(Covers::class, 'covers');
 
                     $qbCoverInfo->where($qbCoverInfo->expr()->in('covers.issuecode', $issuecodesList));
