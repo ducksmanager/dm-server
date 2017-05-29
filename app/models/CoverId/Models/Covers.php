@@ -31,6 +31,13 @@ class Covers extends \CoverId\Models\BaseModel
     /**
      * @var string
      *
+     * @ORM\Column(name="sitecode", type="string", length=11, nullable=false)
+     */
+    private $sitecode;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="url", type="string", length=98, nullable=false)
      */
     private $url;
@@ -69,6 +76,30 @@ class Covers extends \CoverId\Models\BaseModel
     public function getIssuecode()
     {
         return $this->issuecode;
+    }
+
+    /**
+     * Set sitecode
+     *
+     * @param string $sitecode
+     *
+     * @return Covers
+     */
+    public function setSitecode($sitecode)
+    {
+        $this->sitecode = $sitecode;
+
+        return $this;
+    }
+
+    /**
+     * Get issuecode
+     *
+     * @return string
+     */
+    public function getSitecode()
+    {
+        return $this->sitecode;
     }
 
     /**

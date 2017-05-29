@@ -101,7 +101,7 @@ class CoverIdTest extends TestCommon
 
     public function testDownloadCover() {
         /** @var BinaryFileResponse $response */
-        $response = $this->buildAuthenticatedServiceWithTestUser('/cover-id/download/webusers/2010/12/fr_ddd_001a_001.jpg', TestCommon::$dmUser)
+        $response = $this->buildAuthenticatedServiceWithTestUser('/cover-id/download/1', TestCommon::$dmUser)
             ->call();
 
         file_put_contents('/tmp/test.jpg', $response->getContent());

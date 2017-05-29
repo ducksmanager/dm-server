@@ -7,6 +7,7 @@ use DmServer\Controllers\AbstractController;
 use DmServer\DmServer;
 use DmServer\ModelHelper;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Query\Expr\Func;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -52,20 +53,40 @@ class InternalController extends AbstractController
         )->assert('coverids', '^([0-9]+,)*[0-9]+$');
 
         $routing->get(
-            '/internal/cover-id/download/{coverUrl}',
-            function (Request $request, Application $app, $coverUrl) {
-                return self::wrapInternalService($app, function() use ($coverUrl) {
-                    $localFilePath = DmServer::$settings['image_local_root'] . basename($coverUrl);
+            '/internal/cover-id/download/{coverId}',
+            function (Request $request, Application $app, $coverId) {
+                return self::wrapInternalService($app, function(EntityManager $coverEm) use ($coverId) {
+                    $qb = $coverEm->createQueryBuilder();
 
-                    @mkdir(DmServer::$settings['image_local_root'] . dirname($coverUrl), 0777, true);
+                    $concatFunc = new Func('CONCAT', [
+                        $qb->expr()->literal('https://outducks.org/'),
+                        'covers.sitecode',
+                        $qb->expr()->literal('/'),
+                        'case covers.sitecode when \'webusers\' then \'webusers/\' else \'\' end',
+                        'covers.url'
+                    ]);
+
+                    $qb
+                        ->select(
+                            'covers.url',
+                            $concatFunc. 'as full_url')
+                        ->from(Covers::class, 'covers')
+                        ->where($qb->expr()->eq('covers.id', $coverId));
+
+                    $result = $qb->getQuery()->getOneOrNullResult();
+                    $url = $result['url'];
+                    $fullUrl = $result['full_url'];
+
+                    $localFilePath = DmServer::$settings['image_local_root'] . basename($url);
+                    @mkdir(DmServer::$settings['image_local_root'] . dirname($url), 0777, true);
                     file_put_contents(
                         $localFilePath,
-                        file_get_contents(DmServer::$settings['image_remote_root'] . $coverUrl)
+                        file_get_contents($fullUrl)
                     );
 
                     return new BinaryFileResponse($localFilePath);
                 });
             }
-        )->assert('coverUrl', '.+');
+        )->assert('coverId', '[0-9]+');
     }
 }

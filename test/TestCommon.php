@@ -632,14 +632,15 @@ class TestCommon extends WebTestCase {
         $coverIds = [];
 
         $urls = [
-            'fr/DDD 1' => 'webusers/2010/12/fr_ddd_001a_001.jpg',
-            'fr/DDD 2' => 'webusers/2010/12/fr_ddd_002a_001.jpg',
-            'fr/MP 300' => 'webusers/2010/12/fr_mp_0300a_001.jpg',
-            'fr/XXX 111' => 'webusers/2010/12/fr_xxx_111_001.jpg'
+            'fr/DDD 1' => '2010/12/fr_ddd_001a_001.jpg',
+            'fr/DDD 2' => '2010/12/fr_ddd_002a_001.jpg',
+            'fr/MP 300' => '2010/12/fr_mp_0300a_001.jpg',
+            'fr/XXX 111' => '2010/12/fr_xxx_111_001.jpg'
         ];
 
         foreach($urls as $issueNumber => $url) {
             $cover = new Covers();
+            $cover->setSitecode('webusers');
             $cover->setIssuecode($issueNumber);
             $cover->setUrl($url);
             $coverIdEntityManager->persist($cover);
