@@ -6,8 +6,6 @@ use Monolog\Logger;
 use Symfony\Component\HttpFoundation\File\File;
 
 class SimilarImagesHelper {
-    static $pastecHost = 'pastec';
-    static $pastecPort = 4212;
 
     /** @var string $mockedResults */
     public static $mockedResults = null;
@@ -25,7 +23,7 @@ class SimilarImagesHelper {
         else {
             // @codeCoverageIgnoreStart
             $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, 'http://' . self::$pastecHost . ':' . self::$pastecPort . '/index/searcher');
+            curl_setopt($ch, CURLOPT_URL, 'http://' . DmServer::$settings['pastec_host'] . ':' . DmServer::$settings['pastec_port'] . '/index/searcher');
             curl_setopt($ch, CURLOPT_POST, 1);
             curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
