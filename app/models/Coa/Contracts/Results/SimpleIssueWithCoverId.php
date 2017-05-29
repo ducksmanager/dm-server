@@ -5,16 +5,16 @@ namespace Coa\Contracts\Results;
 
 use Generic\Contracts\Results\GenericReturnObject;
 
-class SimpleIssueWithUrl implements GenericReturnObject
+class SimpleIssueWithCoverId implements GenericReturnObject
 {
     private $countrycode;
     private $publicationtitle;
     private $issuenumber;
-    private $fullurl;
+    private $coverid;
 
-    public static function buildWithoutUrl($countrycode, $publicationtitle, $issuenumber)
+    public static function buildWithoutCoverId($countrycode, $publicationtitle, $issuenumber)
     {
-        $o = new SimpleIssueWithUrl();
+        $o = new SimpleIssueWithCoverId();
         $o->countrycode = $countrycode;
         $o->publicationtitle = $publicationtitle;
         $o->issuenumber = $issuenumber;
@@ -78,19 +78,19 @@ class SimpleIssueWithUrl implements GenericReturnObject
     }
 
     /**
-     * @return mixed
+     * @return integer
      */
-    public function getFullurl()
+    public function getCoverid()
     {
-        return $this->fullurl;
+        return $this->coverid;
     }
 
     /**
-     * @param mixed $fullurl
+     * @param integer $coverid
      */
-    public function setFullurl($fullurl)
+    public function setCoverid($coverid)
     {
-        $this->fullurl = $fullurl;
+        $this->coverid = $coverid;
     }
 
 
@@ -99,7 +99,7 @@ class SimpleIssueWithUrl implements GenericReturnObject
             'countrycode' => $this->getCountrycode(),
             'publicationtitle' => $this->getPublicationtitle(),
             'issuenumber' => $this->getIssuenumber(),
-            'fullurl' => $this->getFullurl()
+            'coverid' => $this->getCoverid()
         ];
     }
 }

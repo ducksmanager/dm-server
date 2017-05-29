@@ -2,7 +2,7 @@
 
 namespace DmServer\Controllers\Coa;
 
-use Coa\Contracts\Results\SimpleIssueWithUrl;
+use Coa\Contracts\Results\SimpleIssueWithCoverId;
 use Coa\Models\BaseModel;
 use Coa\Models\InducksCountryname;
 use Coa\Models\InducksIssue;
@@ -130,7 +130,7 @@ class InternalController extends AbstractController
                     array_walk(
                         $resultsIssueInfo,
                         function($issue) use (&$issues) {
-                            $issues[$issue['issuecode']] = SimpleIssueWithUrl::buildWithoutUrl($issue['countrycode'], $issue['title'], $issue['issuenumber']);
+                            $issues[$issue['issuecode']] = SimpleIssueWithCoverId::buildWithoutCoverId($issue['countrycode'], $issue['title'], $issue['issuenumber']);
                         }
                     );
 
@@ -150,13 +150,10 @@ class InternalController extends AbstractController
                             if (empty($issues[$issue['issuecode']])) {
                                 throw new Exception('No COA data exists for this issue : ' . $issue['issuecode']);
                             }
-                            /** @var SimpleIssueWithUrl $issueObject */
+                            /** @var SimpleIssueWithCoverId $issueObject */
                             $issueObject = $issues[$issue['issuecode']];
-                            $url = $issue['url'];
-                            if (strpos($url, 'webusers') === 0) {
-                                $url = 'webusers/'.$url;
-                            }
-                            $issueObject->setFullurl($url);
+
+                            $issueObject->setCoverid($issue['coverid']);
                         }
                     );
 
