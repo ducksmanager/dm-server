@@ -8,14 +8,16 @@ use Generic\Contracts\Results\GenericReturnObject;
 class SimpleIssueWithCoverId implements GenericReturnObject
 {
     private $countrycode;
+    private $publicationcode;
     private $publicationtitle;
     private $issuenumber;
     private $coverid;
 
-    public static function buildWithoutCoverId($countrycode, $publicationtitle, $issuenumber)
+    public static function buildWithoutCoverId($countrycode, $publicationcode, $publicationtitle, $issuenumber)
     {
         $o = new SimpleIssueWithCoverId();
         $o->countrycode = $countrycode;
+        $o->publicationcode = $publicationcode;
         $o->publicationtitle = $publicationtitle;
         $o->issuenumber = $issuenumber;
 
@@ -43,6 +45,22 @@ class SimpleIssueWithCoverId implements GenericReturnObject
     public function setCountrycode($countrycode)
     {
         $this->countrycode = $countrycode;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPublicationcode()
+    {
+        return $this->publicationcode;
+    }
+
+    /**
+     * @param mixed $publicationcode
+     */
+    public function setPublicationcode($publicationcode)
+    {
+        $this->publicationcode = $publicationcode;
     }
 
     /**
@@ -97,6 +115,7 @@ class SimpleIssueWithCoverId implements GenericReturnObject
     public function toArray() {
         return [
             'countrycode' => $this->getCountrycode(),
+            'publicationcode' => $this->getPublicationcode(),
             'publicationtitle' => $this->getPublicationtitle(),
             'issuenumber' => $this->getIssuenumber(),
             'coverid' => $this->getCoverid()

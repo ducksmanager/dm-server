@@ -119,7 +119,7 @@ class InternalController extends AbstractController
 
                     $qbIssueInfo = $coaEm->createQueryBuilder();
                     $qbIssueInfo
-                        ->select('inducks_publication.countrycode, inducks_publication.title, inducks_issue.issuenumber, inducks_issue.issuecode')
+                        ->select('inducks_publication.countrycode, inducks_publication.publicationcode, inducks_publication.title, inducks_issue.issuenumber, inducks_issue.issuecode')
                         ->from(InducksIssue::class, 'inducks_issue')
                         ->join(InducksPublication::class, 'inducks_publication', Join::WITH, 'inducks_issue.publicationcode = inducks_publication.publicationcode');
 
@@ -130,7 +130,7 @@ class InternalController extends AbstractController
                     array_walk(
                         $resultsIssueInfo,
                         function($issue) use (&$issues) {
-                            $issues[$issue['issuecode']] = SimpleIssueWithCoverId::buildWithoutCoverId($issue['countrycode'], $issue['title'], $issue['issuenumber']);
+                            $issues[$issue['issuecode']] = SimpleIssueWithCoverId::buildWithoutCoverId($issue['countrycode'], $issue['publicationcode'], $issue['title'], $issue['issuenumber']);
                         }
                     );
 

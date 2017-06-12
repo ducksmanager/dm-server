@@ -83,7 +83,7 @@ class CoverIdTest extends TestCommon
         )->call();
 
         $this->assertFileExists(implode(DIRECTORY_SEPARATOR, self::$uploadDestination));
-        $this->assertJson($response->getContent());
+        $this->assertJsonStringEqualsJsonString("{\"fr\/DDD 2\":{\"countrycode\":\"fr\",\"publicationcode\":\"fr\/DDD\",\"publicationtitle\":\"Dynastie\",\"issuenumber\":\"2\",\"coverid\":2}}", $response->getContent());
     }
 
     public function testCoverIdSearchInvalidFileName() {
