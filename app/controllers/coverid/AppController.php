@@ -64,7 +64,7 @@ class AppController extends AbstractController
 
                         $app['monolog']->addInfo('Cover ID search: processing done');
 
-                        if (!is_null($engineResponse) && !empty($engineResponse->getImageIds())) {
+                        if (!is_null($engineResponse) && count($engineResponse->getImageIds()) > 0) {
                             $coverids = implode(',', $engineResponse->getImageIds());
                             $app['monolog']->addInfo('Cover ID search: matched cover IDs ' . $coverids);
                             $issueCodes = ModelHelper::getUnserializedArrayFromJson(
@@ -79,9 +79,9 @@ class AppController extends AbstractController
                             );
                             $app['monolog']->addInfo('Cover ID search: matched ' . count($issueCodes) . ' issues');
 
-                            return new JsonResponse(ModelHelper::getSimpleArray($issues));
+                            return new JsonResponse(['issues' => ModelHelper::getSimpleArray($issues)]);
                         } else {
-                            throw new \Exception("Can't decode image similarity response");
+                            return new JsonResponse(['type' => $engineResponse->getType()]);
                         }
                     }
                 }

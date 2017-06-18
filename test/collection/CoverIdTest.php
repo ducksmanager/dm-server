@@ -24,7 +24,7 @@ class CoverIdTest extends TestCommon
         @unlink(implode(DIRECTORY_SEPARATOR, self::$uploadDestination));
         copy(self::getPathToFileToUpload(self::$exampleImage), self::getPathToFileToUpload(self::$exampleImageToUpload));
 
-        SimilarImagesHelper::$mockedResults = json_encode([
+        $this->mockCoverSearchResults([
             "bounding_rects" => [
                 "height" => 846,
                 "width"  => 625,
@@ -42,6 +42,10 @@ class CoverIdTest extends TestCommon
     {
         parent::tearDown();
         @unlink(self::getPathToFileToUpload(self::$exampleImageToUpload));
+    }
+
+    private function mockCoverSearchResults($mockedResponse) {
+        SimilarImagesHelper::$mockedResults = json_encode($mockedResponse);
     }
 
     public function testGetIssueListByIssueCodes() {
@@ -83,7 +87,35 @@ class CoverIdTest extends TestCommon
         )->call();
 
         $this->assertFileExists(implode(DIRECTORY_SEPARATOR, self::$uploadDestination));
-        $this->assertJsonStringEqualsJsonString("{\"fr\/DDD 2\":{\"countrycode\":\"fr\",\"publicationcode\":\"fr\/DDD\",\"publicationtitle\":\"Dynastie\",\"issuenumber\":\"2\",\"coverid\":2}}", $response->getContent());
+        $this->assertJsonStringEqualsJsonString(json_encode([
+            "issues" => [
+                "fr/DDD 2" => [
+                    "countrycode" => "fr",
+                    "publicationcode" => "fr/DDD",
+                    "publicationtitle" => "Dynastie",
+                    "issuenumber" => "2",
+                    "coverid" => 2
+                    ]
+                ]
+            ]), $response->getContent());
+    }
+
+    public function testCoverIdSearchSizeTooSmall() {
+        $this->mockCoverSearchResults([
+            "type" => "IMAGE_SIZE_TOO_SMALL"
+        ]);
+
+        $this->assertFileNotExists(implode(DIRECTORY_SEPARATOR, self::$uploadDestination));
+
+        $response = $this->buildAuthenticatedServiceWithTestUser(
+            '/cover-id/search', TestCommon::$dmUser, 'POST', [], [
+                'wtd_jpg' => self::getCoverIdSearchUploadImage()
+            ]
+        )->call();
+
+        $this->assertJsonStringEqualsJsonString(json_encode([
+            "type" => "IMAGE_SIZE_TOO_SMALL"
+            ]), $response->getContent());
     }
 
     public function testCoverIdSearchInvalidFileName() {

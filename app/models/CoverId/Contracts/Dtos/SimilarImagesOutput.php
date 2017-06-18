@@ -24,18 +24,21 @@ class SimilarImagesOutput
             return null;
         }
 
-        $boundingRect = $resultArray['bounding_rects'];
-
         $outputObject = new SimilarImagesOutput();
-        $outputObject->setBoundingRectHeight($boundingRect['height']);
-        $outputObject->setBoundingRectWidth($boundingRect['width']);
-        $outputObject->setBoundingRectX($boundingRect['x']);
-        $outputObject->setBoundingRectY($boundingRect['y']);
-
-        $outputObject->setImageIds($resultArray['image_ids']);
-        $outputObject->setScores($resultArray['scores']);
-        $outputObject->setTags($resultArray['tags']);
         $outputObject->setType($resultArray['type']);
+
+        if (array_key_exists('bounding_rects', $resultArray)) {
+            $boundingRect = $resultArray['bounding_rects'];
+
+            $outputObject->setBoundingRectHeight($boundingRect['height']);
+            $outputObject->setBoundingRectWidth($boundingRect['width']);
+            $outputObject->setBoundingRectX($boundingRect['x']);
+            $outputObject->setBoundingRectY($boundingRect['y']);
+
+            $outputObject->setImageIds($resultArray['image_ids']);
+            $outputObject->setScores($resultArray['scores']);
+            $outputObject->setTags($resultArray['tags']);
+        }
 
         return $outputObject;
     }
