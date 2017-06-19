@@ -170,12 +170,14 @@ class TestCommon extends WebTestCase {
         $dmEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_DM];
 
         $user = new Users();
-        $user->setBetauser(false);
-        $user->setUsername($username);
-        $user->setPassword(sha1($password));
-        $user->setEmail('test@ducksmanager.net');
-        $user->setDateinscription(\DateTime::createFromFormat('Y-m-d', '2000-01-01'));
-        $dmEntityManager->persist($user);
+        $dmEntityManager->persist(
+            $user
+                ->setBetauser(false)
+                ->setUsername($username)
+                ->setPassword(sha1($password))
+                ->setEmail('test@ducksmanager.net')
+                ->setDateinscription(\DateTime::createFromFormat('Y-m-d', '2000-01-01'))
+        );
 
         $dmEntityManager->flush();
 
@@ -192,38 +194,44 @@ class TestCommon extends WebTestCase {
         $user = self::createUser($username, self::$testDmUsers[$username] ?? 'password');
 
         $numero1 = new Numeros();
-        $numero1->setPays('fr');
-        $numero1->setMagazine('DDD');
-        $numero1->setNumero('1');
-        $numero1->setEtat('indefini');
-        $numero1->setIdAcquisition('-2');
-        $numero1->setAv(false);
-        $numero1->setIdUtilisateur($user->getId());
-        $dmEntityManager->persist($numero1);
-        $dmEntityManager->flush();
+        $dmEntityManager->persist(
+            $numero1
+                ->setPays('fr')
+                ->setMagazine('DDD')
+                ->setNumero('1')
+                ->setEtat('indefini')
+                ->setIdAcquisition('-2')
+                ->setAv(false)
+                ->setIdUtilisateur($user->getId())
+        );
 
         $numero2 = new Numeros();
-        $numero2->setPays('fr');
-        $numero2->setMagazine('MP');
-        $numero2->setNumero('300');
-        $numero2->setEtat('bon');
-        $numero2->setIdUtilisateur($user->getId());
-        $dmEntityManager->persist($numero2);
-        $dmEntityManager->flush();
+        $dmEntityManager->persist(
+            $numero2
+                ->setPays('fr')
+                ->setMagazine('MP')
+                ->setNumero('300')
+                ->setEtat('bon')
+                ->setIdUtilisateur($user->getId())
+        );
 
         $numero3 = new Numeros();
-        $numero3->setPays('fr');
-        $numero3->setMagazine('MP');
-        $numero3->setNumero('301');
-        $numero3->setEtat('mauvais');
-        $numero3->setIdUtilisateur($user->getId());
-        $dmEntityManager->persist($numero3);
+        $dmEntityManager->persist(
+            $numero3
+                ->setPays('fr')
+                ->setMagazine('MP')
+                ->setNumero('301')
+                ->setEtat('mauvais')
+                ->setIdUtilisateur($user->getId())
+        );
 
         $purchase1 = new Achats();
-        $purchase1->setDate(\DateTime::createFromFormat('Y-m-d', '2010-01-01'));
-        $purchase1->setDescription('Purchase');
-        $purchase1->setIdUser($user->getId());
-        $dmEntityManager->persist($purchase1);
+        $dmEntityManager->persist(
+            $purchase1
+                ->setDate(\DateTime::createFromFormat('Y-m-d', '2010-01-01'))
+                ->setDescription('Purchase')
+                ->setIdUser($user->getId())
+        );
 
         $dmEntityManager->flush();
         $dmEntityManager->clear();
@@ -287,7 +295,8 @@ class TestCommon extends WebTestCase {
             self::$testIssues['fr/DDD 1']
                 ->setPublicationcode('fr/DDD')
                 ->setIssuenumber('1')
-                ->setIssuecode('fr/DDD 1'));
+                ->setIssuecode('fr/DDD 1')
+        );
 
         self::$testIssues['fr/DDD 2'] = new InducksIssue();
         $coaEntityManager->persist(
@@ -463,7 +472,8 @@ class TestCommon extends WebTestCase {
             ->setIdUser($userId)
             ->setPublicationcode(self::$testIssues['us/CBL 7']->getPublicationcode())
             ->setIssuenumber(self::$testIssues['us/CBL 7']->getIssuenumber())
-            ->setNotation($authorUser1->getNotation()));
+            ->setNotation($authorUser1->getNotation())
+        );
 
         $missingAuthor1Issue2Story2ForUser = new UtilisateursPublicationsManquantes();
         $dmStatsEntityManager->persist(
@@ -567,64 +577,78 @@ class TestCommon extends WebTestCase {
         );
 
         $model = new EdgecreatorModeles2();
-        $model->setPays('fr');
-        $model->setMagazine('DDD');
-        $model->setOrdre(1);
-        $model->setNomFonction('Remplir');
-        $model->setOptionNom('Couleur');
-        $edgeCreatorEntityManager->persist($model);
+        $edgeCreatorEntityManager->persist(
+            $model
+                ->setPays('fr')
+                ->setMagazine('DDD')
+                ->setOrdre(1)
+                ->setNomFonction('Remplir')
+                ->setOptionNom('Couleur')
+        );
         $edgeCreatorEntityManager->flush();
         $idOption = $model->getId();
 
         $value = new EdgecreatorValeurs();
-        $value->setIdOption($idOption);
-        $value->setOptionValeur('#FF0000');
-        $edgeCreatorEntityManager->persist($value);
+        $edgeCreatorEntityManager->persist(
+            $value
+                ->setIdOption($idOption)
+                ->setOptionValeur('#FF0000')
+        );
         $edgeCreatorEntityManager->flush();
         $valueId = $value->getId();
 
         $interval = new EdgecreatorIntervalles();
-        $interval->setIdValeur($valueId);
-        $interval->setNumeroDebut(1);
-        $interval->setNumeroFin(3);
-        $interval->setUsername($edgeCreatorUser->getUsername());
-        $edgeCreatorEntityManager->persist($interval);
+        $edgeCreatorEntityManager->persist(
+            $interval
+                ->setIdValeur($valueId)
+                ->setNumeroDebut(1)
+                ->setNumeroFin(3)
+                ->setUsername($edgeCreatorUser->getUsername())
+        );
 
         $edgeCreatorEntityManager->flush();
 
         // Models v2
 
         $ongoingModel1 = new TranchesEnCoursModeles();
-        $ongoingModel1->setPays('fr');
-        $ongoingModel1->setMagazine('PM');
-        $ongoingModel1->setNumero('502');
-        $ongoingModel1->setUsername($edgeCreatorUser->getUsername());
-        $edgeCreatorEntityManager->persist($ongoingModel1);
+        $edgeCreatorEntityManager->persist(
+            $ongoingModel1
+                ->setPays('fr')
+                ->setMagazine('PM')
+                ->setNumero('502')
+                ->setUsername($edgeCreatorUser->getUsername())
+        );
         $edgeCreatorEntityManager->flush();
 
         $ongoingModel1Step1Value1 = new TranchesEnCoursValeurs();
-        $ongoingModel1Step1Value1->setIdModele($ongoingModel1);
-        $ongoingModel1Step1Value1->setOrdre(1);
-        $ongoingModel1Step1Value1->setNomFonction('Remplir');
-        $ongoingModel1Step1Value1->setOptionNom('Couleur');
-        $ongoingModel1Step1Value1->setOptionValeur('#FF00FF');
-        $edgeCreatorEntityManager->persist($ongoingModel1Step1Value1);
+        $edgeCreatorEntityManager->persist(
+            $ongoingModel1Step1Value1
+                ->setIdModele($ongoingModel1)
+                ->setOrdre(1)
+                ->setNomFonction('Remplir')
+                ->setOptionNom('Couleur')
+                ->setOptionValeur('#FF00FF')
+        );
 
         $ongoingModel1Step1Value2 = new TranchesEnCoursValeurs();
-        $ongoingModel1Step1Value2->setIdModele($ongoingModel1);
-        $ongoingModel1Step1Value2->setOrdre(1);
-        $ongoingModel1Step1Value2->setNomFonction('Remplir');
-        $ongoingModel1Step1Value2->setOptionNom('Pos_x');
-        $ongoingModel1Step1Value2->setOptionValeur('0');
-        $edgeCreatorEntityManager->persist($ongoingModel1Step1Value2);
+        $edgeCreatorEntityManager->persist(
+            $ongoingModel1Step1Value2
+                ->setIdModele($ongoingModel1)
+                ->setOrdre(1)
+                ->setNomFonction('Remplir')
+                ->setOptionNom('Pos_x')
+                ->setOptionValeur('0')
+        );
 
         $ongoingModel1Step2Value1 = new TranchesEnCoursValeurs();
-        $ongoingModel1Step2Value1->setIdModele($ongoingModel1);
-        $ongoingModel1Step2Value1->setOrdre(2);
-        $ongoingModel1Step2Value1->setNomFonction('TexteMyFonts');
-        $ongoingModel1Step2Value1->setOptionNom('Couleur_texte');
-        $ongoingModel1Step2Value1->setOptionValeur('#000000');
-        $edgeCreatorEntityManager->persist($ongoingModel1Step2Value1);
+        $edgeCreatorEntityManager->persist(
+            $ongoingModel1Step2Value1
+                ->setIdModele($ongoingModel1)
+                ->setOrdre(2)
+                ->setNomFonction('TexteMyFonts')
+                ->setOptionNom('Couleur_texte')
+                ->setOptionValeur('#000000')
+        );
         $edgeCreatorEntityManager->flush();
     }
 
@@ -644,10 +668,13 @@ class TestCommon extends WebTestCase {
 
         foreach($urls as $issueNumber => $url) {
             $cover = new Covers();
-            $cover->setSitecode('webusers');
-            $cover->setIssuecode($issueNumber);
-            $cover->setUrl($url);
-            $coverIdEntityManager->persist($cover);
+            ;
+            $coverIdEntityManager->persist(
+                $cover
+                    ->setSitecode('webusers')
+                    ->setIssuecode($issueNumber)
+                    ->setUrl($url)
+            );
             $coverIdEntityManager->flush();
             $coverIds[]= $cover->getId();
             $coverUrls[$cover->getId()]= $url;
@@ -667,55 +694,71 @@ class TestCommon extends WebTestCase {
 
         $originalEntryCode = $storyCode.'-entry-1';
         $originEntry = new InducksEntry();
-        $originEntry->setEntrycode($originalEntryCode);
-        $originEntry->setStoryversioncode($storyCode.'-1');
-        $coaEntityManager->persist($originEntry);
+        $coaEntityManager->persist(
+            $originEntry
+                ->setEntrycode($originalEntryCode)
+                ->setStoryversioncode($storyCode.'-1')
+        );
 
         $originEntryurl = new InducksEntryurl();
-        $originEntryurl->setEntrycode($originalEntryCode);
-        $originEntryurl->setUrl($entryUrl);
-        $coaEntityManager->persist($originEntryurl);
+        $coaEntityManager->persist(
+            $originEntryurl
+                ->setEntrycode($originalEntryCode)
+                ->setUrl($entryUrl)
+        );
 
         $originStoryversion = new InducksStoryversion();
-        $originStoryversion->setStorycode($storyCode);
-        $originStoryversion->setStoryversioncode($storyCode.'-1');
-        $coaEntityManager->persist($originStoryversion);
+        $coaEntityManager->persist(
+            $originStoryversion
+                ->setStorycode($storyCode)
+                ->setStoryversioncode($storyCode.'-1')
+        );
 
         // Create similar entry / entryurl / storyversion
 
         $relatedEntryCode = $storyCode.'-entry-2';
 
         $relatedStoryversion = new InducksStoryversion();
-        $relatedStoryversion->setStorycode($storyCode);
-        $relatedStoryversion->setStoryversioncode($storyCode.'-2');
-        $coaEntityManager->persist($relatedStoryversion);
+        $coaEntityManager->persist(
+            $relatedStoryversion
+                ->setStorycode($storyCode)
+                ->setStoryversioncode($storyCode.'-2')
+        );
 
         $relatedEntry = new InducksEntry();
-        $relatedEntry->setEntrycode($relatedEntryCode);
-        $relatedEntry->setIssuecode($publicationCode.' '.$issueNumber);
-        $relatedEntry->setStoryversioncode($storyCode.'-2');
-        $coaEntityManager->persist($relatedEntry);
+        $coaEntityManager->persist(
+            $relatedEntry
+                ->setEntrycode($relatedEntryCode)
+                ->setIssuecode($publicationCode.' '.$issueNumber)
+                ->setStoryversioncode($storyCode.'-2')
+        );
 
         $relatedIssue = new InducksIssue();
-        $relatedIssue->setIssuecode($publicationCode.' '.$issueNumber);
-        $relatedIssue->setPublicationcode($publicationCode);
-        $relatedIssue->setIssuenumber($issueNumber);
-        $coaEntityManager->persist($relatedIssue);
+        $coaEntityManager->persist(
+            $relatedIssue
+                ->setIssuecode($publicationCode.' '.$issueNumber)
+                ->setPublicationcode($publicationCode)
+                ->setIssuenumber($issueNumber)
+        );
 
         $relatedEntryUrl = new InducksEntryurl();
-        $relatedEntryUrl->setEntrycode($relatedEntryCode);
-        $relatedEntryUrl->setUrl($entryUrl.'-2');
-        $coaEntityManager->persist($relatedEntryUrl);
+        $coaEntityManager->persist(
+            $relatedEntryUrl
+                ->setEntrycode($relatedEntryCode)
+                ->setUrl($entryUrl.'-2')
+        );
 
         $coaEntityManager->flush();
 
         $coverIdEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_COVER_ID];
 
         $relatedCover = new Covers();
-        $relatedCover->setUrl($entryUrl.'-2');
-        $relatedCover->setSitecode('webusers');
-        $relatedCover->setIssuecode($publicationCode.' '.$issueNumber);
-        $coverIdEntityManager->persist($relatedCover);
+        $coverIdEntityManager->persist(
+            $relatedCover
+                ->setUrl($entryUrl.'-2')
+                ->setSitecode('webusers')
+                ->setIssuecode($publicationCode.' '.$issueNumber)
+        );
 
         $coverIdEntityManager->flush();
 
