@@ -74,7 +74,7 @@ class AppController extends AbstractController
                             $foundIssueCodes = array_map(function($coverInfo) {
                                 return $coverInfo['issuecode'];
                             }, $coverInfos);
-                            $app['monolog']->addInfo('Cover ID search: matched issue codes ' . $foundIssueCodes);
+                            $app['monolog']->addInfo('Cover ID search: matched issue codes ' . implode(',', $foundIssueCodes));
 
                             $urlsStr = implode(',', array_map(function($coverInfo) {
                                 return $coverInfo['url'];
