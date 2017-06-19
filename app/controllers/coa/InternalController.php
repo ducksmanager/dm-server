@@ -5,10 +5,13 @@ namespace DmServer\Controllers\Coa;
 use Coa\Contracts\Results\SimpleIssueWithCoverId;
 use Coa\Models\BaseModel;
 use Coa\Models\InducksCountryname;
+use Coa\Models\InducksEntry;
+use Coa\Models\InducksEntryurl;
 use Coa\Models\InducksIssue;
 use Coa\Models\InducksPerson;
 use Coa\Models\InducksPublication;
 use Coa\Models\InducksStory;
+use Coa\Models\InducksStoryversion;
 use CoverId\Models\Covers;
 use DmServer\Controllers\AbstractController;
 use DmServer\DmServer;
@@ -161,6 +164,38 @@ class InternalController extends AbstractController
                 });
             }
         )->assert('issuecodes', '^([a-z]+/[- A-Z0-9]+,)*[a-z]+/[- A-Z0-9]+$');
+
+        $routing->get(
+            '/internal/coa/issuesbycoverurl/{urls}',
+            function (Request $request, Application $app, $urls) {
+                return self::wrapInternalService($app, function(EntityManager $coaEm) use ($urls) {
+                    $urlList = explode(',', $urls);
+
+                    $qbRelatedIssues = $coaEm->createQueryBuilder();
+
+                    $qbRelatedIssues
+                        ->select('distinct relatedentry.issuecode, relatedentryurl.url')
+                        ->from(InducksEntryurl::class, 'originentryurl')
+                        ->join(InducksEntry::class, 'originentry', Join::WITH, 'originentryurl.entrycode = originentry.entrycode')
+                        ->join(InducksStoryversion::class, 'originstoryversion', Join::WITH, 'originentry.storyversioncode = originstoryversion.storyversioncode')
+                        ->join(InducksStoryversion::class, 'relatedstoryversion', Join::WITH, 'originstoryversion.storycode = relatedstoryversion.storycode')
+                        ->join(InducksEntry::class, 'relatedentry', Join::WITH, 'relatedstoryversion.storyversioncode = relatedentry.storyversioncode')
+                        ->join(InducksIssue::class, 'relatedissue', Join::WITH, 'relatedentry.issuecode = relatedissue.issuecode')
+                        ->join(InducksEntryurl::class, 'relatedentryurl', Join::WITH, 'relatedentry.entrycode = relatedentryurl.entrycode');
+
+                    $qbRelatedIssues->where($qbRelatedIssues->expr()->in('originentryurl.url', $urlList));
+                    $qbRelatedIssues->andWhere($qbRelatedIssues->expr()->neq('originstoryversion.storyversioncode', 'relatedstoryversion.storyversioncode'));
+$sql = $qbRelatedIssues->getQuery()->getSQL();
+                    $resultsRelatedIssueCodes = $qbRelatedIssues->getQuery()->getResult();
+
+                    $issueCodes = array_map(function($result) {
+                        return ['issuecode' => $result['issuecode'], 'url' => $result['url'] ];
+                    }, $resultsRelatedIssueCodes);
+
+                    return new JsonResponse(['relatedissuecodes' => $issueCodes]);
+                });
+            }
+        )->assert('urls', self::getParamAssertRegex('.+', 20));
 
         $routing->get(
             '/internal/coa/authorsfullnames/{authors}',

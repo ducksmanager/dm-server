@@ -67,17 +67,40 @@ class AppController extends AbstractController
                         if (!is_null($engineResponse) && count($engineResponse->getImageIds()) > 0) {
                             $coverids = implode(',', $engineResponse->getImageIds());
                             $app['monolog']->addInfo('Cover ID search: matched cover IDs ' . $coverids);
-                            $issueCodes = ModelHelper::getUnserializedArrayFromJson(
+                            $coverInfos = ModelHelper::getUnserializedArrayFromJson(
                                 self::callInternal($app, '/cover-id/issuecodes', 'GET', [$coverids])->getContent()
                             );
 
-                            $issueCodesStr = implode(',', $issueCodes);
-                            $app['monolog']->addInfo('Cover ID search: matched issue codes ' . $issueCodesStr);
+                            $foundIssueCodes = array_map(function($coverInfo) {
+                                return $coverInfo['issuecode'];
+                            }, $coverInfos);
+                            $app['monolog']->addInfo('Cover ID search: matched issue codes ' . $foundIssueCodes);
+
+                            $urlsStr = implode(',', array_map(function($coverInfo) {
+                                return $coverInfo['url'];
+                            }, $coverInfos));
+
+                            $issuesWithSameCover = self::getResponseIdFromServiceResponse(
+                                self::callInternal($app, "/coa/issuesbycoverurl", 'GET',
+                                    [$urlsStr]),
+                                'relatedissuecodes');
+
+                            $issueCodesStr = implode(',',
+                                array_unique(
+                                    array_merge(
+                                        $foundIssueCodes,
+                                        array_map(function($issue) {
+                                            return $issue->issuecode;
+                                        }, $issuesWithSameCover)
+                                    )
+                                )
+                            );
+
                             $issues = ModelHelper::getUnserializedArrayFromJson(
                                 self::callInternal($app, '/coa/issuesbycodes', 'GET',
                                     [$issueCodesStr])->getContent()
                             );
-                            $app['monolog']->addInfo('Cover ID search: matched ' . count($issueCodes) . ' issues');
+                            $app['monolog']->addInfo('Cover ID search: matched ' . count($coverInfos) . ' issues');
 
                             return new JsonResponse(['issues' => ModelHelper::getSimpleArray($issues)]);
                         } else {

@@ -2,10 +2,13 @@
 namespace DmServer\Test;
 
 use Coa\Models\InducksCountryname;
+use Coa\Models\InducksEntry;
+use Coa\Models\InducksEntryurl;
 use Coa\Models\InducksIssue;
 use Coa\Models\InducksPerson;
 use Coa\Models\InducksPublication;
 use Coa\Models\InducksStory;
+use Coa\Models\InducksStoryversion;
 use CoverId\Models\Covers;
 use Dm\Models\Achats;
 use Dm\Models\Numeros;
@@ -630,6 +633,7 @@ class TestCommon extends WebTestCase {
         $coverIdEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_COVER_ID];
 
         $coverIds = [];
+        $coverUrls = [];
 
         $urls = [
             'fr/DDD 1' => '2010/12/fr_ddd_001a_001.jpg',
@@ -646,13 +650,75 @@ class TestCommon extends WebTestCase {
             $coverIdEntityManager->persist($cover);
             $coverIdEntityManager->flush();
             $coverIds[]= $cover->getId();
+            $coverUrls[$cover->getId()]= $url;
 
             @mkdir(DmServer::$settings['image_remote_root'].dirname($url), 0777, true);
             $imagePath = self::getPathToFileToUpload(self::$exampleImage);
             file_put_contents(DmServer::$settings['image_remote_root'] . $url, file_get_contents($imagePath));
         }
 
-        return $coverIds;
+        return [$coverIds, $coverUrls];
+    }
+
+    protected function createEntryLike($storyCode, $entryUrl, $publicationCode, $issueNumber) {
+        $coaEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_COA];
+
+        // Create origin entry / entryurl / storyversion
+
+        $originalEntryCode = $storyCode.'-entry-1';
+        $originEntry = new InducksEntry();
+        $originEntry->setEntrycode($originalEntryCode);
+        $originEntry->setStoryversioncode($storyCode.'-1');
+        $coaEntityManager->persist($originEntry);
+
+        $originEntryurl = new InducksEntryurl();
+        $originEntryurl->setEntrycode($originalEntryCode);
+        $originEntryurl->setUrl($entryUrl);
+        $coaEntityManager->persist($originEntryurl);
+
+        $originStoryversion = new InducksStoryversion();
+        $originStoryversion->setStorycode($storyCode);
+        $originStoryversion->setStoryversioncode($storyCode.'-1');
+        $coaEntityManager->persist($originStoryversion);
+
+        // Create similar entry / entryurl / storyversion
+
+        $relatedEntryCode = $storyCode.'-entry-2';
+
+        $relatedStoryversion = new InducksStoryversion();
+        $relatedStoryversion->setStorycode($storyCode);
+        $relatedStoryversion->setStoryversioncode($storyCode.'-2');
+        $coaEntityManager->persist($relatedStoryversion);
+
+        $relatedEntry = new InducksEntry();
+        $relatedEntry->setEntrycode($relatedEntryCode);
+        $relatedEntry->setIssuecode($publicationCode.' '.$issueNumber);
+        $relatedEntry->setStoryversioncode($storyCode.'-2');
+        $coaEntityManager->persist($relatedEntry);
+
+        $relatedIssue = new InducksIssue();
+        $relatedIssue->setIssuecode($publicationCode.' '.$issueNumber);
+        $relatedIssue->setPublicationcode($publicationCode);
+        $relatedIssue->setIssuenumber($issueNumber);
+        $coaEntityManager->persist($relatedIssue);
+
+        $relatedEntryUrl = new InducksEntryurl();
+        $relatedEntryUrl->setEntrycode($relatedEntryCode);
+        $relatedEntryUrl->setUrl($entryUrl.'-2');
+        $coaEntityManager->persist($relatedEntryUrl);
+
+        $coaEntityManager->flush();
+
+        $coverIdEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_COVER_ID];
+
+        $relatedCover = new Covers();
+        $relatedCover->setUrl($entryUrl.'-2');
+        $relatedCover->setSitecode('webusers');
+        $relatedCover->setIssuecode($publicationCode.' '.$issueNumber);
+        $coverIdEntityManager->persist($relatedCover);
+
+        $coverIdEntityManager->flush();
+
     }
 
     protected static function getPathToFileToUpload($fileName) {

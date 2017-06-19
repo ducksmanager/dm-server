@@ -33,7 +33,7 @@ class InternalController extends AbstractController
 
                     $qb = $coverEm->createQueryBuilder();
                     $qb
-                        ->select('covers.issuecode')
+                        ->select('covers.issuecode, covers.url')
                         ->from(Covers::class, 'covers');
 
                     $qb->where($qb->expr()->in('covers.id', $coveridsList));
@@ -42,12 +42,12 @@ class InternalController extends AbstractController
 
                     array_walk(
                         $results,
-                        function ($issue, $i) use ($coveridsList, &$issueCodes) {
-                            $issueCodes[$coveridsList[$i]] = $issue['issuecode'];
+                        function ($cover, $i) use ($coveridsList, &$coverInfos) {
+                            $coverInfos[$coveridsList[$i]] = ['url' => $cover['url'], 'issuecode' => $cover['issuecode']];
                         }
                     );
 
-                    return new JsonResponse(ModelHelper::getSerializedArray($issueCodes));
+                    return new JsonResponse(ModelHelper::getSerializedArray($coverInfos));
                 });
             }
         )->assert('coverids', '^([0-9]+,)*[0-9]+$');

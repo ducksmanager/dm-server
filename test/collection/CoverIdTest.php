@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 class CoverIdTest extends TestCommon
 {
     static $coverIds = null;
+    static $coverUrls = null;
 
     static $uploadDestination = ['/tmp', 'test.jpg'];
 
@@ -19,7 +20,7 @@ class CoverIdTest extends TestCommon
     {
         parent::setUp();
         self::createCoaData();
-        self::$coverIds = self::createCoverIds();
+        list(self::$coverIds, self::$coverUrls) = self::createCoverIds();
 
         @unlink(implode(DIRECTORY_SEPARATOR, self::$uploadDestination));
         copy(self::getPathToFileToUpload(self::$exampleImage), self::getPathToFileToUpload(self::$exampleImageToUpload));
@@ -31,7 +32,7 @@ class CoverIdTest extends TestCommon
                 "x" => 67,
                 "y" => 44
             ],
-            "image_ids" => [2],
+            "image_ids" => [1],
             "scores" => [58.0],
             "tags" => [''],
             "type" => "SEARCH_RESULTS"
@@ -80,6 +81,10 @@ class CoverIdTest extends TestCommon
     public function testCoverIdSearch() {
         $this->assertFileNotExists(implode(DIRECTORY_SEPARATOR, self::$uploadDestination));
 
+        $similarCoverIssuePublicationCode = 'fr/DDD';
+        $similarCoverIssueNumber = '10';
+        self::createEntryLike('fr/AR 101', self::$coverUrls[array_values(self::$coverIds)[0]], $similarCoverIssuePublicationCode, $similarCoverIssueNumber);
+
         $response = $this->buildAuthenticatedServiceWithTestUser(
             '/cover-id/search', TestCommon::$dmUser, 'POST', [], [
                 'wtd_jpg' => self::getCoverIdSearchUploadImage()
@@ -89,12 +94,19 @@ class CoverIdTest extends TestCommon
         $this->assertFileExists(implode(DIRECTORY_SEPARATOR, self::$uploadDestination));
         $this->assertJsonStringEqualsJsonString(json_encode([
             "issues" => [
-                "fr/DDD 2" => [
+                "fr/DDD 1" => [
                     "countrycode" => "fr",
                     "publicationcode" => "fr/DDD",
                     "publicationtitle" => "Dynastie",
-                    "issuenumber" => "2",
-                    "coverid" => 2
+                    "issuenumber" => "1",
+                    "coverid" => 1
+                    ], // Related issue: same cover story code
+                $similarCoverIssuePublicationCode.' '.$similarCoverIssueNumber => [
+                    "countrycode" => explode('/', $similarCoverIssuePublicationCode)[0],
+                    "publicationcode" => $similarCoverIssuePublicationCode,
+                    "publicationtitle" => "Dynastie",
+                    "issuenumber" => $similarCoverIssueNumber,
+                    "coverid" => count(self::$coverIds) + 1
                     ]
                 ]
             ]), $response->getContent());
