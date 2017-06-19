@@ -58,11 +58,11 @@ class CoverIdTest extends TestCommon
         $this->assertInternalType('object', $objectResponse);
         $this->assertEquals(2, count(get_object_vars($objectResponse)));
 
-        $this->assertInternalType('string', $objectResponse->{self::$coverIds[0]});
-        $this->assertEquals('fr/DDD 1', $objectResponse->{self::$coverIds[0]});
+        $this->assertObjectHasAttribute('issuecode', $objectResponse->{self::$coverIds[0]});
+        $this->assertEquals('fr/DDD 1', $objectResponse->{self::$coverIds[0]}->issuecode);
 
-        $this->assertInternalType('string', $objectResponse->{self::$coverIds[2]});
-        $this->assertEquals('fr/MP 300', $objectResponse->{self::$coverIds[2]});
+        $this->assertObjectHasAttribute('issuecode', $objectResponse->{self::$coverIds[2]});
+        $this->assertEquals('fr/MP 300', $objectResponse->{self::$coverIds[2]}->issuecode);
     }
 
     public function testCoverIdSearchMultipleUploads() {
