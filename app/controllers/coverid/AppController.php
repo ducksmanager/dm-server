@@ -80,10 +80,12 @@ class AppController extends AbstractController
                                 return $coverInfo['url'];
                             }, $coverInfos));
 
-                            $issuesWithSameCover = self::getResponseIdFromServiceResponse(
-                                self::callInternal($app, "/coa/issuesbycoverurl", 'GET',
-                                    [$urlsStr]),
-                                'relatedissuecodes');
+//                            $issuesWithSameCover = self::getResponseIdFromServiceResponse(
+//                                self::callInternal($app, "/coa/issuesbycoverurl", 'GET',
+//                                    [$urlsStr]),
+//                                'relatedissuecodes');
+
+                            $issuesWithSameCover = [];
 
                             $issueCodesStr = implode(',',
                                 array_unique(
