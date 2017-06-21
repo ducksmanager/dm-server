@@ -2,6 +2,7 @@
 namespace DmServer;
 
 use CoverId\Contracts\Dtos\SimilarImagesOutput;
+use Exception;
 use Monolog\Logger;
 use Symfony\Component\HttpFoundation\File\File;
 
@@ -9,6 +10,37 @@ class SimilarImagesHelper {
 
     /** @var string $mockedResults */
     public static $mockedResults = null;
+
+    /**
+     * @return int
+     * @throws Exception
+     */
+    public static function getIndexedImagesNumber()
+    {
+        if (!is_null(self::$mockedResults)) {
+            $response = self::$mockedResults;
+        }
+        else {
+            // @codeCoverageIgnoreStart
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL,
+                'http://' . DmServer::$settings['pastec_host'] . ':' . DmServer::$settings['pastec_port'] . '/index/imageIds');
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+            $response = curl_exec($ch);
+        }
+
+        $resultArray = json_decode($response, true);
+        if (is_null($resultArray)) {
+            throw new Exception('Pastec is unreachable');
+        }
+        if ($resultArray['type'] === 'INDEX_IMAGE_IDS') {
+            return count($resultArray['image_ids']);
+        }
+        else {
+            throw new Exception('Invalid return type : '.$resultArray['type']);
+        }
+    }
 
     /**
      * @param File $file
