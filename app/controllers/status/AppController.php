@@ -26,7 +26,7 @@ class AppController extends AbstractController
             function (Application $app, Request $request) {
                 return AbstractController::return500ErrorOnException($app, null, function () use ($app) {
                     $errors = [];
-                    $output = [];
+                    $log = [];
                     self::setClientVersion($app, '1.0.0');
 
                     $databaseChecks = [
@@ -60,13 +60,13 @@ class AppController extends AbstractController
                     }
 
                     if (count($errors) === 0) {
-                        $output[] = 'OK for all databases';
+                        $log[] = 'OK for all databases';
                     }
 
                     try {
                         $pastecIndexesImagesNumber = SimilarImagesHelper::getIndexedImagesNumber();
                         if ($pastecIndexesImagesNumber > 0) {
-                            $output[] = "Pastec OK with $pastecIndexesImagesNumber images indexed";
+                            $log[] = "Pastec OK with $pastecIndexesImagesNumber images indexed";
                         }
                         else {
                             $errors[] = "Pastec has no images indexed";
@@ -76,11 +76,11 @@ class AppController extends AbstractController
                         $errors[] = $e->getMessage();
                     }
 
+                    $output = implode('<br />', $log);
                     if (count($errors) > 0) {
-                        return new Response(implode('<br />', $errors));
-                    } else {
-                        return new Response(implode('<br />', $output));
+                        $output.='<br /><b>'.implode('</b><br /><b>', $errors).'</b>';
                     }
+                    return new Response($output);
                 });
 
             }

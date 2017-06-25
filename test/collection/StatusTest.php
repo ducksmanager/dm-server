@@ -5,12 +5,11 @@ use DmServer\SimilarImagesHelper;
 
 class StatusTest extends TestCommon
 {
-
     public function testGetStatus() {
-        self::createCoaData();
         $collectionUserInfo = self::createTestCollection();
         self::setSessionUser($this->app, $collectionUserInfo);
         self::createCoverIds();
+        self::createCoaData();
         self::createStatsData();
         self::createEdgeCreatorData();
 
@@ -19,6 +18,21 @@ class StatusTest extends TestCommon
         $response = $this->buildAuthenticatedService('/status', TestCommon::$dmUser, [], [], 'GET')->call();
 
         $this->assertEquals('OK for all databases<br />Pastec OK with 3 images indexed', $response->getContent());
+    }
+
+    public function testGetStatusNoCoverData() {
+        $collectionUserInfo = self::createTestCollection();
+        self::setSessionUser($this->app, $collectionUserInfo);
+        self::createCoverIds();
+        self::createCoaData();
+        self::createStatsData();
+        self::createEdgeCreatorData();
+
+        SimilarImagesHelper::$mockedResults = json_encode(['image_ids' => [], 'type' => 'INDEX_IMAGE_IDS']);
+
+        $response = $this->buildAuthenticatedService('/status', TestCommon::$dmUser, [], [], 'GET')->call();
+
+        $this->assertEquals('OK for all databases<br /><b>Pastec has no images indexed</b>', $response->getContent());
     }
 
     public function testGetStatusMissingCoaData() {
