@@ -388,17 +388,19 @@ class EdgeCreatorTest extends TestCommon
 
     public function testSetModelNotReadyForPublication() {
         $model = $this->getV2Model('fr', 'PM', '502');
+        $model->setPhotographes('a,b');
+        $model->setCreateurs('c,d');
+        $this->getEm()->flush($model);
 
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/{$model->getId()}/readytopublish/0", TestCommon::$edgecreatorUser, 'POST', [
-            'photographers' => ['brunoperel','nonoox'],
-            'designers' => ['brunoperel']
-        ])
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/{$model->getId()}/readytopublish/0", TestCommon::$edgecreatorUser, 'POST')
             ->call();
 
         $objectResponse = json_decode($response->getContent());
 
         $this->assertEquals($model->getId(), $objectResponse->model->id);
         $this->assertEquals($model->getPretepourpublication(), $objectResponse->readytopublish);
+        $this->assertEquals('a,b', $objectResponse->model->photographes); // should be unchanged
+        $this->assertEquals('c,d', $objectResponse->model->createurs); // should be unchanged
 
         $newModel = $this->getV2Model('fr', 'PM', '502');
         $this->assertEquals(false, $newModel->getPretepourpublication());

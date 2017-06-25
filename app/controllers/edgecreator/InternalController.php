@@ -350,8 +350,12 @@ class InternalController extends AbstractController
                     /** @var TranchesEnCoursModeles $model */
                     $model = $ecEm->getRepository(TranchesEnCoursModeles::class)->find($modelId);
                     $model->setActive(false);
-                    $model->setPhotographes(implode(',', $photographers));
-                    $model->setCreateurs(implode(',', $designers));
+                    if (!is_null($photographers)) {
+                        $model->setPhotographes(implode(',', $photographers));
+                    }
+                    if (!is_null($designers)) {
+                        $model->setCreateurs(implode(',', $designers));
+                    }
                     $model->setPretepourpublication($isReadyToPublish === '1');
                     $ecEm->persist($model);
                     $ecEm->flush();
