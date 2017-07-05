@@ -7,6 +7,7 @@ use Dm\Models\AuteursPseudos;
 use Dm\Models\Numeros;
 use Dm\Models\Users;
 use DmServer\Controllers\AbstractController;
+use DmServer\Controllers\AbstractInternalController;
 use DmServer\DmServer;
 use Doctrine\ORM\EntityManager;
 use Silex\Application;
@@ -14,7 +15,7 @@ use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class InternalController extends AbstractController
+class InternalController extends AbstractInternalController
 {
     protected static function wrapInternalService($app, $function) {
         return parent::return500ErrorOnException($app, DmServer::CONFIG_DB_KEY_DM, $function);

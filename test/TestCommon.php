@@ -15,6 +15,7 @@ use Dm\Models\Numeros;
 use Dm\Models\Users;
 use DmServer\Controllers\AbstractController;
 use DmServer\DmServer;
+use DmServer\RequestUtil;
 use DmStats\Models\AuteursHistoires;
 use DmStats\Models\AuteursPseudosSimple;
 use DmStats\Models\UtilisateursHistoiresManquantes;
@@ -29,6 +30,8 @@ use Silex\Application;
 use Silex\WebTestCase;
 
 class TestCommon extends WebTestCase {
+
+    use RequestUtil;
 
     protected static $conf;
     protected static $roles;
@@ -162,7 +165,7 @@ class TestCommon extends WebTestCase {
     protected function getCurrentUserIssues() {
         $dmEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_DM];
         return $dmEntityManager->getRepository(Numeros::class)->findBy(
-            ['idUtilisateur' => AbstractController::getSessionUser($this->app)['id']]
+            ['idUtilisateur' => self::getSessionUser($this->app)['id']]
         );
     }
 
@@ -390,7 +393,7 @@ class TestCommon extends WebTestCase {
     public function createStatsData() {
         $dmStatsEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_DM_STATS];
 
-        $userId = AbstractController::getSessionUser($this->app)['id'];
+        $userId = self::getSessionUser($this->app)['id'];
 
         // Author 1
 
@@ -573,7 +576,7 @@ class TestCommon extends WebTestCase {
 
         /** @var Users $edgeCreatorUser */
         $edgeCreatorUser = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_DM]->getRepository(Users::class)->find(
-            AbstractController::getSessionUser($this->app)['id']
+            self::getSessionUser($this->app)['id']
         );
 
         $model = new EdgecreatorModeles2();

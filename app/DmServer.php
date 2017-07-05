@@ -18,8 +18,10 @@ use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class DmServer extends AbstractController implements ControllerProviderInterface
+class DmServer implements ControllerProviderInterface
 {
+    use RequestInterceptor;
+
     const CONFIG_FILE_DEFAULT = 'config.db.ini';
     const CONFIG_FILE_TEST = 'config.db.test.ini';
 
@@ -205,22 +207,7 @@ class DmServer extends AbstractController implements ControllerProviderInterface
          * @return Response|void
          */
             function(Request $request, Application $app) {
-                if (strpos($request->getPathInfo(), '/status') === 0) {
-                    return;
-                }
-                if (is_null(self::getClientVersion($app))) {
-                    $clientVersion = $request->headers->get('x-dm-version');
-                    if (is_null($clientVersion)) {
-                        return new Response('Unspecified client version', Response::HTTP_VERSION_NOT_SUPPORTED);
-                    } else {
-                        self::setClientVersion($app, $clientVersion);
-                    }
-                }
-
-                $result = $this->authenticateUser($app, $request);
-                if ($result instanceof Response) {
-                    return $result;
-                }
+                return self::checkRequestVersionAndUser($request, $app);
             }
         );
 
