@@ -81,7 +81,16 @@ class InternalController extends AbstractController
                     @mkdir(DmServer::$settings['image_local_root'] . dirname($url), 0777, true);
                     file_put_contents(
                         $localFilePath,
-                        file_get_contents($fullUrl)
+                        file_get_contents(
+                            $fullUrl,
+                            false,
+                            stream_context_create([
+                                "ssl" => [
+                                    'verify_peer' => false,
+                                    'verify_peer_name' => false
+                                ]
+                            ])
+                        )
                     );
 
                     return new BinaryFileResponse($localFilePath);
