@@ -95,7 +95,7 @@ class InternalController extends AbstractController
                     }
 
                     $purchase->setIdUser($idUser);
-                    $purchase->setDate(\DateTime::createFromFormat('Y-m-d', $purchaseDate));
+                    $purchase->setDate(\DateTime::createFromFormat('Y-m-d H:i:s', $purchaseDate.' 00:00:00'));
                     $purchase->setDescription($purchaseDescription);
 
                     $dmEm->persist($purchase);

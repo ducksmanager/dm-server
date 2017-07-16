@@ -138,7 +138,7 @@ class CollectionTest extends TestCommon
             $purchaseToUpdate
         );
 
-        $this->assertEquals(\DateTime::createFromFormat('Y-m-d', '2017-01-01'), $updatedPurchase->getDate());
+        $this->assertEquals(\DateTime::createFromFormat('Y-m-d H:i:s', '2017-01-01 00:00:00'), $updatedPurchase->getDate());
         $this->assertEquals('New description', $updatedPurchase->getDescription());
     }
 
