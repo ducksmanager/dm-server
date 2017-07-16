@@ -12,7 +12,7 @@ require_once __DIR__.'/vendor/autoload.php';
 $forTest = isset($conf);
 
 if (!$forTest) {
-    $conf = DmServer::getAppConfig('config.db.ini');
+    $conf = DmServer::getAppConfig();
     DmServer::initSettings('settings.ini');
 }
 
@@ -81,7 +81,7 @@ $app['security.default_encoder'] = function () use ($passwordEncoder) {
     return $passwordEncoder;
 };
 
-$roles = DmServer::getAppRoles($forTest);
+$roles = DmServer::getAppRoles();
 
 $users = array();
 array_walk($roles, function($role, $user) use ($passwordEncoder, &$users) {

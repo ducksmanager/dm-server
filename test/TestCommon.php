@@ -73,21 +73,35 @@ class TestCommon extends WebTestCase {
     public static function setUpBeforeClass()
     {
         DmServer::initSettings('settings.test.ini');
-        self::$conf = DmServer::getAppConfig(true);
-        self::$roles = DmServer::getAppRoles(true);
+        self::$conf = DmServer::getAppConfig();
+        self::$roles = DmServer::getAppRoles();
+    }
+
+    public static function createEntityManagers()
+    {
+        DmServer::$entityManagers = [];
+
+        foreach (DmServer::$configuredEntityManagerNames as $emName) {
+            self::$schemas[$emName] = SchemaWithClasses::createFromEntityManager(DmServer::getEntityManager($emName));
+        }
     }
 
     public function setUp() {
-        DmServer::$entityManagers = [];
-
-        foreach(DmServer::$configuredEntityManagerNames as $emName) {
-            self::$schemas[$emName] = SchemaWithClasses::createFromEntityManager(DmServer::getEntityManager($emName, true));
-        }
-
         self::initDatabase();
         @rmdir(DmServer::$settings['image_local_root']);
         @mkdir(DmServer::$settings['image_local_root'], 0777, true);
         parent::setUp();
+    }
+
+    public function tearDown()
+    {
+        foreach(DmServer::$configuredEntityManagerNames as $emName) {
+            if (! DmServer::getEntityManager($emName)->isOpen()) {
+                unset(DmServer::$entityManagers[$emName]);
+                self::$schemas[$emName] = SchemaWithClasses::createFromEntityManager(DmServer::getEntityManager($emName));
+            }
+        }
+        parent::tearDown();
     }
 
     protected static function initDatabase() {

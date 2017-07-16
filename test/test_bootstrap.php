@@ -8,3 +8,6 @@ if (!file_exists($cacertPath)) {
 }
 
 $loader = require __DIR__ . '/../vendor/autoload.php';
+
+\DmServer\DmServer::$isTestContext = true;
+\DmServer\Test\TestCommon::createEntityManagers();

@@ -6,6 +6,7 @@ use DmServer\Controllers;
 use DmServer\Controllers\AbstractController;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\CachedReader;
+use Doctrine\Common\Cache\ApcuCache;
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\EventManager;
 use Doctrine\DBAL\DriverManager;
@@ -21,6 +22,8 @@ use Symfony\Component\HttpFoundation\Response;
 class DmServer implements ControllerProviderInterface
 {
     use RequestInterceptor;
+
+    public static $isTestContext = false;
 
     const CONFIG_FILE_DEFAULT = 'config.db.ini';
     const CONFIG_FILE_TEST = 'config.db.test.ini';
@@ -59,12 +62,11 @@ class DmServer implements ControllerProviderInterface
     }
 
     /**
-     * @param bool $forTest
      * @return array
      */
-    public static function getAppConfig($forTest) {
+    public static function getAppConfig() {
         $config = parse_ini_file(
-            __DIR__.'/config/' . ($forTest ? self::CONFIG_FILE_TEST : self::CONFIG_FILE_DEFAULT)
+            __DIR__ . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . (self::$isTestContext ? self::CONFIG_FILE_TEST : self::CONFIG_FILE_DEFAULT)
             , true
         );
         $schemas = self::getSchemas();
@@ -81,9 +83,9 @@ class DmServer implements ControllerProviderInterface
         return $config;
     }
 
-    public static function getAppRoles($forTest) {
+    public static function getAppRoles() {
         return parse_ini_file(
-            __DIR__.($forTest ? '/config/roles.base.ini' : '/config/roles.ini')
+            __DIR__.(self::$isTestContext ? '/config/roles.base.ini' : '/config/roles.ini')
             , true
         );
     }
@@ -136,16 +138,15 @@ class DmServer implements ControllerProviderInterface
 
     /**
      * @param string $dbName
-     * @param bool $forTest
      * @return EntityManager|null
      */
-    static function getEntityManager($dbName, $forTest = false) {
+    static function getEntityManager($dbName) {
         if (!in_array($dbName, self::$configuredEntityManagerNames)) {
             return null;
         }
         else {
             if (!array_key_exists($dbName, self::$entityManagers)) {
-                self::$entityManagers[$dbName] = self::createEntityManager($dbName, $forTest);
+                self::createEntityManager($dbName);
             }
             return self::$entityManagers[$dbName];
         }
@@ -153,10 +154,9 @@ class DmServer implements ControllerProviderInterface
 
     /**
      * @param string $dbKey
-     * @param bool $forTest
      * @return EntityManager
      */
-    static function createEntityManager($dbKey, $forTest = false)
+    static function createEntityManager($dbKey)
     {
         $cache = new ArrayCache();
         // standard annotation reader
@@ -170,7 +170,7 @@ class DmServer implements ControllerProviderInterface
         $timestampableListener->setAnnotationReader($cachedAnnotationReader);
         $evm->addEventSubscriber($timestampableListener);
 
-        $config = self::getAppConfig($forTest)[$dbKey];
+        $config = self::getAppConfig()[$dbKey];
 
         $metaDataConfig = Setup::createAnnotationMetadataConfiguration(
             [__DIR__ . "/models/".$config['models_path']], true, null, null, false
@@ -184,7 +184,10 @@ class DmServer implements ControllerProviderInterface
             $conn->getConfiguration()->setFilterSchemaAssetsExpression('~^'.$config['tables'].'$~');
         }
 
-        return EntityManager::create($conn, $metaDataConfig);
+        $em = EntityManager::create($conn, $metaDataConfig);
+        self::$entityManagers[$dbKey] = $em;
+
+        return $em;
     }
 
     /**
