@@ -3,12 +3,15 @@
 namespace Dm\Models;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
+use Doctrine\ORM\Mapping\PrePersist;
 
 /**
  * Bouquineries
  *
  * @ORM\Table(name="bouquineries")
  * @ORM\Entity
+ * @HasLifecycleCallbacks
  */
 class Bouquineries extends \Dm\Models\BaseModel
 {
@@ -92,11 +95,19 @@ class Bouquineries extends \Dm\Models\BaseModel
     private $coordy = '0';
 
     /**
-     * @var integer
+     * @var \DateTime
      *
-     * @ORM\Column(name="DateAjout", type="integer", nullable=false)
+     * @ORM\Column(name="DateAjout", type="date", nullable=false)
      */
-    private $dateajout = 'CURRENT_TIMESTAMP';
+    private $dateajout;
+
+    /** @PrePersist */
+    public function setDateOnPrePersist()
+    {
+        if (is_null($this->dateajout)) {
+            $this->dateajout = new \DateTime();
+        }
+    }
 
     /**
      * @var boolean
@@ -360,7 +371,7 @@ class Bouquineries extends \Dm\Models\BaseModel
     /**
      * Set dateajout
      *
-     * @param integer $dateajout
+     * @param \DateTime $dateajout
      *
      * @return Bouquineries
      */
@@ -374,7 +385,7 @@ class Bouquineries extends \Dm\Models\BaseModel
     /**
      * Get dateajout
      *
-     * @return integer
+     * @return \DateTime
      */
     public function getDateajout()
     {

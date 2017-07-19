@@ -23,6 +23,49 @@ class CollectionTest extends TestCommon
 
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
         $this->assertEquals(4, count($this->getCurrentUserIssues()));
+
+        $userIssues = $this->getCurrentUserIssues();
+        /** @var Numeros $lastIssue */
+        $lastIssue = $userIssues[count($userIssues) -1];
+        $this->assertEquals('fr', $lastIssue->getPays());
+        $this->assertEquals('DDD', $lastIssue->getMagazine());
+        $this->assertEquals('3', $lastIssue->getNumero());
+        $this->assertEquals('bon', $lastIssue->getEtat());
+        $this->assertEquals(-2, $lastIssue->getIdAcquisition());
+        $this->assertEquals(false, $lastIssue->getAv());
+        $this->assertEquals(AbstractController::getSessionUser($this->app)['id'], $lastIssue->getIdUtilisateur());
+        $this->assertEquals(date('Y-m-d'), $lastIssue->getDateajout()->format('Y-m-d'));
+    }
+
+    public function testAddIssueDefaultDataDetailed() {
+        $this->assertEquals(0, count($this->getCurrentUserIssues()));
+
+        self::createTestCollection(self::$defaultTestDmUserName);
+
+        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/issues', TestCommon::$dmUser, 'POST', [
+            'country' => 'fr',
+            'publication' => 'DDD',
+            'issuenumbers' => ['3'],
+            'condition' => 'bon',
+            'istosell' => '1',
+            'purchaseid' => '2'
+        ])->call();
+
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+
+        $userIssues = $this->getCurrentUserIssues();
+        $this->assertEquals(4, count($userIssues));
+
+        /** @var Numeros $lastIssue */
+        $lastIssue = $userIssues[count($userIssues) -1];
+        $this->assertEquals('fr', $lastIssue->getPays());
+        $this->assertEquals('DDD', $lastIssue->getMagazine());
+        $this->assertEquals('3', $lastIssue->getNumero());
+        $this->assertEquals('bon', $lastIssue->getEtat());
+        $this->assertEquals(2, $lastIssue->getIdAcquisition());
+        $this->assertEquals(true, $lastIssue->getAv());
+        $this->assertEquals(AbstractController::getSessionUser($this->app)['id'], $lastIssue->getIdUtilisateur());
+        $this->assertEquals(date('Y-m-d'), $lastIssue->getDateajout()->format('Y-m-d'));
     }
 
     public function testDeleteFromCollection() {

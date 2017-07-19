@@ -3,12 +3,15 @@
 namespace Dm\Models;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
+use Doctrine\ORM\Mapping\PrePersist;
 
 /**
  * TranchesPretes
  *
  * @ORM\Table(name="tranches_pretes")
  * @ORM\Entity
+ * @HasLifecycleCallbacks
  */
 class TranchesPretes extends \Dm\Models\BaseModel
 {
@@ -45,12 +48,19 @@ class TranchesPretes extends \Dm\Models\BaseModel
     private $createurs;
 
     /**
-     * @var integer
+     * @var \DateTime
      *
-     * @ORM\Column(name="dateajout", type="integer", nullable=false)
+     * @ORM\Column(name="dateajout", type="date", nullable=false)
      */
-    private $dateajout = 'CURRENT_TIMESTAMP';
+    private $dateajout;
 
+    /** @PrePersist */
+    public function setDateOnPrePersist()
+    {
+        if (is_null($this->dateajout)) {
+            $this->dateajout = new \DateTime();
+        }
+    }
 
 
     /**
@@ -152,7 +162,7 @@ class TranchesPretes extends \Dm\Models\BaseModel
     /**
      * Set dateajout
      *
-     * @param integer $dateajout
+     * @param \DateTime $dateajout
      *
      * @return TranchesPretes
      */
@@ -166,7 +176,7 @@ class TranchesPretes extends \Dm\Models\BaseModel
     /**
      * Get dateajout
      *
-     * @return integer
+     * @return \DateTime
      */
     public function getDateajout()
     {

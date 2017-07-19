@@ -95,4 +95,11 @@ class CoaListsTest extends TestCommon
         $this->assertEquals('Dynastie', $arrayResponse->{'fr/DDD 1'}->publicationtitle);
         $this->assertEquals('1', $arrayResponse->{'fr/DDD 1'}->issuenumber);
     }
+
+    public function testGetIssueListByIssueCodesNotExisting() {
+        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issuesbycodes/fr/DDDDD 1', TestCommon::$dmUser)->call();
+
+        $arrayResponse = json_decode($response->getContent());
+        $this->assertEquals(0, count($arrayResponse));
+    }
 }

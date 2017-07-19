@@ -3,12 +3,15 @@
 namespace Dm\Models;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
+use Doctrine\ORM\Mapping\PrePersist;
 
 /**
  * Numeros
  *
-+ * @ORM\Table(name="numeros", uniqueConstraints={@ORM\UniqueConstraint(name="Details_Numero", columns={"Pays", "Magazine", "Numero", "ID_Utilisateur"})}, indexes={@ORM\Index(name="Utilisateur", columns={"ID_Utilisateur"})})
+ * @ORM\Table(name="numeros", uniqueConstraints={@ORM\UniqueConstraint(name="Details_Numero", columns={"Pays", "Magazine", "Numero", "ID_Utilisateur"})}, indexes={@ORM\Index(name="Utilisateur", columns={"ID_Utilisateur"})})
  * @ORM\Entity
+ * @HasLifecycleCallbacks
  */
 class Numeros extends \Dm\Models\BaseModel
 {
@@ -62,11 +65,20 @@ class Numeros extends \Dm\Models\BaseModel
     private $idUtilisateur;
 
     /**
-     * @var integer
+     * @var \DateTime
      *
-     * @ORM\Column(name="DateAjout", type="integer", nullable=false)
+     * @ORM\Column(name="DateAjout", type="date", nullable=false)
      */
-    private $dateajout = 'CURRENT_TIMESTAMP';
+    private $dateajout;
+
+    /** @PrePersist */
+    public function setDateOnPrePersist()
+    {
+        if (is_null($this->dateajout)) {
+            $this->dateajout = new \DateTime();
+        }
+    }
+
 
     /**
      * @var integer
@@ -250,7 +262,7 @@ class Numeros extends \Dm\Models\BaseModel
     /**
      * Set dateajout
      *
-     * @param integer $dateajout
+     * @param \DateTime $dateajout
      *
      * @return Numeros
      */
@@ -264,7 +276,7 @@ class Numeros extends \Dm\Models\BaseModel
     /**
      * Get dateajout
      *
-     * @return integer
+     * @return \DateTime
      */
     public function getDateajout()
     {

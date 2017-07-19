@@ -3,12 +3,15 @@
 namespace Dm\Models;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
+use Doctrine\ORM\Mapping\PrePersist;
 
 /**
  * Users
  *
  * @ORM\Table(name="users", uniqueConstraints={@ORM\UniqueConstraint(name="username", columns={"username"})})
  * @ORM\Entity
+ * @HasLifecycleCallbacks
  */
 class Users extends \Dm\Models\BaseModel
 {
@@ -106,11 +109,19 @@ class Users extends \Dm\Models\BaseModel
     private $bibliothequeGrossissement = '1.5';
 
     /**
-     * @var integer
+     * @var \DateTime
      *
-     * @ORM\Column(name="DernierAcces", type="integer", nullable=false)
+     * @ORM\Column(name="DernierAcces", type="date", nullable=false)
      */
-    private $dernieracces = 'CURRENT_TIMESTAMP';
+    private $dernieracces;
+
+    /** @PrePersist */
+    public function setDateOnPrePersist()
+    {
+        if (is_null($this->dernieracces)) {
+            $this->dernieracces = new \DateTime();
+        }
+    }
 
 
 
@@ -415,7 +426,7 @@ class Users extends \Dm\Models\BaseModel
     /**
      * Set dernieracces
      *
-     * @param integer $dernieracces
+     * @param \DateTime $dernieracces
      *
      * @return Users
      */
@@ -429,7 +440,7 @@ class Users extends \Dm\Models\BaseModel
     /**
      * Get dernieracces
      *
-     * @return integer
+     * @return \DateTime
      */
     public function getDernieracces()
     {
