@@ -100,14 +100,14 @@ class CoverIdTest extends TestCommon
                     "publicationtitle" => "Dynastie",
                     "issuenumber" => "1",
                     "coverid" => 1
-                    ], // Related issue: same cover story code
+                    ]/*, // Related issue: same cover story code
                 $similarCoverIssuePublicationCode.' '.$similarCoverIssueNumber => [
                     "countrycode" => explode('/', $similarCoverIssuePublicationCode)[0],
                     "publicationcode" => $similarCoverIssuePublicationCode,
                     "publicationtitle" => "Dynastie",
                     "issuenumber" => $similarCoverIssueNumber,
                     "coverid" => count(self::$coverIds) + 1
-                    ]
+                    ]*/
                 ]
             ]), $response->getContent());
     }
