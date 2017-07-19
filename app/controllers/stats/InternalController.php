@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\Request;
 class InternalController extends AbstractController
 {
     protected static function wrapInternalService($app, $function) {
-        return parent::return500ErrorOnException($app, DmServer::CONFIG_DB_KEY_DM_STATS, $function);
+        return parent::returnErrorOnException($app, DmServer::CONFIG_DB_KEY_DM_STATS, $function);
     }
     
     /**

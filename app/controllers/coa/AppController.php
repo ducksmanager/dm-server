@@ -9,6 +9,7 @@ use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class AppController extends AbstractController
 {
@@ -65,10 +66,13 @@ class AppController extends AbstractController
         $routing->get(
             '/coa/list/issuesbycodes/{issuecodes}',
             function (Application $app, Request $request, $issuecodes) {
-                $response = ModelHelper::getUnserializedArrayFromJson(
-                    self::callInternal($app, '/coa/issuesbycodes', 'GET', [$issuecodes])->getContent()
-                );
-                return new JsonResponse(ModelHelper::getSimpleArray($response));
+                $response = self::callInternal($app, '/coa/issuesbycodes', 'GET', [$issuecodes]);
+                if ($response->getStatusCode() === Response::HTTP_OK) {
+                    return new JsonResponse(ModelHelper::getSimpleArray(
+                        ModelHelper::getUnserializedArrayFromJson($response->getContent())
+                    ));
+                }
+                else return $response;
             }
         )->assert('issuecodes', self::getParamAssertRegex(BaseModel::ISSUE_CODE_VALIDATION, 4));
     }

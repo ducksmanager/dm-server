@@ -26,7 +26,7 @@ Creating the containers should take less than a minute.
 
 Once the containers are started, run the following command to generate the DB config files and create the schemas in the databases :
 ```bash
-docker exec -it web /bin/bash -c /var/www/html/dm-server/scripts/create-schemas.sh
+docker exec -it web /bin/bash -c dm-server/scripts/create-schemas.sh
 ```
 (considering `web` is the name of the running Web container)
 
@@ -37,7 +37,7 @@ docker exec -it web /bin/bash -c /var/www/html/dm-server/scripts/create-schemas.
 
 Browse to the path of the source on the host, then run: 
 ```bash
-scripts/deploy/deploy-app.sh web
+docker exec -it web /bin/bash -c scripts/deploy/deploy-app.sh web
 ```
 
 

@@ -1,6 +1,8 @@
 <?php
 namespace DmServer\Test;
 
+use CoverId\Models\Covers;
+use DmServer\DmServer;
 use Symfony\Component\HttpFoundation\Response;
 
 class CoaListsTest extends TestCommon
@@ -96,10 +98,18 @@ class CoaListsTest extends TestCommon
         $this->assertEquals('1', $arrayResponse->{'fr/DDD 1'}->issuenumber);
     }
 
-    public function testGetIssueListByIssueCodesNotExisting() {
+    public function testGetIssueListByIssueCodesNoCoaIssue() {
+        DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_COVER_ID]->persist(
+            $cover = (new Covers())
+                ->setIssueCode('fr/DDDDD 1')
+                ->setSitecode('webusers')
+                ->setUrl('abc.jpg')
+        );
+        DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_COVER_ID]->flush();
+
         $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issuesbycodes/fr/DDDDD 1', TestCommon::$dmUser)->call();
 
-        $arrayResponse = json_decode($response->getContent());
-        $this->assertEquals(0, count($arrayResponse));
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+        $this->assertEquals('No COA data exists for this issue : fr/DDDDD 1', $response->getContent());
     }
 }

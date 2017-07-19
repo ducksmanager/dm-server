@@ -24,7 +24,7 @@ class AppController extends AbstractController
              * @codeCoverageIgnore
              */
             function (Application $app, Request $request) {
-                return AbstractController::return500ErrorOnException($app, null, function () use ($app) {
+                return AbstractController::returnErrorOnException($app, null, function () use ($app) {
                     $errors = [];
                     $log = [];
                     self::setClientVersion($app, '1.0.0');

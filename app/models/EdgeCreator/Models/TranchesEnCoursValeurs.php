@@ -53,9 +53,7 @@ class TranchesEnCoursValeurs extends \EdgeCreator\Models\BaseModel
      * @var \EdgeCreator\Models\TranchesEnCoursModeles
      *
      * @ORM\ManyToOne(targetEntity="EdgeCreator\Models\TranchesEnCoursModeles")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="ID_Modele", referencedColumnName="ID")
-     * })
+     * @ORM\JoinColumn(name="ID_Modele", referencedColumnName="ID")
      */
     private $idModele;
 

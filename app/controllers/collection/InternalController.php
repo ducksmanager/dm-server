@@ -19,7 +19,7 @@ use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 class InternalController extends AbstractController
 {
     protected static function wrapInternalService($app, $function) {
-        return parent::return500ErrorOnException($app, DmServer::CONFIG_DB_KEY_DM, $function);
+        return parent::returnErrorOnException($app, DmServer::CONFIG_DB_KEY_DM, $function);
     }
     
     /**

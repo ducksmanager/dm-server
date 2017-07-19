@@ -48,7 +48,7 @@ abstract class AbstractController
      * @param callable $function
      * @return mixed|Response
      */
-    protected static function return500ErrorOnException($app, $integratedEm, $function) {
+    protected static function returnErrorOnException($app, $integratedEm, $function) {
         try {
             return call_user_func($function, DmServer::getEntityManager($integratedEm));
         }
@@ -56,7 +56,7 @@ abstract class AbstractController
             if (isset($app['monolog'])) {
                 $app['monolog']->addError($e->getMessage());
             }
-            return new Response($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+            return new Response($e->getMessage(), $e->getCode() === 0 ? Response::HTTP_INTERNAL_SERVER_ERROR : $e->getCode());
         }
     }
 

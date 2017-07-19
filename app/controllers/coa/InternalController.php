@@ -23,11 +23,12 @@ use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class InternalController extends AbstractController
 {
     protected static function wrapInternalService($app, $function) {
-        return parent::return500ErrorOnException($app, DmServer::CONFIG_DB_KEY_COA, $function);
+        return parent::returnErrorOnException($app, DmServer::CONFIG_DB_KEY_COA, $function);
     }
 
     /**
@@ -130,6 +131,8 @@ class InternalController extends AbstractController
 
                     $resultsIssueInfo = $qbIssueInfo->getQuery()->getResult();
 
+                    $issues = [];
+
                     array_walk(
                         $resultsIssueInfo,
                         function($issue) use (&$issues) {
@@ -151,7 +154,7 @@ class InternalController extends AbstractController
                         function($issue) use (&$issues) {
 
                             if (empty($issues[$issue['issuecode']])) {
-                                throw new Exception('No COA data exists for this issue : ' . $issue['issuecode']);
+                                throw new Exception('No COA data exists for this issue : ' . $issue['issuecode'], Response::HTTP_BAD_REQUEST);
                             }
                             /** @var SimpleIssueWithCoverId $issueObject */
                             $issueObject = $issues[$issue['issuecode']];

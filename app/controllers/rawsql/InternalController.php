@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 class InternalController extends AbstractController
 {
     protected static function wrapInternalService($app, $function) {
-        return parent::return500ErrorOnException($app, null, $function);
+        return parent::returnErrorOnException($app, null, $function);
     }
 
     /**
