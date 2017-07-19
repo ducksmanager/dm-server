@@ -38,7 +38,7 @@ class EdgecreatorModeles2 extends \EdgeCreator\Models\BaseModel
     /**
      * @var integer
      *
-     * @ORM\Column(name="Ordre", type="integer", precision=10, scale=0, nullable=false)
+     * @ORM\Column(name="Ordre", type="integer", nullable=false)
      */
     private $ordre;
 

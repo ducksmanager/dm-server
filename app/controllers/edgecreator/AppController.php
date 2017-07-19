@@ -188,5 +188,31 @@ class AppController extends AbstractController
                 ]);
             }
         );
+
+        $routing->get(
+            '/edgecreator/multiple_edge_photo/today',
+            function (Request $request, Application $app) {
+                return self::callInternal($app, "/edgecreator/multiple_edge_photo/today", 'GET');
+            }
+        );
+
+        $routing->get(
+            '/edgecreator/multiple_edge_photo/hash/{hash}',
+            function (Request $request, Application $app, $hash) {
+                return self::callInternal($app, "/edgecreator/multiple_edge_photo/$hash", 'GET');
+            }
+        );
+
+        $routing->put(
+            '/edgecreator/multiple_edge_photo',
+            function (Request $request, Application $app) {
+                return self::callInternal($app, "/edgecreator/multiple_edge_photo", 'PUT', [
+                    'hash' => $request->request->get('hash'),
+                    'datetime' => $request->request->get('datetime'),
+                    'filename' => $request->request->get('filename')
+                ]);
+            }
+        );
+
     }
 }

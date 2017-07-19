@@ -10,6 +10,7 @@ use EdgeCreator\Models\EdgecreatorIntervalles;
 use EdgeCreator\Models\EdgecreatorModeles2;
 use EdgeCreator\Models\EdgecreatorValeurs;
 use EdgeCreator\Models\ImagesMyfonts;
+use EdgeCreator\Models\ImagesTranches;
 use EdgeCreator\Models\TranchesEnCoursModeles;
 use EdgeCreator\Models\TranchesEnCoursValeurs;
 use Silex\Application;
@@ -380,6 +381,60 @@ class InternalController extends AbstractController
                     $ecEm->flush();
 
                     return new JsonResponse(['mainphoto' => ['modelid' => $model->getId(), 'photoname' => $photoName]]);
+                });
+            }
+        );
+
+        $routing->get(
+            '/internal/edgecreator/multiple_edge_photo/today',
+            function (Request $request, Application $app) {
+                return self::wrapInternalService($app, function (EntityManager $ecEm) use ($app) {
+                    $qb = $ecEm->createQueryBuilder();
+
+                    $qb->select('photo.id, photo.hash, photo.dateheure, photo.idUtilisateur')
+                        ->from(ImagesTranches::class, 'photo')
+                        ->andWhere("photo.idUtilisateur = :idUtilisateur")
+                        ->setParameter(':idUtilisateur', self::getSessionUser($app)['id'])
+                        ->andWhere("photo.dateheure = :today")
+                        ->setParameter(':today', new \DateTime('today'));
+
+                    $uploadedFiles = $qb->getQuery()->getResult();
+
+                    return new JsonResponse(self::getSerializer()->serialize($uploadedFiles, 'json'), Response::HTTP_OK, [], true);
+                });
+            }
+        );
+
+        $routing->get(
+            '/internal/edgecreator/multiple_edge_photo/{hash}',
+            function (Request $request, Application $app, $hash) {
+                return self::wrapInternalService($app, function (EntityManager $ecEm) use ($app, $hash) {
+                    $uploadedFile = $ecEm->getRepository(ImagesTranches::class)->findOneBy([
+                        'idUtilisateur' => self::getSessionUser($app)['id'],
+                        'hash' => $hash
+                    ]);
+                    return new JsonResponse(self::getSerializer()->serialize($uploadedFile, 'json'), Response::HTTP_OK, [], true);
+                });
+            }
+        );
+
+        $routing->put(
+            '/internal/edgecreator/multiple_edge_photo',
+            function (Application $app, Request $request) {
+                return self::wrapInternalService($app, function (EntityManager $ecEm) use ($request, $app) {
+                    $hash = $request->request->get('hash');
+                    $dateTime = $request->request->get('datetime');
+                    $fileName = $request->request->get('filename');
+
+                    $photo = new ImagesTranches();
+                    $photo->setHash($hash);
+                    $photo->setDateHeure(new \DateTime('today'));
+                    $photo->setNomfichier($fileName);
+                    $photo->setIdUtilisateur(self::getSessionUser($app)['id']);
+                    $ecEm->persist($photo);
+                    $ecEm->flush();
+
+                    return new JsonResponse(['photo' => ['id' => $photo->getId()]]);
                 });
             }
         );

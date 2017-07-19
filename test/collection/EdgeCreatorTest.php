@@ -1,11 +1,13 @@
 <?php
 namespace DmServer\Test;
 
+use DmServer\Controllers\AbstractController;
 use DmServer\DmServer;
 use EdgeCreator\Models\EdgecreatorIntervalles;
 use EdgeCreator\Models\EdgecreatorModeles2;
 use EdgeCreator\Models\EdgecreatorValeurs;
 use EdgeCreator\Models\ImagesMyfonts;
+use EdgeCreator\Models\ImagesTranches;
 use EdgeCreator\Models\TranchesEnCoursModeles;
 use EdgeCreator\Models\TranchesEnCoursValeurs;
 use Symfony\Component\HttpFoundation\Response;
@@ -421,5 +423,50 @@ class EdgeCreatorTest extends TestCommon
 
         $newModel = $this->getV2Model('fr', 'PM', '502');
         $this->assertEquals($photoName, $newModel->getNomphotoprincipale());
+    }
+
+    public function testAddMultipleEdgePhoto() {
+        $hash = sha1('test');
+
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/multiple_edge_photo", TestCommon::$edgecreatorUser, 'PUT', [
+            'hash' => sha1('test2'),
+            'datetime' => new \DateTime('today'),
+            'filename' => 'photo2.jpg'
+        ])->call();
+
+        $objectResponse = json_decode($response->getContent());
+        $this->assertEquals(['id' => 2 ], (array) $objectResponse->photo);
+    }
+
+    public function testGetMultipleEdgePhotos() {
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/multiple_edge_photo/today", TestCommon::$edgecreatorUser, 'GET')->call();
+
+        $photo = $this->getEm()->getRepository(ImagesTranches::class)->findOneBy([
+            'hash' => sha1('test')
+        ]);
+
+        $objectResponse = json_decode($response->getContent());
+        $this->assertEquals(1, count($objectResponse));
+        $photoResult = $objectResponse[0];
+        $this->assertEquals($photo->getId(), $photoResult->id);
+        $this->assertEquals($photo->getIdUtilisateur(), $photoResult->idUtilisateur);
+        $this->assertEquals($photo->getHash(), $photoResult->hash);
+        $this->assertEquals($photo->getDateHeure()->getTimestamp(), $photoResult->dateheure->timestamp);
+    }
+
+    public function testGetMultipleEdgePhotoByHash() {
+
+        $hash = sha1('test');
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/multiple_edge_photo/hash/{$hash}", TestCommon::$edgecreatorUser, 'GET')->call();
+
+        $photo = $this->getEm()->getRepository(ImagesTranches::class)->findOneBy([
+            'hash' => sha1('test')
+        ]);
+
+        $photoResult = json_decode($response->getContent());
+        $this->assertEquals($photo->getId(), $photoResult->id);
+        $this->assertEquals($photo->getIdUtilisateur(), $photoResult->idUtilisateur);
+        $this->assertEquals($photo->getHash(), $photoResult->hash);
+        $this->assertEquals($photo->getDateHeure()->getTimestamp(), $photoResult->dateheure->timestamp);
     }
 }

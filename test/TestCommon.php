@@ -24,6 +24,7 @@ use DmStats\Models\UtilisateursPublicationsSuggerees;
 use EdgeCreator\Models\EdgecreatorIntervalles;
 use EdgeCreator\Models\EdgecreatorModeles2;
 use EdgeCreator\Models\EdgecreatorValeurs;
+use EdgeCreator\Models\ImagesTranches;
 use EdgeCreator\Models\TranchesEnCoursModeles;
 use EdgeCreator\Models\TranchesEnCoursValeurs;
 use Silex\Application;
@@ -665,6 +666,16 @@ class TestCommon extends WebTestCase {
                 ->setNomFonction('TexteMyFonts')
                 ->setOptionNom('Couleur_texte')
                 ->setOptionValeur('#000000')
+        );
+        $edgeCreatorEntityManager->flush();
+
+        $edgePicture = new ImagesTranches();
+        $edgeCreatorEntityManager->persist(
+            $edgePicture
+                ->setNomfichier('photo1.jpg')
+                ->setDateheure(new \DateTime('today'))
+                ->setHash(sha1('test'))
+                ->setIdUtilisateur(self::getSessionUser($this->app)['id'])
         );
         $edgeCreatorEntityManager->flush();
     }
