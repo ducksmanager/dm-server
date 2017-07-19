@@ -423,7 +423,6 @@ class InternalController extends AbstractController
             function (Application $app, Request $request) {
                 return self::wrapInternalService($app, function (EntityManager $ecEm) use ($request, $app) {
                     $hash = $request->request->get('hash');
-                    $dateTime = $request->request->get('datetime');
                     $fileName = $request->request->get('filename');
 
                     $photo = new ImagesTranches();

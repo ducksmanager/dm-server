@@ -430,7 +430,6 @@ class EdgeCreatorTest extends TestCommon
 
         $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/multiple_edge_photo", TestCommon::$edgecreatorUser, 'PUT', [
             'hash' => sha1('test2'),
-            'datetime' => new \DateTime('today'),
             'filename' => 'photo2.jpg'
         ])->call();
 

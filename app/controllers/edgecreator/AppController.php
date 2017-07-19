@@ -208,7 +208,6 @@ class AppController extends AbstractController
             function (Request $request, Application $app) {
                 return self::callInternal($app, "/edgecreator/multiple_edge_photo", 'PUT', [
                     'hash' => $request->request->get('hash'),
-                    'datetime' => $request->request->get('datetime'),
                     'filename' => $request->request->get('filename')
                 ]);
             }
