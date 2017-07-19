@@ -25,7 +25,7 @@ function getSchemaConfigKey($modelNamespace) {
 
 /**
  * @param string $paramName
- * @return string
+ * @return array|null
  */
 function getCommandLineParameter($paramName) {
     $argvRegex = '#^--' . $paramName . '=(.+)$#';

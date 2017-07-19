@@ -196,7 +196,5 @@ class CollectionTest extends TestCommon
         ])->call();
 
         $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
-
-        $a = 1;
     }
 }

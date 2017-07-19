@@ -2,6 +2,7 @@
 
 namespace DmServer\Controllers\EdgeCreator;
 
+use Coa\Models\BaseModel;
 use DmServer\Controllers\AbstractController;
 use DmServer\Controllers\UnexpectedInternalCallResponseException;
 use Silex\Application;
@@ -55,7 +56,7 @@ class AppController extends AbstractController
                 }
             }
         )
-            ->assert('publicationcode', self::getParamAssertRegex(\Coa\Models\BaseModel::PUBLICATION_CODE_VALIDATION))
+            ->assert('publicationcode', self::getParamAssertRegex(BaseModel::PUBLICATION_CODE_VALIDATION))
             ->assert('stepnumber', self::getParamAssertRegex('\\d+'));
 
         $routing->get(
@@ -81,8 +82,8 @@ class AppController extends AbstractController
                 }
             }
         )
-            ->assert('publicationcode', self::getParamAssertRegex(\Coa\Models\BaseModel::PUBLICATION_CODE_VALIDATION))
-            ->assert('issuenumber', self::getParamAssertRegex(\Coa\Models\BaseModel::ISSUE_NUMBER_VALIDATION))
+            ->assert('publicationcode', self::getParamAssertRegex(BaseModel::PUBLICATION_CODE_VALIDATION))
+            ->assert('issuenumber', self::getParamAssertRegex(BaseModel::ISSUE_NUMBER_VALIDATION))
         ;
 
         $routing->post(
@@ -107,8 +108,8 @@ class AppController extends AbstractController
                 }
             }
         )
-            ->assert('publicationcode', self::getParamAssertRegex(\Coa\Models\BaseModel::PUBLICATION_CODE_VALIDATION))
-            ->assert('issuenumber', self::getParamAssertRegex(\Coa\Models\BaseModel::ISSUE_NUMBER_VALIDATION))
+            ->assert('publicationcode', self::getParamAssertRegex(BaseModel::PUBLICATION_CODE_VALIDATION))
+            ->assert('issuenumber', self::getParamAssertRegex(BaseModel::ISSUE_NUMBER_VALIDATION))
         ;
 
         $routing->post(
@@ -125,7 +126,7 @@ class AppController extends AbstractController
                 return self::callInternal($app, "/edgecreator/step/clone/$modelid/$stepnumber/$newstepnumber", 'POST');
             }
         )
-        ->assert('publicationcode', self::getParamAssertRegex(\Coa\Models\BaseModel::PUBLICATION_CODE_VALIDATION))
+        ->assert('publicationcode', self::getParamAssertRegex(BaseModel::PUBLICATION_CODE_VALIDATION))
         ->assert('stepnumber', self::getParamAssertRegex('\\d+'))
         ->assert('newstepnumber', self::getParamAssertRegex('\\d+'));
 

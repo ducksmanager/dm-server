@@ -13,7 +13,7 @@ use CoverId\Models\Covers;
 use Dm\Models\Achats;
 use Dm\Models\Numeros;
 use Dm\Models\Users;
-use DmServer\Controllers\AbstractController;
+
 use DmServer\DmServer;
 use DmServer\RequestUtil;
 use DmStats\Models\AuteursHistoires;

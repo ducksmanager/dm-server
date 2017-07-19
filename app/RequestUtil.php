@@ -19,7 +19,7 @@ trait RequestUtil
 
     /**
      * @param Application $app
-     * @return string
+     * @return array
      */
     static function getSessionUser(Application $app) {
         return $app['session']->get('user');

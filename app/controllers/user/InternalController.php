@@ -6,7 +6,7 @@ use Dm\Models\Achats;
 use Dm\Models\AuteursPseudos;
 use Dm\Models\Numeros;
 use Dm\Models\Users;
-use DmServer\Controllers\AbstractController;
+
 use DmServer\Controllers\AbstractInternalController;
 use DmServer\DmServer;
 use Doctrine\ORM\EntityManager;

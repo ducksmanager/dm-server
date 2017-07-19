@@ -34,6 +34,11 @@ trait RequestInterceptor
         }
     }
 
+    /**
+     * @param Application $app
+     * @param Request $request
+     * @return bool|Response
+     */
     static function authenticateUser(Application $app, Request $request) {
         if (
             preg_match('#^/collection/((?!new/?).)+$#', $request->getPathInfo())

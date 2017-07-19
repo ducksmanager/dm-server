@@ -1,7 +1,6 @@
 <?php
 namespace DmServer\Test;
 
-use Dm\Contracts\Dtos\SimilarImagesOutput;
 use DmServer\SimilarImagesHelper;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\UploadedFile;

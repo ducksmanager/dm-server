@@ -188,7 +188,6 @@ class InternalController extends AbstractController
 
                     $qbRelatedIssues->where($qbRelatedIssues->expr()->in('originentryurl.url', $urlList));
                     $qbRelatedIssues->andWhere($qbRelatedIssues->expr()->neq('originstoryversion.storyversioncode', 'relatedstoryversion.storyversioncode'));
-$sql = $qbRelatedIssues->getQuery()->getSQL();
                     $resultsRelatedIssueCodes = $qbRelatedIssues->getQuery()->getResult();
 
                     $issueCodes = array_map(function($result) {

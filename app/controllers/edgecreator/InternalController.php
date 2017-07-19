@@ -2,6 +2,7 @@
 
 namespace DmServer\Controllers\EdgeCreator;
 
+use Coa\Models\BaseModel;
 use DmServer\Controllers\AbstractController;
 use DmServer\DmServer;
 use Doctrine\Common\Collections\Criteria;
@@ -52,7 +53,7 @@ class InternalController extends AbstractController
                 });
             }
         )
-            ->assert('publicationCode', self::getParamAssertRegex(\Coa\Models\BaseModel::PUBLICATION_CODE_VALIDATION))
+            ->assert('publicationCode', self::getParamAssertRegex(BaseModel::PUBLICATION_CODE_VALIDATION))
             ->assert('stepNumber', self::getParamAssertRegex('[-\\d]+'));
 
         $routing->put(
@@ -75,8 +76,8 @@ class InternalController extends AbstractController
                 });
             }
         )
-            ->assert('publicationCode', self::getParamAssertRegex(\Coa\Models\BaseModel::PUBLICATION_CODE_VALIDATION))
-            ->assert('issueNumber', self::getParamAssertRegex(\Coa\Models\BaseModel::ISSUE_NUMBER_VALIDATION))
+            ->assert('publicationCode', self::getParamAssertRegex(BaseModel::PUBLICATION_CODE_VALIDATION))
+            ->assert('issueNumber', self::getParamAssertRegex(BaseModel::ISSUE_NUMBER_VALIDATION))
         ;
 
         $routing->put(

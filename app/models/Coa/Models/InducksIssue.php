@@ -149,6 +149,8 @@ class InducksIssue extends \Coa\Models\BaseModel
 
     /**
      * @param string $publicationcode
+     *
+     * @return InducksIssue
      */
     public function setPublicationcode($publicationcode)
     {

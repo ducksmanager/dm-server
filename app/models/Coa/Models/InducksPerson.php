@@ -168,6 +168,8 @@ class InducksPerson extends \Coa\Models\BaseModel
 
     /**
      * @param string $personcode
+     *
+     * @return InducksPerson
      */
     public function setPersoncode($personcode)
     {
