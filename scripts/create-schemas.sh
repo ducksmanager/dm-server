@@ -8,6 +8,7 @@ if [ $? -eq 0 ]; then
   cd ${app_dir}
   grep -Po '^models_namespace=\K.+' config/schemas.ini | \
     while read -r namespace; do
+      echo -e "\n\nCreating schema for namespace ${namespace}\n"
       ../vendor/bin/doctrine orm:schema-tool:create --namespace=${namespace}
       if [ $? -ne 0 ]; then
         echo "Schema creation failed."
