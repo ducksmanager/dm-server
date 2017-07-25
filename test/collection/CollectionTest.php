@@ -37,15 +37,17 @@ class CollectionTest extends TestCommon
         $this->assertEquals(date('Y-m-d'), $lastIssue->getDateajout()->format('Y-m-d'));
     }
 
-    public function testAddIssueDefaultDataDetailed() {
-        $this->assertEquals(0, count($this->getCurrentUserIssues()));
-
+    public function testUpdateCollectionCreateIssueWithOptions() {
         self::createTestCollection(self::$defaultTestDmUserName);
 
+        $country = 'fr';
+        $publication = 'DDD';
+        $issueToUpdate = '1';
+
         $response = $this->buildAuthenticatedServiceWithTestUser('/collection/issues', TestCommon::$dmUser, 'POST', [
-            'country' => 'fr',
-            'publication' => 'DDD',
-            'issuenumbers' => ['3'],
+            'country' => $country,
+            'publication' => $publication,
+            'issuenumbers' => [$issueToUpdate],
             'condition' => 'bon',
             'istosell' => '1',
             'purchaseid' => '2'
@@ -53,19 +55,27 @@ class CollectionTest extends TestCommon
 
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
 
-        $userIssues = $this->getCurrentUserIssues();
-        $this->assertEquals(4, count($userIssues));
+        $responseObject = json_decode($response->getContent());
+        $this->assertNotNull($responseObject);
 
-        /** @var Numeros $lastIssue */
-        $lastIssue = $userIssues[count($userIssues) -1];
-        $this->assertEquals('fr', $lastIssue->getPays());
-        $this->assertEquals('DDD', $lastIssue->getMagazine());
-        $this->assertEquals('3', $lastIssue->getNumero());
-        $this->assertEquals('bon', $lastIssue->getEtat());
-        $this->assertEquals(2, $lastIssue->getIdAcquisition());
-        $this->assertEquals(true, $lastIssue->getAv());
-        $this->assertEquals(AbstractController::getSessionUser($this->app)['id'], $lastIssue->getIdUtilisateur());
-        $this->assertEquals(date('Y-m-d'), $lastIssue->getDateajout()->format('Y-m-d'));
+        $this->assertEquals('UPDATE', $responseObject[0]->action);
+        $this->assertEquals(1, $responseObject[0]->numberOfIssues);
+
+        $userIssues = $this->getCurrentUserIssues();
+        $this->assertEquals(3, count($userIssues));
+
+        /** @var Numeros $updatedIssue */
+        $updatedIssue = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->getRepository(Numeros::class)->findOneBy(
+            ['idUtilisateur' => AbstractController::getSessionUser($this->app)['id'], 'pays' => $country, 'magazine' => $publication, 'numero' => $issueToUpdate]
+        );
+        $this->assertEquals('fr', $updatedIssue->getPays());
+        $this->assertEquals('DDD', $updatedIssue->getMagazine());
+        $this->assertEquals('1', $updatedIssue->getNumero());
+        $this->assertEquals('bon', $updatedIssue->getEtat());
+        $this->assertEquals(2, $updatedIssue->getIdAcquisition());
+        $this->assertEquals(true, $updatedIssue->getAv());
+        $this->assertEquals(AbstractController::getSessionUser($this->app)['id'], $updatedIssue->getIdUtilisateur());
+        $this->assertEquals(date('Y-m-d'), $updatedIssue->getDateajout()->format('Y-m-d'));
     }
 
     public function testDeleteFromCollection() {
@@ -87,7 +97,7 @@ class CollectionTest extends TestCommon
         $this->assertEquals(1, $responseObject[0]->numberOfIssues);
     }
 
-    public function testUpdateCollection() {
+    public function testUpdateCollectionCreateAndUpdateIssue() {
         $collectionUserInfo = self::createTestCollection();
         self::setSessionUser($this->app, $collectionUserInfo);
 
