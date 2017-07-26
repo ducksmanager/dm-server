@@ -13,11 +13,18 @@ use Doctrine\ORM\Mapping as ORM;
 class BibliothequeContributeurs extends \Dm\Models\BaseModel
 {
     /**
+     * @var integer
+     *
+     * @ORM\Column(name="ID", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="Nom", type="string", length=30, nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $nom;
 
@@ -29,6 +36,30 @@ class BibliothequeContributeurs extends \Dm\Models\BaseModel
     private $texte;
 
 
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set nom
+     *
+     * @param string $nom
+     *
+     * @return BibliothequeContributeurs
+     */
+    public function setNom($nom)
+    {
+        $this->nom = $nom;
+
+        return $this;
+    }
 
     /**
      * Get nom
