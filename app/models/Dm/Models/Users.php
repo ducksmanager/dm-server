@@ -16,6 +16,15 @@ use Doctrine\ORM\Mapping\PrePersist;
 class Users extends \Dm\Models\BaseModel
 {
     /**
+     * @var integer
+     *
+     * @ORM\Column(name="ID", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="username", type="string", length=25, nullable=false)
@@ -30,27 +39,18 @@ class Users extends \Dm\Models\BaseModel
     private $password;
 
     /**
-     * @var integer
-     *
-     * @ORM\Column(name="ID", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
-    private $id;
-
-    /**
      * @var boolean
      *
      * @ORM\Column(name="AccepterPartage", type="boolean", nullable=false)
      */
-    private $accepterpartage = '1';
+    private $accepterpartage = '0';
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="DateInscription", type="date", nullable=false)
+     * @ORM\Column(name="DateInscription", type="datetime", nullable=false)
      */
-    private $dateinscription = '0000-00-00';
+    private $dateinscription;
 
     /**
      * @var string
@@ -58,6 +58,13 @@ class Users extends \Dm\Models\BaseModel
      * @ORM\Column(name="EMail", type="string", length=50, nullable=false)
      */
     private $email;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="RecommandationsListeMags", type="boolean", nullable=false)
+     */
+    private $recommandationslistemags = '1';
 
     /**
      * @var boolean
@@ -111,7 +118,7 @@ class Users extends \Dm\Models\BaseModel
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="DernierAcces", type="date", nullable=false)
+     * @ORM\Column(name="DernierAcces", type="datetime", nullable=false)
      */
     private $dernieracces;
 
@@ -124,6 +131,15 @@ class Users extends \Dm\Models\BaseModel
     }
 
 
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
     /**
      * Set username
@@ -171,16 +187,6 @@ class Users extends \Dm\Models\BaseModel
     public function getPassword()
     {
         return $this->password;
-    }
-
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
     }
 
     /**
@@ -253,6 +259,30 @@ class Users extends \Dm\Models\BaseModel
     public function getEmail()
     {
         return $this->email;
+    }
+
+    /**
+     * Set recommandationslistemags
+     *
+     * @param boolean $recommandationslistemags
+     *
+     * @return Users
+     */
+    public function setRecommandationslistemags($recommandationslistemags)
+    {
+        $this->recommandationslistemags = $recommandationslistemags;
+
+        return $this;
+    }
+
+    /**
+     * Get recommandationslistemags
+     *
+     * @return boolean
+     */
+    public function getRecommandationslistemags()
+    {
+        return $this->recommandationslistemags;
     }
 
     /**

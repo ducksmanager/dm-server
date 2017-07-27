@@ -34,20 +34,6 @@ class TranchesPretes extends \Dm\Models\BaseModel
     private $issuenumber = '';
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="photographes", type="text", length=65535, nullable=true)
-     */
-    private $photographes;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="createurs", type="text", length=65535, nullable=true)
-     */
-    private $createurs;
-
-    /**
      * @var \DateTime
      *
      * @ORM\Column(name="dateajout", type="date", nullable=false)
@@ -109,54 +95,6 @@ class TranchesPretes extends \Dm\Models\BaseModel
     public function getIssuenumber()
     {
         return $this->issuenumber;
-    }
-
-    /**
-     * Set photographes
-     *
-     * @param string $photographes
-     *
-     * @return TranchesPretes
-     */
-    public function setPhotographes($photographes)
-    {
-        $this->photographes = $photographes;
-
-        return $this;
-    }
-
-    /**
-     * Get photographes
-     *
-     * @return string
-     */
-    public function getPhotographes()
-    {
-        return $this->photographes;
-    }
-
-    /**
-     * Set createurs
-     *
-     * @param string $createurs
-     *
-     * @return TranchesPretes
-     */
-    public function setCreateurs($createurs)
-    {
-        $this->createurs = $createurs;
-
-        return $this;
-    }
-
-    /**
-     * Get createurs
-     *
-     * @return string
-     */
-    public function getCreateurs()
-    {
-        return $this->createurs;
     }
 
     /**
