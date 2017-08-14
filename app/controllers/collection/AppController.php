@@ -124,5 +124,19 @@ class AppController extends AbstractController
             }
         )
             ->value('purchaseid', null);
+
+        $routing->post(
+            '/collection/externalaccess',
+            function (Application $app, Request $request) {
+                return self::callInternal($app, '/collection/externalaccess', 'POST');
+            }
+        );
+
+        $routing->get(
+            '/collection/externalaccess/{key}',
+            function (Application $app, Request $request, $key) {
+                return self::callInternal($app, "/collection/externalaccess/$key");
+            }
+        );
     }
 }

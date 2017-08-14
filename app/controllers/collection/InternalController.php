@@ -4,9 +4,11 @@ namespace DmServer\Controllers\Collection;
 
 use Dm\Contracts\Results\UpdateCollectionResult;
 use Dm\Models\Achats;
+use Dm\Models\BibliothequeAccesExternes;
 use Dm\Models\Numeros;
 use DmServer\Controllers\AbstractController;
 use DmServer\DmServer;
+use DmServer\MiscUtil;
 use DmServer\ModelHelper;
 use Doctrine\ORM\EntityManager;
 use Silex\Application;
@@ -179,6 +181,38 @@ class InternalController extends AbstractController
                     $creationResult = new UpdateCollectionResult('CREATE', count($issueNumbersToCreate));
 
                     return new JsonResponse(ModelHelper::getSimpleArray([$updateResult, $creationResult]));
+                });
+            }
+        );
+
+        $routing->post(
+            '/internal/collection/externalaccess',
+            function (Application $app, Request $request) {
+                return self::wrapInternalService($app, function(EntityManager $dmEm) use ($app, $request) {
+                    $key = MiscUtil::get_random_string();
+
+                    $externalAccess = new BibliothequeAccesExternes();
+                    $externalAccess->setIdUtilisateur(self::getSessionUser($app)['id']);
+                    $externalAccess->setCle($key);
+
+                    $dmEm->persist($externalAccess);
+                    $dmEm->flush();
+
+                    return new JsonResponse(['key' => $key]);
+                });
+            }
+        );
+
+        $routing->get(
+            '/internal/collection/externalaccess/{key}',
+            function (Application $app, Request $request, $key) {
+                return self::wrapInternalService($app, function(EntityManager $dmEm) use ($app, $request, $key) {
+
+                    $access = $dmEm->getRepository(BibliothequeAccesExternes::class)->findBy(
+                        ['cle' => $key]
+                    );
+
+                    return new JsonResponse(ModelHelper::getSerializedArray($access));
                 });
             }
         );

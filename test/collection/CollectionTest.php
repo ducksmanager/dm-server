@@ -3,6 +3,7 @@ namespace DmServer\Test;
 
 use Dm\Models\Achats;
 use Dm\Models\Numeros;
+use Dm\Models\Users;
 use DmServer\Controllers\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use DmServer\DmServer;
@@ -206,5 +207,44 @@ class CollectionTest extends TestCommon
         ])->call();
 
         $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+
+    public function testCreateExternalAccess()
+    {
+        $collectionUserInfo = self::createTestCollection('dm_test_user');
+        self::setSessionUser($this->app, $collectionUserInfo);
+
+        $response = $this->buildAuthenticatedServiceWithTestUser("/collection/externalaccess", TestCommon::$dmUser, 'POST')->call();
+        $objectResponse = json_decode($response->getContent());
+
+        $this->assertObjectHasAttribute('key', $objectResponse);
+        $this->assertRegExp('#[a-zA-Z]+#', $objectResponse->key);
+    }
+
+    public function testGetExternalAccess()
+    {
+        $collectionUserInfo = self::createTestCollection('dm_test_user');
+        self::setSessionUser($this->app, $collectionUserInfo);
+
+        $creationResponse = $this->buildAuthenticatedServiceWithTestUser("/collection/externalaccess", TestCommon::$dmUser, 'POST')->call();
+        $key = json_decode($creationResponse->getContent())->key;
+
+        $getResponse = $this->buildAuthenticatedServiceWithTestUser("/collection/externalaccess/$key", TestCommon::$dmUser)->call();
+        $objectResponse = json_decode($getResponse->getContent());
+
+        $this->assertEquals(1, count($objectResponse));
+        $access = unserialize($objectResponse[0]);
+        $this->assertEquals(1, $access->getIdUtilisateur());
+    }
+
+    public function testGetExternalAccessNotExisting()
+    {
+        $collectionUserInfo = self::createTestCollection('dm_test_user');
+        self::setSessionUser($this->app, $collectionUserInfo);
+
+        $getResponse = $this->buildAuthenticatedServiceWithTestUser("/collection/externalaccess/123", TestCommon::$dmUser)->call();
+        $objectResponse = json_decode($getResponse->getContent());
+
+        $this->assertEquals(0, count($objectResponse));
     }
 }
