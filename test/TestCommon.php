@@ -83,7 +83,7 @@ class TestCommon extends WebTestCase {
         DmServer::$entityManagers = [];
 
         foreach (DmServer::$configuredEntityManagerNames as $emName) {
-            self::$schemas[$emName] = SchemaWithClasses::createFromEntityManager(DmServer::getEntityManager($emName));
+            self::recreateSchema($emName);
         }
     }
 
@@ -99,7 +99,7 @@ class TestCommon extends WebTestCase {
         foreach(DmServer::$configuredEntityManagerNames as $emName) {
             if (! DmServer::getEntityManager($emName)->isOpen()) {
                 unset(DmServer::$entityManagers[$emName]);
-                self::$schemas[$emName] = SchemaWithClasses::createFromEntityManager(DmServer::getEntityManager($emName));
+                self::recreateSchema($emName);
             }
         }
         parent::tearDown();
@@ -111,6 +111,10 @@ class TestCommon extends WebTestCase {
             self::$schemas[$emName]->recreateSchema();
             DmServer::getEntityManager($emName)->clear();
         }
+    }
+
+    protected static function recreateSchema($emName) {
+        self::$schemas[$emName] = SchemaWithClasses::createFromEntityManager(DmServer::getEntityManager($emName));
     }
 
     /**

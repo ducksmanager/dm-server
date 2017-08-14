@@ -1,6 +1,7 @@
 <?php
 namespace DmServer\Test;
 
+use DmServer\DmServer;
 use DmServer\SimilarImagesHelper;
 
 class StatusTest extends TestCommon
@@ -44,5 +45,17 @@ class StatusTest extends TestCommon
         $response = $this->buildAuthenticatedService('/status', TestCommon::$dmUser, [], [], 'GET')->call();
 
         $this->assertContains('Error for db_coa', $response->getContent());
+    }
+
+    public function testGetStatusDBDown() {
+        unset(DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_COA]);
+
+        try {
+            $response = $this->buildAuthenticatedService('/status', TestCommon::$dmUser, [], [], 'GET')->call();
+            $this->assertContains('Error for db_coa : JSON cannot be decoded', $response->getContent());
+        }
+        finally {
+            self::recreateSchema(DmServer::CONFIG_DB_KEY_COA);
+        }
     }
 }
