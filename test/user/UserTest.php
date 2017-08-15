@@ -176,6 +176,23 @@ class UserTest extends TestCommon
         $this->assertEquals(0, count(array_filter($purchasesOfDemoUser, function(Achats $purchase) {
             return $purchase->getDate()->format('Y-m-d') === '2010-01-01' && $purchase->getDescription() === 'Purchase';
         }))); // Previous issue has been reset
+    }
 
+    public function testCreateSaleEmail() {
+        $collectionUserInfo = self::createTestCollection();
+        self::setSessionUser($this->app, $collectionUserInfo);
+
+        self::createTestCollection('otheruser');
+
+        $response = $this->buildAuthenticatedServiceWithTestUser('/user/sellto/otheruser', TestCommon::$dmUser, 'POST')->call();
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+    }
+
+    public function testCreateSaleEmailInvalidUser() {
+        $collectionUserInfo = self::createTestCollection();
+        self::setSessionUser($this->app, $collectionUserInfo);
+
+        $response = $this->buildAuthenticatedServiceWithTestUser('/user/sellto/testuser', TestCommon::$dmUser, 'POST')->call();
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
 }

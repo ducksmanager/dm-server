@@ -91,5 +91,17 @@ class AppController extends AbstractController
                 }
             }
         );
+
+        $routing->post(
+            '/user/sellto/{otheruser}',
+            function (Application $app, Request $request, $otheruser) {
+
+                if (self::callInternal($app, '/user/exists', 'GET', [$otheruser])->getStatusCode() === Response::HTTP_NO_CONTENT) {
+                    return new Response(self::$translator->trans('UTILISATEUR_INVALIDE'), Response::HTTP_BAD_REQUEST);
+                }
+
+                return self::callInternal($app, "/user/sellto/$otheruser", 'POST');
+            }
+        );
     }
 }

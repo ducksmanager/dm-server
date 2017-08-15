@@ -4,6 +4,7 @@ namespace DmServer\Controllers\User;
 
 use Dm\Models\Achats;
 use Dm\Models\AuteursPseudos;
+use Dm\Models\EmailsVentes;
 use Dm\Models\Numeros;
 use Dm\Models\Users;
 
@@ -34,9 +35,9 @@ class InternalController extends AbstractInternalController
                         'username' => $username
                     ]);
                     if (count($existingUser) > 0) {
-                        return new Response('', Response::HTTP_CONFLICT);
+                        return new Response('', Response::HTTP_OK);
                     }
-                    return new Response('', Response::HTTP_OK);
+                    return new Response('', Response::HTTP_NO_CONTENT);
                 });
             }
         );
@@ -57,8 +58,8 @@ class InternalController extends AbstractInternalController
                         $error='MOTS_DE_PASSE_DIFFERENTS';
                     }
                     else {
-                        if (!(self::callInternal($app, '/user/exists', 'GET', [$username])
-                            ->isSuccessful())) {
+                        if (self::callInternal($app, '/user/exists', 'GET', [$username])
+                            ->getStatusCode() !== Response::HTTP_NO_CONTENT) {
                             return new Response(self::$translator->trans('UTILISATEUR_EXISTANT'), Response::HTTP_CONFLICT);
                         }
                     }
@@ -146,6 +147,20 @@ class InternalController extends AbstractInternalController
 
                 $em->persist($user);
                 $em->flush();
+
+                return new Response('OK');
+            });
+        });
+
+        $routing->post('/internal/user/sellto/{otherUser}', function (Request $request, Application $app, $otherUser) {
+            return self::wrapInternalService($app, function(EntityManager $dmEm) use ($app, $otherUser) {
+                $saleEmail = new EmailsVentes();
+
+                $saleEmail->setUsernameVente(self::getSessionUser($app)['username']);
+                $saleEmail->setUsernameAchat($otherUser);
+
+                $dmEm->persist($saleEmail);
+                $dmEm->flush();
 
                 return new Response('OK');
             });
