@@ -31,7 +31,7 @@ class Achats extends \Dm\Models\BaseModel
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="Date", type="date", nullable=false)
+     * @ORM\Column(name="Date", type="datetime", nullable=false)
      */
     private $date;
 

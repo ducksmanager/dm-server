@@ -36,7 +36,7 @@ class TranchesPretes extends \Dm\Models\BaseModel
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="dateajout", type="date", nullable=false)
+     * @ORM\Column(name="dateajout", type="datetime", nullable=false)
      */
     private $dateajout;
 

@@ -61,7 +61,7 @@ class AuteursPseudos extends \Dm\Models\BaseModel
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="DateStat", type="date", nullable=false)
+     * @ORM\Column(name="DateStat", type="datetime", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
      */

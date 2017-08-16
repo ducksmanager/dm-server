@@ -67,7 +67,7 @@ class Numeros extends \Dm\Models\BaseModel
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="DateAjout", type="date", nullable=false)
+     * @ORM\Column(name="DateAjout", type="datetime", nullable=false)
      */
     private $dateajout;
 
