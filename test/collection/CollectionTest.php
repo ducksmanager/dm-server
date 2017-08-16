@@ -3,7 +3,7 @@ namespace DmServer\Test;
 
 use Dm\Models\Achats;
 use Dm\Models\Numeros;
-use Dm\Models\Users;
+
 use DmServer\Controllers\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use DmServer\DmServer;

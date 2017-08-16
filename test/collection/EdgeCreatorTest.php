@@ -426,8 +426,6 @@ class EdgeCreatorTest extends TestCommon
     }
 
     public function testAddMultipleEdgePhoto() {
-        $hash = sha1('test');
-
         $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/multiple_edge_photo", TestCommon::$edgecreatorUser, 'PUT', [
             'hash' => sha1('test2'),
             'filename' => 'photo2.jpg'
