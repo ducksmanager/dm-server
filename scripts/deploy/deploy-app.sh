@@ -21,7 +21,7 @@ fi
 webdir=/var/www/html/dm-server
 
 echo "Generating schema update..."
-docker exec ${container_name} /bin/bash ${webdir}/scripts/update-schemas.sh 0
+docker cp scripts/update-schemas.sh ${container_name}:${webdir} && docker exec ${container_name} /bin/bash ${webdir}/scripts/update-schemas.sh 0
 
 echo -e "\nThe schema update will be applied at the end of the deployment process. Continue ? (y/n)"
 read answer
