@@ -45,7 +45,7 @@ services:
       MYSQL_ROOT_PASSWORD: changeme
       MYSQL_DATABASE: dm
   db_edgecreator:
-    container_name: db_edgecreator
+    container_name: mariadb-server-for-edgecreator
     extends:
       file: docker-compose-db-with-healthcheck.yml
       service: db-with-healthcheck
