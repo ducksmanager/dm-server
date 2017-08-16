@@ -3,7 +3,7 @@
 deploy() {
   docker exec ${container_name} /bin/bash ${webdir}/scripts/deploy/backup-app.sh && \
   \
-  for f in app assets scripts test index.php composer.json; \
+  for f in app assets scripts test index.php composer.json docker-compose.yml; \
   do \
     docker exec ${container_name} rm -rf ${webdir}/${f} && docker cp ${f} ${container_name}:${webdir}; \
   done \
