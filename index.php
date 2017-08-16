@@ -37,10 +37,17 @@ $app->register(new Sorien\Provider\PimpleDumpProvider(), array(
 
 $app->register(new Silex\Provider\LocaleServiceProvider());
 
-$app->register(new Silex\Provider\MonologServiceProvider(), array(
-    'monolog.logfile' => __DIR__ . '/development.log',
-    'monolog.level' => \Monolog\Logger::INFO,
-));
+if ($forTest) {
+    $app->register(new Silex\Provider\MonologServiceProvider(), array(
+        'monolog.level' => \Monolog\Logger::INFO,
+    ));
+}
+else {
+    $app->register(new Silex\Provider\MonologServiceProvider(), array(
+        'monolog.logfile' => __DIR__ . '/development.log',
+        'monolog.level' => \Monolog\Logger::INFO,
+    ));
+}
 
 $app->register(new Silex\Provider\TranslationServiceProvider(), array(
     'locale_fallbacks' => array('en'),

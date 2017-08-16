@@ -2,6 +2,7 @@
 namespace DmServer\Test;
 
 use Dm\Models\Achats;
+use Dm\Models\EmailsVentes;
 use Dm\Models\Numeros;
 use Dm\Models\Users;
 use DmServer\DmServer;
@@ -182,9 +183,10 @@ class UserTest extends TestCommon
         $collectionUserInfo = self::createTestCollection();
         self::setSessionUser($this->app, $collectionUserInfo);
 
-        self::createTestCollection('otheruser');
+        $otherUsername = 'otheruser';
+        self::createTestCollection($otherUsername);
 
-        $response = $this->buildAuthenticatedServiceWithTestUser('/user/sellto/otheruser', TestCommon::$dmUser, 'POST')->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser("/user/sale/$otherUsername", TestCommon::$dmUser, 'POST')->call();
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
     }
 
@@ -192,7 +194,30 @@ class UserTest extends TestCommon
         $collectionUserInfo = self::createTestCollection();
         self::setSessionUser($this->app, $collectionUserInfo);
 
-        $response = $this->buildAuthenticatedServiceWithTestUser('/user/sellto/testuser', TestCommon::$dmUser, 'POST')->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser('/user/sale/testuser', TestCommon::$dmUser, 'POST')->call();
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+    }
+
+    public function testGetSaleEmail() {
+        $collectionUserInfo = self::createTestCollection();
+        self::setSessionUser($this->app, $collectionUserInfo);
+
+        $otherUsername = 'otheruser';
+        self::createTestCollection($otherUsername);
+
+        $this->buildAuthenticatedServiceWithTestUser("/user/sale/$otherUsername", TestCommon::$dmUser, 'POST')->call();
+
+        $today = new \DateTime('today');
+        $today = $today->format('Y-m-d');
+        $response = $this->buildAuthenticatedServiceWithTestUser("/user/sale/$otherUsername/$today", TestCommon::$dmUser, 'GET')->call();
+
+        $objectResponse = json_decode($response->getContent());
+
+        $this->assertEquals(1, count($objectResponse));
+        /** @var EmailsVentes $access */
+        $access = unserialize($objectResponse[0]);
+        $this->assertEquals($collectionUserInfo['username'], $access->getUsernameVente());
+        $this->assertEquals($otherUsername, $access->getUsernameAchat());
+        $this->assertEquals(new \DateTime('today'), $access->getDate());
     }
 }

@@ -10,9 +10,11 @@ use Dm\Models\Users;
 
 use DmServer\Controllers\AbstractInternalController;
 use DmServer\DmServer;
+use DmServer\ModelHelper;
 use Doctrine\ORM\EntityManager;
 use Silex\Application;
 use Silex\ControllerCollection;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -107,7 +109,6 @@ class InternalController extends AbstractInternalController
 
         $routing->delete('/internal/user/{userId}/data', function (Request $request, Application $app, $userId) {
             return self::wrapInternalService($app, function(EntityManager $dmEm) use ($userId) {
-
                 $qb = $dmEm->createQueryBuilder();
 
                 $qb->delete(Numeros::class, 'issues')
@@ -133,9 +134,7 @@ class InternalController extends AbstractInternalController
 
         $routing->post('/internal/user/{userId}/data/bookcase/reset', function (Request $request, Application $app, $userId) {
             return self::wrapInternalService($app, function(EntityManager $dmEm) use ($userId) {
-                $em = $dmEm;
-
-                $user = $em->getRepository(Users::class)->findOneBy([
+                $user = $dmEm->getRepository(Users::class)->findOneBy([
                     'id' => $userId
                 ]);
 
@@ -145,14 +144,14 @@ class InternalController extends AbstractInternalController
                 $user->setBibliothequeSousTexture2('KNOTTY PINE');
                 $user->setBibliothequeGrossissement(1.5);
 
-                $em->persist($user);
-                $em->flush();
+                $dmEm->persist($user);
+                $dmEm->flush();
 
                 return new Response('OK');
             });
         });
 
-        $routing->post('/internal/user/sellto/{otherUser}', function (Request $request, Application $app, $otherUser) {
+        $routing->post('/internal/user/sale/{otherUser}', function (Request $request, Application $app, $otherUser) {
             return self::wrapInternalService($app, function(EntityManager $dmEm) use ($app, $otherUser) {
                 $saleEmail = new EmailsVentes();
 
@@ -163,6 +162,18 @@ class InternalController extends AbstractInternalController
                 $dmEm->flush();
 
                 return new Response('OK');
+            });
+        });
+
+        $routing->get('/internal/user/sale/{otherUser}/{date}', function (Request $request, Application $app, $otherUser, $date) {
+            return self::wrapInternalService($app, function(EntityManager $dmEm) use ($app, $otherUser, $date) {
+                $access = $dmEm->getRepository(EmailsVentes::class)->findBy([
+                    'usernameVente' => self::getSessionUser($app)['username'],
+                    'usernameAchat' => $otherUser,
+                    'date' => \DateTime::createFromFormat('Y-m-d H:i:s', $date.' 00:00:00')
+                ]);
+
+                return new JsonResponse(ModelHelper::getSerializedArray($access));
             });
         });
     }
