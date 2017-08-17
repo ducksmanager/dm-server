@@ -12,6 +12,8 @@ use Coa\Models\InducksStoryversion;
 use CoverId\Models\Covers;
 use Dm\Models\Achats;
 use Dm\Models\Numeros;
+use Dm\Models\TranchesDoublons;
+use Dm\Models\TranchesPretes;
 use Dm\Models\Users;
 
 use DmServer\DmServer;
@@ -21,6 +23,7 @@ use DmStats\Models\AuteursPseudosSimple;
 use DmStats\Models\UtilisateursHistoiresManquantes;
 use DmStats\Models\UtilisateursPublicationsManquantes;
 use DmStats\Models\UtilisateursPublicationsSuggerees;
+use Doctrine\Common\Collections\ArrayCollection;
 use EdgeCreator\Models\EdgecreatorIntervalles;
 use EdgeCreator\Models\EdgecreatorModeles2;
 use EdgeCreator\Models\EdgecreatorValeurs;
@@ -794,6 +797,45 @@ class TestCommon extends WebTestCase {
 
         $coverIdEntityManager->flush();
 
+    }
+
+    protected static function createEdgesData()
+    {
+        $dmEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_DM];
+
+        $edge1 = new TranchesPretes();
+        $dmEntityManager->persist(
+            $edge1
+                ->setPublicationcode('fr/JM')
+                ->setIssuenumber('3001')
+        );
+
+        $dupEdge1 = new TranchesDoublons();
+        $dmEntityManager->persist(
+            $dupEdge1
+                ->setPays('fr')
+                ->setMagazine('JM')
+                ->setNumero('3002')
+                ->setTranchereference($edge1)
+        );
+
+        $edge2 = new TranchesPretes();
+        $dmEntityManager->persist(
+            $edge2
+                ->setPublicationcode('fr/JM')
+                ->setIssuenumber('4001')
+        );
+
+        $dupEdge2 = new TranchesDoublons();
+        $dmEntityManager->persist(
+            $dupEdge2
+                ->setPays('fr')
+                ->setMagazine('JM')
+                ->setNumero('4002')
+                ->setTranchereference($edge2)
+        );
+
+        $dmEntityManager->flush();
     }
 
     protected static function getPathToFileToUpload($fileName) {

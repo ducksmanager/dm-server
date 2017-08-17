@@ -4,6 +4,7 @@ namespace Dm\Models;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
+use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\PrePersist;
 
 /**
@@ -16,11 +17,18 @@ use Doctrine\ORM\Mapping\PrePersist;
 class TranchesPretes extends \Dm\Models\BaseModel
 {
     /**
+     * @var integer
+     *
+     * @ORM\Column(name="ID", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="publicationcode", type="string", length=12, nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
      */
     private $publicationcode = '';
 
@@ -28,8 +36,6 @@ class TranchesPretes extends \Dm\Models\BaseModel
      * @var string
      *
      * @ORM\Column(name="issuenumber", type="string", length=10, nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
      */
     private $issuenumber = '';
 
@@ -48,6 +54,22 @@ class TranchesPretes extends \Dm\Models\BaseModel
         }
     }
 
+    /**
+     * @var TranchesDoublons[]
+     *
+     * @OneToMany(fetch="EAGER", targetEntity="TranchesDoublons", mappedBy="tranchereference")
+     */
+    private $doublons;
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
     /**
      * Set publicationcode
@@ -119,5 +141,24 @@ class TranchesPretes extends \Dm\Models\BaseModel
     public function getDateajout()
     {
         return $this->dateajout;
+    }
+
+    /**
+     * @return TranchesDoublons[]
+     */
+    public function getDoublons()
+    {
+        return $this->doublons;
+    }
+
+    /**
+     * @param TranchesDoublons[] $doublons
+     * @return $this
+     */
+    public function setDoublons($doublons)
+    {
+        $this->doublons = $doublons;
+
+        return $this;
     }
 }

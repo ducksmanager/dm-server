@@ -3,11 +3,13 @@
 namespace Dm\Models;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\ORM\Mapping\ManyToOne;
 
 /**
  * TranchesDoublons
  *
- * @ORM\Table(name="tranches_doublons")
+ * @ORM\Table(name="tranches_doublons", indexes={@ORM\Index(name="fk_tranche_doublon_reference", columns={"TrancheReference"})})
  * @ORM\Entity
  */
 class TranchesDoublons extends \Dm\Models\BaseModel
@@ -40,11 +42,14 @@ class TranchesDoublons extends \Dm\Models\BaseModel
     private $numero;
 
     /**
-     * @var string
+     * @var \Dm\Models\TranchesPretes
      *
-     * @ORM\Column(name="NumeroReference", type="string", length=8, nullable=false)
+     * @ORM\ManyToOne(fetch="EAGER", targetEntity="Dm\Models\TranchesPretes")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="TrancheReference", referencedColumnName="ID")
+     * })
      */
-    private $numeroreference;
+    private $tranchereference;
 
 
 
@@ -121,26 +126,26 @@ class TranchesDoublons extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set numeroreference
+     * Set tranchereference
      *
-     * @param string $numeroreference
+     * @param \Dm\Models\TranchesPretes $tranchereference
      *
      * @return TranchesDoublons
      */
-    public function setNumeroreference($numeroreference)
+    public function setTranchereference(\Dm\Models\TranchesPretes $tranchereference = null)
     {
-        $this->numeroreference = $numeroreference;
+        $this->tranchereference = $tranchereference;
 
         return $this;
     }
 
     /**
-     * Get numeroreference
+     * Get tranchereference
      *
-     * @return string
+     * @return \Dm\Models\TranchesPretes
      */
-    public function getNumeroreference()
+    public function getTranchereference()
     {
-        return $this->numeroreference;
+        return $this->tranchereference;
     }
 }
