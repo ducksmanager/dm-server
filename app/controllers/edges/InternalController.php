@@ -3,11 +3,13 @@
 namespace DmServer\Controllers\Edges;
 
 use Coa\Models\BaseModel;
+use Dm\Models\TranchesDoublons;
 use Dm\Models\TranchesPretes;
 use DmServer\Controllers\AbstractController;
 use DmServer\DmServer;
 use DmServer\ModelHelper;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Query;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -39,6 +41,31 @@ class InternalController extends AbstractController
                         ->setParameter('issueNumbers', explode(',', $issueNumbers));
 
                     $edgeResults = $qbGetEdges->getQuery()->getResult();
+                    return new JsonResponse(ModelHelper::getSerializedArray($edgeResults));
+                });
+            }
+        )
+            ->assert('publicationCode', self::getParamAssertRegex(BaseModel::PUBLICATION_CODE_VALIDATION));
+
+        $routing->get(
+            '/internal/edges/references/{publicationCode}/{issueNumbers}',
+            function (Request $request, Application $app, $publicationCode, $issueNumbers) {
+                return self::wrapInternalService($app, function(EntityManager $dmEm) use ($request, $publicationCode, $issueNumbers) {
+                    list($country, $shortPublicationCode) = explode('/', $publicationCode);
+
+                    $qbGetReferenceEdges = $dmEm->createQueryBuilder();
+                    $qbGetReferenceEdges
+                        ->select('tranches_doublons.numero as issuenumber, reference.issuenumber AS referenceissuenumber')
+                        ->from(TranchesDoublons::class, 'tranches_doublons')
+                        ->innerJoin('tranches_doublons.tranchereference', 'reference')
+                        ->where($qbGetReferenceEdges->expr()->eq('tranches_doublons.pays', ':country'))
+                        ->setParameter('country', explode(',', $country))
+                        ->andWhere($qbGetReferenceEdges->expr()->in('tranches_doublons.magazine', ':shortPublicationCode'))
+                        ->setParameter('shortPublicationCode', explode(',', $shortPublicationCode))
+                        ->andWhere($qbGetReferenceEdges->expr()->in('tranches_doublons.numero', ':issueNumbers'))
+                        ->setParameter('issueNumbers', explode(',', $issueNumbers));
+
+                    $edgeResults = $qbGetReferenceEdges->getQuery()->getResult(Query::HYDRATE_OBJECT);
                     return new JsonResponse(ModelHelper::getSerializedArray($edgeResults));
                 });
             }
