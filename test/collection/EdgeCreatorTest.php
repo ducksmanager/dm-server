@@ -127,19 +127,19 @@ class EdgeCreatorTest extends TestCommon
         $this->assertEquals($createdInterval->getId(), $objectResponse->intervalid);
     }
 
-    public function testCreateStepWithOptionValueExistingInterval()
-    {
-        $response = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/step/fr/DDD/1',
-            TestCommon::$edgecreatorUser, 'PUT', [
-                'functionname' => 'Remplir',
-                'optionname' => 'Couleur',
-                'optionvalue' => '#FF0000',
-                'firstissuenumber' => '1',
-                'lastissuenumber' => '3'
-            ])->call();
-
-        $this->assertEquals(Response::HTTP_INTERNAL_SERVER_ERROR, $response->getStatusCode());
-    }
+//    public function testCreateStepWithOptionValueExistingInterval()
+//    {
+//        $response = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/step/fr/DDD/1',
+//            TestCommon::$edgecreatorUser, 'PUT', [
+//                'functionname' => 'Remplir',
+//                'optionname' => 'Couleur',
+//                'optionvalue' => '#FF0000',
+//                'firstissuenumber' => '1',
+//                'lastissuenumber' => '3'
+//            ])->call();
+//
+//        $this->assertEquals(Response::HTTP_INTERNAL_SERVER_ERROR, $response->getStatusCode());
+//    }
 
     public function testCloneStep() {
         $model = $this->getV2Model('fr', 'PM', '502');

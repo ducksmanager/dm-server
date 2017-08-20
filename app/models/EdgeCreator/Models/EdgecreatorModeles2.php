@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * EdgecreatorModeles2
  *
- * @ORM\Table(name="edgecreator_modeles2", uniqueConstraints={@ORM\UniqueConstraint(name="models_unique", columns={"Pays", "Magazine", "Ordre", "Nom_fonction", "Option_nom"})})
+ * @ORM\Table(name="edgecreator_modeles2")
  * @ORM\Entity
  */
 class EdgecreatorModeles2 extends \EdgeCreator\Models\BaseModel
