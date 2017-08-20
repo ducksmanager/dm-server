@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * UtilisateursPublicationsSuggerees
  *
- * @ORM\Table(name="utilisateurs_publications_suggerees", indexes={@ORM\Index(name="IDX_FCBB992A6E9059DF", columns={"ID_User"})})
+ * @ORM\Table(name="utilisateurs_publications_suggerees", indexes={@ORM\Index(name="ups_index_id_user", columns={"ID_User"})})
  * @ORM\Entity
  */
 class UtilisateursPublicationsSuggerees extends \DmStats\Models\BaseModel
@@ -41,6 +41,8 @@ class UtilisateursPublicationsSuggerees extends \DmStats\Models\BaseModel
      * @var integer
      *
      * @ORM\Column(name="ID_User", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
      */
     private $idUser;
 
