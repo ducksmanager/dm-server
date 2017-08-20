@@ -21,11 +21,11 @@ fi
 webdir=/var/www/html/dm-server
 
 echo "Generating schema update..."
-docker cp scripts/update-schemas.sh ${container_name}:${webdir}/scripts && docker exec ${container_name} /bin/bash ${webdir}/scripts/update-schemas.sh 0
+docker cp scripts/update-schemas.sh ${container_name}:${webdir}/scripts && \
+docker exec ${container_name} /bin/bash ${webdir}/scripts/update-schemas.sh 0
 
-echo -e "\nThe schema update will be applied at the end of the deployment process. Continue ? (y/n)"
+echo -e "\nThe schema update has to be applied now. Afterwards press y to continue the deployment process. Continue ? (y/n)"
 read answer
 if echo "$answer" | grep -iq "^y" ;then
   deploy
-  docker exec ${container_name} /bin/bash -c "bash ${webdir}/scripts/update-schemas.sh 1"
 fi
