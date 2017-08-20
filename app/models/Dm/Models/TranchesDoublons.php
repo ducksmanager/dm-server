@@ -52,6 +52,15 @@ class TranchesDoublons extends \Dm\Models\BaseModel
     private $tranchereference;
 
 
+    /**
+     *
+     * @var string
+     * @deprecated
+     *
+     * @ORM\Column(name="NumeroReference", type="string", length=8, nullable=true)
+     */
+    private $numeroreference;
+
 
     /**
      * Set pays
@@ -147,5 +156,29 @@ class TranchesDoublons extends \Dm\Models\BaseModel
     public function getTranchereference()
     {
         return $this->tranchereference;
+    }
+
+    /**
+     * Set numeroreference
+     *
+     * @param string $numeroreference
+     *
+     * @return TranchesDoublons
+     */
+    public function setNumeroreference($numeroreference)
+    {
+        $this->numeroreference = $numeroreference;
+
+        return $this;
+    }
+
+    /**
+     * Get numeroreference
+     *
+     * @return string
+     */
+    public function getNumeroreference()
+    {
+        return $this->numeroreference;
     }
 }
