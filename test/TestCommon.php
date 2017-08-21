@@ -11,6 +11,7 @@ use Coa\Models\InducksStory;
 use Coa\Models\InducksStoryversion;
 use CoverId\Models\Covers;
 use Dm\Models\Achats;
+use Dm\Models\BibliothequeOrdreMagazines;
 use Dm\Models\Numeros;
 use Dm\Models\TranchesDoublons;
 use Dm\Models\TranchesPretes;
@@ -256,6 +257,24 @@ class TestCommon extends WebTestCase {
                 ->setDate(\DateTime::createFromFormat('Y-m-d', '2010-01-01'))
                 ->setDescription('Purchase')
                 ->setIdUser($user->getId())
+        );
+
+        $publicationSort1 = new BibliothequeOrdreMagazines();
+        $dmEntityManager->persist(
+            $publicationSort1
+                ->setPays('fr')
+                ->setMagazine('DDD')
+                ->setIdUtilisateur($user->getId())
+                ->setOrdre(1)
+        );
+
+        $publicationSort2 = new BibliothequeOrdreMagazines();
+        $dmEntityManager->persist(
+            $publicationSort2
+                ->setPays('fr')
+                ->setMagazine('JM')
+                ->setIdUtilisateur($user->getId())
+                ->setOrdre(2)
         );
 
         $dmEntityManager->flush();

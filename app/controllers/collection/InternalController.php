@@ -5,12 +5,14 @@ namespace DmServer\Controllers\Collection;
 use Dm\Contracts\Results\UpdateCollectionResult;
 use Dm\Models\Achats;
 use Dm\Models\BibliothequeAccesExternes;
+use Dm\Models\BibliothequeOrdreMagazines;
 use Dm\Models\Numeros;
 use DmServer\Controllers\AbstractController;
 use DmServer\DmServer;
 use DmServer\MiscUtil;
 use DmServer\ModelHelper;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Query;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\Response;
@@ -185,7 +187,7 @@ class InternalController extends AbstractController
             }
         );
 
-        $routing->post(
+        $routing->put(
             '/internal/collection/externalaccess',
             function (Application $app, Request $request) {
                 return self::wrapInternalService($app, function(EntityManager $dmEm) use ($app, $request) {
@@ -213,6 +215,41 @@ class InternalController extends AbstractController
                     );
 
                     return new JsonResponse(ModelHelper::getSerializedArray($access));
+                });
+            }
+        );
+
+        $routing->get(
+            '/internal/bookcase/sort',
+            function (Application $app, Request $request) {
+                return self::wrapInternalService($app, function(EntityManager $dmEm) use ($app, $request) {
+
+                    $sorts = $dmEm->getRepository(BibliothequeOrdreMagazines::class)->findBy(
+                        ['idUtilisateur' => self::getSessionUser($app)['id']],
+                        ['ordre' => 'ASC']
+                    );
+
+                    return new JsonResponse(ModelHelper::getSerializedArray($sorts));
+                });
+            }
+        );
+
+        $routing->get(
+            '/internal/bookcase/sort/max',
+            function (Application $app, Request $request) {
+                return self::wrapInternalService($app, function(EntityManager $dmEm) use ($app, $request) {
+
+                    $qb = $dmEm->createQueryBuilder();
+                    $qb
+                        ->select('max(sorts.ordre)')
+                        ->from(BibliothequeOrdreMagazines::class, 'sorts')
+
+                        ->andWhere($qb->expr()->eq('sorts.idUtilisateur', ':userId'))
+                        ->setParameter(':userId', self::getSessionUser($app)['id']);
+
+                    $maxSort = $qb->getQuery()->getResult(Query::HYDRATE_SCALAR);
+
+                    return new JsonResponse(['max' => $maxSort]);
                 });
             }
         );

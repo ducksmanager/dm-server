@@ -2,6 +2,8 @@
 namespace DmServer\Test;
 
 use Dm\Models\Achats;
+use Dm\Models\BibliothequeAccesExternes;
+use Dm\Models\BibliothequeOrdreMagazines;
 use Dm\Models\Numeros;
 
 use DmServer\Controllers\AbstractController;
@@ -214,7 +216,7 @@ class CollectionTest extends TestCommon
         $collectionUserInfo = self::createTestCollection('dm_test_user');
         self::setSessionUser($this->app, $collectionUserInfo);
 
-        $response = $this->buildAuthenticatedServiceWithTestUser("/collection/externalaccess", TestCommon::$dmUser, 'POST')->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser("/collection/externalaccess", TestCommon::$dmUser, 'PUT')->call();
         $objectResponse = json_decode($response->getContent());
 
         $this->assertObjectHasAttribute('key', $objectResponse);
@@ -226,13 +228,14 @@ class CollectionTest extends TestCommon
         $collectionUserInfo = self::createTestCollection('dm_test_user');
         self::setSessionUser($this->app, $collectionUserInfo);
 
-        $creationResponse = $this->buildAuthenticatedServiceWithTestUser("/collection/externalaccess", TestCommon::$dmUser, 'POST')->call();
+        $creationResponse = $this->buildAuthenticatedServiceWithTestUser("/collection/externalaccess", TestCommon::$dmUser, 'PUT')->call();
         $key = json_decode($creationResponse->getContent())->key;
 
         $getResponse = $this->buildAuthenticatedServiceWithTestUser("/collection/externalaccess/$key", TestCommon::$dmUser)->call();
         $objectResponse = json_decode($getResponse->getContent());
 
         $this->assertEquals(1, count($objectResponse));
+        /** @var BibliothequeAccesExternes $access */
         $access = unserialize($objectResponse[0]);
         $this->assertEquals(1, $access->getIdUtilisateur());
     }
@@ -246,5 +249,26 @@ class CollectionTest extends TestCommon
         $objectResponse = json_decode($getResponse->getContent());
 
         $this->assertEquals(0, count($objectResponse));
+    }
+
+    public function testGetBookcaseSorts()
+    {
+        $collectionUserInfo = self::createTestCollection('dm_test_user');
+        self::setSessionUser($this->app, $collectionUserInfo);
+
+        $getResponse = $this->buildAuthenticatedServiceWithTestUser("/bookcase/sort", TestCommon::$dmUser)->call();
+        $objectResponse = json_decode($getResponse->getContent());
+
+        $this->assertEquals(2, count($objectResponse));
+        /** @var BibliothequeOrdreMagazines $order */
+        $order1 = unserialize($objectResponse[0]);
+        $this->assertEquals('fr', $order1->getPays());
+        $this->assertEquals('DDD', $order1->getMagazine());
+        $this->assertEquals(1, $order1->getOrdre());
+
+        $order2 = unserialize($objectResponse[1]);
+        $this->assertEquals('fr', $order2->getPays());
+        $this->assertEquals('JM', $order2->getMagazine());
+        $this->assertEquals(2, $order2->getOrdre());
     }
 }

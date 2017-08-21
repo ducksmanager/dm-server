@@ -125,10 +125,10 @@ class AppController extends AbstractController
         )
             ->value('purchaseid', null);
 
-        $routing->post(
+        $routing->put(
             '/collection/externalaccess',
             function (Application $app, Request $request) {
-                return self::callInternal($app, '/collection/externalaccess', 'POST');
+                return self::callInternal($app, '/collection/externalaccess', 'PUT');
             }
         );
 
@@ -136,6 +136,13 @@ class AppController extends AbstractController
             '/collection/externalaccess/{key}',
             function (Application $app, Request $request, $key) {
                 return self::callInternal($app, "/collection/externalaccess/$key");
+            }
+        );
+
+        $routing->get(
+            '/bookcase/sort',
+            function (Application $app, Request $request) {
+                return self::callInternal($app, "/bookcase/sort");
             }
         );
     }
