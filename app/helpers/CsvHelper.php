@@ -14,7 +14,7 @@ class CsvHelper
                 }
                 else {
                     $outputData[$row-1] = [];
-                    for ($c = 0; $c < count($data); $c++) {
+                    foreach (array_keys($data) as $c) {
                         switch($headers[$c]) {
                             case 'issuenumbers':
                                 $outputData[$row - 1][$headers[$c]] = explode(',', $data[$c]);

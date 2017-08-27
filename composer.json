@@ -2,7 +2,6 @@
     "name": "bperel/dm-server",
     "license": "Apache-2.0",
     "description": "DucksManager server REST API endpoint",
-    "version": "0.0.1",
     "type": "library",
     "keywords": ["ducksmanager", "whattheduck"],
     "homepage": "http://ducksmanager.net",

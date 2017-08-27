@@ -34,7 +34,7 @@ abstract class AbstractController
      * @return int
      * @throws UnexpectedInternalCallResponseException
      */
-    protected static function getResponseIdFromServiceResponse($response, $idKey) {
+    protected static function getResponseIdFromServiceResponse(Response $response, $idKey) {
         if ($response->getStatusCode() !== Response::HTTP_OK) {
             throw new UnexpectedInternalCallResponseException($response->getContent(), $response->getStatusCode());
         }

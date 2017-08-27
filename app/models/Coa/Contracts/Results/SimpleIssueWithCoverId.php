@@ -3,9 +3,9 @@
 namespace Coa\Contracts\Results;
 
 
-use Generic\Contracts\Results\GenericReturnObject;
+use Generic\Contracts\Results\GenericReturnObjectInterface;
 
-class SimpleIssueWithCoverId implements GenericReturnObject
+class SimpleIssueWithCoverId implements GenericReturnObjectInterface
 {
     private $countrycode;
     private $publicationcode;

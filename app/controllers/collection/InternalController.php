@@ -191,7 +191,7 @@ class InternalController extends AbstractController
             '/internal/collection/externalaccess',
             function (Application $app, Request $request) {
                 return self::wrapInternalService($app, function(EntityManager $dmEm) use ($app, $request) {
-                    $key = MiscUtil::get_random_string();
+                    $key = MiscUtil::getRandomString();
 
                     $externalAccess = new BibliothequeAccesExternes();
                     $externalAccess->setIdUtilisateur(self::getSessionUser($app)['id']);

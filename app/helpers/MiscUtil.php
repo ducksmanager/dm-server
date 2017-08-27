@@ -2,7 +2,7 @@
 namespace DmServer;
 
 class MiscUtil {
-    public static function get_random_string($length = 16) {
+    public static function getRandomString($length = 16) {
         $validCharacters = "abcdefghijklmnopqrstuxyvwzABCDEFGHIJKLMNOPQRSTUXYVWZ";
         $validCharNumber = strlen($validCharacters);
         $result = "";

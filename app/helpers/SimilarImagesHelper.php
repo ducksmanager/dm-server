@@ -47,7 +47,7 @@ class SimilarImagesHelper {
      * @param Logger $monolog
      * @return SimilarImagesOutput
      */
-    public static function getSimilarImages($file, $monolog)
+    public static function getSimilarImages(File $file, Logger $monolog)
     {
         if (!is_null(self::$mockedResults)) {
             $response = self::$mockedResults;

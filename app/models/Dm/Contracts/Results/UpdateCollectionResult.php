@@ -2,9 +2,9 @@
 namespace Dm\Contracts\Results;
 
 
-use Generic\Contracts\Results\GenericReturnObject;
+use Generic\Contracts\Results\GenericReturnObjectInterface;
 
-class UpdateCollectionResult implements GenericReturnObject
+class UpdateCollectionResult implements GenericReturnObjectInterface
 {
     private $action;
     private $numberOfIssues;

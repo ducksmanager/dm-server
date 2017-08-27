@@ -1,22 +1,30 @@
 <?php
 namespace DmServer;
 
-use Generic\Contracts\Results\GenericReturnObject;
+use Generic\Contracts\Results\GenericReturnObjectInterface;
 
 class ModelHelper {
     /**
      * @param array $array
      * @return array
      */
-    static function getSerializedArray($array) {
+    public static function getSerializedArray($array) {
         return array_map(function($object) {
             return serialize($object);
         }, $array);
     }
 
-    static function getSimpleArray($objectArray) {
-        return array_map(function($object) {
-            /** @var GenericReturnObject $object */
+    /**
+     * @param \stdClass[] $objectArray
+     * @return array
+     */
+    public static function getSimpleArray($objectArray) {
+        return array_map(/**
+         * @param \stdClass $object
+         * @return mixed
+         */
+            function($object) {
+            /** @var GenericReturnObjectInterface $object */
             return $object->toArray();
         }, $objectArray);
     }
@@ -25,7 +33,7 @@ class ModelHelper {
      * @param array $array
      * @return array
      */
-    static function getUnserializedArray($array) {
+    public static function getUnserializedArray($array) {
         return array_map(function($object) {
             return unserialize($object);
         }, $array);

@@ -91,7 +91,11 @@ class AppController extends AbstractController
                                 array_unique(
                                     array_merge(
                                         $foundIssueCodes,
-                                        array_map(function($issue) {
+                                        array_map(/**
+                                         * @param \stdClass $issue
+                                         * @return mixed
+                                         */
+                                            function($issue) {
                                             return $issue->issuecode;
                                         }, $issuesWithSameCover)
                                     )

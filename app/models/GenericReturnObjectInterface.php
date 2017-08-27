@@ -2,6 +2,6 @@
 
 namespace Generic\Contracts\Results;
 
-interface GenericReturnObject {
+interface GenericReturnObjectInterface {
     function toArray();
 }

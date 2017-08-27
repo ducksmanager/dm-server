@@ -3,9 +3,9 @@ namespace Dm\Contracts\Results;
 
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Generic\Contracts\Results\GenericReturnObject;
+use Generic\Contracts\Results\GenericReturnObjectInterface;
 
-class CoaDataResult implements GenericReturnObject
+class CoaDataResult implements GenericReturnObjectInterface
 {
     /** @var ArrayCollection $pays */
     protected $pays;
