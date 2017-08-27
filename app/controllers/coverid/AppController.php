@@ -95,7 +95,7 @@ class AppController extends AbstractController
                                          * @param \stdClass $issue
                                          * @return mixed
                                          */
-                                            function($issue) {
+                                            function(\stdClass $issue) {
                                             return $issue->issuecode;
                                         }, $issuesWithSameCover)
                                     )
