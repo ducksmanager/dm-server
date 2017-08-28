@@ -114,6 +114,20 @@ class EdgeCreatorTest extends TestCommon
         ])), $responseModel);
     }
 
+    public function testLoadV2UnassignedModels() {
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/model/unassigned/all", TestCommon::$edgecreatorUser, 'GET')->call();
+
+        $objectResponse = json_decode($response->getContent());
+
+        $this->assertEquals(1, count($objectResponse));
+        /** @var TranchesEnCoursModeles $model1 */
+        $model1 = unserialize($objectResponse[0]);
+        $this->assertEquals('fr', $model1->getPays());
+        $this->assertEquals('MP', $model1->getMagazine());
+        $this->assertEquals('400', $model1->getNumero());
+        $this->assertNull($model1->getUsername());
+    }
+
     public function testCreateStepWithOptionValue() {
         $response = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/step/fr/PM/1', TestCommon::$edgecreatorUser, 'PUT', [
             'functionname' => 'TexteMyFonts',

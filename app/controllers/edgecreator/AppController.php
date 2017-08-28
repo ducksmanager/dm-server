@@ -64,6 +64,14 @@ class AppController extends AbstractController
             function (Request $request, Application $app, $modelId) {
                 return self::callInternal($app, "/edgecreator/v2/model/$modelId", 'GET');
             }
+        )
+            ->assert('modelId', self::getParamAssertRegex('\\d+'));
+
+        $routing->get(
+            '/edgecreator/v2/model/unassigned/all',
+            function (Request $request, Application $app) {
+                return self::callInternal($app, "/edgecreator/v2/model/unassigned/all", 'GET');
+            }
         );
 
         $routing->put(

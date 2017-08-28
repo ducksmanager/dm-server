@@ -5,6 +5,7 @@ namespace DmServer\Controllers\EdgeCreator;
 use Coa\Models\BaseModel;
 use DmServer\Controllers\AbstractController;
 use DmServer\DmServer;
+use DmServer\ModelHelper;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManager;
 use EdgeCreator\Models\EdgecreatorIntervalles;
@@ -68,6 +69,9 @@ class InternalController extends AbstractController
                     $model->setNumero($issueNumber);
                     if ($isEditor === '1') {
                         $model->setUsername(self::getSessionUser($app)['username']);
+                    }
+                    else {
+                        $model->setUsername(null);
                     }
                     $model->setActive(true);
 
@@ -292,6 +296,19 @@ class InternalController extends AbstractController
                 return self::wrapInternalService($app, function (EntityManager $ecEm) use ($app, $modelId) {
                     $model = $ecEm->getRepository(TranchesEnCoursModeles::class)->find($modelId);
                     return new JsonResponse(self::getSerializer()->serialize($model, 'json'), Response::HTTP_OK, [], true);
+                });
+            }
+        )
+            ->assert('modelId', self::getParamAssertRegex('\\d+'));
+
+        $routing->get(
+            '/internal/edgecreator/v2/model/unassigned/all',
+            function (Request $request, Application $app) {
+                return self::wrapInternalService($app, function (EntityManager $ecEm) use ($app) {
+                    $models = $ecEm->getRepository(TranchesEnCoursModeles::class)->findBy([
+                        'username' => null
+                    ]);
+                    return new JsonResponse(ModelHelper::getSerializedArray($models));
                 });
             }
         );

@@ -23,7 +23,7 @@ class ModelHelper {
          * @param \stdClass $object
          * @return mixed
          */
-            function(\stdClass $object) {
+            function($object) {
             /** @var GenericReturnObjectInterface $object */
             return $object->toArray();
         }, $objectArray);

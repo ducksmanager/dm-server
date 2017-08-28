@@ -703,6 +703,15 @@ class TestCommon extends WebTestCase {
                 ->setHash(sha1('test'))
                 ->setIdUtilisateur(self::getSessionUser($this->app)['id'])
         );
+
+        $ongoingModel2 = new TranchesEnCoursModeles();
+        $edgeCreatorEntityManager->persist(
+            $ongoingModel2
+                ->setPays('fr')
+                ->setMagazine('MP')
+                ->setNumero('400')
+            ->setUsername(null)
+        );
         $edgeCreatorEntityManager->flush();
     }
 
