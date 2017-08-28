@@ -57,16 +57,18 @@ class InternalController extends AbstractController
             ->assert('stepNumber', self::getParamAssertRegex('[-\\d]+'));
 
         $routing->put(
-            '/internal/edgecreator/v2/model/{publicationCode}/{issueNumber}',
-            function (Request $request, Application $app, $publicationCode, $issueNumber) {
-                return self::wrapInternalService($app, function(EntityManager $ecEm) use ($app, $publicationCode, $issueNumber) {
+            '/internal/edgecreator/v2/model/{publicationCode}/{issueNumber}/{isEditor}',
+            function (Request $request, Application $app, $publicationCode, $issueNumber, $isEditor) {
+                return self::wrapInternalService($app, function(EntityManager $ecEm) use ($app, $publicationCode, $issueNumber, $isEditor) {
                     list($country, $publication) = explode('/', $publicationCode);
 
                     $model = new TranchesEnCoursModeles();
                     $model->setPays($country);
                     $model->setMagazine($publication);
                     $model->setNumero($issueNumber);
-                    $model->setUsername(self::getSessionUser($app)['username']);
+                    if ($isEditor === '1') {
+                        $model->setUsername(self::getSessionUser($app)['username']);
+                    }
                     $model->setActive(true);
 
                     $ecEm->persist($model);

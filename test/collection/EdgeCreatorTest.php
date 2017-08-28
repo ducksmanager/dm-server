@@ -44,14 +44,33 @@ class EdgeCreatorTest extends TestCommon
 
     public function testCreateV2Model()
     {
-        $response = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/v2/model/fr/DDD/10',
+        $response = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/v2/model/fr/DDD/10/1',
             TestCommon::$edgecreatorUser, 'PUT'
         )->call();
 
         $createdModel = $this->getEm()->getRepository(TranchesEnCoursModeles::class)->findOneBy([
             'pays' => 'fr',
             'magazine' => 'DDD',
-            'numero' => '10'
+            'numero' => '10',
+            'username' => self::getSessionUser($this->app)['username']
+        ]);
+
+        $objectResponse = json_decode($response->getContent());
+
+        $this->assertEquals($createdModel->getId(), $objectResponse->modelid);
+    }
+
+    public function testCreateV2ModelNoUser()
+    {
+        $response = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/v2/model/fr/DDD/10/0',
+            TestCommon::$edgecreatorUser, 'PUT'
+        )->call();
+
+        $createdModel = $this->getEm()->getRepository(TranchesEnCoursModeles::class)->findOneBy([
+            'pays' => 'fr',
+            'magazine' => 'DDD',
+            'numero' => '10',
+            'username' => null
         ]);
 
         $objectResponse = json_decode($response->getContent());
@@ -61,12 +80,12 @@ class EdgeCreatorTest extends TestCommon
 
     public function testCreateV2ModelAlreadyExisting()
     {
-        $this->buildAuthenticatedServiceWithTestUser('/edgecreator/v2/model/fr/DDD/10',
+        $this->buildAuthenticatedServiceWithTestUser('/edgecreator/v2/model/fr/DDD/10/1',
             TestCommon::$edgecreatorUser, 'PUT'
         )->call();
 
         // Another time
-        $response = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/v2/model/fr/DDD/10',
+        $response = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/v2/model/fr/DDD/10/1',
             TestCommon::$edgecreatorUser, 'PUT'
         )->call();
 

@@ -67,11 +67,11 @@ class AppController extends AbstractController
         );
 
         $routing->put(
-            '/edgecreator/v2/model/{publicationcode}/{issuenumber}',
-            function (Application $app, Request $request, $publicationcode, $issuenumber) {
+            '/edgecreator/v2/model/{publicationcode}/{issuenumber}/{iseditor}',
+            function (Application $app, Request $request, $publicationcode, $issuenumber, $iseditor) {
                 try {
                     $modelId = self::getResponseIdFromServiceResponse(
-                        self::callInternal($app, "/edgecreator/v2/model/$publicationcode/$issuenumber", 'PUT'),
+                        self::callInternal($app, "/edgecreator/v2/model/$publicationcode/$issuenumber/$iseditor", 'PUT'),
                         'modelid'
                     );
 
@@ -84,6 +84,7 @@ class AppController extends AbstractController
         )
             ->assert('publicationcode', self::getParamAssertRegex(BaseModel::PUBLICATION_CODE_VALIDATION))
             ->assert('issuenumber', self::getParamAssertRegex(BaseModel::ISSUE_NUMBER_VALIDATION))
+            ->value('iseditor', '0')
         ;
 
         $routing->post(
