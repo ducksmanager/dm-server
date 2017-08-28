@@ -120,12 +120,12 @@ class EdgeCreatorTest extends TestCommon
         $objectResponse = json_decode($response->getContent());
 
         $this->assertEquals(1, count($objectResponse));
-        /** @var TranchesEnCoursModeles $model1 */
-        $model1 = unserialize($objectResponse[0]);
-        $this->assertEquals('fr', $model1->getPays());
-        $this->assertEquals('MP', $model1->getMagazine());
-        $this->assertEquals('400', $model1->getNumero());
-        $this->assertNull($model1->getUsername());
+        /** @var \stdClass $model1 */
+        $model1 = $objectResponse[0];
+        $this->assertEquals('fr', $model1->pays);
+        $this->assertEquals('MP', $model1->magazine);
+        $this->assertEquals('400', $model1->numero);
+        $this->assertNull($model1->username);
     }
 
     public function testCreateStepWithOptionValue() {

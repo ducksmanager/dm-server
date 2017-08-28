@@ -308,7 +308,8 @@ class InternalController extends AbstractController
                     $models = $ecEm->getRepository(TranchesEnCoursModeles::class)->findBy([
                         'username' => null
                     ]);
-                    return new JsonResponse(ModelHelper::getSerializedArray($models));
+
+                    return new JsonResponse(self::getSerializer()->serialize($models, 'json'), Response::HTTP_OK, [], true);
                 });
             }
         );
