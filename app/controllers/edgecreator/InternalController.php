@@ -291,6 +291,31 @@ class InternalController extends AbstractController
             ->assert('stepNumber', self::getParamAssertRegex('[-\\d]+'));
 
         $routing->get(
+            '/internal/edgecreator/v2/model',
+            function (Request $request, Application $app) {
+                return self::wrapInternalService($app, function (EntityManager $ecEm) use ($app) {
+                    $qb = $ecEm->createQueryBuilder();
+
+                    $qb->select('modeles.id, modeles.pays, modeles.magazine, modeles.numero, modeles.nomphotoprincipale, modeles.username,'
+                                .' (case when modeles.username = :username then 1 else 0 end) as est_editeur')
+                        ->from(TranchesEnCoursModeles::class, 'modeles')
+                        ->andWhere("modeles.active = :active")
+                        ->setParameter(':active', true)
+                        ->andWhere("modeles.username = :username or modeles.photographes LIKE :usernamefirstinlist or modeles.photographes LIKE :usernameinlist or modeles.photographes LIKE :usernamelastinlist  or modeles.photographes = :usernameonlyinlist")
+                        ->setParameter(':username', self::getSessionUser($app)['username'])
+                        ->setParameter(':usernamefirstinlist', self::getSessionUser($app)['username'].',%')
+                        ->setParameter(':usernameinlist', '%,'.self::getSessionUser($app)['username'].',%')
+                        ->setParameter(':usernamelastinlist', '%,'.self::getSessionUser($app)['username'])
+                        ->setParameter(':usernameonlyinlist', self::getSessionUser($app)['username'])
+                    ;
+
+                    $models = $qb->getQuery()->getResult();
+                    return new JsonResponse(self::getSerializer()->serialize($models, 'json'), Response::HTTP_OK, [], true);
+                });
+            }
+        );
+
+        $routing->get(
             '/internal/edgecreator/v2/model/{modelId}',
             function (Request $request, Application $app, $modelId) {
                 return self::wrapInternalService($app, function (EntityManager $ecEm) use ($app, $modelId) {

@@ -114,6 +114,16 @@ class EdgeCreatorTest extends TestCommon
         ])), $responseModel);
     }
 
+    public function testLoadV2UserModels() {
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/model", TestCommon::$edgecreatorUser, 'GET')->call();
+
+        $responseObjects = json_decode($response->getContent());
+
+        $this->assertEquals(2, count($responseObjects));
+        $this->assertEquals('1', $responseObjects[0]->est_editeur);
+        $this->assertEquals('0', $responseObjects[1]->est_editeur);
+    }
+
     public function testLoadV2UnassignedModels() {
         $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/model/unassigned/all", TestCommon::$edgecreatorUser, 'GET')->call();
 

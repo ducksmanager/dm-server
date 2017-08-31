@@ -664,6 +664,17 @@ class TestCommon extends WebTestCase {
         );
         $edgeCreatorEntityManager->flush();
 
+        $ongoingModel2 = new TranchesEnCoursModeles();
+        $edgeCreatorEntityManager->persist(
+            $ongoingModel2
+                ->setPays('fr')
+                ->setMagazine('PM')
+                ->setNumero('502')
+                ->setUsername(null)
+                ->setPhotographes($edgeCreatorUser->getUsername())
+        );
+        $edgeCreatorEntityManager->flush();
+
         $ongoingModel1Step1Value1 = new TranchesEnCoursValeurs();
         $edgeCreatorEntityManager->persist(
             $ongoingModel1Step1Value1

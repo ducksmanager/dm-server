@@ -60,6 +60,13 @@ class AppController extends AbstractController
             ->assert('stepnumber', self::getParamAssertRegex('\\d+'));
 
         $routing->get(
+            '/edgecreator/v2/model',
+            function (Request $request, Application $app) {
+                return self::callInternal($app, "/edgecreator/v2/model", 'GET');
+            }
+        );
+
+        $routing->get(
             '/edgecreator/v2/model/{modelId}',
             function (Request $request, Application $app, $modelId) {
                 return self::callInternal($app, "/edgecreator/v2/model/$modelId", 'GET');

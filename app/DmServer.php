@@ -8,10 +8,12 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\CachedReader;
 
 use Doctrine\Common\Cache\ArrayCache;
+use Doctrine\Common\ClassLoader;
 use Doctrine\Common\EventManager;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Setup;
+use DoctrineExtensions\Query\Mysql\Regexp;
 use Gedmo\Timestampable\TimestampableListener;
 use Silex\Api\ControllerProviderInterface;
 use Silex\Application;
@@ -119,10 +121,7 @@ class DmServer implements ControllerProviderInterface
                 $params = [
                     'user' => $username,
                     'password' => $password,
-                    'driver' => 'pdo_sqlite',
-                    'driverOptions' => [
-                        1002 => 'SET NAMES utf8'
-                    ]
+                    'driver' => 'pdo_sqlite'
                 ];
                 if (array_key_exists('in_memory', $dbConf)) {
                     $params['memory'] = true;
