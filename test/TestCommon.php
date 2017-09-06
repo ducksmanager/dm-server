@@ -669,7 +669,7 @@ class TestCommon extends WebTestCase {
             $ongoingModel2
                 ->setPays('fr')
                 ->setMagazine('PM')
-                ->setNumero('502')
+                ->setNumero('503')
                 ->setUsername(null)
                 ->setPhotographes($edgeCreatorUser->getUsername())
         );
@@ -715,9 +715,9 @@ class TestCommon extends WebTestCase {
                 ->setIdUtilisateur(self::getSessionUser($this->app)['id'])
         );
 
-        $ongoingModel2 = new TranchesEnCoursModeles();
+        $ongoingModel3 = new TranchesEnCoursModeles();
         $edgeCreatorEntityManager->persist(
-            $ongoingModel2
+            $ongoingModel3
                 ->setPays('fr')
                 ->setMagazine('MP')
                 ->setNumero('400')

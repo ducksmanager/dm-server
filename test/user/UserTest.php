@@ -33,7 +33,7 @@ class UserTest extends TestCommon
     }
 
     public function testCallServiceWithUserCredentials() {
-        $response = $this->buildAuthenticatedServiceWithTestUser('/user/new', TestCommon::$dmUser, 'POST', [
+        $response = $this->buildAuthenticatedServiceWithTestUser('/ducksmanager/user/new', TestCommon::$dmUser, 'POST', [
             'username' => 'dm_user',
             'password' => 'test',
             'password2' => 'test',
@@ -44,7 +44,7 @@ class UserTest extends TestCommon
     }
 
     public function testCreateCollection() {
-        $response = $this->buildAuthenticatedService('/user/new', TestCommon::$dmUser, [], [
+        $response = $this->buildAuthenticatedService('/ducksmanager/user/new', TestCommon::$dmUser, [], [
             'username' => self::$defaultTestDmUserName,
             'password' => 'dm_pass',
             'password2' => 'dm_pass',
@@ -63,7 +63,7 @@ class UserTest extends TestCommon
     }
 
     public function testCreateCollectionErrorDifferentPasswords() {
-        $response = $this->buildAuthenticatedService('/user/new', TestCommon::$dmUser, [], [
+        $response = $this->buildAuthenticatedService('/ducksmanager/user/new', TestCommon::$dmUser, [], [
             'username' => self::$defaultTestDmUserName,
             'password' => 'dm_pass',
             'password2' => 'dm_pass_different',
@@ -73,7 +73,7 @@ class UserTest extends TestCommon
     }
 
     public function testCreateCollectionErrorShortUsername() {
-        $response = $this->buildAuthenticatedService('/user/new', TestCommon::$dmUser, [], [
+        $response = $this->buildAuthenticatedService('/ducksmanager/user/new', TestCommon::$dmUser, [], [
             'username' => 'dm',
             'password' => 'dm_pass',
             'password2' => 'dm_pass',
@@ -83,7 +83,7 @@ class UserTest extends TestCommon
     }
 
     public function testCreateCollectionErrorShortPassword() {
-        $response = $this->buildAuthenticatedService('/user/new', TestCommon::$dmUser, [], [
+        $response = $this->buildAuthenticatedService('/ducksmanager/user/new', TestCommon::$dmUser, [], [
             'username' => self::$defaultTestDmUserName,
             'password' => 'pass',
             'password2' => 'pass',
@@ -94,7 +94,7 @@ class UserTest extends TestCommon
 
     public function testCreateCollectionErrorExistingUsername() {
         self::createTestCollection();
-        $response = $this->buildAuthenticatedService('/user/new', TestCommon::$dmUser, [], [
+        $response = $this->buildAuthenticatedService('/ducksmanager/user/new', TestCommon::$dmUser, [], [
             'username' => self::$defaultTestDmUserName,
             'password' => 'dm_pass',
             'password2' => 'dm_pass',
@@ -104,12 +104,12 @@ class UserTest extends TestCommon
     }
 
     public function testResetDemoDataWrongUser() {
-        $response = $this->buildAuthenticatedService('/user/resetDemo', TestCommon::$dmUser, [])->call();
+        $response = $this->buildAuthenticatedService('/ducksmanager/resetDemo', TestCommon::$dmUser, [])->call();
         $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 
     public function testResetDemoDataNoDemoUser() {
-        $response = $this->buildAuthenticatedService('/user/resetDemo', TestCommon::$adminUser, [])->call();
+        $response = $this->buildAuthenticatedService('/ducksmanager/resetDemo', TestCommon::$adminUser, [])->call();
         $this->assertEquals(Response::HTTP_EXPECTATION_FAILED, $response->getStatusCode());
     }
 
@@ -145,7 +145,7 @@ class UserTest extends TestCommon
         $demoUser->setBetauser(true);
         $dmEm->flush($demoUser);
 
-        $response = $this->buildAuthenticatedService('/user/resetDemo', TestCommon::$adminUser, [])->call();
+        $response = $this->buildAuthenticatedService('/ducksmanager/resetDemo', TestCommon::$adminUser, [])->call();
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
 
         $demoUser = $dmEm->getRepository(Users::class)->findOneBy([

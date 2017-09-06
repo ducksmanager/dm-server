@@ -46,5 +46,5 @@ docker exec -it web /bin/bash -c scripts/deploy/deploy-app.sh web
 #### Reset the demo user
 
 ```bash
-docker exec -i web /bin/bash dm-server/scripts/call-service.sh admin /user/resetDemo
+docker exec -i web /bin/bash dm-server/scripts/call-service.sh admin /ducksmanager/resetDemo
 ```

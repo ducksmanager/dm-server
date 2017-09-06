@@ -50,7 +50,7 @@ trait RequestInterceptor
             if (isset($username) && isset($password)) {
                 $app['monolog']->addInfo("Authenticating $username...");
 
-                $userCheck = self::callInternal($app, '/user/check', 'GET', [
+                $userCheck = self::callInternal($app, '/ducksmanager/check', 'GET', [
                     'username' => $username,
                     'password' => $password
                 ]);

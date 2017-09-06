@@ -58,6 +58,9 @@
             "DmServer\\Controllers\\CoverId\\": [
                 "app/controllers/coverid"
             ],
+            "DmServer\\Controllers\\DucksManager\\": [
+                "app/controllers/ducksmanager"
+            ],
             "DmServer\\Controllers\\RawSql\\": [
                 "app/controllers/rawsql"
             ],

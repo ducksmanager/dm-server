@@ -104,7 +104,7 @@ $app->register(new Silex\Provider\SecurityServiceProvider(), array(
             'users' => ['rawsql' => $users['rawsql']]
         ),
         'admin' => array(
-            'pattern' => '^/user/resetDemo',
+            'pattern' => '^/ducksmanager/resetDemo',
             'http' => true,
             'users' => ['admin' => $users['admin']]
         ),
