@@ -14,6 +14,7 @@ use EdgeCreator\Models\EdgecreatorValeurs;
 use EdgeCreator\Models\ImagesMyfonts;
 use EdgeCreator\Models\ImagesTranches;
 use EdgeCreator\Models\TranchesEnCoursModeles;
+use EdgeCreator\Models\TranchesEnCoursModelesImages;
 use EdgeCreator\Models\TranchesEnCoursValeurs;
 use Silex\Application;
 use Silex\ControllerCollection;
@@ -296,11 +297,15 @@ class InternalController extends AbstractController
                 return self::wrapInternalService($app, function (EntityManager $ecEm) use ($app) {
                     $qb = $ecEm->createQueryBuilder();
 
-                    $qb->select('modeles.id, modeles.pays, modeles.magazine, modeles.numero, modeles.nomphotoprincipale, modeles.username,'
+                    $qb->select('modeles.id, modeles.pays, modeles.magazine, modeles.numero, image.nomfichier, modeles.username,'
                                 .' (case when modeles.username = :username then 1 else 0 end) as est_editeur')
                         ->from(TranchesEnCoursModeles::class, 'modeles')
+                        ->leftJoin('modeles.photos', 'photos')
+                        ->leftJoin('photos.image', 'image')
                         ->andWhere("modeles.active = :active")
                         ->setParameter(':active', true)
+                        ->andWhere("photos.estphotoprincipale = :estphotoprincipale or photos.estphotoprincipale is null")
+                        ->setParameter(':estphotoprincipale', true)
                         ->andWhere("modeles.username = :username or modeles.photographes LIKE :usernamefirstinlist or modeles.photographes LIKE :usernameinlist or modeles.photographes LIKE :usernamelastinlist  or modeles.photographes = :usernameonlyinlist")
                         ->setParameter(':username', self::getSessionUser($app)['username'])
                         ->setParameter(':usernamefirstinlist', self::getSessionUser($app)['username'].',%')
@@ -310,6 +315,7 @@ class InternalController extends AbstractController
                     ;
 
                     $models = $qb->getQuery()->getResult();
+
                     return new JsonResponse(self::getSerializer()->serialize($models, 'json'), Response::HTTP_OK, [], true);
                 });
             }
@@ -418,7 +424,7 @@ class InternalController extends AbstractController
         $routing->put(
             '/internal/edgecreator/model/v2/{modelId}/photo/main',
             function (Application $app, Request $request, $modelId) {
-                return self::wrapInternalService($app, function (EntityManager $ecEm) use ($request, $modelId) {
+                return self::wrapInternalService($app, function (EntityManager $ecEm) use ($app, $request, $modelId) {
                     $photoName = $request->request->get('photoname');
                     $username = $request->request->get('username');
 
@@ -433,11 +439,27 @@ class InternalController extends AbstractController
                         $photographers[] = $username;
                         $model->setPhotographes(implode(';', $photographers));
                     }
-                    $model->setNomphotoprincipale($photoName);
+
                     $ecEm->persist($model);
+
+                    $mainPhoto = new ImagesTranches();
+                    $mainPhoto
+                        ->setIdUtilisateur(self::getSessionUser($app)['id'])
+                        ->setDateheure((new \DateTime())->setTime(0,0))
+                        ->setHash(null) // TODO
+                        ->setNomfichier($photoName);
+                    $ecEm->persist($mainPhoto);
+
+                    $photoAndEdge = new TranchesEnCoursModelesImages();
+                    $photoAndEdge
+                        ->setImage($mainPhoto)
+                        ->setModele($model)
+                        ->setEstphotoprincipale(true);
+                    $ecEm->persist($photoAndEdge);
+
                     $ecEm->flush();
 
-                    return new JsonResponse(['mainphoto' => ['modelid' => $model->getId(), 'photoname' => $photoName]]);
+                    return new JsonResponse(['mainphoto' => ['modelid' => $model->getId(), 'photoname' => $mainPhoto->getNomfichier()]]);
                 });
             }
         );

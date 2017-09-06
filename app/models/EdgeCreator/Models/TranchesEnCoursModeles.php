@@ -3,6 +3,7 @@
 namespace EdgeCreator\Models;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\OneToMany;
 
 /**
  * TranchesEnCoursModeles
@@ -51,10 +52,18 @@ class TranchesEnCoursModeles extends \EdgeCreator\Models\BaseModel
 
     /**
      * @var string
+     * @deprecated
      *
      * @ORM\Column(name="NomPhotoPrincipale", type="string", length=60, nullable=true)
      */
     private $nomphotoprincipale;
+
+    /**
+     * @var TranchesEnCoursModelesImages[]
+     *
+     * @OneToMany(fetch="EAGER", targetEntity="TranchesEnCoursModelesImages", cascade={"persist", "remove"}, mappedBy="modele")
+     */
+    private $photos = [];
 
     /**
      * @var string
@@ -214,6 +223,30 @@ class TranchesEnCoursModeles extends \EdgeCreator\Models\BaseModel
     public function getNomphotoprincipale()
     {
         return $this->nomphotoprincipale;
+    }
+
+    /**
+     * Set photos
+     *
+     * @param TranchesEnCoursModelesImages[] $photos
+     *
+     * @return TranchesEnCoursModeles
+     */
+    public function setPhotos($photos)
+    {
+        $this->photos = $photos;
+
+        return $this;
+    }
+
+    /**
+     * Get photographes
+     *
+     * @return TranchesEnCoursModelesImages[]
+     */
+    public function getPhotos()
+    {
+        return $this->photos;
     }
 
     /**
