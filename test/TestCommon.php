@@ -16,7 +16,6 @@ use Dm\Models\Numeros;
 use Dm\Models\TranchesDoublons;
 use Dm\Models\TranchesPretes;
 use Dm\Models\Users;
-
 use DmServer\DmServer;
 use DmServer\RequestUtil;
 use DmStats\Models\AuteursHistoires;
@@ -24,11 +23,11 @@ use DmStats\Models\AuteursPseudosSimple;
 use DmStats\Models\UtilisateursHistoiresManquantes;
 use DmStats\Models\UtilisateursPublicationsManquantes;
 use DmStats\Models\UtilisateursPublicationsSuggerees;
-use Doctrine\Common\Collections\ArrayCollection;
 use EdgeCreator\Models\EdgecreatorIntervalles;
 use EdgeCreator\Models\EdgecreatorModeles2;
 use EdgeCreator\Models\EdgecreatorValeurs;
 use EdgeCreator\Models\ImagesTranches;
+use EdgeCreator\Models\TranchesEnCoursContributeurs;
 use EdgeCreator\Models\TranchesEnCoursModeles;
 use EdgeCreator\Models\TranchesEnCoursValeurs;
 use Silex\Application;
@@ -669,11 +668,18 @@ class TestCommon extends WebTestCase {
             $ongoingModel2
                 ->setPays('fr')
                 ->setMagazine('PM')
-                ->setNumero('502')
+                ->setNumero('503')
                 ->setUsername(null)
-                ->setPhotographes($edgeCreatorUser->getUsername())
         );
         $edgeCreatorEntityManager->flush();
+
+        $ongoingModel2Contributor1 = new TranchesEnCoursContributeurs();
+        $edgeCreatorEntityManager->persist(
+            $ongoingModel2Contributor1
+                ->setModele($ongoingModel2)
+                ->setIdUtilisateur($edgeCreatorUser->getId())
+                ->setContribution('photographe')
+        );
 
         $ongoingModel1Step1Value1 = new TranchesEnCoursValeurs();
         $edgeCreatorEntityManager->persist(
@@ -721,7 +727,7 @@ class TestCommon extends WebTestCase {
                 ->setPays('fr')
                 ->setMagazine('MP')
                 ->setNumero('400')
-            ->setUsername(null)
+                ->setUsername(null)
         );
         $edgeCreatorEntityManager->flush();
     }
