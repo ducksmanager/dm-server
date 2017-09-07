@@ -10,6 +10,7 @@ use EdgeCreator\Models\ImagesMyfonts;
 use EdgeCreator\Models\ImagesTranches;
 use EdgeCreator\Models\TranchesEnCoursContributeurs;
 use EdgeCreator\Models\TranchesEnCoursModeles;
+use EdgeCreator\Models\TranchesEnCoursModelesImages;
 use EdgeCreator\Models\TranchesEnCoursValeurs;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -112,7 +113,8 @@ class EdgeCreatorTest extends TestCommon
             'createurs' => NULL,
             'active' => '1',
             'pretepourpublication' => '0',
-            'contributeurs' => []
+            'contributeurs' => [],
+            'photos' => []
         ])), $responseModel);
     }
 
@@ -516,7 +518,10 @@ class EdgeCreatorTest extends TestCommon
         $this->assertEquals(['modelid' => $model->getId(), 'photoname' => $photoName], (array) $objectResponse->mainphoto);
 
         $newModel = $this->getV2Model('fr', 'PM', '502');
-        $this->assertEquals($photoName, $newModel->getNomphotoprincipale());
+        $mainPhoto = $this->getEm()->getRepository(TranchesEnCoursModelesImages::class)->findOneBy([
+            'modele' => $newModel
+        ]);
+        $this->assertEquals($photoName, $mainPhoto->getImage()->getNomfichier());
         $this->assertEquals($userName, $newModel->getPhotographes());
     }
 

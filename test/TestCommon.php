@@ -29,6 +29,7 @@ use EdgeCreator\Models\EdgecreatorValeurs;
 use EdgeCreator\Models\ImagesTranches;
 use EdgeCreator\Models\TranchesEnCoursContributeurs;
 use EdgeCreator\Models\TranchesEnCoursModeles;
+use EdgeCreator\Models\TranchesEnCoursModelesImages;
 use EdgeCreator\Models\TranchesEnCoursValeurs;
 use Silex\Application;
 use Silex\WebTestCase;
@@ -671,6 +672,24 @@ class TestCommon extends WebTestCase {
                 ->setNumero('503')
                 ->setUsername(null)
         );
+
+        $edgePicture = new ImagesTranches();
+        $edgeCreatorEntityManager->persist(
+            $edgePicture
+                ->setNomfichier('photo1.jpg')
+                ->setDateheure(new \DateTime('today'))
+                ->setHash(sha1('test'))
+                ->setIdUtilisateur(self::getSessionUser($this->app)['id'])
+        );
+
+        $ongoingModel2MainEdgePicture = new TranchesEnCoursModelesImages();
+        $edgeCreatorEntityManager->persist(
+            $ongoingModel2MainEdgePicture
+                ->setModele($ongoingModel2)
+                ->setImage($edgePicture)
+                ->setEstphotoprincipale(true)
+        );
+
         $edgeCreatorEntityManager->flush();
 
         $ongoingModel2Contributor1 = new TranchesEnCoursContributeurs();
@@ -712,15 +731,6 @@ class TestCommon extends WebTestCase {
         );
         $edgeCreatorEntityManager->flush();
 
-        $edgePicture = new ImagesTranches();
-        $edgeCreatorEntityManager->persist(
-            $edgePicture
-                ->setNomfichier('photo1.jpg')
-                ->setDateheure(new \DateTime('today'))
-                ->setHash(sha1('test'))
-                ->setIdUtilisateur(self::getSessionUser($this->app)['id'])
-        );
-
         $ongoingModel3 = new TranchesEnCoursModeles();
         $edgeCreatorEntityManager->persist(
             $ongoingModel3
@@ -729,6 +739,7 @@ class TestCommon extends WebTestCase {
                 ->setNumero('400')
                 ->setUsername(null)
         );
+
         $edgeCreatorEntityManager->flush();
     }
 
