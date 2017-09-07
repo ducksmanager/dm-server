@@ -348,6 +348,19 @@ class InternalController extends AbstractController
             }
         );
 
+        $routing->get(
+            '/internal/edgecreator/v2/model/unassigned/all',
+            function (Request $request, Application $app) {
+                return self::wrapInternalService($app, function (EntityManager $ecEm) use ($app) {
+                    $models = $ecEm->getRepository(TranchesEnCoursModeles::class)->findBy([
+                        'username' => null
+                    ]);
+
+                    return new JsonResponse(self::getSerializer()->serialize($models, 'json'), Response::HTTP_OK, [], true);
+                });
+            }
+        );
+
         $routing->put(
             '/internal/edgecreator/myfontspreview',
             function (Application $app, Request $request) {

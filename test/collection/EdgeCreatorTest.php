@@ -129,12 +129,26 @@ class EdgeCreatorTest extends TestCommon
         $this->assertEquals('0', $responseObjects[2]->est_editeur);
     }
 
-    public function testLoadV2UnassignedModels() {
+    public function testLoadV2ModelsEditedByOthers() {
         $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/model/editedbyother/all", TestCommon::$edgecreatorUser, 'GET')->call();
 
         $objectResponse = json_decode($response->getContent());
 
         $this->assertEquals(1, count($objectResponse));
+        /** @var \stdClass $model1 */
+        $model1 = $objectResponse[0];
+        $this->assertEquals('fr', $model1->pays);
+        $this->assertEquals('PM', $model1->magazine);
+        $this->assertEquals('503', $model1->numero);
+        $this->assertNull($model1->username);
+    }
+
+    public function testLoadV2UnassignedModels() {
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/model/unassigned/all", TestCommon::$edgecreatorUser, 'GET')->call();
+
+        $objectResponse = json_decode($response->getContent());
+
+        $this->assertEquals(3, count($objectResponse));
         /** @var \stdClass $model1 */
         $model1 = $objectResponse[0];
         $this->assertEquals('fr', $model1->pays);

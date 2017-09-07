@@ -81,6 +81,13 @@ class AppController extends AbstractController
             }
         );
 
+        $routing->get(
+            '/edgecreator/v2/model/unassigned/all',
+            function (Request $request, Application $app) {
+                return self::callInternal($app, "/edgecreator/v2/model/unassigned/all", 'GET');
+            }
+        );
+
         $routing->put(
             '/edgecreator/v2/model/{publicationcode}/{issuenumber}/{iseditor}',
             function (Application $app, Request $request, $publicationcode, $issuenumber, $iseditor) {
