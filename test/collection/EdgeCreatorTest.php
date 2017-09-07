@@ -140,7 +140,6 @@ class EdgeCreatorTest extends TestCommon
         $this->assertEquals('fr', $model1->pays);
         $this->assertEquals('PM', $model1->magazine);
         $this->assertEquals('503', $model1->numero);
-        $this->assertNull($model1->username);
     }
 
     public function testLoadV2UnassignedModels() {
