@@ -41,9 +41,9 @@ trait RequestInterceptor
      */
     static function authenticateUser(Application $app, Request $request) {
         if (
-            preg_match('#^/collection/.+$#',                     $request->getPathInfo())
-         || preg_match('#^/edgecreator/.+$#',                    $request->getPathInfo())
-         || preg_match('#^/user/((?!new/?)(?!resetDemo/?).)+$#', $request->getPathInfo())
+            preg_match('#^/collection/.+$#',  $request->getPathInfo())
+         || preg_match('#^/edgecreator/.+$#', $request->getPathInfo())
+         || preg_match('#^/user/.+$#',        $request->getPathInfo())
         ) {
             $username = $request->headers->get('x-dm-user');
             $password = $request->headers->get('x-dm-pass');
