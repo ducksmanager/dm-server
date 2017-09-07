@@ -452,6 +452,15 @@ class InternalController extends AbstractController
                     /** @var TranchesEnCoursModeles $model */
                     $model = $ecEm->getRepository(TranchesEnCoursModeles::class)->find($modelId);
 
+                    $helperUsers = $model->getContributeurs();
+
+                    $photographer = new TranchesEnCoursContributeurs();
+                    $photographer->setModele($model);
+                    $photographer->setContribution('photographe');
+                    $photographer->setIdUtilisateur(self::getSessionUser($app)['id']);
+                    $model->setContributeurs(array_merge($helperUsers->toArray(), [$photographer]));
+                    $ecEm->persist($model);
+
                     $mainPhoto = new ImagesTranches();
                     $mainPhoto
                         ->setIdUtilisateur(self::getSessionUser($app)['id'])
