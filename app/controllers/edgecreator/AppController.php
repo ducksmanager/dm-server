@@ -201,8 +201,7 @@ class AppController extends AbstractController
             '/edgecreator/model/v2/{modelid}/photo/main',
             function (Application $app, Request $request, $modelid) {
                 return self::callInternal($app, "/edgecreator/model/v2/$modelid/photo/main", 'PUT', [
-                    'photoname' => $request->request->get('photoname'),
-                    'username' => $request->request->get('username')
+                    'photoname' => $request->request->get('photoname')
                 ]);
             }
         );

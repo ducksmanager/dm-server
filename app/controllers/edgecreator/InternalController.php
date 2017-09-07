@@ -448,21 +448,9 @@ class InternalController extends AbstractController
             function (Application $app, Request $request, $modelId) {
                 return self::wrapInternalService($app, function (EntityManager $ecEm) use ($app, $request, $modelId) {
                     $photoName = $request->request->get('photoname');
-                    $username = $request->request->get('username');
 
                     /** @var TranchesEnCoursModeles $model */
                     $model = $ecEm->getRepository(TranchesEnCoursModeles::class)->find($modelId);
-
-                    $photographers = $model->getPhotographes();
-                    if (is_null($photographers)) {
-                        $photographers = '';
-                    }
-                    if (!in_array($username, explode(';', $photographers))) {
-                        $photographers[] = $username;
-                        $model->setPhotographes(implode(';', $photographers));
-                    }
-
-                    $ecEm->persist($model);
 
                     $mainPhoto = new ImagesTranches();
                     $mainPhoto
