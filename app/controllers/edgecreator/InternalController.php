@@ -300,7 +300,6 @@ class InternalController extends AbstractController
                         ->leftJoin('photos.image', 'image')
                         ->andWhere("modeles.active = :active")
                         ->setParameter(':active', true)
-                        ->andWhere("photos.estphotoprincipale != 0")
                         ->andWhere("modeles.username = :username or helperusers.idUtilisateur = :usernameid")
                         ->setParameter(':username', self::getSessionUser($app)['username'])
                         ->setParameter(':usernameid', self::getSessionUser($app)['id'])
