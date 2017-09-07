@@ -75,9 +75,9 @@ class AppController extends AbstractController
             ->assert('modelId', self::getParamAssertRegex('\\d+'));
 
         $routing->get(
-            '/edgecreator/v2/model/unassigned/all',
+            '/edgecreator/v2/model/editedbyother/all',
             function (Request $request, Application $app) {
-                return self::callInternal($app, "/edgecreator/v2/model/unassigned/all", 'GET');
+                return self::callInternal($app, "/edgecreator/v2/model/editedbyother/all", 'GET');
             }
         );
 

@@ -324,12 +324,24 @@ class InternalController extends AbstractController
             ->assert('modelId', self::getParamAssertRegex('\\d+'));
 
         $routing->get(
-            '/internal/edgecreator/v2/model/unassigned/all',
+            '/internal/edgecreator/v2/model/editedbyother/all',
             function (Request $request, Application $app) {
                 return self::wrapInternalService($app, function (EntityManager $ecEm) use ($app) {
-                    $models = $ecEm->getRepository(TranchesEnCoursModeles::class)->findBy([
-                        'username' => null
-                    ]);
+                    $qb = $ecEm->createQueryBuilder();
+
+                    $qb->select('modeles.id, modeles.pays, modeles.magazine, modeles.numero')
+                        ->from(TranchesEnCoursModeles::class, 'modeles')
+                        ->leftJoin('modeles.contributeurs', 'helperusers')
+                        ->andWhere("modeles.active = :active")
+                        ->setParameter(':active', true)
+                        ->andWhere("modeles.username != :username or modeles.username is null")
+                        ->andWhere("helperusers.idUtilisateur = :usernameid and helperusers.contribution = :contribution")
+                        ->setParameter(':username', self::getSessionUser($app)['username'])
+                        ->setParameter(':usernameid', self::getSessionUser($app)['id'])
+                        ->setParameter(':contribution', 'photographe')
+                    ;
+
+                    $models = $qb->getQuery()->getResult();
 
                     return new JsonResponse(self::getSerializer()->serialize($models, 'json'), Response::HTTP_OK, [], true);
                 });
