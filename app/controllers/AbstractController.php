@@ -3,6 +3,7 @@ namespace DmServer\Controllers;
 
 use DmServer\DmServer;
 use DmServer\RequestUtil;
+use EdgeCreator\Models\TranchesEnCoursModeles;
 use Silex\Application;
 use Silex\Application\TranslationTrait;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,10 +23,18 @@ abstract class AbstractController
     }
 
     protected static function getSerializer() {
-        $encoders = [new JsonEncoder()];
-        $normalizers = [new ObjectNormalizer()];
+        $encoder = new JsonEncoder();
+        $normalizer = new ObjectNormalizer();
 
-        return new Serializer($normalizers, $encoders);
+        $normalizer->setCircularReferenceHandler(function ($object) {
+            if (get_class($object) === TranchesEnCoursModeles::class) {
+                /** @var TranchesEnCoursModeles $object */
+                return $object->getId();
+            }
+            return null;
+        });
+
+        return new Serializer([$normalizer], [$encoder]);
     }
 
     /**

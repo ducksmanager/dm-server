@@ -8,6 +8,7 @@ use EdgeCreator\Models\EdgecreatorModeles2;
 use EdgeCreator\Models\EdgecreatorValeurs;
 use EdgeCreator\Models\ImagesMyfonts;
 use EdgeCreator\Models\ImagesTranches;
+use EdgeCreator\Models\TranchesEnCoursContributeurs;
 use EdgeCreator\Models\TranchesEnCoursModeles;
 use EdgeCreator\Models\TranchesEnCoursValeurs;
 use Symfony\Component\HttpFoundation\Response;
@@ -110,7 +111,8 @@ class EdgeCreatorTest extends TestCommon
             'photographes' => NULL,
             'createurs' => NULL,
             'active' => '1',
-            'pretepourpublication' => '0'
+            'pretepourpublication' => '0',
+            'contributeurs' => []
         ])), $responseModel);
     }
 
@@ -418,8 +420,8 @@ class EdgeCreatorTest extends TestCommon
     public function testSetModelReadyForPublication() {
         $model = $this->getV2Model('fr', 'PM', '502');
 
-        $designers = ['designer1'];
-        $photographers = ['photograph1', 'photograph2'];
+        $designers = [1];
+        $photographers = [1, 2];
 
         $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/{$model->getId()}/readytopublish/1", TestCommon::$edgecreatorUser, 'POST', [
             'designers' => $designers,
@@ -430,8 +432,21 @@ class EdgeCreatorTest extends TestCommon
         $objectResponse = json_decode($response->getContent(), true);
 
         $this->assertEquals($model->getId(), $objectResponse['model']['id']);
-        $this->assertEquals(implode(',', $photographers), $objectResponse['model']['photographes']);
-        $this->assertEquals(implode(',', $designers), $objectResponse['model']['createurs']);
+        $helperUsers = $objectResponse['model']['contributeurs'];
+
+        $creatorsDetails = array_filter($helperUsers, function($helperUser) {
+            return $helperUser['contribution'] === 'createur';
+        });
+        $photographersDetails = array_filter($helperUsers, function($helperUser) {
+            return $helperUser['contribution'] === 'photographe';
+        });
+
+        $this->assertEquals($designers, array_values(array_map(function($creator) {
+            return $creator['idUtilisateur'];
+        }, $creatorsDetails)));
+        $this->assertEquals($photographers, array_values(array_map(function($photographer) {
+            return $photographer['idUtilisateur'];
+        }, $photographersDetails)));
 
         $newModel = $this->getV2Model('fr', 'PM', '502');
         $this->assertEquals(true, $newModel->getPretepourpublication());
@@ -440,8 +455,29 @@ class EdgeCreatorTest extends TestCommon
 
     public function testSetModelNotReadyForPublication() {
         $model = $this->getV2Model('fr', 'PM', '502');
-        $model->setPhotographes('a,b');
-        $model->setCreateurs('c,d');
+        $contributeur1 = new TranchesEnCoursContributeurs();
+        $contributeur2 = new TranchesEnCoursContributeurs();
+        $contributeur3 = new TranchesEnCoursContributeurs();
+        $contributeur4 = new TranchesEnCoursContributeurs();
+        $model->setContributeurs([
+            $contributeur1
+                ->setIdUtilisateur(1)
+                ->setContribution('photographe')
+                ->setModele($model),
+            $contributeur2
+                ->setIdUtilisateur(2)
+                ->setContribution('photographe')
+                ->setModele($model),
+            $contributeur3
+                ->setIdUtilisateur(3)
+                ->setContribution('createur')
+                ->setModele($model),
+            $contributeur4
+                ->setIdUtilisateur(1)
+                ->setContribution('createur')
+                ->setModele($model)
+            ]);
+
         $this->getEm()->flush($model);
 
         $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/{$model->getId()}/readytopublish/0", TestCommon::$edgecreatorUser, 'POST')
@@ -451,8 +487,14 @@ class EdgeCreatorTest extends TestCommon
 
         $this->assertEquals($model->getId(), $objectResponse->model->id);
         $this->assertEquals($model->getPretepourpublication(), $objectResponse->readytopublish);
-        $this->assertEquals('a,b', $objectResponse->model->photographes); // should be unchanged
-        $this->assertEquals('c,d', $objectResponse->model->createurs); // should be unchanged
+        $this->assertEquals($contributeur1->getIdUtilisateur(), $objectResponse->model->contributeurs[0]->idUtilisateur); // should be unchanged
+        $this->assertEquals($contributeur1->getContribution(), $objectResponse->model->contributeurs[0]->contribution); // should be unchanged
+        $this->assertEquals($contributeur2->getIdUtilisateur(), $objectResponse->model->contributeurs[1]->idUtilisateur); // should be unchanged
+        $this->assertEquals($contributeur2->getContribution(), $objectResponse->model->contributeurs[1]->contribution); // should be unchanged
+        $this->assertEquals($contributeur3->getIdUtilisateur(), $objectResponse->model->contributeurs[2]->idUtilisateur); // should be unchanged
+        $this->assertEquals($contributeur3->getContribution(), $objectResponse->model->contributeurs[2]->contribution); // should be unchanged
+        $this->assertEquals($contributeur4->getIdUtilisateur(), $objectResponse->model->contributeurs[3]->idUtilisateur); // should be unchanged
+        $this->assertEquals($contributeur4->getContribution(), $objectResponse->model->contributeurs[3]->contribution); // should be unchanged
 
         $newModel = $this->getV2Model('fr', 'PM', '502');
         $this->assertEquals(false, $newModel->getPretepourpublication());

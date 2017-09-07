@@ -3,6 +3,7 @@
 namespace EdgeCreator\Models;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\OneToMany;
 
 /**
  * TranchesEnCoursModeles
@@ -58,6 +59,7 @@ class TranchesEnCoursModeles extends \EdgeCreator\Models\BaseModel
 
     /**
      * @var string
+     * @deprecated
      *
      * @ORM\Column(name="photographes", type="text", length=65535, nullable=true)
      */
@@ -65,10 +67,18 @@ class TranchesEnCoursModeles extends \EdgeCreator\Models\BaseModel
 
     /**
      * @var string
+     * @deprecated
      *
      * @ORM\Column(name="createurs", type="text", length=65535, nullable=true)
      */
     private $createurs;
+
+    /**
+     * @var TranchesEnCoursContributeurs[]
+     *
+     * @OneToMany(fetch="EAGER", targetEntity="TranchesEnCoursContributeurs", cascade={"persist", "remove"}, mappedBy="modele")
+     */
+    private $contributeurs = [];
 
     /**
      * @var boolean
@@ -238,6 +248,30 @@ class TranchesEnCoursModeles extends \EdgeCreator\Models\BaseModel
     public function getPhotographes()
     {
         return $this->photographes;
+    }
+
+    /**
+     * Set contributeurs
+     *
+     * @param TranchesEnCoursContributeurs[] $contributeurs
+     *
+     * @return TranchesEnCoursModeles
+     */
+    public function setContributeurs($contributeurs)
+    {
+        $this->contributeurs = $contributeurs;
+
+        return $this;
+    }
+
+    /**
+     * Get contributeurs
+     *
+     * @return TranchesEnCoursContributeurs[]
+     */
+    public function getContributeurs()
+    {
+        return $this->contributeurs;
     }
 
     /**

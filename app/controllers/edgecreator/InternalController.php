@@ -5,7 +5,6 @@ namespace DmServer\Controllers\EdgeCreator;
 use Coa\Models\BaseModel;
 use DmServer\Controllers\AbstractController;
 use DmServer\DmServer;
-use DmServer\ModelHelper;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManager;
 use EdgeCreator\Models\EdgecreatorIntervalles;
@@ -13,6 +12,7 @@ use EdgeCreator\Models\EdgecreatorModeles2;
 use EdgeCreator\Models\EdgecreatorValeurs;
 use EdgeCreator\Models\ImagesMyfonts;
 use EdgeCreator\Models\ImagesTranches;
+use EdgeCreator\Models\TranchesEnCoursContributeurs;
 use EdgeCreator\Models\TranchesEnCoursModeles;
 use EdgeCreator\Models\TranchesEnCoursValeurs;
 use Silex\Application;
@@ -67,12 +67,7 @@ class InternalController extends AbstractController
                     $model->setPays($country);
                     $model->setMagazine($publication);
                     $model->setNumero($issueNumber);
-                    if ($isEditor === '1') {
-                        $model->setUsername(self::getSessionUser($app)['username']);
-                    }
-                    else {
-                        $model->setUsername(null);
-                    }
+                    $model->setUsername($isEditor === '1' ? self::getSessionUser($app)['username'] : null);
                     $model->setActive(true);
 
                     $ecEm->persist($model);
@@ -297,16 +292,14 @@ class InternalController extends AbstractController
                     $qb = $ecEm->createQueryBuilder();
 
                     $qb->select('modeles.id, modeles.pays, modeles.magazine, modeles.numero, modeles.nomphotoprincipale, modeles.username,'
-                                .' (case when modeles.username = :username then 1 else 0 end) as est_editeur')
+                        .' (case when modeles.username = :username then 1 else 0 end) as est_editeur')
                         ->from(TranchesEnCoursModeles::class, 'modeles')
+                        ->leftJoin('modeles.contributeurs', 'helperusers')
                         ->andWhere("modeles.active = :active")
                         ->setParameter(':active', true)
-                        ->andWhere("modeles.username = :username or modeles.photographes LIKE :usernamefirstinlist or modeles.photographes LIKE :usernameinlist or modeles.photographes LIKE :usernamelastinlist  or modeles.photographes = :usernameonlyinlist")
+                        ->andWhere("modeles.username = :username or helperusers.idUtilisateur = :usernameid")
                         ->setParameter(':username', self::getSessionUser($app)['username'])
-                        ->setParameter(':usernamefirstinlist', self::getSessionUser($app)['username'].',%')
-                        ->setParameter(':usernameinlist', '%,'.self::getSessionUser($app)['username'].',%')
-                        ->setParameter(':usernamelastinlist', '%,'.self::getSessionUser($app)['username'])
-                        ->setParameter(':usernameonlyinlist', self::getSessionUser($app)['username'])
+                        ->setParameter(':usernameid', self::getSessionUser($app)['id'])
                     ;
 
                     $models = $qb->getQuery()->getResult();
@@ -397,11 +390,30 @@ class InternalController extends AbstractController
                     /** @var TranchesEnCoursModeles $model */
                     $model = $ecEm->getRepository(TranchesEnCoursModeles::class)->find($modelId);
                     $model->setActive(false);
+
+                    $helperUsers = [];
                     if (!is_null($photographers)) {
-                        $model->setPhotographes(implode(',', $photographers));
+                        $helperUsers = array_merge($helperUsers, array_map(function($photographUsername) use ($model) {
+                            $photographer = new TranchesEnCoursContributeurs();
+                            $photographer->setContribution('photographe');
+                            $photographer->setIdUtilisateur($photographUsername);
+                            $photographer->setModele($model);
+
+                            return $photographer;
+                        }, $photographers));
                     }
                     if (!is_null($designers)) {
-                        $model->setCreateurs(implode(',', $designers));
+                        $helperUsers = array_merge($helperUsers, array_map(function($designorUsername) use ($model) {
+                            $designer = new TranchesEnCoursContributeurs();
+                            $designer->setContribution('createur');
+                            $designer->setIdUtilisateur($designorUsername);
+                            $designer->setModele($model);
+
+                            return $designer;
+                        }, $designers));
+                    }
+                    if (!is_null($photographers) || !is_null($designers)) {
+                        $model->setContributeurs($helperUsers);
                     }
                     $model->setPretepourpublication($isReadyToPublish === '1');
                     $ecEm->persist($model);
