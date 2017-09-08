@@ -19,7 +19,42 @@ class AppController extends AbstractController
     public static function addRoutes($routing)
     {
         $routing->get(
-            '/status',
+            '/status/pastec',
+            /**
+             * @codeCoverageIgnore
+             */
+            function (Application $app, Request $request) {
+                return AbstractController::returnErrorOnException($app, null, function () use ($app) {
+                    $errors = [];
+                    $log = [];
+
+                    try {
+                        $pastecIndexesImagesNumber = SimilarImagesHelper::getIndexedImagesNumber();
+                        if ($pastecIndexesImagesNumber > 0) {
+                            $log[] = "Pastec OK with $pastecIndexesImagesNumber images indexed";
+                        }
+                        else {
+                            $errors[] = "Pastec has no images indexed";
+                        }
+                    }
+                    catch(\Exception $e) {
+                        $errors[] = $e->getMessage();
+                    }
+
+                    $output = implode('<br />', $log);
+                    if (count($errors) > 0) {
+                        if (count($log) > 0) {
+                            $output.='<br />';
+                        }
+                        $output .= '<b>' . implode('</b><br /><b>', $errors) . '</b>';
+                    }
+                    return new Response($output);
+                });
+            }
+        );
+
+        $routing->get(
+            '/status/db',
             /**
              * @codeCoverageIgnore
              */
@@ -61,19 +96,6 @@ class AppController extends AbstractController
 
                     if (count($errors) === 0) {
                         $log[] = 'OK for all databases';
-                    }
-
-                    try {
-                        $pastecIndexesImagesNumber = SimilarImagesHelper::getIndexedImagesNumber();
-                        if ($pastecIndexesImagesNumber > 0) {
-                            $log[] = "Pastec OK with $pastecIndexesImagesNumber images indexed";
-                        }
-                        else {
-                            $errors[] = "Pastec has no images indexed";
-                        }
-                    }
-                    catch(\Exception $e) {
-                        $errors[] = $e->getMessage();
                     }
 
                     $output = implode('<br />', $log);

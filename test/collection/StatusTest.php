@@ -16,9 +16,9 @@ class StatusTest extends TestCommon
 
         SimilarImagesHelper::$mockedResults = json_encode(['image_ids' => [1,2,3], 'type' => 'INDEX_IMAGE_IDS']);
 
-        $response = $this->buildAuthenticatedService('/status', TestCommon::$dmUser, [], [], 'GET')->call();
+        $response = $this->buildAuthenticatedService('/status/pastec', TestCommon::$dmUser, [], [], 'GET')->call();
 
-        $this->assertEquals('OK for all databases<br />Pastec OK with 3 images indexed', $response->getContent());
+        $this->assertEquals('Pastec OK with 3 images indexed', $response->getContent());
     }
 
     public function testGetStatusNoCoverData() {
@@ -31,9 +31,9 @@ class StatusTest extends TestCommon
 
         SimilarImagesHelper::$mockedResults = json_encode(['image_ids' => [], 'type' => 'INDEX_IMAGE_IDS']);
 
-        $response = $this->buildAuthenticatedService('/status', TestCommon::$dmUser, [], [], 'GET')->call();
+        $response = $this->buildAuthenticatedService('/status/pastec', TestCommon::$dmUser, [], [], 'GET')->call();
 
-        $this->assertEquals('OK for all databases<br /><b>Pastec has no images indexed</b>', $response->getContent());
+        $this->assertEquals('<b>Pastec has no images indexed</b>', $response->getContent());
     }
 
     public function testGetStatusMissingCoaData() {
@@ -42,7 +42,7 @@ class StatusTest extends TestCommon
         self::createCoverIds();
         self::createStatsData();
 
-        $response = $this->buildAuthenticatedService('/status', TestCommon::$dmUser, [], [], 'GET')->call();
+        $response = $this->buildAuthenticatedService('/status/db', TestCommon::$dmUser, [], [], 'GET')->call();
 
         $this->assertContains('Error for db_coa', $response->getContent());
     }
@@ -51,7 +51,7 @@ class StatusTest extends TestCommon
         unset(DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_COA]);
 
         try {
-            $response = $this->buildAuthenticatedService('/status', TestCommon::$dmUser, [], [], 'GET')->call();
+            $response = $this->buildAuthenticatedService('/status/db', TestCommon::$dmUser, [], [], 'GET')->call();
             $this->assertContains('Error for db_coa : JSON cannot be decoded', $response->getContent());
         }
         finally {
