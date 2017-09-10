@@ -12,7 +12,7 @@ class DatabaseCheckHelper {
      * @return Response
      * @internal param $expectedQueryResultsHeader
      */
-    static function checkDatabase($app, $query, $db): Response
+    public static function checkDatabase($app, $query, $db): Response
     {
         $response = AbstractController::callInternal($app, '/rawsql', 'POST', [
             'query' => $query,

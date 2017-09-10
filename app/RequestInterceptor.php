@@ -14,7 +14,7 @@ trait RequestInterceptor
      * @param Application $app
      * @return Response|void
      */
-    static function checkRequestVersionAndUser(Request $request, Application $app)
+    public static function checkRequestVersionAndUser(Request $request, Application $app)
     {
         if (strpos($request->getPathInfo(), '/status') === 0) {
             return;
@@ -39,7 +39,7 @@ trait RequestInterceptor
      * @param Request $request
      * @return bool|Response
      */
-    static function authenticateUser(Application $app, Request $request) {
+    public static function authenticateUser(Application $app, Request $request) {
         if (
             preg_match('#^/collection/.+$#',  $request->getPathInfo())
          || preg_match('#^/edgecreator/.+$#', $request->getPathInfo())
@@ -47,7 +47,7 @@ trait RequestInterceptor
         ) {
             $username = $request->headers->get('x-dm-user');
             $password = $request->headers->get('x-dm-pass');
-            if (isset($username) && isset($password)) {
+            if (isset($username, $password)) {
                 $app['monolog']->addInfo("Authenticating $username...");
 
                 $userCheck = self::callInternal($app, '/ducksmanager/check', 'GET', [

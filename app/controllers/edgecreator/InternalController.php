@@ -5,6 +5,7 @@ namespace DmServer\Controllers\EdgeCreator;
 use Coa\Models\BaseModel;
 use DmServer\Controllers\AbstractController;
 use DmServer\DmServer;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManager;
 use EdgeCreator\Models\EdgecreatorIntervalles;
@@ -236,11 +237,11 @@ class InternalController extends AbstractController
 
                     $criteria = new Criteria();
                     $criteria
-                        ->where($criteria->expr()->andX(
-                            $criteria->expr()->eq('idModele', $model),
+                        ->where(Criteria::expr()->andX(
+                            Criteria::expr()->eq('idModele', $model),
                             $isIncludingThisStep ==='inclusive'
-                                ? $criteria->expr()->gte('ordre', $stepNumber)
-                                : $criteria->expr()->gt ('ordre', $stepNumber)
+                                ? Criteria::expr()->gte('ordre', $stepNumber)
+                                : Criteria::expr()->gt ('ordre', $stepNumber)
                         ));
 
                     $values = $ecEm->getRepository(TranchesEnCoursValeurs::class)->matching($criteria);
@@ -351,7 +352,7 @@ class InternalController extends AbstractController
         $routing->get(
             '/internal/edgecreator/v2/model/unassigned/all',
             function (Request $request, Application $app) {
-                return self::wrapInternalService($app, function (EntityManager $ecEm) use ($app) {
+                return self::wrapInternalService($app, function (EntityManager $ecEm) {
                     $models = $ecEm->getRepository(TranchesEnCoursModeles::class)->findBy([
                         'username' => null
                     ]);
@@ -465,6 +466,7 @@ class InternalController extends AbstractController
                     /** @var TranchesEnCoursModeles $model */
                     $model = $ecEm->getRepository(TranchesEnCoursModeles::class)->find($modelId);
 
+                    /** @var Collection $helperUsers */
                     $helperUsers = $model->getContributeurs();
 
                     $photographer = new TranchesEnCoursContributeurs();
@@ -559,7 +561,7 @@ class InternalController extends AbstractController
 
                     $photo = new ImagesTranches();
                     $photo->setHash($hash);
-                    $photo->setDateHeure(new \DateTime('today'));
+                    $photo->setDateheure(new \DateTime('today'));
                     $photo->setNomfichier($fileName);
                     $photo->setIdUtilisateur(self::getSessionUser($app)['id']);
                     $ecEm->persist($photo);

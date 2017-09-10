@@ -8,9 +8,9 @@ class IssueListWithSuggestionDetails
     /** @var SuggestedIssue[] $issues */
     private $issues = [];
 
-    static $authors = [];
-    static $storyDetails = [];
-    static $publicationTitles = [];
+    public static $authors = [];
+    public static $storyDetails = [];
+    public static $publicationTitles = [];
 
     public function __construct()
     {

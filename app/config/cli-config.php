@@ -10,7 +10,7 @@ trait CliConfig
      * @param string $modelNamespace
      * @return bool|string
      */
-    static function getSchemaConfigKey($modelNamespace)
+    public static function getSchemaConfigKey($modelNamespace)
     {
         if (is_null($modelNamespace)) {
             return false;
@@ -31,7 +31,7 @@ trait CliConfig
      * @param string $paramName
      * @return array|null
      */
-    static function getCommandLineParameter($paramName)
+    public static function getCommandLineParameter($paramName)
     {
         $argvRegex = '#^--' . $paramName . '=(.+)$#';
         $argvMatch = preg_grep($argvRegex, $_SERVER['argv']);
@@ -53,7 +53,7 @@ trait CliConfig
      * @param string $paramName
      * @return string|null
      */
-    static function getCommandLineParameterValue($paramName)
+    public static function getCommandLineParameterValue($paramName)
     {
         $commandLineParameter = self::getCommandLineParameter($paramName);
 
@@ -63,7 +63,7 @@ trait CliConfig
     /**
      * @param string $parameterName
      */
-    static function removeCommandLineParameter($parameterName)
+    public static function removeCommandLineParameter($parameterName)
     {
         if (!is_null(self::getCommandLineParameterValue($parameterName))) {
             array_splice($_SERVER['argv'], array_search(self::getCommandLineParameter($parameterName)[0], $_SERVER['argv']),
@@ -74,7 +74,7 @@ trait CliConfig
     /**
      * @return string|bool
      */
-    static function getSchemaConfigKeyFromCommandLine()
+    public static function getSchemaConfigKeyFromCommandLine()
     {
         $schemaKeyFromNamespace = self::getSchemaConfigKey(self::getCommandLineParameterValue('namespace'));
         if ($schemaKeyFromNamespace !== false) {

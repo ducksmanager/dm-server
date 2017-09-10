@@ -137,7 +137,7 @@ class DmServer implements ControllerProviderInterface
      * @param string $dbName
      * @return EntityManager|null
      */
-    static function getEntityManager($dbName) {
+    public static function getEntityManager($dbName) {
         if (!in_array($dbName, self::$configuredEntityManagerNames)) {
             return null;
         }
@@ -153,7 +153,7 @@ class DmServer implements ControllerProviderInterface
      * @param string $dbKey
      * @return EntityManager
      */
-    static function createEntityManager($dbKey)
+    public static function createEntityManager($dbKey)
     {
         $cache = new ArrayCache();
         // standard annotation reader

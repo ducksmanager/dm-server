@@ -43,7 +43,7 @@ class ModelHelper {
      * @param string $json
      * @return array
      */
-    static function getUnserializedArrayFromJson($json) {
+    public static function getUnserializedArrayFromJson($json) {
         return self::getUnserializedArray((array)json_decode($json));
     }
 }

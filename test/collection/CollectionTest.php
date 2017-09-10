@@ -13,7 +13,7 @@ use DmServer\DmServer;
 class CollectionTest extends TestCommon
 {
     public function testAddIssue() {
-        $this->assertEquals(0, count($this->getCurrentUserIssues()));
+        $this->assertCount(0, $this->getCurrentUserIssues());
 
         self::createTestCollection(self::$defaultTestDmUserName); // Creates a collection with 3 issues
 
@@ -25,7 +25,7 @@ class CollectionTest extends TestCommon
         ])->call();
 
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
-        $this->assertEquals(4, count($this->getCurrentUserIssues()));
+        $this->assertCount(4, $this->getCurrentUserIssues());
 
         $userIssues = $this->getCurrentUserIssues();
         /** @var Numeros $lastIssue */
@@ -65,7 +65,7 @@ class CollectionTest extends TestCommon
         $this->assertEquals(1, $responseObject[0]->numberOfIssues);
 
         $userIssues = $this->getCurrentUserIssues();
-        $this->assertEquals(3, count($userIssues));
+        $this->assertCount(3, $userIssues);
 
         /** @var Numeros $updatedIssue */
         $updatedIssue = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->getRepository(Numeros::class)->findOneBy(
@@ -234,7 +234,7 @@ class CollectionTest extends TestCommon
         $getResponse = $this->buildAuthenticatedServiceWithTestUser("/collection/externalaccess/$key", TestCommon::$dmUser)->call();
         $objectResponse = json_decode($getResponse->getContent());
 
-        $this->assertEquals(1, count($objectResponse));
+        $this->assertCount(1, $objectResponse);
         /** @var BibliothequeAccesExternes $access */
         $access = unserialize($objectResponse[0]);
         $this->assertEquals(1, $access->getIdUtilisateur());
@@ -248,7 +248,7 @@ class CollectionTest extends TestCommon
         $getResponse = $this->buildAuthenticatedServiceWithTestUser("/collection/externalaccess/123", TestCommon::$dmUser)->call();
         $objectResponse = json_decode($getResponse->getContent());
 
-        $this->assertEquals(0, count($objectResponse));
+        $this->assertCount(0, $objectResponse);
     }
 
     public function testGetBookcaseSorts()
@@ -259,7 +259,7 @@ class CollectionTest extends TestCommon
         $getResponse = $this->buildAuthenticatedServiceWithTestUser("/bookcase/sort", TestCommon::$dmUser)->call();
         $objectResponse = json_decode($getResponse->getContent());
 
-        $this->assertEquals(2, count($objectResponse));
+        $this->assertCount(2, $objectResponse);
         /** @var BibliothequeOrdreMagazines $order */
         $order1 = unserialize($objectResponse[0]);
         $this->assertEquals('fr', $order1->getPays());

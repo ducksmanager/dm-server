@@ -13,7 +13,7 @@ trait RequestUtil
      * @param string $username
      * @param $userId
      */
-    static function setSessionUser(Application $app, $username, $userId) {
+    public static function setSessionUser(Application $app, $username, $userId) {
         $app['session']->set('user', ['username' => $username, 'id' => $userId]);
     }
 
@@ -21,7 +21,7 @@ trait RequestUtil
      * @param Application $app
      * @return array
      */
-    static function getSessionUser(Application $app) {
+    public static function getSessionUser(Application $app) {
         return $app['session']->get('user');
     }
 
@@ -29,7 +29,7 @@ trait RequestUtil
      * @param Application $app
      * @param string $clientVersion
      */
-    static function setClientVersion(Application $app, $clientVersion) {
+    public static function setClientVersion(Application $app, $clientVersion) {
         $app['session']->set('clientVersion', $clientVersion);
     }
 
@@ -37,15 +37,15 @@ trait RequestUtil
      * @param Application $app
      * @return string
      */
-    static function getClientVersion(Application $app) {
+    public static function getClientVersion(Application $app) {
         return $app['session']->get('clientVersion');
     }
 
-    static function buildUrl($url, $getParameters = []) {
+    public static function buildUrl($url, $getParameters = []) {
         return $url . (count($getParameters) === 0 ? '' : '/' . implode('/', array_values($getParameters)));
     }
 
-    static function callInternalGetRequest(Application $app, $url, $parameters = []) {
+    public static function callInternalGetRequest(Application $app, $url, $parameters = []) {
         $subRequest = Request::create(self::buildUrl('/internal'.$url, $parameters));
         return $app->handle($subRequest, HttpKernelInterface::SUB_REQUEST, false);
     }
@@ -58,7 +58,7 @@ trait RequestUtil
      * @param int $chunkSize
      * @return Response|array
      */
-    static function callInternal(Application $app, $url, $type = 'GET', $parameters = [], $chunkSize = 0) {
+    public static function callInternal(Application $app, $url, $type = 'GET', $parameters = [], $chunkSize = 0) {
         if ($chunkSize > 1) {
             if (count($parameters) > 1) {
                 return new Response('Attempt to call callInternal with chunkSize > 1 and more than one parameter', Response::HTTP_INTERNAL_SERVER_ERROR);

@@ -12,5 +12,5 @@ abstract class AbstractInternalController extends AbstractController
      * @return mixed|Response
      * @throws \Exception
      */
-    protected abstract static function wrapInternalService($app, $function);
+    abstract protected static function wrapInternalService($app, $function);
 }

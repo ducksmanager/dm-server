@@ -17,8 +17,8 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 class AppController extends AbstractController
 {
-    static $uploadFileName = 'wtd_jpg';
-    static $uploadDestination = ['/tmp', 'test.jpg'];
+    public static $uploadFileName = 'wtd_jpg';
+    public static $uploadDestination = ['/tmp', 'test.jpg'];
 
     /**
      * @param $routing ControllerCollection

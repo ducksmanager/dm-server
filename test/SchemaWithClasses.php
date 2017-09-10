@@ -24,7 +24,7 @@ class SchemaWithClasses
     private $cachedDropSchemaSql = [];
 
     public static function createFromEntityManager(EntityManager $em) {
-        $schemaWithClasses = new SchemaWithClasses();
+        $schemaWithClasses = new self();
         $schemaWithClasses->setEm($em);
         $schemaWithClasses->setSchemaTool(new SchemaTool($em));
         $schemaWithClasses->setModelClasses($em->getMetadataFactory()->getAllMetadata());

@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\File\File;
 class SimilarImagesHelper {
 
     /** @var string $mockedResults */
-    public static $mockedResults = null;
+    public static $mockedResults;
 
     /**
      * @return int

@@ -120,7 +120,9 @@ class AppController extends AbstractController
                 if ($response->getStatusCode() === Response::HTTP_OK) {
                     return new JsonResponse($response->getContent(), 200, [], true);
                 }
-                else return $response;
+                else {
+                    return $response;
+                }
             }
         )
             ->value('purchaseid', null);

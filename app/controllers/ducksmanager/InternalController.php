@@ -4,17 +4,17 @@ namespace DmServer\Controllers\DucksManager;
 
 use Dm\Models\Achats;
 use Dm\Models\AuteursPseudos;
-use Dm\Models\EmailsVentes;
+
 use Dm\Models\Numeros;
 use Dm\Models\Users;
 
 use DmServer\Controllers\AbstractInternalController;
 use DmServer\DmServer;
-use DmServer\ModelHelper;
+
 use Doctrine\ORM\EntityManager;
 use Silex\Application;
 use Silex\ControllerCollection;
-use Symfony\Component\HttpFoundation\JsonResponse;
+
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 

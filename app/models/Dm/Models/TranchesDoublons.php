@@ -3,8 +3,7 @@
 namespace Dm\Models;
 
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Mapping\JoinColumn;
-use Doctrine\ORM\Mapping\ManyToOne;
+
 
 /**
  * TranchesDoublons

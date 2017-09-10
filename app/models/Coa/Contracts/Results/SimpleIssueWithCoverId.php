@@ -15,7 +15,7 @@ class SimpleIssueWithCoverId implements GenericReturnObjectInterface
 
     public static function buildWithoutCoverId($countrycode, $publicationcode, $publicationtitle, $issuenumber)
     {
-        $o = new SimpleIssueWithCoverId();
+        $o = new self();
         $o->countrycode = $countrycode;
         $o->publicationcode = $publicationcode;
         $o->publicationtitle = $publicationtitle;

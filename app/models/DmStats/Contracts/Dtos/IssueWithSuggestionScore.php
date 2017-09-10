@@ -11,7 +11,7 @@ class IssueWithSuggestionScore
 
     public static function build($publicationcode, $issuenumber, $score)
     {
-        $o = new IssueWithSuggestionScore();
+        $o = new self();
         $o->publicationcode = $publicationcode;
         $o->issuenumber = $issuenumber;
         $o->score = $score;

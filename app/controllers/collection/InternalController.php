@@ -189,8 +189,8 @@ class InternalController extends AbstractController
 
         $routing->put(
             '/internal/collection/externalaccess',
-            function (Application $app, Request $request) {
-                return self::wrapInternalService($app, function(EntityManager $dmEm) use ($app, $request) {
+            function (Application $app) {
+                return self::wrapInternalService($app, function(EntityManager $dmEm) use ($app) {
                     $key = MiscUtil::getRandomString();
 
                     $externalAccess = new BibliothequeAccesExternes();
@@ -221,8 +221,8 @@ class InternalController extends AbstractController
 
         $routing->get(
             '/internal/bookcase/sort',
-            function (Application $app, Request $request) {
-                return self::wrapInternalService($app, function(EntityManager $dmEm) use ($app, $request) {
+            function (Application $app) {
+                return self::wrapInternalService($app, function(EntityManager $dmEm) use ($app) {
 
                     $sorts = $dmEm->getRepository(BibliothequeOrdreMagazines::class)->findBy(
                         ['idUtilisateur' => self::getSessionUser($app)['id']],
@@ -236,8 +236,8 @@ class InternalController extends AbstractController
 
         $routing->get(
             '/internal/bookcase/sort/max',
-            function (Application $app, Request $request) {
-                return self::wrapInternalService($app, function(EntityManager $dmEm) use ($app, $request) {
+            function (Application $app) {
+                return self::wrapInternalService($app, function(EntityManager $dmEm) use ($app) {
 
                     $qb = $dmEm->createQueryBuilder();
                     $qb

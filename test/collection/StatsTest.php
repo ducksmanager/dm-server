@@ -10,7 +10,7 @@ class StatsTest extends TestCommon
         self::createCoaData();
         $collectionUserInfo = self::createTestCollection();
         self::setSessionUser($this->app, $collectionUserInfo);
-        self::createStatsData();
+        $this->createStatsData();
     }
 
     public function testGetWatchedAuthors() {
@@ -18,7 +18,7 @@ class StatsTest extends TestCommon
 
         $objectResponse = json_decode($response->getContent());
         $this->assertInternalType('object', $objectResponse);
-        $this->assertEquals(2, count(get_object_vars($objectResponse)));
+        $this->assertCount(2, get_object_vars($objectResponse));
         $this->assertEquals('CB', array_keys(get_object_vars($objectResponse))[0]);
         $this->assertEquals('Carl Barks', $objectResponse->CB->fullname);
         $this->assertEquals(4, $objectResponse->CB->storycount);
@@ -39,7 +39,7 @@ class StatsTest extends TestCommon
         $this->assertEquals(2, $objectResponse->minScore);
         $this->assertEquals(6, $objectResponse->maxScore); // fr/PM 315 : 1xDR + 1xCB = 1x4 + 1x2
 
-        $this->assertEquals(3, count(get_object_vars($objectResponse->issues)));
+        $this->assertCount(3, get_object_vars($objectResponse->issues));
 
         $issue1 = $objectResponse->issues->{'us/CBL 7'};
         $this->assertEquals(4, $issue1->score);
@@ -91,7 +91,7 @@ class StatsTest extends TestCommon
 
         $objectResponse = json_decode($response->getContent());
         $this->assertInternalType('object', $objectResponse);
-        $this->assertEquals(2, count(get_object_vars($objectResponse->issues)));
+        $this->assertCount(2, get_object_vars($objectResponse->issues));
 
         $issue1 = $objectResponse->issues->{'fr/DDD 1'};
         $this->assertEquals(2, $issue1->score);

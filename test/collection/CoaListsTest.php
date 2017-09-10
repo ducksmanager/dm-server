@@ -76,7 +76,7 @@ class CoaListsTest extends TestCommon
         $arrayResponse = json_decode($response->getContent());
 
         $this->assertInternalType('array', $arrayResponse);
-        $this->assertEquals(0, count($arrayResponse));
+        $this->assertCount(0, $arrayResponse);
     }
 
     public function testGetIssueListInvalidPublicationCode() {
@@ -101,7 +101,7 @@ class CoaListsTest extends TestCommon
     public function testGetIssueListByIssueCodesNoCoaIssue() {
         DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_COVER_ID]->persist(
             $cover = (new Covers())
-                ->setIssueCode('fr/DDDDD 1')
+                ->setIssuecode('fr/DDDDD 1')
                 ->setSitecode('webusers')
                 ->setUrl('abc.jpg')
         );

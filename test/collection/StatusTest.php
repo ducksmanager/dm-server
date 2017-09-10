@@ -11,8 +11,8 @@ class StatusTest extends TestCommon
         self::setSessionUser($this->app, $collectionUserInfo);
         self::createCoverIds();
         self::createCoaData();
-        self::createStatsData();
-        self::createEdgeCreatorData();
+        $this->createStatsData();
+        $this->createEdgeCreatorData();
 
         SimilarImagesHelper::$mockedResults = json_encode(['image_ids' => [1,2,3], 'type' => 'INDEX_IMAGE_IDS']);
 
@@ -26,8 +26,8 @@ class StatusTest extends TestCommon
         self::setSessionUser($this->app, $collectionUserInfo);
         self::createCoverIds();
         self::createCoaData();
-        self::createStatsData();
-        self::createEdgeCreatorData();
+        $this->createStatsData();
+        $this->createEdgeCreatorData();
 
         SimilarImagesHelper::$mockedResults = json_encode(['image_ids' => [], 'type' => 'INDEX_IMAGE_IDS']);
 
@@ -40,7 +40,7 @@ class StatusTest extends TestCommon
         $collectionUserInfo = self::createTestCollection();
         self::setSessionUser($this->app, $collectionUserInfo);
         self::createCoverIds();
-        self::createStatsData();
+        $this->createStatsData();
 
         $response = $this->buildAuthenticatedService('/status/db', TestCommon::$dmUser, [], [], 'GET')->call();
 

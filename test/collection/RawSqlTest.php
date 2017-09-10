@@ -43,7 +43,7 @@ class RawSqlTest extends TestCommon
         $objectResponse = json_decode($response->getContent(), true);
 
         $this->assertInternalType('array', $objectResponse);
-        $this->assertEquals(3, count($objectResponse));
+        $this->assertCount(3, $objectResponse);
         $this->assertInternalType('array', $objectResponse[0]);
         $this->assertEquals('fr', $objectResponse[0]['Pays']);
         $this->assertEquals('DDD', $objectResponse[0]['Magazine']);

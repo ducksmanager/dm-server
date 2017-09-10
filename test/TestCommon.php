@@ -162,7 +162,7 @@ class TestCommon extends WebTestCase {
     protected function buildService(
         $path, $userCredentials, $parameters = [], $systemCredentials = [], $method = 'POST', $files = []
     ) {
-        $service = new TestServiceCallCommon(static::createClient());
+        $service = new TestServiceCallCommon($this->createClient());
         $service->setPath($path);
         $service->setUserCredentials($userCredentials);
         $service->setParameters($parameters);
@@ -776,7 +776,6 @@ class TestCommon extends WebTestCase {
 
         foreach($urls as $issueNumber => $url) {
             $cover = new Covers();
-            ;
             $coverIdEntityManager->persist(
                 $cover
                     ->setSitecode('webusers')
@@ -789,7 +788,7 @@ class TestCommon extends WebTestCase {
 
             @mkdir(DmServer::$settings['image_remote_root'].dirname($url), 0777, true);
             $imagePath = self::getPathToFileToUpload(self::$exampleImage);
-            file_put_contents(DmServer::$settings['image_remote_root'] . $url, file_get_contents($imagePath));
+            copy($imagePath, DmServer::$settings['image_remote_root'] . $url);
         }
 
         return [$coverIds, $coverUrls];

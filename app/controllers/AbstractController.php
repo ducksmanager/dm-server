@@ -16,9 +16,9 @@ abstract class AbstractController
     use RequestUtil;
 
     /** @var $translator TranslationTrait */
-    static $translator;
+    public static $translator;
 
-    static function initTranslation($app) {
+    public static function initTranslation($app) {
         self::$translator = $app['translator'];
     }
 
@@ -59,7 +59,7 @@ abstract class AbstractController
      */
     protected static function returnErrorOnException($app, $integratedEm, $function) {
         try {
-            return call_user_func($function, DmServer::getEntityManager($integratedEm));
+            return $function(DmServer::getEntityManager($integratedEm));
         }
         catch (\Exception $e) {
             if (isset($app['monolog'])) {

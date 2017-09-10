@@ -6,15 +6,15 @@ namespace DmStats\Contracts\Results;
 use Generic\Contracts\Results\GenericReturnObjectInterface;
 
 class SuggestedIssue implements GenericReturnObjectInterface {
-    var $storycode;
-    var $storycomment;
-    var $title;
-    var $personcode;
-    var $personfullname;
+    public $storycode;
+    public $storycomment;
+    public $title;
+    public $personcode;
+    public $personfullname;
 
     public static function build($storycode, $storycomment, $title, $personcode, $personfullname)
     {
-        $o = new SuggestedIssue();
+        $o = new self();
         $o->storycode = $storycode;
         $o->storycomment = $storycomment;
         $o->title = $title;

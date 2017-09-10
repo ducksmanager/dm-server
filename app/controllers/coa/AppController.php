@@ -72,7 +72,9 @@ class AppController extends AbstractController
                         ModelHelper::getUnserializedArrayFromJson($response->getContent())
                     ));
                 }
-                else return $response;
+                else {
+                    return $response;
+                }
             }
         )->assert('issuecodes', self::getParamAssertRegex(BaseModel::ISSUE_CODE_VALIDATION, 4));
     }

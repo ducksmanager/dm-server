@@ -41,7 +41,7 @@ class EdgeCreatorTest extends TestCommon
         parent::setUp();
         $collectionUserInfo = self::createTestCollection();
         self::setSessionUser($this->app, $collectionUserInfo);
-        self::createEdgeCreatorData();
+        $this->createEdgeCreatorData();
     }
 
     public function testCreateV2Model()
@@ -123,7 +123,7 @@ class EdgeCreatorTest extends TestCommon
 
         $responseObjects = json_decode($response->getContent());
 
-        $this->assertEquals(3, count($responseObjects));
+        $this->assertCount(3, $responseObjects);
         $this->assertEquals('1', $responseObjects[0]->est_editeur);
         $this->assertEquals('0', $responseObjects[1]->est_editeur);
         $this->assertEquals('0', $responseObjects[2]->est_editeur);
@@ -134,7 +134,7 @@ class EdgeCreatorTest extends TestCommon
 
         $objectResponse = json_decode($response->getContent());
 
-        $this->assertEquals(1, count($objectResponse));
+        $this->assertCount(1, $objectResponse);
         /** @var \stdClass $model1 */
         $model1 = $objectResponse[0];
         $this->assertEquals('fr', $model1->pays);
@@ -147,7 +147,7 @@ class EdgeCreatorTest extends TestCommon
 
         $objectResponse = json_decode($response->getContent());
 
-        $this->assertEquals(3, count($objectResponse));
+        $this->assertCount(3, $objectResponse);
         /** @var \stdClass $model1 */
         $model1 = $objectResponse[0];
         $this->assertEquals('fr', $model1->pays);
@@ -334,7 +334,7 @@ class EdgeCreatorTest extends TestCommon
             'ordre' => 2
         ]);
 
-        $this->assertEquals(3, count($values));
+        $this->assertCount(3, $values);
         $this->assertEquals('Couleur', $values[0]->getOptionNom());
         $this->assertEquals('#AAAAAA', $values[0]->getOptionValeur());
 
@@ -376,7 +376,7 @@ class EdgeCreatorTest extends TestCommon
             'ordre' => $stepToRemove
         ]);
 
-        $this->assertEquals(0, count($values));
+        $this->assertCount(0, $values);
     }
 
     public function testCreateMyfontsPreview() {
@@ -534,8 +534,6 @@ class EdgeCreatorTest extends TestCommon
     }
 
     public function testGetMainPhoto() {
-        $photoName = 'myphoto.jpg';
-
         $model = $this->getV2Model('fr', 'PM', '502');
 
         $photo = new ImagesTranches();
@@ -575,12 +573,12 @@ class EdgeCreatorTest extends TestCommon
         ]);
 
         $objectResponse = json_decode($response->getContent());
-        $this->assertEquals(1, count($objectResponse));
+        $this->assertCount(1, $objectResponse);
         $photoResult = $objectResponse[0];
         $this->assertEquals($photo->getId(), $photoResult->id);
         $this->assertEquals($photo->getIdUtilisateur(), $photoResult->idUtilisateur);
         $this->assertEquals($photo->getHash(), $photoResult->hash);
-        $this->assertEquals($photo->getDateHeure()->getTimestamp(), $photoResult->dateheure->timestamp);
+        $this->assertEquals($photo->getDateheure()->getTimestamp(), $photoResult->dateheure->timestamp);
     }
 
     public function testGetMultipleEdgePhotoByHash() {
@@ -596,6 +594,6 @@ class EdgeCreatorTest extends TestCommon
         $this->assertEquals($photo->getId(), $photoResult->id);
         $this->assertEquals($photo->getIdUtilisateur(), $photoResult->idUtilisateur);
         $this->assertEquals($photo->getHash(), $photoResult->hash);
-        $this->assertEquals($photo->getDateHeure()->getTimestamp(), $photoResult->dateheure->timestamp);
+        $this->assertEquals($photo->getDateheure()->getTimestamp(), $photoResult->dateheure->timestamp);
     }
 }

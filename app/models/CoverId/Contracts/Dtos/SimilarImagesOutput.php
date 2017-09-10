@@ -24,7 +24,7 @@ class SimilarImagesOutput
             return null;
         }
 
-        $outputObject = new SimilarImagesOutput();
+        $outputObject = new self();
         $outputObject->setType($resultArray['type']);
 
         if (array_key_exists('bounding_rects', $resultArray)) {

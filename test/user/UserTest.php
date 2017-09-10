@@ -16,7 +16,7 @@ class UserTest extends TestCommon
     }
 
     public function testCallServiceWithoutClientVersion() {
-        $response = $this->buildService('/collection/issues', [], [], $this->getSystemCredentialsNoVersion(TestCommon::$dmUser),
+        $response = $this->buildService('/collection/issues', [], [], static::getSystemCredentialsNoVersion(TestCommon::$dmUser),
             'POST')->call();
         $this->assertEquals(Response::HTTP_VERSION_NOT_SUPPORTED, $response->getStatusCode());
     }
@@ -57,7 +57,7 @@ class UserTest extends TestCommon
             ['username' => self::$defaultTestDmUserName]
         );
 
-        $this->assertEquals(1, count($usersWithUsername));
+        $this->assertCount(1, $usersWithUsername);
         $this->assertEquals(Users::class, get_class($usersWithUsername[0]));
         $this->assertEquals(sha1('dm_pass'), $usersWithUsername[0]->getPassword());
     }
@@ -126,16 +126,16 @@ class UserTest extends TestCommon
             'idUser' => $demoUser->getId()
         ]);
 
-        $this->assertEquals(1, count(array_filter($purchasesOfDemoUser, function(Achats $purchase) {
+        $this->assertCount(1, array_filter($purchasesOfDemoUser, function(Achats $purchase) {
             return $purchase->getDate()->format('Y-m-d') === '2010-01-01' && $purchase->getDescription() === 'Purchase';
-        })));
+        }));
 
         $issuesOfDemoUser = $dmEm->getRepository(Numeros::class)->findBy([
             'idUtilisateur' => $demoUser->getId()
         ]);
-        $this->assertEquals(1, count(array_filter($issuesOfDemoUser, function(Numeros $issue) {
+        $this->assertCount(1, array_filter($issuesOfDemoUser, function(Numeros $issue) {
             return $issue->getPays() === 'fr' && $issue->getMagazine() === 'MP' && $issue->getNumero() === '300';
-        })));
+        }));
 
         $demoUser->setBibliothequeTexture1('A');
         $demoUser->setBibliothequeSousTexture1('B');
@@ -164,19 +164,19 @@ class UserTest extends TestCommon
             'idUtilisateur' => $demoUser->getId()
         ]);
 
-        $this->assertEquals(35, count($issuesOfDemoUser));
-        $this->assertEquals(0, count(array_filter($issuesOfDemoUser, function(Numeros $issue) {
+        $this->assertCount(35, $issuesOfDemoUser);
+        $this->assertCount(0, array_filter($issuesOfDemoUser, function(Numeros $issue) {
             return $issue->getPays() === 'fr' && $issue->getMagazine() === 'MP' && $issue->getNumero() === '300';
-        }))); // Previous issue has been reset
+        })); // Previous issue has been reset
 
         $purchasesOfDemoUser = $dmEm->getRepository(Achats::class)->findBy([
             'idUser' => $demoUser->getId()
         ]);
 
-        $this->assertEquals(4, count($purchasesOfDemoUser));
-        $this->assertEquals(0, count(array_filter($purchasesOfDemoUser, function(Achats $purchase) {
+        $this->assertCount(4, $purchasesOfDemoUser);
+        $this->assertCount(0, array_filter($purchasesOfDemoUser, function(Achats $purchase) {
             return $purchase->getDate()->format('Y-m-d') === '2010-01-01' && $purchase->getDescription() === 'Purchase';
-        }))); // Previous issue has been reset
+        })); // Previous issue has been reset
     }
 
     public function testCreateSaleEmail() {
@@ -213,7 +213,7 @@ class UserTest extends TestCommon
 
         $objectResponse = json_decode($response->getContent());
 
-        $this->assertEquals(1, count($objectResponse));
+        $this->assertCount(1, $objectResponse);
         /** @var EmailsVentes $access */
         $access = unserialize($objectResponse[0]);
         $this->assertEquals($collectionUserInfo['username'], $access->getUsernameVente());

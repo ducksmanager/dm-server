@@ -98,7 +98,7 @@ class TranchesEnCoursContributeurs extends \EdgeCreator\Models\BaseModel
     /**
      * Get modele
      *
-     * @return $modele
+     * @return TranchesEnCoursModeles
      */
     public function getModele()
     {

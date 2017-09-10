@@ -23,8 +23,8 @@ class AppController extends AbstractController
             /**
              * @codeCoverageIgnore
              */
-            function (Application $app, Request $request) {
-                return AbstractController::returnErrorOnException($app, null, function () use ($app) {
+            function (Application $app) {
+                return AbstractController::returnErrorOnException($app, null, function () {
                     $errors = [];
                     $log = [];
 

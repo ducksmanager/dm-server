@@ -8,12 +8,12 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CoverIdTest extends TestCommon
 {
-    static $coverIds = null;
-    static $coverUrls = null;
+    public static $coverIds;
+    public static $coverUrls;
 
-    static $uploadDestination = ['/tmp', 'test.jpg'];
+    public static $uploadDestination = ['/tmp', 'test.jpg'];
 
-    static $exampleImageToUpload = 'cover_example_to_upload.jpg';
+    public static $exampleImageToUpload = 'cover_example_to_upload.jpg';
 
     public function setUp()
     {
@@ -56,7 +56,7 @@ class CoverIdTest extends TestCommon
         $objectResponse = json_decode($response->getContent());
 
         $this->assertInternalType('object', $objectResponse);
-        $this->assertEquals(2, count(get_object_vars($objectResponse)));
+        $this->assertCount(2, get_object_vars($objectResponse));
 
         $this->assertObjectHasAttribute('issuecode', $objectResponse->{self::$coverIds[0]});
         $this->assertEquals('fr/DDD 1', $objectResponse->{self::$coverIds[0]}->issuecode);
@@ -82,7 +82,7 @@ class CoverIdTest extends TestCommon
 
         $similarCoverIssuePublicationCode = 'fr/DDD';
         $similarCoverIssueNumber = '10';
-        self::createEntryLike('fr/AR 101', self::$coverUrls[array_values(self::$coverIds)[0]], $similarCoverIssuePublicationCode, $similarCoverIssueNumber);
+        $this->createEntryLike('fr/AR 101', self::$coverUrls[array_values(self::$coverIds)[0]], $similarCoverIssuePublicationCode, $similarCoverIssueNumber);
 
         $response = $this->buildAuthenticatedServiceWithTestUser(
             '/cover-id/search', TestCommon::$dmUser, 'POST', [], [
