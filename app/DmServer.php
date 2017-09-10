@@ -2,6 +2,7 @@
 
 namespace DmServer;
 
+use DDesrosiers\SilexAnnotations\AnnotationServiceProvider;
 use DmServer\Controllers;
 
 use Doctrine\Common\Annotations\AnnotationReader;
@@ -16,6 +17,7 @@ use Gedmo\Timestampable\TimestampableListener;
 use Silex\Api\ControllerProviderInterface;
 use Silex\Application;
 use Silex\ControllerCollection;
+use Symfony\Component\Cache\Simple\ApcuCache;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -210,6 +212,12 @@ class DmServer implements ControllerProviderInterface
                 return self::checkRequestVersionAndUser($request, $app);
             }
         );
+
+        $app->register(new AnnotationServiceProvider(), array(
+            "annot.cache" => new ArrayCache(),
+            "annot.controllerDir" => "app/controllers",
+            "annot.controllerNamespace" => "DmServer\\Controllers\\"
+        ));
 
         Controllers\User\AppController::addRoutes($routing);
         Controllers\User\InternalController::addRoutes($routing);

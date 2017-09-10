@@ -10,25 +10,56 @@ use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use DDesrosiers\SilexAnnotations\Annotations as SLX;
+use Swagger\Annotations as SWG;
 
+/**
+ * @SLX\Controller(prefix="/coa")
+ */
 class AppController extends AbstractController
 {
+
+    /**
+     * Get country list.
+     *
+     * @SLX\Route(
+     *   @SLX\Request(method="GET", uri="list/countries/{countries}"),
+     *	 @SLX\Assert(variable="countries", regex="\s+"),
+     *
+     *   @SWG\Parameter(
+     *     name="countries",
+     *     in="path",
+     *     required=false
+     *   ),
+     *
+     *   @SWG\Response(response=200),
+     *   @SWG\Response(response="default", description="Error")
+     * )
+     */
+    public function listCountries(Application $app, Request $request, $countries) {
+        return new JsonResponse(
+            ModelHelper::getUnserializedArrayFromJson(
+                self::callInternal($app, '/coa/countrynames', 'GET', empty($countries) ? [] : [$countries])->getContent()
+            )
+        );
+    }
+
     /**
      * @param $routing ControllerCollection
      */
     public static function addRoutes($routing)
     {
-        $routing->get(
-            '/coa/list/countries/{countries}',
-            function (Application $app, Request $request, $countries) {
-                return new JsonResponse(
-                    ModelHelper::getUnserializedArrayFromJson(
-                        self::callInternal($app, '/coa/countrynames', 'GET', empty($countries) ? [] : [$countries])->getContent()
-                    )
-                );
-            }
-        )->assert('countries', self::getParamAssertRegex(BaseModel::COUNTRY_CODE_VALIDATION, 50))
-         ->value('countries', '');
+//        $routing->get(
+//            '/coa/list/countries/{countries}',
+//            function (Application $app, Request $request, $countries) {
+//                return new JsonResponse(
+//                    ModelHelper::getUnserializedArrayFromJson(
+//                        self::callInternal($app, '/coa/countrynames', 'GET', empty($countries) ? [] : [$countries])->getContent()
+//                    )
+//                );
+//            }
+//        )->assert('countries', self::getParamAssertRegex(BaseModel::COUNTRY_CODE_VALIDATION, 50))
+//         ->value('countries', '');
 
         $routing->get(
             '/coa/list/publications/{country}',
