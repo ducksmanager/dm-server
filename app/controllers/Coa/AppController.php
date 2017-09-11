@@ -15,31 +15,63 @@ use Swagger\Annotations as SWG;
 
 /**
  * @SLX\Controller(prefix="/coa")
+ * @SLX\Before("DmServer\RequestInterceptor::checkRequestVersionAndUser")
+ *
  */
 class AppController extends AbstractController
 {
-
     /**
-     * Get country list.
-     *
      * @SLX\Route(
-     *   @SLX\Request(method="GET", uri="list/countries/{countries}"),
-     *	 @SLX\Assert(variable="countries", regex="\s+"),
+     *   @SLX\Request(method="GET", uri="list/countries"),
      *
      *   @SWG\Parameter(
-     *     name="countries",
-     *     in="path",
-     *     required=false
+     *     name="x-dm-server",
+     *     in="header",
+     *     required=true
      *   ),
      *
      *   @SWG\Response(response=200),
      *   @SWG\Response(response="default", description="Error")
      * )
+     * @param Application $app
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function listCountries(Application $app, Request $request, $countries) {
+    public function listCountries(Application $app, Request $request) {
         return new JsonResponse(
             ModelHelper::getUnserializedArrayFromJson(
-                self::callInternal($app, '/coa/countrynames', 'GET', empty($countries) ? [] : [$countries])->getContent()
+                self::callInternal($app, '/coa/countrynames', 'GET', [])->getContent()
+            )
+        );
+    }
+    /**
+     * @SLX\Route(
+     *   @SLX\Request(method="GET", uri="list/countries/{countries}"),
+     *	 @SLX\Assert(variable="countries", regex="^((?<countrycode>[a-z]+),){0,9}(?&countrycode)$"),
+     *
+     *   @SWG\Parameter(
+     *     name="x-dm-server",
+     *     in="header",
+     *     required=true
+     *   ),
+     *   @SWG\Parameter(
+     *     name="countries",
+     *     in="path",
+     *     required=true
+     *   ),
+     *
+     *   @SWG\Response(response=200),
+     *   @SWG\Response(response="default", description="Error")
+     * )
+     * @param Application $app
+     * @param Request $request
+     * @param string $countries
+     * @return JsonResponse
+     */
+    public function listCountriesFromCodes(Application $app, Request $request, $countries) {
+        return new JsonResponse(
+            ModelHelper::getUnserializedArrayFromJson(
+                self::callInternal($app, '/coa/countrynames', 'GET', [$countries])->getContent()
             )
         );
     }
@@ -49,18 +81,6 @@ class AppController extends AbstractController
      */
     public static function addRoutes($routing)
     {
-//        $routing->get(
-//            '/coa/list/countries/{countries}',
-//            function (Application $app, Request $request, $countries) {
-//                return new JsonResponse(
-//                    ModelHelper::getUnserializedArrayFromJson(
-//                        self::callInternal($app, '/coa/countrynames', 'GET', empty($countries) ? [] : [$countries])->getContent()
-//                    )
-//                );
-//            }
-//        )->assert('countries', self::getParamAssertRegex(BaseModel::COUNTRY_CODE_VALIDATION, 50))
-//         ->value('countries', '');
-
         $routing->get(
             '/coa/list/publications/{country}',
             function (Application $app, Request $request, $country) {

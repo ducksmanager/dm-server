@@ -50,7 +50,7 @@
                 "app/controllers"
             ],
             "DmServer\\Controllers\\Coa\\": [
-                "app/controllers/coa"
+                "app/controllers/Coa"
             ],
             "DmServer\\Controllers\\Collection\\": [
                 "app/controllers/collection"

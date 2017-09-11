@@ -203,6 +203,7 @@ class DmServer implements ControllerProviderInterface
         /** @var ControllerCollection $routing */
         $routing = $app['controllers_factory'];
 
+        // TODO remove once 'before' handling is done by the controllers
         $routing->before(/**
          * @param Request $request
          * @param Application $app
@@ -214,9 +215,7 @@ class DmServer implements ControllerProviderInterface
         );
 
         $app->register(new AnnotationServiceProvider(), array(
-            "annot.cache" => new ArrayCache(),
-            "annot.controllerDir" => "app/controllers",
-            "annot.controllerNamespace" => "DmServer\\Controllers\\"
+            "annot.controllerDir" => __DIR__."/controllers"
         ));
 
         Controllers\User\AppController::addRoutes($routing);
