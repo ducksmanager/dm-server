@@ -25,7 +25,7 @@ class AppController extends AbstractController
      *   @SLX\Request(method="GET", uri="list/countries"),
      *
      *   @SWG\Parameter(
-     *     name="x-dm-server",
+     *     name="x-dm-version",
      *     in="header",
      *     required=true
      *   ),
@@ -50,7 +50,7 @@ class AppController extends AbstractController
      *	 @SLX\Assert(variable="countries", regex="^((?<countrycode>[a-z]+),){0,9}(?&countrycode)$"),
      *
      *   @SWG\Parameter(
-     *     name="x-dm-server",
+     *     name="x-dm-version",
      *     in="header",
      *     required=true
      *   ),
