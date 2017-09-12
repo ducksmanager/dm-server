@@ -102,7 +102,7 @@
         "doctrine/doctrine-bundle": "1.6.*",
         "monolog/monolog": "1.23.*",
         "gedmo/doctrine-extensions": "2.4.*",
-        "phpunit/phpunit": "6.2.*",
+        "phpunit/phpunit": "6.4.*",
         "phpunit/php-code-coverage": "5.2.*",
         "roave/security-advisories": "dev-master"
     }
