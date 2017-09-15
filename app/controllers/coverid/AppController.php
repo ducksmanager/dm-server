@@ -76,9 +76,9 @@ class AppController extends AbstractController
                             }, $coverInfos);
                             $app['monolog']->addInfo('Cover ID search: matched issue codes ' . implode(',', $foundIssueCodes));
 
-                            $urlsStr = implode(',', array_map(function($coverInfo) {
-                                return $coverInfo['url'];
-                            }, $coverInfos));
+//                            $urlsStr = implode(',', array_map(function($coverInfo) {
+//                                return $coverInfo['url'];
+//                            }, $coverInfos));
 
 //                            $issuesWithSameCover = self::getResponseIdFromServiceResponse(
 //                                self::callInternal($app, "/coa/issuesbycoverurl", 'GET',
@@ -108,7 +108,10 @@ class AppController extends AbstractController
                             );
                             $app['monolog']->addInfo('Cover ID search: matched ' . count($coverInfos) . ' issues');
 
-                            return new JsonResponse(['issues' => ModelHelper::getSimpleArray($issues)]);
+                            return new JsonResponse([
+                                'issues' => ModelHelper::getSimpleArray($issues),
+                                'imageIds' => $engineResponse->getImageIds()
+                            ]);
                         } else {
                             return new JsonResponse(['type' => $engineResponse->getType()]);
                         }
