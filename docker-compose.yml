@@ -19,19 +19,29 @@ services:
       service: db-with-healthcheck
     ports:
      - "44000:3306"
+    volumes:
+     - ../coa-box/scripts:/home/scripts
+     - ../coa-box/container.properties:/home/container.properties
     environment:
       MYSQL_ROOT_PASSWORD: changeme
       MYSQL_DATABASE: coa
   db_cover_id:
     container_name: mariadb-server-for-cover-info-box
-    extends:
-      file: docker-compose-db-with-healthcheck.yml
-      service: db-with-healthcheck
+    build:
+      context: ../duck-cover-id
     ports:
      - "44009:3306"
     environment:
       MYSQL_ROOT_PASSWORD: changeme
       MYSQL_DATABASE: cover_info
+    volumes:
+     - ../duck-cover-id/scripts:/home/scripts
+     - ../duck-cover-id/container.properties:/home/container.properties
+    healthcheck:
+      test: grep 'Server socket created' /var/log/mysql/error.log
+      interval: 2s
+      timeout: 30s
+    command: mysqld --log-error=/var/log/mysql/error.log
   db_dm:
     container_name: mariadb-server-for-dm
     extends:
@@ -62,6 +72,9 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: changeme
       MYSQL_DATABASE: dm_stats
+    volumes:
+     - ../dm-stats/scripts:/home/scripts
+     - ../dm-stats/container.properties:/home/container.properties
   pastec:
     container_name: pastec-ubuntu-1704-timestamps
     image: "bperel/pastec-ubuntu-1704-timestamps"
