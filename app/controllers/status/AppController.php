@@ -71,7 +71,7 @@ class AppController extends AbstractController
                         ],
                         [
                             'db' => DmServer::CONFIG_DB_KEY_COA,
-                            'query' => 'SELECT * FROM inducks_countryname LIMIT 1'
+                            'query' => DatabaseCheckHelper::generateRowCheckOnTables(DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_COA))
                         ],
                         [
                             'db' => DmServer::CONFIG_DB_KEY_COVER_ID,

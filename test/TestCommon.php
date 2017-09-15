@@ -73,6 +73,15 @@ class TestCommon extends WebTestCase {
     /** @var InducksStory[] $testStories */
     private static $testStories = [];
 
+    /** @var InducksStoryversion[] $testStoryversions */
+    private static $testStoryversions = [];
+
+    /** @var InducksEntry[] $testEntries */
+    private static $testEntries = [];
+
+    /** @var InducksEntryurl[] $testEntryurls */
+    private static $testEntryurls = [];
+
     // Test data - end
 
     public static function setUpBeforeClass()
@@ -412,6 +421,34 @@ class TestCommon extends WebTestCase {
                 ->setTitle('Title of story AR 201')
                 ->setStorycomment('Comment of story AR 201')
                 ->setStorycode('AR 201')
+        );
+
+        self::$testStoryversions['W WDC  31-05'] = new InducksStoryversion();
+        $coaEntityManager->persist(
+            self::$testStoryversions['W WDC  31-05']
+                ->setStorycode('W WDC  31-05')
+        );
+
+        self::$testStoryversions['de/SPBL 136c'] = new InducksStoryversion();
+        $coaEntityManager->persist(
+            self::$testStoryversions['W WDC  31-05']
+                ->setStorycode('W WDC  31-05')
+        );
+
+        self::$testEntries['us/CBL 7a'] = new InducksEntry();
+        $coaEntityManager->persist(
+            self::$testEntries['us/CBL 7a']
+                ->setEntrycode('us/CBL 7a')
+                ->setIssuecode('fr/DDD 1')
+                ->setStoryversioncode('W WDC  31-05')
+        );
+
+        self::$testEntryurls['us/CBL 7p000a'] = new InducksEntryurl();
+        $coaEntityManager->persist(
+            self::$testEntryurls['us/CBL 7p000a']
+                ->setEntrycode('us/CBL 7p000a')
+                ->setUrl('us/cbl/us_cbl_7p000a_001.png')
+                ->setSitecode('thumbnails')
         );
 
         $inducksPerson = new InducksPerson();
