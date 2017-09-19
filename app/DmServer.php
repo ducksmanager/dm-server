@@ -224,7 +224,6 @@ class DmServer implements ControllerProviderInterface
         Controllers\Collection\AppController::addRoutes($routing);
         Controllers\Collection\InternalController::addRoutes($routing);
 
-        Controllers\Coa\AppController::addRoutes($routing);
         Controllers\Coa\InternalController::addRoutes($routing);
 
         Controllers\CoverId\AppController::addRoutes($routing);

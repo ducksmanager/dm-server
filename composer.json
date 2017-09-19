@@ -105,6 +105,6 @@
         "phpunit/phpunit": "6.2.*",
         "phpunit/php-code-coverage": "5.2.*",
         "roave/security-advisories": "dev-master",
-        "radebatz/silex2swagger": "3.0.*"
+        "radebatz/silex2swagger": "dev-controller_shared_parameter#0dd5e35a342a5e0f6ade9ffead61723429b0b978"
     }
 }
