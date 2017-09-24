@@ -554,8 +554,7 @@ class EdgeCreatorTest extends TestCommon
 
         $objectResponse = json_decode($response->getContent());
 
-        $this->assertEquals(1, count($objectResponse));
-        $this->assertEquals('abc.jpg', $objectResponse[0]->nomfichier);
+        $this->assertEquals('abc.jpg', $objectResponse->nomfichier);
     }
 
     public function testAddMultipleEdgePhoto() {
