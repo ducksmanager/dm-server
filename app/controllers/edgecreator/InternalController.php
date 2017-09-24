@@ -497,6 +497,27 @@ class InternalController extends AbstractController
         );
 
         $routing->get(
+            '/internal/edgecreator/model/v2/{modelId}/photo/main',
+            function (Application $app, Request $request, $modelId) {
+                return self::wrapInternalService($app, function (EntityManager $ecEm) use ($app, $request, $modelId) {
+                    $qb = $ecEm->createQueryBuilder();
+
+                    $qb->select('photo.id, photo.nomfichier')
+                        ->from(TranchesEnCoursModelesImages::class, 'modelsPhotos')
+                        ->innerJoin('modelsPhotos.modele', 'model')
+                        ->innerJoin('modelsPhotos.image', 'photo')
+                        ->andWhere("model.id = :modelId")
+                        ->setParameter(':modelId', $modelId)
+                        ->andWhere("modelsPhotos.estphotoprincipale = 1");
+
+                    $mainPhoto = $qb->getQuery()->getResult();
+
+                    return new JsonResponse(self::getSerializer()->serialize($mainPhoto, 'json'), Response::HTTP_OK, [], true);
+                });
+            }
+        );
+
+        $routing->get(
             '/internal/edgecreator/multiple_edge_photo/today',
             function (Request $request, Application $app) {
                 return self::wrapInternalService($app, function (EntityManager $ecEm) use ($app) {

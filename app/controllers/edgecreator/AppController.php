@@ -214,6 +214,13 @@ class AppController extends AbstractController
         );
 
         $routing->get(
+            '/edgecreator/model/v2/{modelid}/photo/main',
+            function (Application $app, Request $request, $modelid) {
+                return self::callInternal($app, "/edgecreator/model/v2/$modelid/photo/main");
+            }
+        );
+
+        $routing->get(
             '/edgecreator/multiple_edge_photo/today',
             function (Request $request, Application $app) {
                 return self::callInternal($app, "/edgecreator/multiple_edge_photo/today", 'GET');

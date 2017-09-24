@@ -533,6 +533,31 @@ class EdgeCreatorTest extends TestCommon
         $this->assertEquals(1, $helperUsers->getIdUtilisateur());
     }
 
+    public function testGetMainPhoto() {
+        $photoName = 'myphoto.jpg';
+
+        $model = $this->getV2Model('fr', 'PM', '502');
+
+        $photo = new ImagesTranches();
+        $photo->setIdUtilisateur(self::getSessionUser($this->app)['id']);
+        $photo->setNomfichier('abc.jpg');
+        $this->getEm()->persist($photo);
+
+        $modelPhoto = new TranchesEnCoursModelesImages();
+        $modelPhoto->setEstphotoprincipale(true);
+        $modelPhoto->setModele($model);
+        $modelPhoto->setImage($photo);
+        $this->getEm()->persist($modelPhoto);
+        $this->getEm()->flush();
+
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/{$model->getId()}/photo/main", TestCommon::$edgecreatorUser)->call();
+
+        $objectResponse = json_decode($response->getContent());
+
+        $this->assertEquals(1, count($objectResponse));
+        $this->assertEquals('abc.jpg', $objectResponse[0]->nomfichier);
+    }
+
     public function testAddMultipleEdgePhoto() {
         $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/multiple_edge_photo", TestCommon::$edgecreatorUser, 'PUT', [
             'hash' => sha1('test2'),

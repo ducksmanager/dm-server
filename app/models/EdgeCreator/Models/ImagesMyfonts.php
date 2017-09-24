@@ -7,11 +7,20 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * ImagesMyfonts
  *
- * @ORM\Table(name="images_myfonts")
+ * @ORM\Table(name="images_myfonts", uniqueConstraints={@ORM\UniqueConstraint(name="images_myfonts_ID_uindex", columns={"ID"})})
  * @ORM\Entity
  */
 class ImagesMyfonts extends \EdgeCreator\Models\BaseModel
 {
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="ID", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
     /**
      * @var string
      *
@@ -54,16 +63,17 @@ class ImagesMyfonts extends \EdgeCreator\Models\BaseModel
      */
     private $precision;
 
+
+
     /**
-     * @var integer
+     * Get id
      *
-     * @ORM\Column(name="ID", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @return integer
      */
-    private $id;
-
-
+    public function getId()
+    {
+        return $this->id;
+    }
 
     /**
      * Set font
@@ -207,15 +217,5 @@ class ImagesMyfonts extends \EdgeCreator\Models\BaseModel
     public function getPrecision()
     {
         return $this->precision;
-    }
-
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
     }
 }
