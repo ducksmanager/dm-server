@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 
 webdir=/var/www/html/dm-server
-deployment_commit_id=$1
+webdir_new=${webdir}_new
 
-cd ${webdir}
+cd ${webdir_new}
 
-composer dumpautoload -o && \
-echo ${deployment_commit_id} > deployment_commit_id.txt && \
-echo "Deployed:" && cat deployment_commit_id.txt
+rm -rf ${webdir} && mv ${webdir_new} ${webdir}
+echo "Deployed:" && cat ${webdir}/deployment_commit_id.txt

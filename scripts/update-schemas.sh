@@ -1,4 +1,5 @@
 #!/bin/bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 force=$1
 if [ ! -z "${force}" ] && [ ${force} -eq 1 ]; then
@@ -7,7 +8,7 @@ else
   force=0
 fi
 
-app_dir=/var/www/html/dm-server/app
+app_dir=$DIR/../app
 
 cd ${app_dir}/config
 php generate-db-config.php

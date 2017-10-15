@@ -4,15 +4,13 @@ services:
     container_name: dm-server
     build: .
     ports:
-     - "10001:80"
+     - "8001:80"
     depends_on:
      - db_coa
      - db_cover_id
      - db_dm
      - db_dm_stats
      - db_edgecreator
-    volumes:
-     - .:/var/www/html/dm-server
   db_coa:
     container_name: mariadb-server-for-coa-box
     image: "bperel/coa-box"
@@ -20,7 +18,7 @@ services:
       file: docker-compose-db-with-healthcheck.yml
       service: db-with-healthcheck
     ports:
-     - "64000:3306"
+     - "44000:3306"
     environment:
       MYSQL_ROOT_PASSWORD: changeme
       MYSQL_DATABASE: coa
@@ -30,7 +28,7 @@ services:
       file: docker-compose-db-with-healthcheck.yml
       service: db-with-healthcheck
     ports:
-     - "64001:3306"
+     - "44009:3306"
     environment:
       MYSQL_ROOT_PASSWORD: changeme
       MYSQL_DATABASE: cover_info
@@ -40,7 +38,7 @@ services:
       file: docker-compose-db-with-healthcheck.yml
       service: db-with-healthcheck
     ports:
-     - "64002:3306"
+     - "44002:3306"
     environment:
       MYSQL_ROOT_PASSWORD: changeme
       MYSQL_DATABASE: dm
@@ -50,7 +48,7 @@ services:
       file: docker-compose-db-with-healthcheck.yml
       service: db-with-healthcheck
     ports:
-     - "64003:3306"
+     - "44003:3306"
     environment:
       MYSQL_ROOT_PASSWORD: changeme
       MYSQL_DATABASE: edgecreator
@@ -60,7 +58,7 @@ services:
       file: docker-compose-db-with-healthcheck.yml
       service: db-with-healthcheck
     ports:
-     - "64010:3306"
+     - "44010:3306"
     environment:
       MYSQL_ROOT_PASSWORD: changeme
       MYSQL_DATABASE: dm_stats
@@ -68,7 +66,7 @@ services:
     container_name: pastec-ubuntu-1704-timestamps
     image: "bperel/pastec-ubuntu-1704-timestamps"
     ports:
-     - "4212:4212"
+     - "4214:4212"
     restart: always
 networks:
   default:
