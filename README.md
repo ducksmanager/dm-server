@@ -4,9 +4,10 @@ The fastest way to start the project is to use the docker-compose template. In t
 
 #### Web server setup
 
-Copy `config/roles.base.ini` and rename the copy to `config/roles.ini`. Edit `config/roles.ini` to set the application role passwords:
+Copy `config/roles.base.ini` and `config/settings.base.ini` and rename the copies respectively to `config/roles.ini` and `config/settings.ini`. Edit the copies with appropriate values. In particuler, edit `config/roles.ini` to set the application role passwords:
 * The `ducksmanager` and `whattheduck` roles are only authorized to use the services prefixed with `/collection/`
 * `rawsql` is only authorized to use the services prefixed with `/rawsql`
+* `edgecreator` is only authorized to use the services prefixed with `/edgecreator`
 
 #### Database setup
 

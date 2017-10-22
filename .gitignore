@@ -1,6 +1,7 @@
 /.idea
 /app/config/config.db.ini
 /app/config/roles.ini
+/app/config/settings.ini
 /bin
 /build
 /development.log

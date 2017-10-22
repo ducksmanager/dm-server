@@ -19,6 +19,7 @@ use EdgeCreator\Models\TranchesEnCoursModelesImages;
 use EdgeCreator\Models\TranchesEnCoursValeurs;
 use Silex\Application;
 use Silex\ControllerCollection;
+use Swift_Mailer;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -558,14 +559,29 @@ class InternalController extends AbstractController
                 return self::wrapInternalService($app, function (EntityManager $ecEm) use ($request, $app) {
                     $hash = $request->request->get('hash');
                     $fileName = $request->request->get('filename');
+                    $user = self::getSessionUser($app);
+                    /** @var Swift_Mailer $mailer */
+                    $mailer = $app['mailer'];
 
                     $photo = new ImagesTranches();
                     $photo->setHash($hash);
                     $photo->setDateheure(new \DateTime('today'));
                     $photo->setNomfichier($fileName);
-                    $photo->setIdUtilisateur(self::getSessionUser($app)['id']);
+                    $photo->setIdUtilisateur($user['id']);
                     $ecEm->persist($photo);
                     $ecEm->flush();
+
+                    $message = new \Swift_Message();
+                    $message
+                        ->setSubject('Nouvelle photo de tranche')
+                        ->setFrom(array("{$user['username']}@edgecreator.ducksmanager.net"))
+                        ->setTo(array(DmServer::$settings['smtp_username']))
+                        ->setBody($fileName);
+
+                    // Pass a variable name to the send() method
+                    if (!$mailer->send($message, $failures)) {
+                        throw new \Exception("Can't send e-mail '$message': failed with ".print_r($failures, true));
+                    }
 
                     return new JsonResponse(['photo' => ['id' => $photo->getId()]]);
                 });

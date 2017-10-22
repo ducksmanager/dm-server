@@ -11,7 +11,10 @@ require_once __DIR__.'/vendor/autoload.php';
 
 $forTest = isset($conf);
 
-if (!$forTest) {
+if ($forTest) {
+    DmServer::initSettings('settings.test.ini');
+}
+else {
     $conf = DmServer::getAppConfig();
     DmServer::initSettings('settings.ini');
 }
@@ -60,6 +63,18 @@ $app->register(new Silex\Provider\TranslationServiceProvider(), array(
 ));
 
 $app->register(new Silex\Provider\SessionServiceProvider());
+
+$app->register(new Silex\Provider\SwiftmailerServiceProvider());
+
+$app['swiftmailer.transport'] = new Swift_NullTransport();
+$app['swiftmailer.options'] = array(
+    'host' => DmServer::$settings['smtp_host'],
+    'port' => '25',
+    'username' => DmServer::$settings['smtp_username'],
+    'password' => DmServer::$settings['smtp_password'],
+    'encryption' => null,
+    'auth_mode' => null
+);
 
 $app->error(function (\Exception $e, Request $request, $code) {
     return new Response($e->getMessage()."\n\n".$e->getTraceAsString(), $code);
