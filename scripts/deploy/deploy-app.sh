@@ -12,7 +12,7 @@ deploy() {
   \
   && docker exec ${container_name} chmod -R +x ${webdir}_new/scripts \
   && docker exec ${container_name} /bin/bash -c "cd ${webdir}_new && touch development.log pimple.json && chown www-data:www-data development.log pimple.json" \
-  && docker exec ${container_name} /bin/bash -c "cd ${webdir}_new && cp -r ../dm-server/vendor . && composer update --no-dev -o && echo `git rev-parse HEAD` > deployment_commit_id.txt" \
+  && docker exec ${container_name} /bin/bash -c "cd ${webdir}_new && composer update --no-dev -o && echo `git rev-parse HEAD` > deployment_commit_id.txt" \
   && docker exec ${container_name} /bin/bash ${webdir}_new/scripts/update-schemas.sh 0 \
   && echo -e "\nThe schema update has to be applied now. Afterwards press y to continue the deployment process. Continue ? (y/n)" \
   && read answer \
