@@ -5,7 +5,7 @@
 /bin
 /build
 /development.log
-/test/db.sqlite
+**/*.sqlite
 /vendor
 composer.lock
 composer.phar
