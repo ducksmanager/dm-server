@@ -5,7 +5,7 @@ require_once __DIR__."/../DmServer.php";
 use Symfony\Component\Yaml\Yaml;
 
 $dbServiceFilter = function ($serviceKey) {
-    return strpos('db_', $serviceKey) === 0;
+    return strpos($serviceKey, 'db_') === 0;
 };
 
 $composeFile = Yaml::parse(file_get_contents(__DIR__.'/../../docker-compose.yml'));
@@ -37,12 +37,12 @@ if (isset($composeFile['services'])) {
         file_put_contents(__DIR__.'/config.db.ini', implode("\n\n", $dbConfigs));
     }
     else {
-        echo 'No DB service found';
+        echo "No DB service found\n";
         exit(1);
     }
 }
 else {
-    echo 'No services found';
+    echo "No services found\n";
     exit(1);
 }
 
