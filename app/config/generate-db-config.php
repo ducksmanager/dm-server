@@ -4,15 +4,15 @@ require_once __DIR__."/../DmServer.php";
 
 use Symfony\Component\Yaml\Yaml;
 
-$dbServiceFilter = function ($service) {
-    return isset($service['extends']) && $service['extends']['service'] === 'db-with-healthcheck';
+$dbServiceFilter = function ($serviceKey) {
+    return strpos('db_', $serviceKey) === 0;
 };
 
 $composeFile = Yaml::parse(file_get_contents(__DIR__.'/../../docker-compose.yml'));
 $configuredEntityManagerNames = \DmServer\DmServer::$configuredEntityManagerNames;
 
 if (isset($composeFile['services'])) {
-    $dbServices = array_filter($composeFile['services'], $dbServiceFilter);
+    $dbServices = array_filter($composeFile['services'], $dbServiceFilter, ARRAY_FILTER_USE_KEY);
     if (count($dbServices) > 0) {
         $dbConfigs = [];
 
