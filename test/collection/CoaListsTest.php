@@ -109,7 +109,7 @@ class CoaListsTest extends TestCommon
 
         $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issuesbycodes/fr/DDDDD 1', TestCommon::$dmUser)->call();
 
-        $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
-        $this->assertEquals('No COA data exists for this issue : fr/DDDDD 1', $response->getContent());
+        $arrayResponse = json_decode($response->getContent());
+        $this->assertEquals([], $arrayResponse);
     }
 }
