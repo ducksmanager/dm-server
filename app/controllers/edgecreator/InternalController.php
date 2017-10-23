@@ -574,8 +574,8 @@ class InternalController extends AbstractController
                     $message = new \Swift_Message();
                     $message
                         ->setSubject('Nouvelle photo de tranche')
-                        ->setFrom(array("{$user['username']}@edgecreator.ducksmanager.net"))
-                        ->setTo(array(DmServer::$settings['smtp_username']))
+                        ->setFrom([$user['username']."@".DmServer::$settings['smtp_origin_email_domain']])
+                        ->setTo([DmServer::$settings['smtp_username']])
                         ->setBody($fileName);
 
                     // Pass a variable name to the send() method
