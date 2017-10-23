@@ -555,6 +555,16 @@ class EdgeCreatorTest extends TestCommon
         $this->assertEquals('abc.jpg', $objectResponse->nomfichier);
     }
 
+    public function testGetMainPhotoNotExisting() {
+        $model = $this->getV2Model('fr', 'PM', '502');
+        $this->getEm()->persist($model);
+        $this->getEm()->flush();
+
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/{$model->getId()}/photo/main", TestCommon::$edgecreatorUser)->call();
+
+        $this->assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
+    }
+
     public function testAddMultipleEdgePhoto() {
         $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/multiple_edge_photo", TestCommon::$edgecreatorUser, 'PUT', [
             'hash' => sha1('test2'),
@@ -563,6 +573,16 @@ class EdgeCreatorTest extends TestCommon
 
         $objectResponse = json_decode($response->getContent());
         $this->assertEquals(['id' => 2 ], (array) $objectResponse->photo);
+    }
+
+    public function testAddMultipleEdgePhotoInvalidEmail() {
+        DmServer::$settings['smtp_username'] = 'user@@ducksmanager.net';
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/multiple_edge_photo", TestCommon::$edgecreatorUser, 'PUT', [
+            'hash' => sha1('test2'),
+            'filename' => 'photo2.jpg'
+        ])->call();
+
+        $this->assertContains('does not comply with RFC', $response->getContent());
     }
 
     public function testGetMultipleEdgePhotos() {

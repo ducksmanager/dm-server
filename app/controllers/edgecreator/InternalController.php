@@ -8,6 +8,7 @@ use DmServer\DmServer;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\NoResultException;
 use EdgeCreator\Models\EdgecreatorIntervalles;
 use EdgeCreator\Models\EdgecreatorModeles2;
 use EdgeCreator\Models\EdgecreatorValeurs;
@@ -513,7 +514,12 @@ class InternalController extends AbstractController
                         ->setParameter(':modelId', $modelId)
                         ->andWhere("modelsPhotos.estphotoprincipale = 1");
 
-                    $mainPhoto = $qb->getQuery()->getSingleResult();
+                    try {
+                        $mainPhoto = $qb->getQuery()->getSingleResult();
+                    }
+                    catch(NoResultException $e) {
+                        return new Response('', Response::HTTP_NO_CONTENT);
+                    }
 
                     return new JsonResponse(self::getSerializer()->serialize($mainPhoto, 'json'), Response::HTTP_OK, [], true);
                 });
