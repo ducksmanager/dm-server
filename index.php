@@ -70,16 +70,10 @@ if ($forTest) {
     $app['swiftmailer.transport'] = new Swift_NullTransport();
 }
 else {
-    $app['swiftmailer.transport'] = new Swift_SendmailTransport();
+    $app['swiftmailer.transport'] = (new Swift_SmtpTransport(DmServer::$settings['smtp_host'], 25, 'tls'))
+        ->setUsername(DmServer::$settings['smtp_username'])
+        ->setPassword(DmServer::$settings['smtp_password']);
 }
-$app['swiftmailer.options'] = [
-    'host' => DmServer::$settings['smtp_host'],
-    'port' => '25',
-    'username' => DmServer::$settings['smtp_username'],
-    'password' => DmServer::$settings['smtp_password'],
-    'encryption' => null,
-    'auth_mode' => null
-];
 
 $app->error(function (\Exception $e, Request $request, $code) {
     return new Response($e->getMessage()."\n\n".$e->getTraceAsString(), $code);
