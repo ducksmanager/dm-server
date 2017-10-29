@@ -105,7 +105,7 @@ class InternalController extends AbstractController
         );
 
         $routing->put(
-            '/internal/edgecreator/v2/model/{modelId}/{stepNumber}',
+            '/internal/edgecreator/v2/step/{modelId}/{stepNumber}',
             function (Request $request, Application $app, $modelId, $stepNumber) {
                 return self::wrapInternalService($app, function(EntityManager $ecEm) use ($request, $modelId, $stepNumber) {
                     $qb = $ecEm->createQueryBuilder();
