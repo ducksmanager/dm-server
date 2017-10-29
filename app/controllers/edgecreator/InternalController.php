@@ -364,6 +364,29 @@ class InternalController extends AbstractController
             }
         );
 
+        $routing->get(
+            '/internal/edgecreator/v2/model/{publicationCode}/{issueNumber}',
+            function (Request $request, Application $app, $publicationCode, $issueNumber) {
+                return self::wrapInternalService($app, function (EntityManager $ecEm) use ($publicationCode, $issueNumber) {
+                    list($country, $magazine) = explode('/', $publicationCode);
+                    $model = $ecEm->getRepository(TranchesEnCoursModeles::class)->findOneBy([
+                        'pays' => $country,
+                        'magazine' => $magazine,
+                        'numero' => $issueNumber
+                    ]);
+
+                    if (is_null($model)) {
+                        return new Response('', Response::HTTP_NO_CONTENT);
+                    }
+                    else {
+                        return new JsonResponse(self::getSerializer()->serialize($model, 'json'), Response::HTTP_OK, [], true);
+                    }
+                });
+            }
+        )
+            ->assert('publicationCode', self::getParamAssertRegex(BaseModel::PUBLICATION_CODE_VALIDATION))
+            ->assert('issueNumber', self::getParamAssertRegex(BaseModel::ISSUE_NUMBER_VALIDATION));
+
         $routing->put(
             '/internal/edgecreator/myfontspreview',
             function (Application $app, Request $request) {

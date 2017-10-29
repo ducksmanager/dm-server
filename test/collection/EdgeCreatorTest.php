@@ -156,6 +156,21 @@ class EdgeCreatorTest extends TestCommon
         $this->assertNull($model1->username);
     }
 
+    public function testGetModel() {
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/model/fr/PM/502", TestCommon::$edgecreatorUser, 'GET')->call();
+
+        $model = json_decode($response->getContent());
+        $this->assertEquals('fr', $model->pays);
+        $this->assertEquals('PM', $model->magazine);
+        $this->assertEquals('502', $model->numero);
+    }
+
+    public function testGetModelNotExisting() {
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/model/fr/PM/505", TestCommon::$edgecreatorUser, 'GET')->call();
+
+        $this->assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
+    }
+
     public function testCreateStepWithOptionValue() {
         $response = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/step/fr/PM/1', TestCommon::$edgecreatorUser, 'PUT', [
             'functionname' => 'TexteMyFonts',

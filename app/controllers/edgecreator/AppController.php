@@ -88,6 +88,15 @@ class AppController extends AbstractController
             }
         );
 
+        $routing->get(
+            '/edgecreator/v2/model/{publicationcode}/{issuenumber}',
+            function (Request $request, Application $app, $publicationcode, $issuenumber) {
+                return self::callInternal($app, "/edgecreator/v2/model/$publicationcode/$issuenumber", 'GET');
+            }
+        )
+            ->assert('publicationcode', self::getParamAssertRegex(BaseModel::PUBLICATION_CODE_VALIDATION))
+            ->assert('issuenumber', self::getParamAssertRegex(BaseModel::ISSUE_NUMBER_VALIDATION));
+
         $routing->put(
             '/edgecreator/v2/model/{publicationcode}/{issuenumber}/{iseditor}',
             function (Application $app, Request $request, $publicationcode, $issuenumber, $iseditor) {
