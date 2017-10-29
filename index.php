@@ -66,7 +66,12 @@ $app->register(new Silex\Provider\SessionServiceProvider());
 
 $app->register(new Silex\Provider\SwiftmailerServiceProvider());
 
-$app['swiftmailer.transport'] = new Swift_NullTransport();
+if ($forTest) {
+    $app['swiftmailer.transport'] = new Swift_NullTransport();
+}
+else {
+    $app['swiftmailer.transport'] = new Swift_SendmailTransport();
+}
 $app['swiftmailer.options'] = [
     'host' => DmServer::$settings['smtp_host'],
     'port' => '25',

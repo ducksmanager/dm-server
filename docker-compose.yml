@@ -11,6 +11,8 @@ services:
      - db_dm
      - db_dm_stats
      - db_edgecreator
+    volumes:
+     - ./ssmtp.conf:/etc/ssmtp/ssmtp.conf
   db_coa:
     container_name: mariadb-server-for-coa-box
     image: "bperel/coa-box"

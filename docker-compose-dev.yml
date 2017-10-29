@@ -16,6 +16,7 @@ services:
     volumes:
      - .:/var/www/html/dm-server
      - ./php.xdebug.ini:/usr/local/etc/php/php.ini
+     - ./ssmtp.conf:/etc/ssmtp/ssmtp.conf
   db_coa:
     container_name: db_coa
     image: "bperel/coa-box"
