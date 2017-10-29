@@ -18,20 +18,23 @@ fi
 
 docker exec ${container_name} grep -Po '^(host|dbname|username|password)=\K.+' ${config_file_path} | sed '$!N;$!N;$!N;s/\n/\t/g' | \
   while read -r host dbname username password; do
+    backup_subdir=${backup_dir}/db_${dbname}
     backup_file=backup_${container_name}_${dbname}.sql
-    backup_path=${backup_dir}/${backup_file}
+    backup_path=${backup_subdir}/${backup_file}
 
     echo "Backing up $dbname from $host to $backup_path"
-    docker exec ${container_name} mysqldump -u${username} -p${password} -h ${host} ${dbname} > ${backup_path}
-    echo "Compressing $backup_path"
-    time 7z a -m0=lzma2 ${backup_path}.7z ${backup_path}
+    docker exec ${container_name} mysqldump --skip-dump-date -u${username} -p${password} -h ${host} ${dbname} > ${backup_path}
+    git -C ${backup_subdir} add ${backup_path} &&
+    git -C ${backup_subdir} commit -m "Backup $today"
+
+    echo "Compressing backup_subdir"
+    rm -f ${backup_subdir}.zip ${backup_path} && zip ${backup_subdir}.zip -r ${backup_subdir}
     if [ $? -eq 0 ]; then
-      rm -f ${backup_path}
       echo "Backed up locally"
       if [ -z "$remote_backup_config" ]; then
         echo "No remote backup configuration was provided, skipping remote backup"
       else
-        scp ${backup_path}.7z ${remote_backup_config}/${today}-${backup_file}.7z
+        scp ${backup_subdir}.zip ${remote_backup_config}/db_${dbname}.zip
         if [ $? -eq 0 ]; then
           echo "Backed up remotely"
         else
