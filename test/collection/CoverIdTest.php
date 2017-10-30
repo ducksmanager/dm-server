@@ -15,6 +15,32 @@ class CoverIdTest extends TestCommon
 
     public static $exampleImageToUpload = 'cover_example_to_upload.jpg';
 
+    public static $coverSearchResultsSimple = [
+        "bounding_rects" => [
+            "height" => 846,
+            "width"  => 625,
+            "x" => 67,
+            "y" => 44
+        ],
+        "image_ids" => [1],
+        "scores" => [58.0],
+        "tags" => [''],
+        "type" => "SEARCH_RESULTS"
+    ];
+
+    public static $coverSearchResultsMany = [
+        "bounding_rects" => [
+            "height" => 846,
+            "width"  => 625,
+            "x" => 67,
+            "y" => 44
+        ],
+        "image_ids" => [1,2,3,4,5,6,7,8,9,10,11],
+        "scores" => [58.0,59.0,60.0,61.0,62.0,63.0,64.0,65.0,66.0,67.0,68.0],
+        "tags" => [''],
+        "type" => "SEARCH_RESULTS"
+    ];
+
     public function setUp()
     {
         parent::setUp();
@@ -23,19 +49,6 @@ class CoverIdTest extends TestCommon
 
         @unlink(implode(DIRECTORY_SEPARATOR, self::$uploadDestination));
         copy(self::getPathToFileToUpload(self::$exampleImage), self::getPathToFileToUpload(self::$exampleImageToUpload));
-
-        $this->mockCoverSearchResults([
-            "bounding_rects" => [
-                "height" => 846,
-                "width"  => 625,
-                "x" => 67,
-                "y" => 44
-            ],
-            "image_ids" => [1],
-            "scores" => [58.0],
-            "tags" => [''],
-            "type" => "SEARCH_RESULTS"
-        ]);
     }
 
     public function tearDown()
@@ -49,6 +62,7 @@ class CoverIdTest extends TestCommon
     }
 
     public function testGetIssueListByIssueCodes() {
+        $this->mockCoverSearchResults(self::$coverSearchResultsSimple);
         $response = $this->buildAuthenticatedServiceWithTestUser(
             '/cover-id/issuecodes/'
             . implode(',', [self::$coverIds[0], self::$coverIds[2]]), TestCommon::$dmUser)->call();
@@ -66,6 +80,7 @@ class CoverIdTest extends TestCommon
     }
 
     public function testCoverIdSearchMultipleUploads() {
+        $this->mockCoverSearchResults(self::$coverSearchResultsSimple);
         $response = $this->buildAuthenticatedServiceWithTestUser(
             '/cover-id/search', TestCommon::$dmUser, 'POST', [], [
                 'wtd_jpg' => self::getCoverIdSearchUploadImage(),
@@ -78,6 +93,7 @@ class CoverIdTest extends TestCommon
     }
 
     public function testCoverIdSearch() {
+        $this->mockCoverSearchResults(self::$coverSearchResultsSimple);
         $this->assertFileNotExists(implode(DIRECTORY_SEPARATOR, self::$uploadDestination));
 
         $similarCoverIssuePublicationCode = 'fr/DDD';
@@ -99,7 +115,7 @@ class CoverIdTest extends TestCommon
                     "publicationtitle" => "Dynastie",
                     "issuenumber" => "1",
                     "coverid" => 1
-                    ]/*, // Related issue: same cover story code
+                ]/*, // Related issue: same cover story code
                 $similarCoverIssuePublicationCode.' '.$similarCoverIssueNumber => [
                     "countrycode" => explode('/', $similarCoverIssuePublicationCode)[0],
                     "publicationcode" => $similarCoverIssuePublicationCode,
@@ -107,8 +123,59 @@ class CoverIdTest extends TestCommon
                     "issuenumber" => $similarCoverIssueNumber,
                     "coverid" => count(self::$coverIds) + 1
                     ]*/
-                ]
+                ],
+            "imageIds" => [1]
             ]), $response->getContent());
+    }
+
+    public function testCoverIdSearchManyResults() {
+        $this->mockCoverSearchResults(self::$coverSearchResultsMany);
+        $this->assertFileNotExists(implode(DIRECTORY_SEPARATOR, self::$uploadDestination));
+
+        $similarCoverIssuePublicationCode = 'fr/DDD';
+        $similarCoverIssueNumber = '10';
+        $this->createEntryLike('fr/AR 101', self::$coverUrls[array_values(self::$coverIds)[0]], $similarCoverIssuePublicationCode, $similarCoverIssueNumber);
+
+        $response = $this->buildAuthenticatedServiceWithTestUser(
+            '/cover-id/search', TestCommon::$dmUser, 'POST', [], [
+                'wtd_jpg' => self::getCoverIdSearchUploadImage()
+            ]
+        )->call();
+
+        $this->assertFileExists(implode(DIRECTORY_SEPARATOR, self::$uploadDestination));
+        $this->assertJsonStringEqualsJsonString(json_encode([
+            "issues" => [
+                "fr/DDD 1" => [
+                    "countrycode" => "fr",
+                    "publicationcode" => "fr/DDD",
+                    "publicationtitle" => "Dynastie",
+                    "issuenumber" => "1",
+                    "coverid" => 1
+                ],
+                "fr/DDD 10" => [
+                    "countrycode" => "fr",
+                    "publicationcode" => "fr/DDD",
+                    "publicationtitle" => "Dynastie",
+                    "issuenumber" => "10",
+                    "coverid" => 5
+                ],
+                "fr/DDD 2" => [
+                    "countrycode" => "fr",
+                    "publicationcode" => "fr/DDD",
+                    "publicationtitle" => "Dynastie",
+                    "issuenumber" => "2",
+                    "coverid" => 2
+                ],
+                "fr/MP 300" => [
+                    "countrycode" => "fr",
+                    "publicationcode" => "fr/MP",
+                    "publicationtitle" => "Parade",
+                    "issuenumber" => "300",
+                    "coverid" => 3
+                ]
+            ],
+            "imageIds" => [1,2,3,4,5,6,7,8,9,10]
+        ]), $response->getContent());
     }
 
     public function testCoverIdSearchSizeTooSmall() {
@@ -130,6 +197,7 @@ class CoverIdTest extends TestCommon
     }
 
     public function testCoverIdSearchInvalidFileName() {
+        $this->mockCoverSearchResults(self::$coverSearchResultsSimple);
         $this->assertFileNotExists(implode(DIRECTORY_SEPARATOR, self::$uploadDestination));
 
         $response = $this->buildAuthenticatedServiceWithTestUser(

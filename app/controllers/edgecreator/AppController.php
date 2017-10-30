@@ -88,6 +88,15 @@ class AppController extends AbstractController
             }
         );
 
+        $routing->get(
+            '/edgecreator/v2/model/{publicationcode}/{issuenumber}',
+            function (Request $request, Application $app, $publicationcode, $issuenumber) {
+                return self::callInternal($app, "/edgecreator/v2/model/$publicationcode/$issuenumber", 'GET');
+            }
+        )
+            ->assert('publicationcode', self::getParamAssertRegex(BaseModel::PUBLICATION_CODE_VALIDATION))
+            ->assert('issuenumber', self::getParamAssertRegex(BaseModel::ISSUE_NUMBER_VALIDATION));
+
         $routing->put(
             '/edgecreator/v2/model/{publicationcode}/{issuenumber}/{iseditor}',
             function (Application $app, Request $request, $publicationcode, $issuenumber, $iseditor) {
@@ -110,6 +119,52 @@ class AppController extends AbstractController
         ;
 
         $routing->post(
+            '/edgecreator/v2/model/clone/to/{publicationcode}/{issuenumber}',
+            function (Application $app, Request $request, $publicationcode, $issuenumber) {
+                $steps = $request->request->get('steps');
+
+                $targetModelId = null;
+
+                try {
+                    // Target model already exists
+                    $targetModelId = self::getResponseIdFromServiceResponse(
+                        self::callInternal($app, "/edgecreator/v2/model/$publicationcode/$issuenumber", 'GET'),
+                        'id'
+                    );
+                }
+                catch(UnexpectedInternalCallResponseException $e) {
+                    if ($e->getStatusCode() === Response::HTTP_NO_CONTENT) {
+                        $targetModelId = self::getResponseIdFromServiceResponse(
+                            self::callInternal($app, "/edgecreator/v2/model/$publicationcode/$issuenumber/1", 'PUT'),
+                            'modelid'
+                        );
+                    }
+                    else {
+                        return new Response($e->getContent(), $e->getStatusCode());
+                    }
+                }
+                finally {
+                    $valueIds = [];
+                    foreach($steps as $stepNumber => $stepOptions) {
+                        $valueIds[$stepNumber] = self::getResponseIdFromServiceResponse(
+                            self::callInternal($app, "/edgecreator/v2/step/$targetModelId/$stepNumber", 'PUT', [
+                                'newFunctionName' => $stepOptions['stepfunctionname'],
+                                'options' => $stepOptions['options']
+                            ]),
+                            'valueids'
+                        );
+                    }
+                    return new JsonResponse([
+                        'modelid' => $targetModelId,
+                        'valueids' => $valueIds
+                    ]);
+                }
+            }
+        )
+            ->assert('publicationcode', self::getParamAssertRegex(BaseModel::PUBLICATION_CODE_VALIDATION))
+            ->assert('issuenumber', self::getParamAssertRegex(BaseModel::ISSUE_NUMBER_VALIDATION));
+
+        $routing->post(
             '/edgecreator/v2/step/{modelid}/{stepnumber}',
             function (Application $app, Request $request, $modelid, $stepnumber) {
                 $stepFunctionName = $request->request->get('stepfunctionname');
@@ -117,7 +172,7 @@ class AppController extends AbstractController
 
                 try {
                     $valueIds = self::getResponseIdFromServiceResponse(
-                        self::callInternal($app, "/edgecreator/v2/model/$modelid/$stepnumber", 'PUT', [
+                        self::callInternal($app, "/edgecreator/v2/step/$modelid/$stepnumber", 'PUT', [
                             'newFunctionName' => $stepFunctionName,
                             'options' => $optionValues
                         ]),
@@ -131,8 +186,8 @@ class AppController extends AbstractController
                 }
             }
         )
-            ->assert('publicationcode', self::getParamAssertRegex(BaseModel::PUBLICATION_CODE_VALIDATION))
-            ->assert('issuenumber', self::getParamAssertRegex(BaseModel::ISSUE_NUMBER_VALIDATION))
+            ->assert('modelId', self::getParamAssertRegex('\\d+'))
+            ->assert('stepnumber', self::getParamAssertRegex('\\d+'))
         ;
 
         $routing->post(

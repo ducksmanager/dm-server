@@ -102,9 +102,12 @@
         "doctrine/doctrine-bundle": "1.6.*",
         "monolog/monolog": "1.23.*",
         "gedmo/doctrine-extensions": "2.4.*",
-        "phpunit/phpunit": "6.2.*",
-        "phpunit/php-code-coverage": "5.2.*",
+        "swiftmailer/swiftmailer": "6.0.*",
         "roave/security-advisories": "dev-master",
         "radebatz/silex2swagger": "dev-controller_shared_parameter#0dd5e35a342a5e0f6ade9ffead61723429b0b978"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "6.4.*",
+        "phpunit/php-code-coverage": "5.2.*"
     }
 }

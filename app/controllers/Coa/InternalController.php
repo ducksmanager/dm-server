@@ -118,7 +118,7 @@ class InternalController extends AbstractController
         $routing->get(
             '/internal/coa/issuesbycodes/{issuecodes}',
             function (Request $request, Application $app, $issuecodes) {
-                return self::wrapInternalService($app, function(EntityManager $coaEm) use ($issuecodes) {
+                return self::wrapInternalService($app, function(EntityManager $coaEm) use ($app, $issuecodes) {
                     $issuecodesList = explode(',', $issuecodes);
 
                     $qbIssueInfo = $coaEm->createQueryBuilder();
@@ -151,15 +151,17 @@ class InternalController extends AbstractController
 
                     array_walk(
                         $resultsCoverInfo,
-                        function($issue) use (&$issues) {
+                        function($issue) use (&$issues, $app) {
 
                             if (empty($issues[$issue['issuecode']])) {
-                                throw new Exception('No COA data exists for this issue : ' . $issue['issuecode'], Response::HTTP_BAD_REQUEST);
+                                $app['monolog']->addError('No COA data exists for this issue : ' . $issue['issuecode']);
+                                unset($issues[$issue['issuecode']]);
                             }
-                            /** @var SimpleIssueWithCoverId $issueObject */
-                            $issueObject = $issues[$issue['issuecode']];
-
-                            $issueObject->setCoverid($issue['coverid']);
+                            else {
+                                /** @var SimpleIssueWithCoverId $issueObject */
+                                $issueObject = $issues[$issue['issuecode']];
+                                $issueObject->setCoverid($issue['coverid']);
+                            }
                         }
                     );
 

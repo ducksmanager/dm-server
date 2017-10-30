@@ -156,6 +156,21 @@ class EdgeCreatorTest extends TestCommon
         $this->assertNull($model1->username);
     }
 
+    public function testGetModel() {
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/model/fr/PM/502", TestCommon::$edgecreatorUser, 'GET')->call();
+
+        $model = json_decode($response->getContent());
+        $this->assertEquals('fr', $model->pays);
+        $this->assertEquals('PM', $model->magazine);
+        $this->assertEquals('502', $model->numero);
+    }
+
+    public function testGetModelNotExisting() {
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/model/fr/PM/505", TestCommon::$edgecreatorUser, 'GET')->call();
+
+        $this->assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
+    }
+
     public function testCreateStepWithOptionValue() {
         $response = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/step/fr/PM/1', TestCommon::$edgecreatorUser, 'PUT', [
             'functionname' => 'TexteMyFonts',
@@ -343,6 +358,94 @@ class EdgeCreatorTest extends TestCommon
 
         $this->assertEquals('Pos_y', $values[2]->getOptionNom());
         $this->assertEquals('10', $values[2]->getOptionValeur());
+    }
+
+    public function testCloneModel() {
+        $model = $this->getV2Model('fr', 'PM', '502');
+
+        $response = $this->buildAuthenticatedServiceWithTestUser("edgecreator/v2/model/clone/to/fr/PM/505", TestCommon::$edgecreatorUser, 'POST', [
+            'steps' => [
+                '1' => [
+                    'stepfunctionname' => 'Remplir',
+                    'options' => [
+                        'Couleur' => '#CCCCCC',
+                        'Pos_x' => '15',
+                        'Pos_y' => '20'
+                    ]
+                ],
+                '2' => [
+                    'stepfunctionname' => 'Remplir',
+                    'options' => [
+                        'Couleur' => '#AAAAAA',
+                        'Pos_x' => '5',
+                        'Pos_y' => '10'
+                    ]
+                ]
+            ]
+        ])->call();
+
+        $objectResponse = json_decode($response->getContent());
+
+        $this->assertEquals(
+            [
+                '1' => [
+                    [
+                        'name' => 'Couleur',
+                        'value' => '#CCCCCC'
+                    ],[
+                        'name' => 'Pos_x',
+                        'value' => '15'
+                    ],[
+                        'name' => 'Pos_y',
+                        'value' => '20'
+                    ]
+                ],
+                '2' => [
+                    [
+                        'name' => 'Couleur',
+                        'value' => '#AAAAAA'
+                    ],[
+                        'name' => 'Pos_x',
+                        'value' => '5'
+                    ],[
+                        'name' => 'Pos_y',
+                        'value' => '10'
+                    ]
+                ]
+            ],
+            json_decode(json_encode($objectResponse->valueids), true)
+        );
+        /** @var TranchesEnCoursValeurs[] $valuesStep1 */
+        $valuesStep1 = $this->getEm()->getRepository(TranchesEnCoursValeurs::class)->findBy([
+            'idModele' => $objectResponse->modelid,
+            'ordre' => 1
+        ]);
+
+        $this->assertCount(3, $valuesStep1);
+        $this->assertEquals('Couleur', $valuesStep1[0]->getOptionNom());
+        $this->assertEquals('#CCCCCC', $valuesStep1[0]->getOptionValeur());
+
+        $this->assertEquals('Pos_x', $valuesStep1[1]->getOptionNom());
+        $this->assertEquals('15', $valuesStep1[1]->getOptionValeur());
+
+        $this->assertEquals('Pos_y', $valuesStep1[2]->getOptionNom());
+        $this->assertEquals('20', $valuesStep1[2]->getOptionValeur());
+        
+        /** @var TranchesEnCoursValeurs[] $valuesStep2 */
+        $valuesStep2 = $this->getEm()->getRepository(TranchesEnCoursValeurs::class)->findBy([
+            'idModele' => $objectResponse->modelid,
+            'ordre' => 2
+        ]);
+
+        $this->assertCount(3, $valuesStep2);
+        $this->assertEquals('Couleur', $valuesStep2[0]->getOptionNom());
+        $this->assertEquals('#AAAAAA', $valuesStep2[0]->getOptionValeur());
+
+        $this->assertEquals('Pos_x', $valuesStep2[1]->getOptionNom());
+        $this->assertEquals('5', $valuesStep2[1]->getOptionValeur());
+
+        $this->assertEquals('Pos_y', $valuesStep2[2]->getOptionNom());
+        $this->assertEquals('10', $valuesStep2[2]->getOptionValeur());
     }
 
     public function testShiftStep() {
@@ -555,6 +658,16 @@ class EdgeCreatorTest extends TestCommon
         $this->assertEquals('abc.jpg', $objectResponse->nomfichier);
     }
 
+    public function testGetMainPhotoNotExisting() {
+        $model = $this->getV2Model('fr', 'PM', '502');
+        $this->getEm()->persist($model);
+        $this->getEm()->flush();
+
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/{$model->getId()}/photo/main", TestCommon::$edgecreatorUser)->call();
+
+        $this->assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
+    }
+
     public function testAddMultipleEdgePhoto() {
         $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/multiple_edge_photo", TestCommon::$edgecreatorUser, 'PUT', [
             'hash' => sha1('test2'),
@@ -563,6 +676,16 @@ class EdgeCreatorTest extends TestCommon
 
         $objectResponse = json_decode($response->getContent());
         $this->assertEquals(['id' => 2 ], (array) $objectResponse->photo);
+    }
+
+    public function testAddMultipleEdgePhotoInvalidEmail() {
+        DmServer::$settings['smtp_username'] = 'user@@ducksmanager.net';
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/multiple_edge_photo", TestCommon::$edgecreatorUser, 'PUT', [
+            'hash' => sha1('test2'),
+            'filename' => 'photo2.jpg'
+        ])->call();
+
+        $this->assertContains('does not comply with RFC', $response->getContent());
     }
 
     public function testGetMultipleEdgePhotos() {

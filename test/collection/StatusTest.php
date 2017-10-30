@@ -6,13 +6,9 @@ use DmServer\SimilarImagesHelper;
 
 class StatusTest extends TestCommon
 {
-    public function testGetStatus() {
+    public function testGetCoverIdStatus() {
         $collectionUserInfo = self::createTestCollection();
         self::setSessionUser($this->app, $collectionUserInfo);
-        self::createCoverIds();
-        self::createCoaData();
-        $this->createStatsData();
-        $this->createEdgeCreatorData();
 
         SimilarImagesHelper::$mockedResults = json_encode(['image_ids' => [1,2,3], 'type' => 'INDEX_IMAGE_IDS']);
 
@@ -21,13 +17,9 @@ class StatusTest extends TestCommon
         $this->assertEquals('Pastec OK with 3 images indexed', $response->getContent());
     }
 
-    public function testGetStatusNoCoverData() {
+    public function testGetCoverIdStatusNoCoverData() {
         $collectionUserInfo = self::createTestCollection();
         self::setSessionUser($this->app, $collectionUserInfo);
-        self::createCoverIds();
-        self::createCoaData();
-        $this->createStatsData();
-        $this->createEdgeCreatorData();
 
         SimilarImagesHelper::$mockedResults = json_encode(['image_ids' => [], 'type' => 'INDEX_IMAGE_IDS']);
 
@@ -36,7 +28,20 @@ class StatusTest extends TestCommon
         $this->assertEquals('<b>Pastec has no images indexed</b>', $response->getContent());
     }
 
-    public function testGetStatusMissingCoaData() {
+    public function testGetDbStatus() {
+        $collectionUserInfo = self::createTestCollection();
+        self::setSessionUser($this->app, $collectionUserInfo);
+        self::createCoaData();
+        self::createCoverIds();
+        $this->createStatsData();
+        $this->createEdgeCreatorData();
+
+        $response = $this->buildAuthenticatedService('/status/db', TestCommon::$dmUser, [], [], 'GET')->call();
+
+        $this->assertEquals('OK for all databases', $response->getContent());
+    }
+
+    public function testGetDbStatusMissingCoaData() {
         $collectionUserInfo = self::createTestCollection();
         self::setSessionUser($this->app, $collectionUserInfo);
         self::createCoverIds();
@@ -47,7 +52,7 @@ class StatusTest extends TestCommon
         $this->assertContains('Error for db_coa', $response->getContent());
     }
 
-    public function testGetStatusDBDown() {
+    public function testGetDbStatusDBDown() {
         unset(DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_COA]);
 
         try {

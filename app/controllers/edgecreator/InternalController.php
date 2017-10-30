@@ -8,6 +8,7 @@ use DmServer\DmServer;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\NoResultException;
 use EdgeCreator\Models\EdgecreatorIntervalles;
 use EdgeCreator\Models\EdgecreatorModeles2;
 use EdgeCreator\Models\EdgecreatorValeurs;
@@ -19,6 +20,7 @@ use EdgeCreator\Models\TranchesEnCoursModelesImages;
 use EdgeCreator\Models\TranchesEnCoursValeurs;
 use Silex\Application;
 use Silex\ControllerCollection;
+use Swift_Mailer;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -103,7 +105,7 @@ class InternalController extends AbstractController
         );
 
         $routing->put(
-            '/internal/edgecreator/v2/model/{modelId}/{stepNumber}',
+            '/internal/edgecreator/v2/step/{modelId}/{stepNumber}',
             function (Request $request, Application $app, $modelId, $stepNumber) {
                 return self::wrapInternalService($app, function(EntityManager $ecEm) use ($request, $modelId, $stepNumber) {
                     $qb = $ecEm->createQueryBuilder();
@@ -362,6 +364,29 @@ class InternalController extends AbstractController
             }
         );
 
+        $routing->get(
+            '/internal/edgecreator/v2/model/{publicationCode}/{issueNumber}',
+            function (Request $request, Application $app, $publicationCode, $issueNumber) {
+                return self::wrapInternalService($app, function (EntityManager $ecEm) use ($publicationCode, $issueNumber) {
+                    list($country, $magazine) = explode('/', $publicationCode);
+                    $model = $ecEm->getRepository(TranchesEnCoursModeles::class)->findOneBy([
+                        'pays' => $country,
+                        'magazine' => $magazine,
+                        'numero' => $issueNumber
+                    ]);
+
+                    if (is_null($model)) {
+                        return new Response('', Response::HTTP_NO_CONTENT);
+                    }
+                    else {
+                        return new JsonResponse(self::getSerializer()->serialize($model, 'json'), Response::HTTP_OK, [], true);
+                    }
+                });
+            }
+        )
+            ->assert('publicationCode', self::getParamAssertRegex(BaseModel::PUBLICATION_CODE_VALIDATION))
+            ->assert('issueNumber', self::getParamAssertRegex(BaseModel::ISSUE_NUMBER_VALIDATION));
+
         $routing->put(
             '/internal/edgecreator/myfontspreview',
             function (Application $app, Request $request) {
@@ -512,7 +537,12 @@ class InternalController extends AbstractController
                         ->setParameter(':modelId', $modelId)
                         ->andWhere("modelsPhotos.estphotoprincipale = 1");
 
-                    $mainPhoto = $qb->getQuery()->getSingleResult();
+                    try {
+                        $mainPhoto = $qb->getQuery()->getSingleResult();
+                    }
+                    catch(NoResultException $e) {
+                        return new Response('', Response::HTTP_NO_CONTENT);
+                    }
 
                     return new JsonResponse(self::getSerializer()->serialize($mainPhoto, 'json'), Response::HTTP_OK, [], true);
                 });
@@ -558,14 +588,29 @@ class InternalController extends AbstractController
                 return self::wrapInternalService($app, function (EntityManager $ecEm) use ($request, $app) {
                     $hash = $request->request->get('hash');
                     $fileName = $request->request->get('filename');
+                    $user = self::getSessionUser($app);
+                    /** @var Swift_Mailer $mailer */
+                    $mailer = $app['mailer'];
 
                     $photo = new ImagesTranches();
                     $photo->setHash($hash);
                     $photo->setDateheure(new \DateTime('today'));
                     $photo->setNomfichier($fileName);
-                    $photo->setIdUtilisateur(self::getSessionUser($app)['id']);
+                    $photo->setIdUtilisateur($user['id']);
                     $ecEm->persist($photo);
                     $ecEm->flush();
+
+                    $message = new \Swift_Message();
+                    $message
+                        ->setSubject('Nouvelle photo de tranche')
+                        ->setFrom([$user['username']."@".DmServer::$settings['smtp_origin_email_domain']])
+                        ->setTo([DmServer::$settings['smtp_username']])
+                        ->setBody($fileName);
+
+                    // Pass a variable name to the send() method
+                    if (!$mailer->send($message, $failures)) {
+                        throw new \Exception("Can't send e-mail '$message': failed with ".print_r($failures, true));
+                    }
 
                     return new JsonResponse(['photo' => ['id' => $photo->getId()]]);
                 });

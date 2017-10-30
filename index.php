@@ -11,7 +11,10 @@ require_once __DIR__.'/vendor/autoload.php';
 
 $forTest = isset($conf);
 
-if (!$forTest) {
+if ($forTest) {
+    DmServer::initSettings('settings.test.ini');
+}
+else {
     $conf = DmServer::getAppConfig();
     DmServer::initSettings('settings.ini');
 }
@@ -24,6 +27,12 @@ $app->match('/', function () {
     return '';
 });
 
+$app->match("{url}", function () {
+    $response = new Response('', 200);
+    $response->headers->set("Access-Control-Allow-Headers", "x-dm-version");
+    return $response;
+})->assert('url', '.*')->method("OPTIONS");
+
 $app->before(function (Request $request) {
     if (strpos($request->getRequestUri(), '/internal') === 0) {
         return new Response('Unauthorized', Response::HTTP_FORBIDDEN);
@@ -31,29 +40,40 @@ $app->before(function (Request $request) {
     return true;
 });
 
-$app->register(new Sorien\Provider\PimpleDumpProvider(), array(
-    'pimpledump.output_dir' => __DIR__)
+$app->register(new Sorien\Provider\PimpleDumpProvider(), [
+    'pimpledump.output_dir' => __DIR__]
 );
 
 $app->register(new Silex\Provider\LocaleServiceProvider());
 
 if ($forTest) {
-    $app->register(new Silex\Provider\MonologServiceProvider(), array(
+    $app->register(new Silex\Provider\MonologServiceProvider(), [
         'monolog.level' => \Monolog\Logger::INFO,
-    ));
+    ]);
 }
 else {
-    $app->register(new Silex\Provider\MonologServiceProvider(), array(
+    $app->register(new Silex\Provider\MonologServiceProvider(), [
         'monolog.logfile' => __DIR__ . '/development.log',
         'monolog.level' => \Monolog\Logger::INFO,
-    ));
+    ]);
 }
 
-$app->register(new Silex\Provider\TranslationServiceProvider(), array(
-    'locale_fallbacks' => array('en'),
-));
+$app->register(new Silex\Provider\TranslationServiceProvider(), [
+    'locale_fallbacks' => ['en'],
+]);
 
 $app->register(new Silex\Provider\SessionServiceProvider());
+
+$app->register(new Silex\Provider\SwiftmailerServiceProvider());
+
+if ($forTest) {
+    $app['swiftmailer.transport'] = new Swift_NullTransport();
+}
+else {
+    $app['swiftmailer.transport'] = (new Swift_SmtpTransport(DmServer::$settings['smtp_host'], 25, 'tls'))
+        ->setUsername(DmServer::$settings['smtp_username'])
+        ->setPassword(DmServer::$settings['smtp_password']);
+}
 
 $app->error(function (\Exception $e, Request $request, $code) {
     return new Response($e->getMessage()."\n\n".$e->getTraceAsString(), $code);
@@ -90,40 +110,40 @@ $app['security.default_encoder'] = function () use ($passwordEncoder) {
 
 $roles = DmServer::getAppRoles();
 
-$users = array();
+$users = [];
 array_walk($roles, function($role, $user) use ($passwordEncoder, &$users) {
     list($roleName, $rolePassword) = explode(':', $role);
-    $users[$user] = array($roleName, $passwordEncoder->encodePassword($rolePassword, ''));
+    $users[$user] = [$roleName, $passwordEncoder->encodePassword($rolePassword, '')];
 });
 
-$app->register(new Silex\Provider\SecurityServiceProvider(), array(
-    'security.firewalls' => array(
-        'rawsql' => array(
+$app->register(new Silex\Provider\SecurityServiceProvider(), [
+    'security.firewalls' => [
+        'rawsql' => [
             'pattern' => '^/rawsql',
             'http' => true,
             'users' => ['rawsql' => $users['rawsql']]
-        ),
-        'admin' => array(
+        ],
+        'admin' => [
             'pattern' => '^/ducksmanager/resetDemo',
             'http' => true,
             'users' => ['admin' => $users['admin']]
-        ),
-        'collection' => array(
+        ],
+        'collection' => [
             'pattern' => '^/collection/',
             'http' => true,
             'users' => [
                 'ducksmanager' => $users['ducksmanager'],
                 'whattheduck' => $users['whattheduck']
             ]
-        ),
-        'edgecreator' => array(
+        ],
+        'edgecreator' => [
             'pattern' => '^/edgecreator/',
             'http' => true,
             'users' => [
                 'edgecreator' => $users['edgecreator']
             ]
-        )
-    )
-));
+        ]
+    ]
+]);
 
 $app->run();

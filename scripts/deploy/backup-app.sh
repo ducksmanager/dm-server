@@ -4,7 +4,7 @@ webdir=/var/www/html/dm-server
 
 mkdir -p ${webdir}_old && rm -rf ${webdir}_old/*
 
-for f in app assets scripts test index.php composer.json docker-compose.yml deployment_commit_id.txt
+for f in .htaccess app assets scripts test index.php composer.json docker-compose.yml deployment_commit_id.txt
 do
   if [ -d "${webdir}/$f" ] || [ -f "${webdir}/$f" ]; then
     cp -rp "${webdir}/$f" ${webdir}_old
