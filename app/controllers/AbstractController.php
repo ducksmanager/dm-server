@@ -40,7 +40,7 @@ abstract class AbstractController
     /**
      * @param Response $response
      * @param string $idKey
-     * @return int
+     * @return mixed
      * @throws UnexpectedInternalCallResponseException
      */
     protected static function getResponseIdFromServiceResponse(Response $response, $idKey) {

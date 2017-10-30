@@ -436,6 +436,25 @@ class InternalController extends AbstractController
         );
 
         $routing->post(
+            '/internal/edgecreator/v2/model/{modelId}/empty',
+            function (Application $app, Request $request, $modelId) {
+                return self::wrapInternalService($app, function (EntityManager $ecEm) use ($modelId) {
+                    $qbDeleteSteps = $ecEm->getRepository(TranchesEnCoursModeles::class)->createQueryBuilder($modelId);
+                    $qbDeleteSteps
+                        ->delete(TranchesEnCoursValeurs::class, 'values')
+                        ->where('values.idModele = :modelid')
+                        ->setParameter('modelid', $modelId);
+
+                    $deletedSteps = $qbDeleteSteps->getQuery()->execute();
+
+                    return new JsonResponse([
+                        'steps' => ['deleted' => $deletedSteps]
+                    ]);
+                });
+            }
+        );
+
+        $routing->post(
             '/internal/edgecreator/model/v2/{modelId}/readytopublish/{isReadyToPublish}',
             function (Application $app, Request $request, $modelId, $isReadyToPublish) {
                 return self::wrapInternalService($app, function (EntityManager $ecEm) use ($request, $modelId, $isReadyToPublish) {

@@ -361,9 +361,7 @@ class EdgeCreatorTest extends TestCommon
     }
 
     public function testCloneModel() {
-        $model = $this->getV2Model('fr', 'PM', '502');
-
-        $response = $this->buildAuthenticatedServiceWithTestUser("edgecreator/v2/model/clone/to/fr/PM/505", TestCommon::$edgecreatorUser, 'POST', [
+        $stepsToClone = [
             'steps' => [
                 '1' => [
                     'stepfunctionname' => 'Remplir',
@@ -382,70 +380,92 @@ class EdgeCreatorTest extends TestCommon
                     ]
                 ]
             ]
-        ])->call();
+        ];
+
+        $expectedValueIds = [
+            '1' => [
+                [
+                    'name' => 'Couleur',
+                    'value' => '#CCCCCC'
+                ],[
+                    'name' => 'Pos_x',
+                    'value' => '15'
+                ],[
+                    'name' => 'Pos_y',
+                    'value' => '20'
+                ]
+            ],
+            '2' => [
+                [
+                    'name' => 'Couleur',
+                    'value' => '#AAAAAA'
+                ],[
+                    'name' => 'Pos_x',
+                    'value' => '5'
+                ],[
+                    'name' => 'Pos_y',
+                    'value' => '10'
+                ]
+            ]
+        ];
+
+        $assertValues = function($modelId) {
+
+            /** @var TranchesEnCoursValeurs[] $valuesStep1 */
+            $valuesStep1 = $this->getEm()->getRepository(TranchesEnCoursValeurs::class)->findBy([
+                'idModele' => $modelId,
+                'ordre' => 1
+            ]);
+
+            $this->assertCount(3, $valuesStep1);
+            $this->assertEquals('Couleur', $valuesStep1[0]->getOptionNom());
+            $this->assertEquals('#CCCCCC', $valuesStep1[0]->getOptionValeur());
+
+            $this->assertEquals('Pos_x', $valuesStep1[1]->getOptionNom());
+            $this->assertEquals('15', $valuesStep1[1]->getOptionValeur());
+
+            $this->assertEquals('Pos_y', $valuesStep1[2]->getOptionNom());
+            $this->assertEquals('20', $valuesStep1[2]->getOptionValeur());
+
+            /** @var TranchesEnCoursValeurs[] $valuesStep2 */
+            $valuesStep2 = $this->getEm()->getRepository(TranchesEnCoursValeurs::class)->findBy([
+                'idModele' => $modelId,
+                'ordre' => 2
+            ]);
+
+            $this->assertCount(3, $valuesStep2);
+            $this->assertEquals('Couleur', $valuesStep2[0]->getOptionNom());
+            $this->assertEquals('#AAAAAA', $valuesStep2[0]->getOptionValeur());
+
+            $this->assertEquals('Pos_x', $valuesStep2[1]->getOptionNom());
+            $this->assertEquals('5', $valuesStep2[1]->getOptionValeur());
+
+            $this->assertEquals('Pos_y', $valuesStep2[2]->getOptionNom());
+            $this->assertEquals('10', $valuesStep2[2]->getOptionValeur());
+        };
+
+        // Existing model with steps
+        $response = $this->buildAuthenticatedServiceWithTestUser("edgecreator/v2/model/clone/to/fr/PM/502", TestCommon::$edgecreatorUser, 'POST', $stepsToClone)->call();
 
         $objectResponse = json_decode($response->getContent());
 
-        $this->assertEquals(
-            [
-                '1' => [
-                    [
-                        'name' => 'Couleur',
-                        'value' => '#CCCCCC'
-                    ],[
-                        'name' => 'Pos_x',
-                        'value' => '15'
-                    ],[
-                        'name' => 'Pos_y',
-                        'value' => '20'
-                    ]
-                ],
-                '2' => [
-                    [
-                        'name' => 'Couleur',
-                        'value' => '#AAAAAA'
-                    ],[
-                        'name' => 'Pos_x',
-                        'value' => '5'
-                    ],[
-                        'name' => 'Pos_y',
-                        'value' => '10'
-                    ]
-                ]
-            ],
-            json_decode(json_encode($objectResponse->valueids), true)
-        );
-        /** @var TranchesEnCoursValeurs[] $valuesStep1 */
-        $valuesStep1 = $this->getEm()->getRepository(TranchesEnCoursValeurs::class)->findBy([
-            'idModele' => $objectResponse->modelid,
-            'ordre' => 1
-        ]);
+        $this->assertEquals(1, $objectResponse->modelid);
+        $this->assertEquals(3, $objectResponse->deletedsteps);
+        $this->assertEquals($expectedValueIds, json_decode(json_encode($objectResponse->valueids), true));
 
-        $this->assertCount(3, $valuesStep1);
-        $this->assertEquals('Couleur', $valuesStep1[0]->getOptionNom());
-        $this->assertEquals('#CCCCCC', $valuesStep1[0]->getOptionValeur());
+        $assertValues($objectResponse->modelid);
 
-        $this->assertEquals('Pos_x', $valuesStep1[1]->getOptionNom());
-        $this->assertEquals('15', $valuesStep1[1]->getOptionValeur());
 
-        $this->assertEquals('Pos_y', $valuesStep1[2]->getOptionNom());
-        $this->assertEquals('20', $valuesStep1[2]->getOptionValeur());
-        
-        /** @var TranchesEnCoursValeurs[] $valuesStep2 */
-        $valuesStep2 = $this->getEm()->getRepository(TranchesEnCoursValeurs::class)->findBy([
-            'idModele' => $objectResponse->modelid,
-            'ordre' => 2
-        ]);
+        // New model
+        $response = $this->buildAuthenticatedServiceWithTestUser("edgecreator/v2/model/clone/to/fr/PM/505", TestCommon::$edgecreatorUser, 'POST', $stepsToClone)->call();
 
-        $this->assertCount(3, $valuesStep2);
-        $this->assertEquals('Couleur', $valuesStep2[0]->getOptionNom());
-        $this->assertEquals('#AAAAAA', $valuesStep2[0]->getOptionValeur());
+        $objectResponse = json_decode($response->getContent());
 
-        $this->assertEquals('Pos_x', $valuesStep2[1]->getOptionNom());
-        $this->assertEquals('5', $valuesStep2[1]->getOptionValeur());
+        $this->assertEquals(5, $objectResponse->modelid);
+        $this->assertEquals(0, $objectResponse->deletedsteps);
+        $this->assertEquals($expectedValueIds, json_decode(json_encode($objectResponse->valueids), true));
 
-        $this->assertEquals('Pos_y', $valuesStep2[2]->getOptionNom());
-        $this->assertEquals('10', $valuesStep2[2]->getOptionValeur());
+        $assertValues($objectResponse->modelid);
     }
 
     public function testShiftStep() {

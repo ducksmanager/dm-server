@@ -124,6 +124,7 @@ class AppController extends AbstractController
                 $steps = $request->request->get('steps');
 
                 $targetModelId = null;
+                $deletedSteps = 0;
 
                 try {
                     // Target model already exists
@@ -131,6 +132,15 @@ class AppController extends AbstractController
                         self::callInternal($app, "/edgecreator/v2/model/$publicationcode/$issuenumber", 'GET'),
                         'id'
                     );
+                    try {
+                        $deletedSteps = self::getResponseIdFromServiceResponse(
+                            self::callInternal($app, "/edgecreator/v2/model/$targetModelId/empty", 'POST'),
+                            'steps'
+                        )->deleted;
+                    }
+                    catch(UnexpectedInternalCallResponseException $e) {
+                        return new Response($e->getContent(), $e->getStatusCode());
+                    }
                 }
                 catch(UnexpectedInternalCallResponseException $e) {
                     if ($e->getStatusCode() === Response::HTTP_NO_CONTENT) {
@@ -156,7 +166,8 @@ class AppController extends AbstractController
                     }
                     return new JsonResponse([
                         'modelid' => $targetModelId,
-                        'valueids' => $valueIds
+                        'valueids' => $valueIds,
+                        'deletedsteps' => $deletedSteps
                     ]);
                 }
             }
