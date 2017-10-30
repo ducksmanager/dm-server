@@ -104,7 +104,7 @@
         "gedmo/doctrine-extensions": "2.4.*",
         "swiftmailer/swiftmailer": "6.0.*",
         "roave/security-advisories": "dev-master",
-        "radebatz/silex2swagger": "dev-controller_shared_parameter#0dd5e35a342a5e0f6ade9ffead61723429b0b978"
+        "radebatz/silex2swagger": "dev-controller_shared_parameter#759daf7b1d976504e7c2433c93db6b0f2109cddd"
     },
     "require-dev": {
         "phpunit/phpunit": "6.4.*",
