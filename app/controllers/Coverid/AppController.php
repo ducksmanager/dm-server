@@ -66,7 +66,7 @@ class AppController extends AbstractController
      * @SLX\Route(
      *   @SLX\Request(method="POST", uri="search"),
      *   @SWG\Parameter(
-     *     name="self::$uploadFileName",
+     *     name="wtd_jpg",
      *     in="body",
      *     required=true
      *   )
