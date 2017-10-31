@@ -8,8 +8,10 @@ use DmServer\DmServer;
 use DmServer\SimilarImagesHelper;
 use Silex\Application;
 use Silex\ControllerCollection;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 class AppController extends AbstractController
 {
@@ -18,6 +20,33 @@ class AppController extends AbstractController
      */
     public static function addRoutes($routing)
     {
+        $routing->get(
+            '/status/swagger.json',
+            /**
+             * @codeCoverageIgnore
+             */
+            function (Application $app) {
+                return AbstractController::returnErrorOnException($app, null, function () {
+                    $swaggerContent = file_get_contents('/var/www/html/dm-server/swagger.json');
+                    if ($swaggerContent === false) {
+                        return new Response('swagger.json not found', Response::HTTP_NOT_FOUND);
+                    }
+                    else {
+                        $response = new Response($swaggerContent);
+
+                        $disposition = $response->headers->makeDisposition(
+                            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+                            'swagger.json'
+                        );
+
+                        $response->headers->set('Content-Disposition', $disposition);
+
+                        return $response;
+                    }
+                });
+            }
+        );
+
         $routing->get(
             '/status/pastec',
             /**
