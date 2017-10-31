@@ -256,7 +256,7 @@ class CollectionTest extends TestCommon
         $collectionUserInfo = self::createTestCollection('dm_test_user');
         self::setSessionUser($this->app, $collectionUserInfo);
 
-        $getResponse = $this->buildAuthenticatedServiceWithTestUser("/bookcase/sort", TestCommon::$dmUser)->call();
+        $getResponse = $this->buildAuthenticatedServiceWithTestUser("/collection/bookcase/sort", TestCommon::$dmUser)->call();
         $objectResponse = json_decode($getResponse->getContent());
 
         $this->assertCount(2, $objectResponse);

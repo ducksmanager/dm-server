@@ -220,7 +220,7 @@ class InternalController extends AbstractController
         );
 
         $routing->get(
-            '/internal/bookcase/sort',
+            '/internal/collection/bookcase/sort',
             function (Application $app) {
                 return self::wrapInternalService($app, function(EntityManager $dmEm) use ($app) {
 
@@ -235,7 +235,7 @@ class InternalController extends AbstractController
         );
 
         $routing->get(
-            '/internal/bookcase/sort/max',
+            '/internal/collection/bookcase/sort/max',
             function (Application $app) {
                 return self::wrapInternalService($app, function(EntityManager $dmEm) use ($app) {
 
