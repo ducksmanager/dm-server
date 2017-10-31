@@ -210,7 +210,13 @@ class DmServer implements ControllerProviderInterface
          * @return Response|void
          */
             function(Request $request, Application $app) {
-                return self::checkRequestVersionAndUser($request, $app);
+                $versionCheck = self::checkVersion($request, $app);
+                if (is_null($versionCheck)) {
+                    return self::authenticateUser($request, $app);
+                }
+                else {
+                    return $versionCheck;
+                }
             }
         );
 

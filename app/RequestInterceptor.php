@@ -12,34 +12,29 @@ trait RequestInterceptor
     /**
      * @param Request $request
      * @param Application $app
-     * @return Response|void
+     * @return Response|null
      */
-    public static function checkRequestVersionAndUser(Request $request, Application $app)
+    public static function checkVersion(Request $request, Application $app)
     {
-        if (strpos($request->getPathInfo(), '/status') === 0) {
-            return;
-        }
-        if (is_null(self::getClientVersion($app))) {
-            $clientVersion = $request->headers->get('x-dm-version');
-            if (is_null($clientVersion)) {
-                return new Response('Unspecified client version', Response::HTTP_VERSION_NOT_SUPPORTED);
-            } else {
-                self::setClientVersion($app, $clientVersion);
+        if (strpos($request->getPathInfo(), '/status') !== 0) {
+            if (is_null(self::getClientVersion($app))) {
+                $clientVersion = $request->headers->get('x-dm-version');
+                if (is_null($clientVersion)) {
+                    return new Response('Unspecified client version', Response::HTTP_VERSION_NOT_SUPPORTED);
+                } else {
+                    self::setClientVersion($app, $clientVersion);
+                }
             }
-        }
-
-        $result = self::authenticateUser($app, $request);
-        if ($result instanceof Response) {
-            return $result;
+            return null;
         }
     }
 
     /**
-     * @param Application $app
      * @param Request $request
-     * @return bool|Response
+     * @param Application $app
+     * @return null|Response
      */
-    public static function authenticateUser(Application $app, Request $request) {
+    public static function authenticateUser(Request $request, Application $app) {
         if (
             preg_match('#^/collection/.+$#',  $request->getPathInfo())
          || preg_match('#^/edgecreator/.+$#', $request->getPathInfo())
@@ -59,12 +54,13 @@ trait RequestInterceptor
                 } else {
                     self::setSessionUser($app, $username, $userCheck->getContent());
                     $app['monolog']->addInfo("$username is logged in");
-                    return true;
                 }
             }
             else {
                 return new Response('', Response::HTTP_UNAUTHORIZED);
             }
         }
+
+        return null;
     }
 }

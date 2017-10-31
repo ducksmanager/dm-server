@@ -26,9 +26,11 @@ use Swagger\Annotations as SWG;
  *     required=true
  *   ),
  *   @SWG\Response(response=200),
+ *   @SWG\Response(response=401, description="User not authorized"),
  *   @SWG\Response(response="default", description="Error")
  * ),
- * @SLX\Before("DmServer\RequestInterceptor::checkRequestVersionAndUser")
+ * @SLX\Before("DmServer\RequestInterceptor::checkVersion")
+ * @SLX\Before("DmServer\RequestInterceptor::authenticateUser")
  */
 class AppController extends AbstractController
 {

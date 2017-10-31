@@ -22,7 +22,7 @@ use Swagger\Annotations as SWG;
  *   @SWG\Response(response=200),
  *   @SWG\Response(response="default", description="Error")
  * ),
- * @SLX\Before("DmServer\RequestInterceptor::checkRequestVersionAndUser")
+ * @SLX\Before("DmServer\RequestInterceptor::checkVersion")
  */
 class AppController extends AbstractController
 {
