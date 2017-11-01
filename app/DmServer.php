@@ -225,7 +225,7 @@ class DmServer implements ControllerProviderInterface
 
         Controllers\Coa\InternalController::addRoutes($routing);
 
-        Controllers\CoverId\InternalController::addRoutes($routing);
+        Controllers\Coverid\InternalController::addRoutes($routing);
 
         Controllers\RawSql\AppController::addRoutes($routing);
         Controllers\RawSql\InternalController::addRoutes($routing);

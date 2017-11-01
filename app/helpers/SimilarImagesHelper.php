@@ -1,7 +1,7 @@
 <?php
 namespace DmServer;
 
-use CoverId\Contracts\Dtos\SimilarImagesOutput;
+use Coverid\Contracts\Dtos\SimilarImagesOutput;
 use Exception;
 use Monolog\Logger;
 use Symfony\Component\HttpFoundation\File\File;
