@@ -35,11 +35,11 @@ trait RequestInterceptor
      * @return null|Response
      */
     public static function authenticateUser(Request $request, Application $app) {
-        if (
+        if ($request->getMethod() !== 'OPTIONS' && (
             preg_match('#^/collection/.+$#',  $request->getPathInfo())
          || preg_match('#^/edgecreator/.+$#', $request->getPathInfo())
          || preg_match('#^/user/.+$#',        $request->getPathInfo())
-        ) {
+        )) {
             $username = $request->headers->get('x-dm-user');
             $password = $request->headers->get('x-dm-pass');
             if (isset($username, $password)) {

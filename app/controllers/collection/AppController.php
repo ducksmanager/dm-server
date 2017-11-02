@@ -25,6 +25,16 @@ use Swagger\Annotations as SWG;
  *     in="header",
  *     required=true
  *   ),
+ *   @SWG\Parameter(
+ *     name="x-dm-user",
+ *     in="header",
+ *     required=true
+ *   ),
+ *   @SWG\Parameter(
+ *     name="x-dm-pass",
+ *     in="header",
+ *     required=true
+ *   ),
  *   @SWG\Response(response=200),
  *   @SWG\Response(response=401, description="User not authorized"),
  *   @SWG\Response(response="default", description="Error")

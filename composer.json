@@ -53,7 +53,7 @@
                 "app/controllers/Coa"
             ],
             "DmServer\\Controllers\\Collection\\": [
-                "app/controllers/collection"
+                "app/controllers/Collection"
             ],
             "DmServer\\Controllers\\Coverid\\": [
                 "app/controllers/Coverid"

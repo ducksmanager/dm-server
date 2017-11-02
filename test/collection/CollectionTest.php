@@ -211,6 +211,13 @@ class CollectionTest extends TestCommon
         $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 
+    public function testCallOptionsService()
+    {
+        $response = $this->buildAuthenticatedServiceWithTestUser("/collection/purchases/3", TestCommon::$dmUser, 'OPTIONS')->call();
+
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+    }
+
     public function testCreateExternalAccess()
     {
         $collectionUserInfo = self::createTestCollection('dm_test_user');
