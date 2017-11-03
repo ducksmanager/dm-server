@@ -9,7 +9,7 @@ use Coa\Models\InducksPerson;
 use Coa\Models\InducksPublication;
 use Coa\Models\InducksStory;
 use Coa\Models\InducksStoryversion;
-use CoverId\Models\Covers;
+use Coverid\Models\Covers;
 use Dm\Models\Achats;
 use Dm\Models\BibliothequeOrdreMagazines;
 use Dm\Models\Numeros;
@@ -84,13 +84,6 @@ class TestCommon extends WebTestCase {
 
     // Test data - end
 
-    public static function setUpBeforeClass()
-    {
-        DmServer::initSettings('settings.test.ini');
-        self::$conf = DmServer::getAppConfig();
-        self::$roles = DmServer::getAppRoles();
-    }
-
     public static function createEntityManagers()
     {
         DmServer::$entityManagers = [];
@@ -101,6 +94,9 @@ class TestCommon extends WebTestCase {
     }
 
     public function setUp() {
+        DmServer::initSettings('settings.test.ini');
+        self::$conf = DmServer::getAppConfig();
+        self::$roles = DmServer::getAppRoles();
         self::initDatabase();
         @rmdir(DmServer::$settings['image_local_root']);
         @mkdir(DmServer::$settings['image_local_root'], 0777, true);

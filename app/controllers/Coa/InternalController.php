@@ -12,7 +12,7 @@ use Coa\Models\InducksPerson;
 use Coa\Models\InducksPublication;
 use Coa\Models\InducksStory;
 use Coa\Models\InducksStoryversion;
-use CoverId\Models\Covers;
+use Coverid\Models\Covers;
 use DmServer\Controllers\AbstractController;
 use DmServer\DmServer;
 use DmServer\ModelHelper;

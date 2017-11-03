@@ -27,22 +27,24 @@ class AppController extends AbstractController
              */
             function (Application $app) {
                 return AbstractController::returnErrorOnException($app, null, function () {
-                    $swaggerContent = file_get_contents('/var/www/html/dm-server/swagger.json');
-                    if ($swaggerContent === false) {
-                        return new Response('swagger.json not found', Response::HTTP_NOT_FOUND);
+                    try {
+                        $swaggerContent = file_get_contents(DmServer::$settings['swagger_path']);
+                        if ($swaggerContent !== false) {
+                            $response = new Response($swaggerContent);
+
+                            $disposition = $response->headers->makeDisposition(
+                                ResponseHeaderBag::DISPOSITION_INLINE,
+                                'swagger.json'
+                            );
+
+                            $response->headers->set('Content-Disposition', $disposition);
+
+                            return $response;
+                        }
                     }
-                    else {
-                        $response = new Response($swaggerContent);
+                    catch(\Exception $e) {}
 
-                        $disposition = $response->headers->makeDisposition(
-                            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-                            'swagger.json'
-                        );
-
-                        $response->headers->set('Content-Disposition', $disposition);
-
-                        return $response;
-                    }
+                    return new Response('swagger.json not found', Response::HTTP_NOT_FOUND);
                 });
             }
         );

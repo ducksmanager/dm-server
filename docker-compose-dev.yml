@@ -73,6 +73,14 @@ services:
     image: "bperel/pastec-ubuntu-1704-timestamps"
     ports:
      - "4212:4212"
+  swagger:
+    container_name: swagger
+    image: "swaggerapi/swagger-ui"
+    ports:
+     - "8081:8080"
+    environment:
+      API_URL: http://localhost:10001/dm-server/status/swagger.json
+      SWAGGER_JSON: http://dm-server/dm-server/status/swagger.json
 networks:
   default:
     external:

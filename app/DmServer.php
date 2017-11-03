@@ -14,6 +14,7 @@ use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Setup;
 use Gedmo\Timestampable\TimestampableListener;
+use JDesrosiers\Silex\Provider\CorsServiceProvider;
 use Silex\Api\ControllerProviderInterface;
 use Silex\Application;
 use Silex\ControllerCollection;
@@ -224,6 +225,11 @@ class DmServer implements ControllerProviderInterface
             "annot.controllerDir" => __DIR__."/controllers"
         ));
 
+        $app->register(new CorsServiceProvider(), [
+            "cors.allowOrigin" => "*",
+        ]);
+        $app["cors-enabled"]($routing);
+
         Controllers\User\AppController::addRoutes($routing);
         Controllers\User\InternalController::addRoutes($routing);
 
@@ -231,7 +237,7 @@ class DmServer implements ControllerProviderInterface
 
         Controllers\Coa\InternalController::addRoutes($routing);
 
-        Controllers\CoverId\InternalController::addRoutes($routing);
+        Controllers\Coverid\InternalController::addRoutes($routing);
 
         Controllers\RawSql\AppController::addRoutes($routing);
         Controllers\RawSql\InternalController::addRoutes($routing);

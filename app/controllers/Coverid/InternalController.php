@@ -2,7 +2,7 @@
 
 namespace DmServer\Controllers\Coverid;
 
-use CoverId\Models\Covers;
+use Coverid\Models\Covers;
 use DmServer\Controllers\AbstractController;
 use DmServer\DmServer;
 use DmServer\ModelHelper;

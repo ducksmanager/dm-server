@@ -63,4 +63,15 @@ class StatusTest extends TestCommon
             self::recreateSchema(DmServer::CONFIG_DB_KEY_COA);
         }
     }
+
+    public function testGetSwaggerJson() {
+        $response = $this->buildAuthenticatedService('/status/swagger.json', TestCommon::$dmUser, [], [], 'GET')->call();
+        $this->assertEquals(\Symfony\Component\HttpFoundation\Response::HTTP_OK, $response->getStatusCode());
+    }
+
+    public function testGetSwaggerJsonNotExisting() {
+        DmServer::$settings['swagger_path'] = '/not/existing';
+        $response = $this->buildAuthenticatedService('/status/swagger.json', TestCommon::$dmUser, [], [], 'GET')->call();
+        $this->assertEquals(\Symfony\Component\HttpFoundation\Response::HTTP_NOT_FOUND, $response->getStatusCode());
+    }
 }

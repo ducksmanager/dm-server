@@ -1,7 +1,7 @@
 <?php
 namespace DmServer\Test;
 
-use CoverId\Models\Covers;
+use Coverid\Models\Covers;
 use DmServer\DmServer;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -57,7 +57,7 @@ class CoaListsTest extends TestCommon
     public function testGetPublicationListInvalidCountry() {
         $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/publications/fr0', TestCommon::$dmUser)->call();
 
-        $this->assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $response->getStatusCode());
+        $this->assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
     }
 
     public function testGetIssueList() {
@@ -82,7 +82,7 @@ class CoaListsTest extends TestCommon
     public function testGetIssueListInvalidPublicationCode() {
         $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issues/fr/DD_', TestCommon::$dmUser)->call();
 
-        $this->assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $response->getStatusCode());
+        $this->assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
     }
 
     public function testGetIssueListByIssueCodes() {
