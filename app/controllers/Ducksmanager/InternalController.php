@@ -1,6 +1,6 @@
 <?php
 
-namespace DmServer\Controllers\DucksManager;
+namespace DmServer\Controllers\Ducksmanager;
 
 use Dm\Models\Achats;
 use Dm\Models\AuteursPseudos;
