@@ -215,7 +215,7 @@ class CollectionTest extends TestCommon
     {
         $response = $this->buildAuthenticatedServiceWithTestUser("/collection/purchases/3", TestCommon::$dmUser, 'OPTIONS')->call();
 
-        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $this->assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
     }
 
     public function testCreateExternalAccess()
