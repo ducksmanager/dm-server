@@ -68,7 +68,7 @@
                 "app/controllers/Edgecreator"
             ],
             "DmServer\\Controllers\\Edges\\": [
-                "app/controllers/edges"
+                "app/controllers/Edges"
             ],
             "DmServer\\Controllers\\Stats\\": [
                 "app/controllers/stats"
