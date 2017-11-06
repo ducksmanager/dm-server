@@ -105,7 +105,7 @@
         "swiftmailer/swiftmailer": "6.0.*",
         "jdesrosiers/silex-cors-provider": "~1.0",
         "roave/security-advisories": "dev-master",
-        "radebatz/silex2swagger": "dev-controller_shared_parameter#9575159425e0230cc457d2196fe3b0fe45286434"
+        "radebatz/silex2swagger": "dev-master#0a794e8d5c07894da837abfa8c10201e256f80bf"
     },
     "require-dev": {
         "phpunit/phpunit": "6.4.*",
