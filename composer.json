@@ -64,8 +64,8 @@
             "DmServer\\Controllers\\RawSql\\": [
                 "app/controllers/rawsql"
             ],
-            "DmServer\\Controllers\\EdgeCreator\\": [
-                "app/controllers/edgecreator"
+            "DmServer\\Controllers\\Edgecreator\\": [
+                "app/controllers/Edgecreator"
             ],
             "DmServer\\Controllers\\Edges\\": [
                 "app/controllers/edges"
