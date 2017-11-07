@@ -25,40 +25,34 @@ trait RequestInterceptor
                     self::setClientVersion($app, $clientVersion);
                 }
             }
-            return null;
         }
+        return null;
     }
 
     /**
      * @param Request $request
      * @param Application $app
-     * @return null|Response
+     * @return Response|null
      */
     public static function authenticateUser(Request $request, Application $app) {
-        if ($request->getMethod() !== 'OPTIONS' && (
-            preg_match('#^/collection/.+$#',  $request->getPathInfo())
-         || preg_match('#^/edgecreator/.+$#', $request->getPathInfo())
-         || preg_match('#^/user/.+$#',        $request->getPathInfo())
-        )) {
-            $username = $request->headers->get('x-dm-user');
-            $password = $request->headers->get('x-dm-pass');
-            if (isset($username, $password)) {
-                $app['monolog']->addInfo("Authenticating $username...");
+        $username = $request->headers->get('x-dm-user');
+        $password = $request->headers->get('x-dm-pass');
+        if (isset($username, $password)) {
+            $app['monolog']->addInfo("Authenticating $username...");
 
-                $userCheck = self::callInternal($app, '/ducksmanager/check', 'GET', [
-                    'username' => $username,
-                    'password' => $password
-                ]);
-                if ($userCheck->getStatusCode() !== Response::HTTP_OK) {
-                    return new Response('', Response::HTTP_UNAUTHORIZED);
-                } else {
-                    self::setSessionUser($app, $username, $userCheck->getContent());
-                    $app['monolog']->addInfo("$username is logged in");
-                }
-            }
-            else {
+            $userCheck = self::callInternal($app, '/ducksmanager/check', 'GET', [
+                'username' => $username,
+                'password' => $password
+            ]);
+            if ($userCheck->getStatusCode() !== Response::HTTP_OK) {
                 return new Response('', Response::HTTP_UNAUTHORIZED);
+            } else {
+                self::setSessionUser($app, $username, $userCheck->getContent());
+                $app['monolog']->addInfo("$username is logged in");
             }
+        }
+        else {
+            return new Response('', Response::HTTP_UNAUTHORIZED);
         }
 
         return null;

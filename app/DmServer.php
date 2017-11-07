@@ -4,10 +4,8 @@ namespace DmServer;
 
 use DDesrosiers\SilexAnnotations\AnnotationServiceProvider;
 use DmServer\Controllers;
-
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\CachedReader;
-
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\EventManager;
 use Doctrine\DBAL\DriverManager;
@@ -18,9 +16,6 @@ use JDesrosiers\Silex\Provider\CorsServiceProvider;
 use Silex\Api\ControllerProviderInterface;
 use Silex\Application;
 use Silex\ControllerCollection;
-use Symfony\Component\Cache\Simple\ApcuCache;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class DmServer implements ControllerProviderInterface
 {
@@ -204,26 +199,10 @@ class DmServer implements ControllerProviderInterface
         /** @var ControllerCollection $routing */
         $routing = $app['controllers_factory'];
 
-        // TODO remove once 'before' handling is done by the controllers
-        $routing->before(/**
-         * @param Request $request
-         * @param Application $app
-         * @return Response|void
-         */
-            function(Request $request, Application $app) {
-                $versionCheck = self::checkVersion($request, $app);
-                if (is_null($versionCheck)) {
-                    return self::authenticateUser($request, $app);
-                }
-                else {
-                    return $versionCheck;
-                }
-            }
-        );
-
-        $app->register(new AnnotationServiceProvider(), array(
+        $app->register(new AnnotationServiceProvider(), [
+            "annot.cache" => new ArrayCache(),
             "annot.controllerDir" => __DIR__."/controllers"
-        ));
+        ]);
 
         $app->register(new CorsServiceProvider(), [
             "cors.allowOrigin" => "*",
