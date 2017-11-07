@@ -77,7 +77,7 @@
                 "app/controllers/Status"
             ],
             "DmServer\\Controllers\\User\\": [
-                "app/controllers/user"
+                "app/controllers/User"
             ],
             "DmServer\\": [
                 "app",

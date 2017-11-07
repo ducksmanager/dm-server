@@ -230,24 +230,15 @@ class DmServer implements ControllerProviderInterface
         ]);
         $app["cors-enabled"]($routing);
 
-        Controllers\User\AppController::addRoutes($routing);
-        Controllers\User\InternalController::addRoutes($routing);
-
-        Controllers\Collection\InternalController::addRoutes($routing);
-
         Controllers\Coa\InternalController::addRoutes($routing);
-
+        Controllers\Collection\InternalController::addRoutes($routing);
         Controllers\Coverid\InternalController::addRoutes($routing);
-
-        Controllers\RawSql\InternalController::addRoutes($routing);
-
-        Controllers\Stats\InternalController::addRoutes($routing);
-
-        Controllers\Edgecreator\InternalController::addRoutes($routing);
-
-        Controllers\Edges\InternalController::addRoutes($routing);
-
         Controllers\Ducksmanager\InternalController::addRoutes($routing);
+        Controllers\Edgecreator\InternalController::addRoutes($routing);
+        Controllers\Edges\InternalController::addRoutes($routing);
+        Controllers\RawSql\InternalController::addRoutes($routing);
+        Controllers\Stats\InternalController::addRoutes($routing);
+        Controllers\User\InternalController::addRoutes($routing);
 
         return $routing;
     }
