@@ -1,6 +1,6 @@
 <?php
 
-namespace DmServer\Controllers\DucksManager;
+namespace DmServer\Controllers\Ducksmanager;
 
 use DmServer\Controllers\AbstractController;
 use DmServer\CsvHelper;

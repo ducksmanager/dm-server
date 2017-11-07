@@ -3,15 +3,15 @@ namespace DmServer\Test;
 
 
 use DmServer\DmServer;
-use EdgeCreator\Models\EdgecreatorIntervalles;
-use EdgeCreator\Models\EdgecreatorModeles2;
-use EdgeCreator\Models\EdgecreatorValeurs;
-use EdgeCreator\Models\ImagesMyfonts;
-use EdgeCreator\Models\ImagesTranches;
-use EdgeCreator\Models\TranchesEnCoursContributeurs;
-use EdgeCreator\Models\TranchesEnCoursModeles;
-use EdgeCreator\Models\TranchesEnCoursModelesImages;
-use EdgeCreator\Models\TranchesEnCoursValeurs;
+use Edgecreator\Models\EdgecreatorIntervalles;
+use Edgecreator\Models\EdgecreatorModeles2;
+use Edgecreator\Models\EdgecreatorValeurs;
+use Edgecreator\Models\ImagesMyfonts;
+use Edgecreator\Models\ImagesTranches;
+use Edgecreator\Models\TranchesEnCoursContributeurs;
+use Edgecreator\Models\TranchesEnCoursModeles;
+use Edgecreator\Models\TranchesEnCoursModelesImages;
+use Edgecreator\Models\TranchesEnCoursValeurs;
 use Symfony\Component\HttpFoundation\Response;
 
 class EdgeCreatorTest extends TestCommon

@@ -1,6 +1,6 @@
 <?php
 
-namespace DmStats\Models;
+namespace Stats\Models;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="numeros_simple", indexes={@ORM\Index(name="ID_Utilisateur", columns={"ID_Utilisateur"}), @ORM\Index(name="numeros_simple_issue", columns={"Publicationcode", "Numero"})})
  * @ORM\Entity
  */
-class NumerosSimple extends \DmStats\Models\BaseModel
+class NumerosSimple extends \Stats\Models\BaseModel
 {
     /**
      * @var string
@@ -31,11 +31,11 @@ class NumerosSimple extends \DmStats\Models\BaseModel
     private $numero;
 
     /**
-     * @var \DmStats\Models\AuteursPseudosSimple
+     * @var \Stats\Models\AuteursPseudosSimple
      *
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
-     * @ORM\OneToOne(targetEntity="DmStats\Models\AuteursPseudosSimple")
+     * @ORM\OneToOne(targetEntity="Stats\Models\AuteursPseudosSimple")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="ID_Utilisateur", referencedColumnName="ID_User")
      * })
@@ -95,11 +95,11 @@ class NumerosSimple extends \DmStats\Models\BaseModel
     /**
      * Set idUtilisateur
      *
-     * @param \DmStats\Models\AuteursPseudosSimple $idUtilisateur
+     * @param \Stats\Models\AuteursPseudosSimple $idUtilisateur
      *
      * @return NumerosSimple
      */
-    public function setIdUtilisateur(\DmStats\Models\AuteursPseudosSimple $idUtilisateur)
+    public function setIdUtilisateur(\Stats\Models\AuteursPseudosSimple $idUtilisateur)
     {
         $this->idUtilisateur = $idUtilisateur;
 
@@ -109,7 +109,7 @@ class NumerosSimple extends \DmStats\Models\BaseModel
     /**
      * Get idUtilisateur
      *
-     * @return \DmStats\Models\AuteursPseudosSimple
+     * @return \Stats\Models\AuteursPseudosSimple
      */
     public function getIdUtilisateur()
     {

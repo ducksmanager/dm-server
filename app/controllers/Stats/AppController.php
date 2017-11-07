@@ -4,7 +4,7 @@ namespace DmServer\Controllers\Stats;
 
 use DmServer\Controllers\AbstractController;
 use DmServer\ModelHelper;
-use DmStats\Contracts\Results\IssueListWithSuggestionDetails;
+use Stats\Contracts\Results\IssueListWithSuggestionDetails;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\JsonResponse;

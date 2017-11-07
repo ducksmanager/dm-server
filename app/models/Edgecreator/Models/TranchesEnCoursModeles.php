@@ -1,6 +1,6 @@
 <?php
 
-namespace EdgeCreator\Models;
+namespace Edgecreator\Models;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\OneToMany;
@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping\OneToMany;
  * @ORM\Table(name="tranches_en_cours_modeles", uniqueConstraints={@ORM\UniqueConstraint(name="tranches_en_cours_modeles__numero", columns={"Pays", "Magazine", "Numero", "username"})})
  * @ORM\Entity
  */
-class TranchesEnCoursModeles extends \EdgeCreator\Models\BaseModel
+class TranchesEnCoursModeles extends \Edgecreator\Models\BaseModel
 {
     /**
      * @var integer

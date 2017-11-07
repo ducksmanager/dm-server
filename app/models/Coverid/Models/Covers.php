@@ -1,6 +1,6 @@
 <?php
 
-namespace CoverId\Models;
+namespace Coverid\Models;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="covers", uniqueConstraints={@ORM\UniqueConstraint(name="uniquefieldset_covers", columns={"issuecode", "url"})})
  * @ORM\Entity
  */
-class Covers extends \CoverId\Models\BaseModel
+class Covers extends \Coverid\Models\BaseModel
 {
     /**
      * @var integer

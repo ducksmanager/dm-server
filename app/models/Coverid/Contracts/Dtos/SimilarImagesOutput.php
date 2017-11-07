@@ -1,6 +1,6 @@
 <?php
 
-namespace CoverId\Contracts\Dtos;
+namespace Coverid\Contracts\Dtos;
 
 
 class SimilarImagesOutput

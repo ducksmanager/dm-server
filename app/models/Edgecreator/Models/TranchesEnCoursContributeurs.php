@@ -1,6 +1,6 @@
 <?php
 
-namespace EdgeCreator\Models;
+namespace Edgecreator\Models;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\JoinColumn;
@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping\ManyToOne;
  * @ORM\Table(name="tranches_en_cours_contributeurs", indexes={@ORM\Index(name="IDX_1D8956AC4A1ED576", columns={"ID_Modele"})})
  * @ORM\Entity
  */
-class TranchesEnCoursContributeurs extends \EdgeCreator\Models\BaseModel
+class TranchesEnCoursContributeurs extends \Edgecreator\Models\BaseModel
 {
     /**
      * @var integer

@@ -220,25 +220,25 @@ class DmServer implements ControllerProviderInterface
         Controllers\Coa\AppController::addRoutes($routing);
         Controllers\Coa\InternalController::addRoutes($routing);
 
-        Controllers\CoverId\AppController::addRoutes($routing);
-        Controllers\CoverId\InternalController::addRoutes($routing);
+        Controllers\Coverid\AppController::addRoutes($routing);
+        Controllers\Coverid\InternalController::addRoutes($routing);
 
-        Controllers\RawSql\AppController::addRoutes($routing);
-        Controllers\RawSql\InternalController::addRoutes($routing);
+        Controllers\Rawsql\AppController::addRoutes($routing);
+        Controllers\Rawsql\InternalController::addRoutes($routing);
 
         Controllers\Status\AppController::addRoutes($routing);
 
         Controllers\Stats\AppController::addRoutes($routing);
         Controllers\Stats\InternalController::addRoutes($routing);
 
-        Controllers\EdgeCreator\AppController::addRoutes($routing);
-        Controllers\EdgeCreator\InternalController::addRoutes($routing);
+        Controllers\Edgecreator\AppController::addRoutes($routing);
+        Controllers\Edgecreator\InternalController::addRoutes($routing);
 
         Controllers\Edges\AppController::addRoutes($routing);
         Controllers\Edges\InternalController::addRoutes($routing);
 
-        Controllers\DucksManager\AppController::addRoutes($routing);
-        Controllers\DucksManager\InternalController::addRoutes($routing);
+        Controllers\Ducksmanager\AppController::addRoutes($routing);
+        Controllers\Ducksmanager\InternalController::addRoutes($routing);
 
         return $routing;
     }

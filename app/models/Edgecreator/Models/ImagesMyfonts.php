@@ -1,6 +1,6 @@
 <?php
 
-namespace EdgeCreator\Models;
+namespace Edgecreator\Models;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="images_myfonts", uniqueConstraints={@ORM\UniqueConstraint(name="images_myfonts_ID_uindex", columns={"ID"})})
  * @ORM\Entity
  */
-class ImagesMyfonts extends \EdgeCreator\Models\BaseModel
+class ImagesMyfonts extends \Edgecreator\Models\BaseModel
 {
     /**
      * @var integer

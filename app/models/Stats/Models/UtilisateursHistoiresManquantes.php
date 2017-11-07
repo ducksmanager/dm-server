@@ -1,6 +1,6 @@
 <?php
 
-namespace DmStats\Models;
+namespace Stats\Models;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="utilisateurs_histoires_manquantes")
  * @ORM\Entity
  */
-class UtilisateursHistoiresManquantes extends \DmStats\Models\BaseModel
+class UtilisateursHistoiresManquantes extends \Stats\Models\BaseModel
 {
     /**
      * @var string

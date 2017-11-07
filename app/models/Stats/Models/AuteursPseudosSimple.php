@@ -1,6 +1,6 @@
 <?php
 
-namespace DmStats\Models;
+namespace Stats\Models;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="auteurs_pseudos_simple", uniqueConstraints={@ORM\UniqueConstraint(name="auteurs_pseudos_simple_ID_User_NomAuteurAbrege_uindex", columns={"ID_User", "NomAuteurAbrege"})}, indexes={@ORM\Index(name="index_auteur_inducks", columns={"NomAuteurAbrege"})})
  * @ORM\Entity
  */
-class AuteursPseudosSimple extends \DmStats\Models\BaseModel
+class AuteursPseudosSimple extends \Stats\Models\BaseModel
 {
     /**
      * @var integer

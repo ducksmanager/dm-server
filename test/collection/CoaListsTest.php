@@ -1,7 +1,7 @@
 <?php
 namespace DmServer\Test;
 
-use CoverId\Models\Covers;
+use Coverid\Models\Covers;
 use DmServer\DmServer;
 use Symfony\Component\HttpFoundation\Response;
 

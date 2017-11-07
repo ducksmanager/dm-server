@@ -1,6 +1,6 @@
 <?php
 
-namespace DmStats\Models;
+namespace Stats\Models;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="histoires_publications", indexes={@ORM\Index(name="index_issue", columns={"publicationcode", "issuenumber"}), @ORM\Index(name="index_story", columns={"storycode"})})
  * @ORM\Entity
  */
-class HistoiresPublications extends \DmStats\Models\BaseModel
+class HistoiresPublications extends \Stats\Models\BaseModel
 {
     /**
      * @var string

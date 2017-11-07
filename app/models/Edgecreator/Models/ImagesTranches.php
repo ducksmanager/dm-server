@@ -1,6 +1,6 @@
 <?php
 
-namespace EdgeCreator\Models;
+namespace Edgecreator\Models;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="images_tranches", uniqueConstraints={@ORM\UniqueConstraint(name="images_tranches_Hash_uindex", columns={"Hash"})})
  * @ORM\Entity
  */
-class ImagesTranches extends \EdgeCreator\Models\BaseModel
+class ImagesTranches extends \Edgecreator\Models\BaseModel
 {
     /**
      * @var integer

@@ -1,6 +1,6 @@
 <?php
 
-namespace DmServer\Controllers\EdgeCreator;
+namespace DmServer\Controllers\Edgecreator;
 
 use Coa\Models\BaseModel;
 use DmServer\Controllers\AbstractController;
@@ -9,15 +9,15 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NoResultException;
-use EdgeCreator\Models\EdgecreatorIntervalles;
-use EdgeCreator\Models\EdgecreatorModeles2;
-use EdgeCreator\Models\EdgecreatorValeurs;
-use EdgeCreator\Models\ImagesMyfonts;
-use EdgeCreator\Models\ImagesTranches;
-use EdgeCreator\Models\TranchesEnCoursContributeurs;
-use EdgeCreator\Models\TranchesEnCoursModeles;
-use EdgeCreator\Models\TranchesEnCoursModelesImages;
-use EdgeCreator\Models\TranchesEnCoursValeurs;
+use Edgecreator\Models\EdgecreatorIntervalles;
+use Edgecreator\Models\EdgecreatorModeles2;
+use Edgecreator\Models\EdgecreatorValeurs;
+use Edgecreator\Models\ImagesMyfonts;
+use Edgecreator\Models\ImagesTranches;
+use Edgecreator\Models\TranchesEnCoursContributeurs;
+use Edgecreator\Models\TranchesEnCoursModeles;
+use Edgecreator\Models\TranchesEnCoursModelesImages;
+use Edgecreator\Models\TranchesEnCoursValeurs;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Swift_Mailer;

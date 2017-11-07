@@ -1,6 +1,6 @@
 <?php
 
-namespace DmServer\Controllers\EdgeCreator;
+namespace DmServer\Controllers\Edgecreator;
 
 use Coa\Models\BaseModel;
 use DmServer\Controllers\AbstractController;

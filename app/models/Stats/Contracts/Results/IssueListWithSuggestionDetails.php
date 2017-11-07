@@ -1,6 +1,6 @@
 <?php
 
-namespace DmStats\Contracts\Results;
+namespace Stats\Contracts\Results;
 
 
 class IssueListWithSuggestionDetails

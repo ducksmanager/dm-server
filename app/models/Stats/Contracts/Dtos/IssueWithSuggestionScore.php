@@ -1,6 +1,6 @@
 <?php
 
-namespace Coa\Contracts\Results;
+namespace Stats\Contracts\Results;
 
 
 class IssueWithSuggestionScore

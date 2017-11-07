@@ -1,6 +1,6 @@
 <?php
 
-namespace EdgeCreator\Models;
+namespace Edgecreator\Models;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="edgecreator_modeles2")
  * @ORM\Entity
  */
-class EdgecreatorModeles2 extends \EdgeCreator\Models\BaseModel
+class EdgecreatorModeles2 extends \Edgecreator\Models\BaseModel
 {
     /**
      * @var integer

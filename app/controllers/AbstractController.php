@@ -3,7 +3,7 @@ namespace DmServer\Controllers;
 
 use DmServer\DmServer;
 use DmServer\RequestUtil;
-use EdgeCreator\Models\TranchesEnCoursModeles;
+use Edgecreator\Models\TranchesEnCoursModeles;
 use Silex\Application;
 use Silex\Application\TranslationTrait;
 use Symfony\Component\HttpFoundation\Response;

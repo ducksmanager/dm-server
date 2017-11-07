@@ -1,6 +1,6 @@
 <?php
 
-namespace EdgeCreator\Models;
+namespace Edgecreator\Models;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="tranches_en_cours_modeles_vue")
  * @ORM\Entity(readOnly=true)
  */
-class TranchesEnCoursModelesVue extends \EdgeCreator\Models\BaseModel
+class TranchesEnCoursModelesVue extends \Edgecreator\Models\BaseModel
 {
     /**
      * @var integer

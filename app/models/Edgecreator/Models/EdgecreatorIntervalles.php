@@ -1,6 +1,6 @@
 <?php
 
-namespace EdgeCreator\Models;
+namespace Edgecreator\Models;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="edgecreator_intervalles", indexes={@ORM\Index(name="index_intervalles", columns={"ID_Valeur", "Numero_debut", "Numero_fin", "username"})})
  * @ORM\Entity
  */
-class EdgecreatorIntervalles extends \EdgeCreator\Models\BaseModel
+class EdgecreatorIntervalles extends \Edgecreator\Models\BaseModel
 {
     /**
      * @var integer

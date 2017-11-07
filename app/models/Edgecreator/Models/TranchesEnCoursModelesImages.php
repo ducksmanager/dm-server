@@ -1,6 +1,6 @@
 <?php
 
-namespace EdgeCreator\Models;
+namespace Edgecreator\Models;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\JoinColumn;
@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping\ManyToOne;
  * @ORM\Table(name="tranches_en_cours_modeles_images", indexes={@ORM\Index(name="tranches_en_cours_modeles_images___fk_image", columns={"ID_Image"}), @ORM\Index(name="tranches_en_cours_modeles_images___modele", columns={"ID_Modele"})})
  * @ORM\Entity
  */
-class TranchesEnCoursModelesImages extends \EdgeCreator\Models\BaseModel
+class TranchesEnCoursModelesImages extends \Edgecreator\Models\BaseModel
 {
     /**
      * @var integer
@@ -31,9 +31,9 @@ class TranchesEnCoursModelesImages extends \EdgeCreator\Models\BaseModel
     private $estphotoprincipale;
 
     /**
-     * @var \EdgeCreator\Models\ImagesTranches
+     * @var \Edgecreator\Models\ImagesTranches
      *
-     * @ORM\ManyToOne(targetEntity="EdgeCreator\Models\ImagesTranches", fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity="Edgecreator\Models\ImagesTranches", fetch="EAGER")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="ID_Image", referencedColumnName="ID")
      * })
@@ -41,7 +41,7 @@ class TranchesEnCoursModelesImages extends \EdgeCreator\Models\BaseModel
     private $image;
 
     /**
-     * @var \EdgeCreator\Models\TranchesEnCoursModeles
+     * @var \Edgecreator\Models\TranchesEnCoursModeles
      *
      * @ManyToOne(targetEntity="TranchesEnCoursModeles", inversedBy="photos")
      * @JoinColumn(name="ID_Modele", referencedColumnName="ID")
@@ -87,11 +87,11 @@ class TranchesEnCoursModelesImages extends \EdgeCreator\Models\BaseModel
     /**
      * Set idImage
      *
-     * @param \EdgeCreator\Models\ImagesTranches $image
+     * @param \Edgecreator\Models\ImagesTranches $image
      *
      * @return TranchesEnCoursModelesImages
      */
-    public function setImage(\EdgeCreator\Models\ImagesTranches $image = null)
+    public function setImage(\Edgecreator\Models\ImagesTranches $image = null)
     {
         $this->image = $image;
 
@@ -101,7 +101,7 @@ class TranchesEnCoursModelesImages extends \EdgeCreator\Models\BaseModel
     /**
      * Get idImage
      *
-     * @return \EdgeCreator\Models\ImagesTranches
+     * @return \Edgecreator\Models\ImagesTranches
      */
     public function getImage()
     {
@@ -111,11 +111,11 @@ class TranchesEnCoursModelesImages extends \EdgeCreator\Models\BaseModel
     /**
      * Set idModele
      *
-     * @param \EdgeCreator\Models\TranchesEnCoursModeles $modele
+     * @param \Edgecreator\Models\TranchesEnCoursModeles $modele
      *
      * @return TranchesEnCoursModelesImages
      */
-    public function setModele(\EdgeCreator\Models\TranchesEnCoursModeles $modele = null)
+    public function setModele(\Edgecreator\Models\TranchesEnCoursModeles $modele = null)
     {
         $this->modele = $modele;
 
@@ -125,7 +125,7 @@ class TranchesEnCoursModelesImages extends \EdgeCreator\Models\BaseModel
     /**
      * Get idModele
      *
-     * @return \EdgeCreator\Models\TranchesEnCoursModeles
+     * @return \Edgecreator\Models\TranchesEnCoursModeles
      */
     public function getModele()
     {

@@ -1,6 +1,6 @@
 <?php
 
-namespace EdgeCreator\Models;
+namespace Edgecreator\Models;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="tranches_en_cours_valeurs", indexes={@ORM\Index(name="ID_Modele", columns={"ID_Modele"})})
  * @ORM\Entity
  */
-class TranchesEnCoursValeurs extends \EdgeCreator\Models\BaseModel
+class TranchesEnCoursValeurs extends \Edgecreator\Models\BaseModel
 {
     /**
      * @var integer
@@ -50,9 +50,9 @@ class TranchesEnCoursValeurs extends \EdgeCreator\Models\BaseModel
     private $optionValeur;
 
     /**
-     * @var \EdgeCreator\Models\TranchesEnCoursModeles
+     * @var \Edgecreator\Models\TranchesEnCoursModeles
      *
-     * @ORM\ManyToOne(targetEntity="EdgeCreator\Models\TranchesEnCoursModeles")
+     * @ORM\ManyToOne(targetEntity="Edgecreator\Models\TranchesEnCoursModeles")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="ID_Modele", referencedColumnName="ID")
      * })
@@ -170,11 +170,11 @@ class TranchesEnCoursValeurs extends \EdgeCreator\Models\BaseModel
     /**
      * Set idModele
      *
-     * @param \EdgeCreator\Models\TranchesEnCoursModeles $idModele
+     * @param \Edgecreator\Models\TranchesEnCoursModeles $idModele
      *
      * @return TranchesEnCoursValeurs
      */
-    public function setIdModele(\EdgeCreator\Models\TranchesEnCoursModeles $idModele = null)
+    public function setIdModele(\Edgecreator\Models\TranchesEnCoursModeles $idModele = null)
     {
         $this->idModele = $idModele;
 
@@ -184,7 +184,7 @@ class TranchesEnCoursValeurs extends \EdgeCreator\Models\BaseModel
     /**
      * Get idModele
      *
-     * @return \EdgeCreator\Models\TranchesEnCoursModeles
+     * @return \Edgecreator\Models\TranchesEnCoursModeles
      */
     public function getIdModele()
     {
