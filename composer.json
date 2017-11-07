@@ -50,34 +50,34 @@
                 "app/controllers"
             ],
             "DmServer\\Controllers\\Coa\\": [
-                "app/controllers/coa"
+                "app/controllers/Coa"
             ],
             "DmServer\\Controllers\\Collection\\": [
-                "app/controllers/collection"
+                "app/controllers/Collection"
             ],
             "DmServer\\Controllers\\CoverId\\": [
-                "app/controllers/coverid"
+                "app/controllers/Coverid"
             ],
             "DmServer\\Controllers\\DucksManager\\": [
-                "app/controllers/ducksmanager"
+                "app/controllers/Ducksmanager"
             ],
             "DmServer\\Controllers\\RawSql\\": [
-                "app/controllers/rawsql"
+                "app/controllers/Rawsql"
             ],
             "DmServer\\Controllers\\EdgeCreator\\": [
-                "app/controllers/edgecreator"
+                "app/controllers/Edgecreator"
             ],
             "DmServer\\Controllers\\Edges\\": [
-                "app/controllers/edges"
+                "app/controllers/Edges"
             ],
             "DmServer\\Controllers\\Stats\\": [
-                "app/controllers/stats"
+                "app/controllers/Stats"
             ],
             "DmServer\\Controllers\\Status\\": [
-                "app/controllers/status"
+                "app/controllers/Status"
             ],
             "DmServer\\Controllers\\User\\": [
-                "app/controllers/user"
+                "app/controllers/User"
             ],
             "DmServer\\": [
                 "app",
