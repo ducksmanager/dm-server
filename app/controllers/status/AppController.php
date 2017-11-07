@@ -25,7 +25,6 @@ use Swagger\Annotations as SWG;
  * ),
  * @SLX\Before("DmServer\RequestInterceptor::checkVersion")
  */
-
 class AppController extends AbstractController
 {
     /**

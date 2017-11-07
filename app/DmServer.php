@@ -236,7 +236,7 @@ class DmServer implements ControllerProviderInterface
         Controllers\Ducksmanager\InternalController::addRoutes($routing);
         Controllers\Edgecreator\InternalController::addRoutes($routing);
         Controllers\Edges\InternalController::addRoutes($routing);
-        Controllers\RawSql\InternalController::addRoutes($routing);
+        Controllers\Rawsql\InternalController::addRoutes($routing);
         Controllers\Stats\InternalController::addRoutes($routing);
         Controllers\User\InternalController::addRoutes($routing);
 

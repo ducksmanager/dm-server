@@ -31,10 +31,9 @@ class AppController extends AbstractController
      *   @SLX\Request(method="GET", uri="list/countries")
      * )
      * @param Application $app
-     * @param Request $request
      * @return JsonResponse
      */
-    public function listCountries(Application $app, Request $request) {
+    public function listCountries(Application $app) {
         return new JsonResponse(
             ModelHelper::getUnserializedArrayFromJson(
                 self::callInternal($app, '/coa/countrynames', 'GET', [])->getContent()
@@ -53,11 +52,10 @@ class AppController extends AbstractController
      *	 @SLX\Assert(variable="countries", regex="^((?<countrycode_regex>[a-z]+),){0,9}(?&countrycode_regex)$")
      * )
      * @param Application $app
-     * @param Request $request
      * @param string $countries
      * @return JsonResponse
      */
-    public function listCountriesFromCodes(Application $app, Request $request, $countries) {
+    public function listCountriesFromCodes(Application $app, $countries) {
         return new JsonResponse(
             ModelHelper::getUnserializedArrayFromJson(
                 self::callInternal($app, '/coa/countrynames', 'GET', [$countries])->getContent()
@@ -76,11 +74,10 @@ class AppController extends AbstractController
      *	 @SLX\Assert(variable="country", regex="^(?<countrycode_regex>[a-z]+)$")
      * )
      * @param Application $app
-     * @param Request $request
      * @param string $country
      * @return JsonResponse
      */
-    public function listPublicationsFromCountryCode(Application $app, Request $request, $country) {
+    public function listPublicationsFromCountryCode(Application $app, $country) {
         return new JsonResponse(
             ModelHelper::getUnserializedArrayFromJson(
                 self::callInternal($app, '/coa/publicationtitles', 'GET', [$country.'/%'])->getContent()
@@ -99,11 +96,10 @@ class AppController extends AbstractController
      *	 @SLX\Assert(variable="publicationcodes", regex="^((?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+),){0,9}(?&publicationcode_regex)$")
      * )
      * @param Application $app
-     * @param Request $request
      * @param string $publicationcodes
      * @return JsonResponse
      */
-    public function listPublicationsFromPublicationCodes(Application $app, Request $request, $publicationcodes) {
+    public function listPublicationsFromPublicationCodes(Application $app, $publicationcodes) {
         return new JsonResponse(
             ModelHelper::getUnserializedArrayFromJson(
                 self::callInternal($app, '/coa/publicationtitles', 'GET', [$publicationcodes])->getContent()
@@ -122,11 +118,10 @@ class AppController extends AbstractController
      *	 @SLX\Assert(variable="publicationcode", regex="^(?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+)$")
      * )
      * @param Application $app
-     * @param Request $request
      * @param string $publicationcode
      * @return JsonResponse
      */
-    public function listIssuesFromPublicationCode(Application $app, Request $request, $publicationcode) {
+    public function listIssuesFromPublicationCode(Application $app, $publicationcode) {
         return new JsonResponse(
             ModelHelper::getUnserializedArrayFromJson(
                 self::callInternal($app, '/coa/issues', 'GET', [$publicationcode])->getContent()
@@ -145,11 +140,10 @@ class AppController extends AbstractController
      *	 @SLX\Assert(variable="issuecodes", regex="^((?<issuecode_regex>[a-z]+/[-A-Z0-9 ]+),){0,3}(?&issuecode_regex)$")
      * )
      * @param Application $app
-     * @param Request $request
      * @param string $issuecodes
      * @return Response
      */
-    public function listIssuesFromIssueCodes(Application $app, Request $request, $issuecodes) {
+    public function listIssuesFromIssueCodes(Application $app, $issuecodes) {
         $response = self::callInternal($app, '/coa/issuesbycodes', 'GET', [$issuecodes]);
         if ($response->getStatusCode() === Response::HTTP_OK) {
             return new JsonResponse(ModelHelper::getSimpleArray(
