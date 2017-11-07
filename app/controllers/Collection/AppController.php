@@ -220,11 +220,10 @@ class AppController extends AbstractController
      *   )
      * )
      * @param Application $app
-     * @param Request $request
      * @param string $key
      * @return Response
      */
-    function getExternalAccess(Application $app, Request $request, $key) {
+    function getExternalAccess(Application $app, $key) {
         return self::callInternal($app, "/collection/externalaccess/$key");
     }
 

@@ -44,11 +44,10 @@ class AppController extends AbstractController
      *	 @SLX\Assert(variable="issueUrl", regex="^(?<issueurl_regex>.+)$")
      * )
      * @param Application $app
-     * @param Request $request
      * @param string $issueUrl
      * @return Response
      */
-    public function downloadCover(Application $app, Request $request, $issueUrl) {
+    public function downloadCover(Application $app, $issueUrl) {
         /** @var BinaryFileResponse $internalRequestResponse */
         $internalRequestResponse = self::callInternal($app, '/cover-id/download', 'GET', [$issueUrl]);
         $response = new Response(file_get_contents($internalRequestResponse->getFile()->getRealPath()));
@@ -161,11 +160,10 @@ class AppController extends AbstractController
      *	 @SLX\Assert(variable="$coverids", regex="^((?<coverid_regex>[0-9]+),){0,3}(?&coverid_regex)$")
      * )
      * @param Application $app
-     * @param Request $request
      * @param string $coverids
      * @return Response
      */
-    public function getCoverList(Application $app, Request $request, $coverids) {
+    public function getCoverList(Application $app, $coverids) {
         return new JsonResponse(
             ModelHelper::getUnserializedArrayFromJson(
                 self::callInternal($app, '/cover-id/issuecodes', 'GET', [$coverids])->getContent()
