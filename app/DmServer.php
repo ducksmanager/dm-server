@@ -200,7 +200,6 @@ class DmServer implements ControllerProviderInterface
         $routing = $app['controllers_factory'];
 
         $app->register(new AnnotationServiceProvider(), [
-            "annot.cache" => new ArrayCache(),
             "annot.controllerDir" => __DIR__."/controllers"
         ]);
 
