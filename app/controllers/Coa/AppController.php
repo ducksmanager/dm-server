@@ -6,7 +6,6 @@ use DmServer\Controllers\AbstractController;
 use DmServer\ModelHelper;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use DDesrosiers\SilexAnnotations\Annotations as SLX;
 use Radebatz\Silex2Swagger\Swagger\Annotations as S2S;
