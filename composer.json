@@ -71,7 +71,7 @@
                 "app/controllers/Edges"
             ],
             "DmServer\\Controllers\\Stats\\": [
-                "app/controllers/stats"
+                "app/controllers/Stats"
             ],
             "DmServer\\Controllers\\Status\\": [
                 "app/controllers/status"

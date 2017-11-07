@@ -243,7 +243,6 @@ class DmServer implements ControllerProviderInterface
 
         Controllers\Status\AppController::addRoutes($routing);
 
-        Controllers\Stats\AppController::addRoutes($routing);
         Controllers\Stats\InternalController::addRoutes($routing);
 
         Controllers\Edgecreator\InternalController::addRoutes($routing);
