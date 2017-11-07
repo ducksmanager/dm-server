@@ -62,7 +62,7 @@
                 "app/controllers/Ducksmanager"
             ],
             "DmServer\\Controllers\\RawSql\\": [
-                "app/controllers/rawsql"
+                "app/controllers/Rawsql"
             ],
             "DmServer\\Controllers\\Edgecreator\\": [
                 "app/controllers/Edgecreator"
