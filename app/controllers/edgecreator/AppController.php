@@ -128,7 +128,7 @@ class AppController extends AbstractController
      * @param Application $app
      * @return Response
      */
-    function getModels(Application $app) {
+    function getV2MyModels(Application $app) {
         return self::callInternal($app, "/edgecreator/v2/model", 'GET');
     }
 
@@ -140,7 +140,7 @@ class AppController extends AbstractController
      *     in="path",
      *     required=true
      *   ),
-     *	 @SLX\Assert(variable="countries", regex="^(?<modelid_regex>\d+)$")
+     *	 @SLX\Assert(variable="modelId", regex="^(?<modelid_regex>\d+)$")
      * )
      * @param Application $app
      * @param string $modelId
@@ -388,7 +388,7 @@ class AppController extends AbstractController
      * @return Response
      */
     function shiftStep(Application $app, $modelid, $stepnumber, $isincludingthisstep) {
-        return self::callInternal($app, "/edgecreator/step/shift/$modelid/$stepnumber/$isincludingthisstep", 'POST');
+        return self::callInternal($app, "/edgecreator/v2/step/shift/$modelid/$stepnumber/$isincludingthisstep", 'POST');
     }
 
     /**
@@ -420,7 +420,7 @@ class AppController extends AbstractController
      * @return Response
      */
     function cloneStep(Application $app, $modelid, $stepnumber, $newstepnumber) {
-        return self::callInternal($app, "/edgecreator/step/clone/$modelid/$stepnumber/$newstepnumber", 'POST');
+        return self::callInternal($app, "/edgecreator/v2/step/clone/$modelid/$stepnumber/$newstepnumber", 'POST');
     }
 
     /**
@@ -445,7 +445,7 @@ class AppController extends AbstractController
      * @return Response
      */
     function deleteStep(Application $app, $modelid, $stepnumber) {
-        return self::callInternal($app, "/edgecreator/step/$modelid/$stepnumber", 'DELETE');
+        return self::callInternal($app, "/edgecreator/v2/step/$modelid/$stepnumber", 'DELETE');
     }
 
     /**

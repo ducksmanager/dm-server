@@ -208,7 +208,6 @@ class DmServer implements ControllerProviderInterface
         ]);
         $app["cors-enabled"]($routing);
 
-        Controllers\Edgecreator\InternalController::addRoutes($routing);
         Controllers\Edges\InternalController::addRoutes($routing);
         Controllers\Rawsql\InternalController::addRoutes($routing);
         Controllers\Stats\InternalController::addRoutes($routing);
