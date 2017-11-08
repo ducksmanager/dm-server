@@ -11,7 +11,7 @@ use Radebatz\Silex2Swagger\Swagger\Annotations as S2S;
 use Swagger\Annotations as SWG;
 
 /**
- * @S2S\Controller(prefix="/",
+ * @S2S\Controller(
  *   @SWG\Parameter(
  *     name="x-dm-version",
  *     in="header",
@@ -26,7 +26,7 @@ class AppController extends AbstractController
 {
     /**
      * @SLX\Route(
-     *   @SLX\Request(method="POST", uri="rawsql"),
+     *   @SLX\Request(method="POST", uri="/rawsql"),
      *   @SWG\Parameter(
      *     name="query",
      *     in="query",

@@ -3,7 +3,6 @@
 namespace DmServer;
 
 use DDesrosiers\SilexAnnotations\AnnotationServiceProvider;
-use DmServer\Controllers;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\CachedReader;
 use Doctrine\Common\Cache\ArrayCache;
@@ -207,11 +206,6 @@ class DmServer implements ControllerProviderInterface
             "cors.allowOrigin" => "*",
         ]);
         $app["cors-enabled"]($routing);
-
-        Controllers\Edges\InternalController::addRoutes($routing);
-        Controllers\Rawsql\InternalController::addRoutes($routing);
-        Controllers\Stats\InternalController::addRoutes($routing);
-        Controllers\User\InternalController::addRoutes($routing);
 
         return $routing;
     }
