@@ -42,7 +42,7 @@ class DatabaseCheckHelper {
      * @param EntityManager $em
      * @return string
      */
-    public static function generateRowCheckOnTables($em)
+    public static function generateRowCheckOnTables(EntityManager $em)
     {
         $emTables = $em->getConnection()->getSchemaManager()->listTableNames();
 

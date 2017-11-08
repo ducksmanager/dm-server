@@ -18,12 +18,10 @@ use DmServer\DmServer;
 use DmServer\ModelHelper;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query\Expr\Join;
-use Exception;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class InternalController extends AbstractController
 {

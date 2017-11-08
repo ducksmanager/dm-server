@@ -136,6 +136,8 @@ class DmServer implements ControllerProviderInterface
     /**
      * @param string $dbName
      * @return EntityManager|null
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\ORM\ORMException
      */
     public static function getEntityManager($dbName) {
         if (!in_array($dbName, self::$configuredEntityManagerNames)) {
@@ -152,6 +154,8 @@ class DmServer implements ControllerProviderInterface
     /**
      * @param string $dbKey
      * @return EntityManager
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\ORM\ORMException
      */
     public static function createEntityManager($dbKey)
     {

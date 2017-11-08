@@ -222,6 +222,7 @@ class TestCommon extends WebTestCase {
     /**
      * @param string $username
      * @return array user info
+     * @throws \Doctrine\ORM\OptimisticLockException
      */
     protected static function createTestCollection($username = 'dm_test_user') {
         $dmEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_DM];
