@@ -9,93 +9,101 @@ use DmServer\ModelHelper;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query\Expr\Func;
 use Silex\Application;
-use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
+use DDesrosiers\SilexAnnotations\Annotations as SLX;
 
+/**
+ * @SLX\Controller(prefix="/internal/cover-id")
+ */
 class InternalController extends AbstractController
 {
     protected static function wrapInternalService($app, $function) {
         return parent::returnErrorOnException($app, DmServer::CONFIG_DB_KEY_COVER_ID, $function);
     }
-    
+
     /**
-     * @param $routing ControllerCollection
+     * @SLX\Route(
+     *     @SLX\Request(method="GET", uri="issuecodes/{coverids}"),
+     *     @SLX\Assert(variable="coverids", regex="^((?<coverid_regex>[0-9]+),){0,19}(?&coverid_regex)$")
+     * )
+     * @param Application $app
+     * @param string $coverids
+     * @return JsonResponse
      */
-    public static function addRoutes($routing)
-    {
-        $routing->get(
-            '/internal/cover-id/issuecodes/{coverids}',
-            function (Request $request, Application $app, $coverids) {
-                return self::wrapInternalService($app, function(EntityManager $coverEm) use ($coverids) {
-                    $coveridsList = explode(',', $coverids);
+    function getCoverList(Application $app, $coverids) {
+        return self::wrapInternalService($app, function(EntityManager $coverEm) use ($coverids) {
+            $coveridsList = explode(',', $coverids);
 
-                    $qb = $coverEm->createQueryBuilder();
-                    $qb
-                        ->select('covers.issuecode, covers.url')
-                        ->from(Covers::class, 'covers');
+            $qb = $coverEm->createQueryBuilder();
+            $qb
+                ->select('covers.issuecode, covers.url')
+                ->from(Covers::class, 'covers');
 
-                    $qb->where($qb->expr()->in('covers.id', $coveridsList));
+            $qb->where($qb->expr()->in('covers.id', $coveridsList));
 
-                    $results = $qb->getQuery()->getResult();
+            $results = $qb->getQuery()->getResult();
 
-                    array_walk(
-                        $results,
-                        function ($cover, $i) use ($coveridsList, &$coverInfos) {
-                            $coverInfos[$coveridsList[$i]] = ['url' => $cover['url'], 'issuecode' => $cover['issuecode']];
-                        }
-                    );
+            array_walk(
+                $results,
+                function ($cover, $i) use ($coveridsList, &$coverInfos) {
+                    $coverInfos[$coveridsList[$i]] = ['url' => $cover['url'], 'issuecode' => $cover['issuecode']];
+                }
+            );
 
-                    return new JsonResponse(ModelHelper::getSerializedArray($coverInfos));
-                });
-            }
-        )->assert('coverids', '^([0-9]+,)*[0-9]+$');
+            return new JsonResponse(ModelHelper::getSerializedArray($coverInfos));
+        });
+    }
 
-        $routing->get(
-            '/internal/cover-id/download/{coverId}',
-            function (Request $request, Application $app, $coverId) {
-                return self::wrapInternalService($app, function(EntityManager $coverEm) use ($coverId) {
-                    $qb = $coverEm->createQueryBuilder();
+    /**
+     * @SLX\Route(
+     *     @SLX\Request(method="GET", uri="download/{coverId}"),
+     *     @SLX\Assert(variable="coverids", regex="^(?<coverid_regex>[0-9]+)$")
+     * )
+     * @param Application $app
+     * @param string $coverId
+     * @return JsonResponse
+     */
+    function downloadCover(Application $app, $coverId) {
+        return self::wrapInternalService($app, function(EntityManager $coverEm) use ($coverId) {
+            $qb = $coverEm->createQueryBuilder();
 
-                    $concatFunc = new Func('CONCAT', [
-                        $qb->expr()->literal('https://outducks.org/'),
-                        'covers.sitecode',
-                        $qb->expr()->literal('/'),
-                        'case covers.sitecode when \'webusers\' then \'webusers/\' else \'\' end',
-                        'covers.url'
-                    ]);
+            $concatFunc = new Func('CONCAT', [
+                $qb->expr()->literal('https://outducks.org/'),
+                'covers.sitecode',
+                $qb->expr()->literal('/'),
+                'case covers.sitecode when \'webusers\' then \'webusers/\' else \'\' end',
+                'covers.url'
+            ]);
 
-                    $qb
-                        ->select(
-                            'covers.url',
-                            $concatFunc. 'as full_url')
-                        ->from(Covers::class, 'covers')
-                        ->where($qb->expr()->eq('covers.id', $coverId));
+            $qb
+                ->select(
+                    'covers.url',
+                    $concatFunc. 'as full_url')
+                ->from(Covers::class, 'covers')
+                ->where($qb->expr()->eq('covers.id', $coverId));
 
-                    $result = $qb->getQuery()->getOneOrNullResult();
-                    $url = $result['url'];
-                    $fullUrl = $result['full_url'];
+            $result = $qb->getQuery()->getOneOrNullResult();
+            $url = $result['url'];
+            $fullUrl = $result['full_url'];
 
-                    $localFilePath = DmServer::$settings['image_local_root'] . basename($url);
-                    @mkdir(DmServer::$settings['image_local_root'] . dirname($url), 0777, true);
-                    file_put_contents(
-                        $localFilePath,
-                        file_get_contents(
-                            $fullUrl,
-                            false,
-                            stream_context_create([
-                                "ssl" => [
-                                    'verify_peer' => false,
-                                    'verify_peer_name' => false
-                                ]
-                            ])
-                        )
-                    );
+            $localFilePath = DmServer::$settings['image_local_root'] . basename($url);
+            @mkdir(DmServer::$settings['image_local_root'] . dirname($url), 0777, true);
+            file_put_contents(
+                $localFilePath,
+                file_get_contents(
+                    $fullUrl,
+                    false,
+                    stream_context_create([
+                        "ssl" => [
+                            'verify_peer' => false,
+                            'verify_peer_name' => false
+                        ]
+                    ])
+                )
+            );
 
-                    return new BinaryFileResponse($localFilePath);
-                });
-            }
-        )->assert('coverId', '[0-9]+');
+            return new BinaryFileResponse($localFilePath);
+        });
     }
 }
