@@ -10,15 +10,8 @@ deploy() {
     docker cp ${f} ${container_name}:${webdir}_new; \
   done \
   \
-  && docker exec ${container_name} chmod -R +x ${webdir}_new/scripts \
-  && docker exec ${container_name} /bin/bash -c "cd ${webdir}_new && touch development.log pimple.json && chown www-data:www-data development.log pimple.json" \
-  && docker exec ${container_name} /bin/bash -c "cd ${webdir}_new && composer update --no-dev -o && echo `git rev-parse HEAD` > deployment_commit_id.txt" \
-  && docker exec ${container_name} /bin/bash ${webdir}_new/scripts/update-schemas.sh 0 \
-  && echo -e "\nThe schema update has to be applied now. Afterwards press y to continue the deployment process. Continue ? (y/n)" \
-  && read answer \
-  && if echo "$answer" | grep -iq "^y" ;then
-     docker exec ${container_name} /bin/bash ${webdir}_new/scripts/deploy/apply-app.sh
-  fi
+  && docker exec ${container_name} /bin/bash -c "echo `git rev-parse HEAD` > ${webdir}_new/deployment_commit_id.txt" \
+  && docker exec -it ${container_name} /bin/bash -x ${webdir}_new/scripts/deploy/apply-app.sh
 }
 
 container_name=$1
