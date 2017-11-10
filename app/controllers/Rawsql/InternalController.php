@@ -5,11 +5,14 @@ namespace DmServer\Controllers\Rawsql;
 use DmServer\Controllers\AbstractController;
 use DmServer\DmServer;
 use Silex\Application;
-use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use DDesrosiers\SilexAnnotations\Annotations as SLX;
 
+/**
+ * @SLX\Controller
+ */
 class InternalController extends AbstractController
 {
     protected static function wrapInternalService($app, $function) {
@@ -17,32 +20,31 @@ class InternalController extends AbstractController
     }
 
     /**
-     * @param $routing ControllerCollection
+     * @SLX\Route(
+     *     @SLX\Request(method="POST", uri="/internal/rawsql")
+     * )
+     * @param Request $request
+     * @param Application $app
+     * @return JsonResponse
      */
-    public static function addRoutes($routing)
-    {
-        $routing->post(
-            '/internal/rawsql',
-            function (Request $request, Application $app) {
-                return self::wrapInternalService($app, function() use ($request, $app) {
-                    $query = $request->request->get('query');
-                    $db = $request->request->get('db');
+    function runQuery(Request $request, Application $app) {
+        return self::wrapInternalService($app, function() use ($request, $app) {
+            $query = $request->request->get('query');
+            $db = $request->request->get('db');
 
-                    $em = DmServer::getEntityManager($db);
-                    if (is_null($em)) {
-                        return new Response('Invalid parameter : db='.$db, Response::HTTP_BAD_REQUEST);
-                    }
-                    if (strpos($query, ';') !== false) { // In lack of something better
-                        return new Response('Raw queries shouldn\'t contain the ";" symbol', Response::HTTP_BAD_REQUEST);
-                    }
-
-                    if (isset($app['monolog'])) {
-                        $app['monolog']->addInfo('Raw sql sent : '.$query);
-                    }
-                    $results = $em->getConnection()->fetchAll($query);
-                    return new JsonResponse($results);
-                });
+            $em = DmServer::getEntityManager($db);
+            if (is_null($em)) {
+                return new Response('Invalid parameter : db='.$db, Response::HTTP_BAD_REQUEST);
             }
-        );
+            if (strpos($query, ';') !== false) { // In lack of something better
+                return new Response('Raw queries shouldn\'t contain the ";" symbol', Response::HTTP_BAD_REQUEST);
+            }
+
+            if (isset($app['monolog'])) {
+                $app['monolog']->addInfo('Raw sql sent : '.$query);
+            }
+            $results = $em->getConnection()->fetchAll($query);
+            return new JsonResponse($results);
+        });
     }
 }

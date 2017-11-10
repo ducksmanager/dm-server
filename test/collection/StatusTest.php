@@ -3,6 +3,7 @@ namespace DmServer\Test;
 
 use DmServer\DmServer;
 use DmServer\SimilarImagesHelper;
+use Symfony\Component\HttpFoundation\Response;
 
 class StatusTest extends TestCommon
 {
@@ -62,5 +63,16 @@ class StatusTest extends TestCommon
         finally {
             self::recreateSchema(DmServer::CONFIG_DB_KEY_COA);
         }
+    }
+
+    public function testGetSwaggerJson() {
+        $response = $this->buildAuthenticatedService('/status/swagger.json', TestCommon::$dmUser, [], [], 'GET')->call();
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+    }
+
+    public function testGetSwaggerJsonNotExisting() {
+        DmServer::$settings['swagger_path'] = '/not/existing';
+        $response = $this->buildAuthenticatedService('/status/swagger.json', TestCommon::$dmUser, [], [], 'GET')->call();
+        $this->assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
     }
 }

@@ -10,6 +10,19 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
+use Swagger\Annotations as SWG;
+
+/**
+ * @SWG\Swagger(
+ *     schemes={"http","https"},
+ *     basePath="/dm-server",
+ *     host="163.172.211.199:8001",
+ *     @SWG\Info(
+ *         version="1.0.0",
+ *         title="DM server API"
+ *     )
+ * )
+ */
 
 abstract class AbstractController
 {
@@ -73,6 +86,6 @@ abstract class AbstractController
         if ($maxOccurrences === 1) {
             return '^'.$baseRegex.'$';
         }
-        return '^('.$baseRegex.',){0,'.($maxOccurrences-1).'}'.$baseRegex.'$';
+        return '^((?<base>'.$baseRegex.'),){0,'.($maxOccurrences-1).'}(?&base)$';
     }
 }
