@@ -66,7 +66,7 @@ class InternalController extends AbstractController
     /**
      * @SLX\Route(
      *     @SLX\Request(method="GET", uri="publicationtitles/{publicationCodes}"),
-     *     @SLX\Assert(variable="publicationCodes", regex="^((?P<publicationcode_wildcard_regex>[a-z]+/%)|((?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+),){0,9}(?&publicationcode_regex))$")
+     *     @SLX\Assert(variable="publicationCodes", regex="^((?P<publicationcode_wildcard_regex>[a-z]+/%)|((?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+),){0,49}(?&publicationcode_regex))$")
      * )
      * @param Application $app
      * @param string $publicationCodes
