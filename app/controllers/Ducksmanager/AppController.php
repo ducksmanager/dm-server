@@ -135,8 +135,9 @@ class AppController extends AbstractController
      *   @SWG\Parameter(
      *     name="userid",
      *     in="query",
-     *     required=true
+     *     required=false
      *   ),
+     *	 @SLX\Value(variable="userid", default=null)
      * )
      * @param Application $app
      * @param Request $request
