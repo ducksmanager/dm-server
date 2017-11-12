@@ -14,6 +14,7 @@ use DmServer\DmServer;
 use Doctrine\ORM\EntityManager;
 use Silex\Application;
 
+use Swift_Mailer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use DDesrosiers\SilexAnnotations\Annotations as SLX;
@@ -188,6 +189,46 @@ class InternalController extends AbstractInternalController
             $dmEm->flush();
 
             return new Response('OK');
+        });
+    }
+
+    /**
+     * @SLX\Route(
+     *     @SLX\Request(method="POST", uri="email/bookstore")
+     * )
+     * @param Application $app
+     * @param Request $request
+     * @return Response
+     * @throws \Exception
+     */
+    function sendBookstoreEmail(Application $app, Request $request) {
+        return self::wrapInternalService($app, function(EntityManager $dmEm) use ($app, $request) {
+            $userId = $request->request->get('userId');
+            if (is_null($userId)) {
+                $userName = 'anonymous';
+            }
+            else {
+                $userName = $dmEm->getRepository(Users::class)->findOneBy([
+                    'id' => $userId
+                ])->getUsername();
+            }
+
+            $message = new \Swift_Message();
+            $message
+                ->setSubject('Ajout de bouquinerie')
+                ->setFrom([$userName."@".DmServer::$settings['smtp_origin_email_domain_ducksmanager']])
+                ->setTo([DmServer::$settings['smtp_username']])
+                ->setBody('<a href="https://www.ducksmanager.net/backend/bouquineries.php">Validation</a>', 'text/html');
+
+            /** @var Swift_Mailer $mailer */
+            $mailer = $app['mailer'];
+            $failures = [];
+            // Pass a variable name to the send() method
+            if (!$mailer->send($message, $failures)) {
+                throw new \Exception("Can't send e-mail '$message': failed with ".print_r($failures, true));
+            }
+
+            return new Response(Response::HTTP_OK);
         });
     }
 }

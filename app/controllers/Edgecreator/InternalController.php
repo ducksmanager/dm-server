@@ -758,10 +758,11 @@ class InternalController extends AbstractController
             $message = new \Swift_Message();
             $message
                 ->setSubject('Nouvelle photo de tranche')
-                ->setFrom([$user['username']."@".DmServer::$settings['smtp_origin_email_domain']])
+                ->setFrom([$user['username']."@".DmServer::$settings['smtp_origin_email_domain_edgecreator']])
                 ->setTo([DmServer::$settings['smtp_username']])
                 ->setBody($fileName);
 
+            $failures = [];
             // Pass a variable name to the send() method
             if (!$mailer->send($message, $failures)) {
                 throw new \Exception("Can't send e-mail '$message': failed with ".print_r($failures, true));

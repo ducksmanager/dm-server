@@ -128,4 +128,24 @@ class AppController extends AbstractController
             return $demoUserResponse;
         }
     }
+
+    /**
+     * @SLX\Route(
+     *   @SLX\Request(method="POST", uri="email/bookstore"),
+     *   @SWG\Parameter(
+     *     name="userid",
+     *     in="query",
+     *     required=true
+     *   ),
+     * )
+     * @param Application $app
+     * @param Request $request
+     * @return Response
+     * @throws \Exception
+     */
+    public function sendBookstoreEmail(Application $app, Request $request) {
+        return self::callInternal($app, '/ducksmanager/email/bookstore', 'POST', [
+            'userId' => $request->request->get('userid')
+         ]);
+    }
 }

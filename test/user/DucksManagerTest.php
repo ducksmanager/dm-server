@@ -84,4 +84,24 @@ class DucksManagerTest extends TestCommon
             return $purchase->getDate()->format('Y-m-d') === '2010-01-01' && $purchase->getDescription() === 'Purchase';
         })); // Previous issue has been reset
     }
+
+    public function testSendBookcaseEmail() {
+        $response = $this->buildAuthenticatedService('/ducksmanager/email/bookstore', TestCommon::$dmUser, [])->call();
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+    }
+
+    public function testSendBookcaseEmailWithUser() {
+        self::createTestCollection('demo');
+
+        $dmEm = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM);
+
+        $demoUser = $dmEm->getRepository(Users::class)->findOneBy([
+            'username' => 'demo'
+        ]);
+
+        $response = $this->buildAuthenticatedService('/ducksmanager/email/bookstore', TestCommon::$dmUser, [], [
+            'userid' => $demoUser->getId()
+        ])->call();
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+    }
 }
