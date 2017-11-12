@@ -32,7 +32,7 @@ $app->before(function (Request $request) {
         return new Response('Unauthorized', Response::HTTP_FORBIDDEN);
     }
     return true;
-});
+}, Application::EARLY_EVENT);
 
 $app->register(new Sorien\Provider\PimpleDumpProvider(), [
     'pimpledump.output_dir' => __DIR__]
