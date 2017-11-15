@@ -26,6 +26,7 @@ docker exec ${container_name} grep -Po '^(host|dbname|username|password)=\K.+' $
     docker exec ${host} /bin/bash -c "mysqldump -uroot -pchangeme --tab=/tmp/export --skip-dump-date ${dbname} && for i in /tmp/export/*.txt; do mv \$i \"$(basename \$i .txt).csv\"; done" && \
     docker cp ${host}:/tmp/export ${backup_subdir}
   
+    git -C ${backup_subdir} init &&
     git -C ${backup_subdir} add ${backup_subdir}/* &&
     git -C ${backup_subdir} commit -m "Backup $today"
 
