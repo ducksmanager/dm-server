@@ -21,7 +21,7 @@ docker exec ${container_name} grep -Po '^(host|dbname|username|password)=\K.+' $
     backup_subdir=${backup_dir}/db_csv_${dbname}
 
     echo "Backing up $dbname from $host to $backup_subdir"
-    rm -rf ${backup_subdir} && \
+    rm -rf ${backup_subdir}/* && \
     docker exec ${container_name} /bin/bash -c "rm -rf /tmp/export && mkdir -p /tmp/export && chmod 777 /tmp/export" && \
     docker exec ${container_name} /bin/bash -c "mysqldump -uroot -pchangeme -h ${host} --tab=/tmp/export --skip-dump-date ${dbname} && for i in /tmp/export/*.txt; do mv \$i \"$(basename \$i .txt).csv\"; done" && \
     docker cp ${container_name}:/tmp/export ${backup_subdir}
