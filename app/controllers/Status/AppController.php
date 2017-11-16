@@ -35,7 +35,7 @@ class AppController extends AbstractController
      * @param Application $app
      * @return Response
      */
-    function getSwaggerJson(Application $app) {
+    public function getSwaggerJson(Application $app) {
         return AbstractController::returnErrorOnException($app, null, function () {
             try {
                 $swaggerContent = file_get_contents(DmServer::$settings['swagger_path']);
@@ -66,7 +66,7 @@ class AppController extends AbstractController
      * @param Application $app
      * @return Response
      */
-    function getPastecStatus(Application $app) {
+    public function getPastecStatus(Application $app) {
         return AbstractController::returnErrorOnException($app, null, function () {
             $errors = [];
             $log = [];
@@ -103,7 +103,7 @@ class AppController extends AbstractController
      * @param Application $app
      * @return Response
      */
-    function getDbStatus(Application $app) {
+    public function getDbStatus(Application $app) {
         return AbstractController::returnErrorOnException($app, null, function () use ($app) {
             $errors = [];
             $log = [];

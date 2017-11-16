@@ -15,7 +15,7 @@ class CoaListsTest extends TestCommon
     }
 
     public function testGetCountryList() {
-        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/countries', TestCommon::$dmUser)->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/countries', self::$dmUser)->call();
 
         $objectResponse = json_decode($response->getContent());
 
@@ -25,7 +25,7 @@ class CoaListsTest extends TestCommon
     }
 
     public function testGetCountryListFromCountryCodes() {
-        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/countries/fr,us', TestCommon::$dmUser)->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/countries/fr,us', self::$dmUser)->call();
 
         $objectResponse = json_decode($response->getContent());
 
@@ -35,7 +35,7 @@ class CoaListsTest extends TestCommon
     }
 
     public function testGetPublicationListFromCountry() {
-        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/publications/fr', TestCommon::$dmUser)->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/publications/fr', self::$dmUser)->call();
 
         $objectResponse = json_decode($response->getContent());
 
@@ -45,7 +45,7 @@ class CoaListsTest extends TestCommon
     }
 
     public function testGetPublicationListFromPublicationCodes() {
-        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/publications/fr/DDD,us/CBL', TestCommon::$dmUser)->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/publications/fr/DDD,us/CBL', self::$dmUser)->call();
 
         $objectResponse = json_decode($response->getContent());
 
@@ -55,13 +55,13 @@ class CoaListsTest extends TestCommon
     }
 
     public function testGetPublicationListInvalidCountry() {
-        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/publications/fr0', TestCommon::$dmUser)->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/publications/fr0', self::$dmUser)->call();
 
         $this->assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
     }
 
     public function testGetIssueList() {
-        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issues/fr/DDD', TestCommon::$dmUser)->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issues/fr/DDD', self::$dmUser)->call();
 
         $arrayResponse = json_decode($response->getContent());
 
@@ -71,7 +71,7 @@ class CoaListsTest extends TestCommon
     }
 
     public function testGetIssueListEmptyList() {
-        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issues/fr/DD', TestCommon::$dmUser)->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issues/fr/DD', self::$dmUser)->call();
 
         $arrayResponse = json_decode($response->getContent());
 
@@ -80,13 +80,13 @@ class CoaListsTest extends TestCommon
     }
 
     public function testGetIssueListInvalidPublicationCode() {
-        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issues/fr/DD_', TestCommon::$dmUser)->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issues/fr/DD_', self::$dmUser)->call();
 
         $this->assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
     }
 
     public function testGetIssueListByIssueCodes() {
-        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issuesbycodes/fr/DDD 1', TestCommon::$dmUser)->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issuesbycodes/fr/DDD 1', self::$dmUser)->call();
 
         $arrayResponse = json_decode($response->getContent());
 
@@ -107,7 +107,7 @@ class CoaListsTest extends TestCommon
         );
         DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_COVER_ID]->flush();
 
-        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issuesbycodes/fr/DDDDD 1', TestCommon::$dmUser)->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issuesbycodes/fr/DDDDD 1', self::$dmUser)->call();
 
         $arrayResponse = json_decode($response->getContent());
         $this->assertEquals([], $arrayResponse);

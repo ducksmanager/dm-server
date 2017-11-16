@@ -31,7 +31,7 @@ class InternalController extends AbstractController
      * @param string $coverids
      * @return JsonResponse
      */
-    function getCoverList(Application $app, $coverids) {
+    public function getCoverList(Application $app, $coverids) {
         return self::wrapInternalService($app, function(EntityManager $coverEm) use ($coverids) {
             $coveridsList = explode(',', $coverids);
 
@@ -64,7 +64,7 @@ class InternalController extends AbstractController
      * @param string $coverId
      * @return JsonResponse
      */
-    function downloadCover(Application $app, $coverId) {
+    public function downloadCover(Application $app, $coverId) {
         return self::wrapInternalService($app, function(EntityManager $coverEm) use ($coverId) {
             $qb = $coverEm->createQueryBuilder();
 

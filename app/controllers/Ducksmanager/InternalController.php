@@ -36,7 +36,7 @@ class InternalController extends AbstractInternalController
      * @param string $username
      * @return Response
      */
-    function getUsernameExists(Application $app, $username) {
+    public function getUsernameExists(Application $app, $username) {
         return self::wrapInternalService($app, function(EntityManager $dmEm) use ($username) {
             $existingUser = $dmEm->getRepository(Users::class)->findBy([
                 'username' => $username
@@ -58,7 +58,7 @@ class InternalController extends AbstractInternalController
      * @param string $password2
      * @return Response
      */
-    function checkNewUser(Application $app, $username, $password, $password2) {
+    public function checkNewUser(Application $app, $username, $password, $password2) {
         $error = null;
 
         if (isset($username)) {
@@ -94,7 +94,7 @@ class InternalController extends AbstractInternalController
      * @param string $password
      * @return Response
      */
-    function checkExistingUser(Application $app, $username, $password) {
+    public function checkExistingUser(Application $app, $username, $password) {
         return self::wrapInternalService($app, function(EntityManager $dmEm) use ($username, $password) {
             /** @var Users $existingUser */
             $existingUser = $dmEm->getRepository(Users::class)->findOneBy([
@@ -117,7 +117,7 @@ class InternalController extends AbstractInternalController
      * @param Application $app
      * @return Response
      */
-    function createUser(Request $request, Application $app) {
+    public function createUser(Request $request, Application $app) {
         return self::wrapInternalService($app, function(EntityManager $dmEm) use ($request) {
             $user = new Users();
             $user->setUsername($request->request->get('username'));
@@ -140,7 +140,7 @@ class InternalController extends AbstractInternalController
      * @param string $userId
      * @return Response
      */
-    function deleteUserData(Application $app, $userId) {
+    public function deleteUserData(Application $app, $userId) {
         return self::wrapInternalService($app, function(EntityManager $dmEm) use ($userId) {
             $qb = $dmEm->createQueryBuilder();
 
@@ -173,7 +173,7 @@ class InternalController extends AbstractInternalController
      * @param string $userId
      * @return Response
      */
-    function resetBookcaseOptions(Application $app, $userId) {
+    public function resetBookcaseOptions(Application $app, $userId) {
         return self::wrapInternalService($app, function(EntityManager $dmEm) use ($userId) {
             $user = $dmEm->getRepository(Users::class)->findOneBy([
                 'id' => $userId
@@ -201,7 +201,7 @@ class InternalController extends AbstractInternalController
      * @return Response
      * @throws \Exception
      */
-    function sendBookstoreEmail(Application $app, Request $request) {
+    public function sendBookstoreEmail(Application $app, Request $request) {
         return self::wrapInternalService($app, function(EntityManager $dmEm) use ($app, $request) {
             $userId = $request->request->get('userId');
             if (is_null($userId)) {

@@ -44,7 +44,7 @@ class AppController extends AbstractController
      * @param Application $app
      * @return JsonResponse
      */
-    function getWatchedAuthorStoryCount(Application $app) {
+    public function getWatchedAuthorStoryCount(Application $app) {
         $authorsAndStoryMissingForUserCount = ModelHelper::getUnserializedArrayFromJson(
             self::callInternal($app, '/stats/authorsstorycount/usercollection/missing', 'GET')->getContent()
         );
@@ -89,7 +89,7 @@ class AppController extends AbstractController
      * @param string $countrycode
      * @return JsonResponse
      */
-    function getSuggestedIssues(Application $app, $countrycode) {
+    public function getSuggestedIssues(Application $app, $countrycode) {
         $suggestedStories = ModelHelper::getUnserializedArrayFromJson(
             self::callInternal($app, '/stats/suggestedissues/' . $countrycode, 'GET')->getContent()
         );

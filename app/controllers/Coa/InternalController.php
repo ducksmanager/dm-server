@@ -40,7 +40,7 @@ class InternalController extends AbstractController
      * @param string $countryCodes
      * @return JsonResponse
      */
-    function listCountries(Application $app, $countryCodes) {
+    public function listCountries(Application $app, $countryCodes) {
         return self::wrapInternalService($app, function(EntityManager $coaEm) use ($countryCodes) {
             $qb = $coaEm->createQueryBuilder();
             $qb
@@ -72,7 +72,7 @@ class InternalController extends AbstractController
      * @param string $publicationCodes
      * @return JsonResponse
      */
-    function listPublications(Application $app, $publicationCodes) {
+    public function listPublications(Application $app, $publicationCodes) {
         return self::wrapInternalService($app, function(EntityManager $coaEm) use ($publicationCodes) {
             $qb = $coaEm->createQueryBuilder();
             $qb
@@ -108,7 +108,7 @@ class InternalController extends AbstractController
      * @param string $publicationCode
      * @return JsonResponse
      */
-    function listIssuesFromPublicationCode(Application $app, $publicationCode) {
+    public function listIssuesFromPublicationCode(Application $app, $publicationCode) {
         return self::wrapInternalService($app, function(EntityManager $coaEm) use ($publicationCode) {
             $qb = $coaEm->createQueryBuilder();
             $qb
@@ -137,7 +137,7 @@ class InternalController extends AbstractController
      * @param string $issuecodes
      * @return JsonResponse
      */
-    function listIssuesFromIssueCodes(Application $app, $issuecodes) {
+    public function listIssuesFromIssueCodes(Application $app, $issuecodes) {
         return self::wrapInternalService($app, function(EntityManager $coaEm) use ($app, $issuecodes) {
             $issuecodesList = explode(',', $issuecodes);
 
@@ -198,7 +198,7 @@ class InternalController extends AbstractController
      * @param string $urls
      * @return JsonResponse
      */
-    function listIssuesByCoverUrls(Application $app, $urls) {
+    public function listIssuesByCoverUrls(Application $app, $urls) {
         return self::wrapInternalService($app, function(EntityManager $coaEm) use ($urls) {
             $urlList = explode(',', $urls);
 
@@ -234,7 +234,7 @@ class InternalController extends AbstractController
      * @param string $authors
      * @return JsonResponse
      */
-    function listAuthorsFromAuthorCodes(Application $app, $authors) {
+    public function listAuthorsFromAuthorCodes(Application $app, $authors) {
         return self::wrapInternalService($app, function(EntityManager $coaEm) use($authors) {
             $authorsList = array_unique(explode(',', $authors));
 
@@ -264,7 +264,7 @@ class InternalController extends AbstractController
      * @param string $storyCodes
      * @return JsonResponse
      */
-    function listStoryDetailsFromStoryCodes(Application $app, $storyCodes) {
+    public function listStoryDetailsFromStoryCodes(Application $app, $storyCodes) {
         return self::wrapInternalService($app, function(EntityManager $coaEm) use($storyCodes) {
             $storyList = array_unique(explode(',', $storyCodes));
 

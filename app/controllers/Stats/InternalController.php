@@ -33,7 +33,7 @@ class InternalController extends AbstractController
      * @param string $personCodes
      * @return JsonResponse
      */
-    function getWatchedAuthorStoryCount(Application $app, $personCodes) {
+    public function getWatchedAuthorStoryCount(Application $app, $personCodes) {
         return self::wrapInternalService($app, function(EntityManager $statsEm) use ($personCodes) {
             $qbStoryCountPerAuthor = $statsEm->createQueryBuilder();
             $qbStoryCountPerAuthor
@@ -61,7 +61,7 @@ class InternalController extends AbstractController
      * @param Application $app
      * @return JsonResponse
      */
-    function getMissingStories(Application $app) {
+    public function getMissingStories(Application $app) {
         return self::wrapInternalService($app, function(EntityManager $statsEm) use($app) {
             $qbMissingStoryCountPerAuthor = $statsEm->createQueryBuilder();
             $qbMissingStoryCountPerAuthor
@@ -92,7 +92,7 @@ class InternalController extends AbstractController
      * @param string $countrycode
      * @return JsonResponse
      */
-    function getSuggestedIssues(Application $app, $countrycode) {
+    public function getSuggestedIssues(Application $app, $countrycode) {
         return self::wrapInternalService($app, function(EntityManager $statsEm) use ($app, $countrycode) {
             $qbGetMostWantedSuggestions = $statsEm->createQueryBuilder();
 

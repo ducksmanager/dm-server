@@ -45,7 +45,7 @@ class InternalController extends AbstractController
      * @param string $stepNumber
      * @return Response
      */
-    function createStepV1(Request $request, Application $app, $publicationCode, $stepNumber) {
+    public function createStepV1(Request $request, Application $app, $publicationCode, $stepNumber) {
         return self::wrapInternalService($app, function(EntityManager $ecEm) use ($request, $publicationCode, $stepNumber) {
             list($country, $publication) = explode('/', $publicationCode);
             $functionName = $request->request->get('functionname');
@@ -78,7 +78,7 @@ class InternalController extends AbstractController
      * @param string $isEditor
      * @return Response
      */
-    function createModelV2(Application $app, $publicationCode, $issueNumber, $isEditor) {
+    public function createModelV2(Application $app, $publicationCode, $issueNumber, $isEditor) {
         return self::wrapInternalService($app, function(EntityManager $ecEm) use ($app, $publicationCode, $issueNumber, $isEditor) {
             list($country, $publication) = explode('/', $publicationCode);
 
@@ -104,7 +104,7 @@ class InternalController extends AbstractController
      * @param Application $app
      * @return Response
      */
-    function createValueV1(Request $request, Application $app) {
+    public function createValueV1(Request $request, Application $app) {
         return self::wrapInternalService($app, function(EntityManager $ecEm) use ($request) {
             $optionId = $request->request->get('optionid');
             $optionValue = $request->request->get('optionvalue');
@@ -132,7 +132,7 @@ class InternalController extends AbstractController
      * @param string $stepNumber
      * @return Response
      */
-    function createStepV2(Request $request, Application $app, $modelId, $stepNumber) {
+    public function createStepV2(Request $request, Application $app, $modelId, $stepNumber) {
         return self::wrapInternalService($app, function(EntityManager $ecEm) use ($request, $modelId, $stepNumber) {
             $qb = $ecEm->createQueryBuilder();
 
@@ -202,7 +202,7 @@ class InternalController extends AbstractController
      * @param string $lastIssueNumber
      * @return Response
      */
-    function createV1Interval(Application $app, $valueId, $firstIssueNumber, $lastIssueNumber) {
+    public function createV1Interval(Application $app, $valueId, $firstIssueNumber, $lastIssueNumber) {
         return self::wrapInternalService($app, function(EntityManager $ecEm) use ($app, $valueId, $firstIssueNumber, $lastIssueNumber) {
             $interval = new EdgecreatorIntervalles();
 
@@ -231,8 +231,8 @@ class InternalController extends AbstractController
      * @param string $newStepNumber
      * @return Response
      */
-    function cloneStepV2(Application $app, $modelId, $stepNumber, $newStepNumber) {
-        return self::wrapInternalService($app, function(EntityManager $ecEm) use ($app, $modelId, $stepNumber, $newStepNumber) {
+    public function cloneStepV2(Application $app, $modelId, $stepNumber, $newStepNumber) {
+        return self::wrapInternalService($app, function(EntityManager $ecEm) use ($modelId, $stepNumber, $newStepNumber) {
             $criteria = [
                 'idModele' => $modelId,
                 'ordre' => $stepNumber
@@ -280,8 +280,8 @@ class InternalController extends AbstractController
      * @param string $isIncludingThisStep
      * @return Response
      */
-    function shiftV2Step(Application $app, $modelId, $stepNumber, $isIncludingThisStep) {
-        return self::wrapInternalService($app, function(EntityManager $ecEm) use ($app, $modelId, $stepNumber, $isIncludingThisStep) {
+    public function shiftV2Step(Application $app, $modelId, $stepNumber, $isIncludingThisStep) {
+        return self::wrapInternalService($app, function(EntityManager $ecEm) use ($modelId, $stepNumber, $isIncludingThisStep) {
             $model = $ecEm->getRepository(TranchesEnCoursModeles::class)->find($modelId);
 
             $stepNumber = (int) $stepNumber;
@@ -325,8 +325,8 @@ class InternalController extends AbstractController
      * @param string $stepNumber
      * @return Response
      */
-    function deleteV2Step(Application $app, $modelId, $stepNumber) {
-        return self::wrapInternalService($app, function(EntityManager $ecEm) use ($app, $modelId, $stepNumber) {
+    public function deleteV2Step(Application $app, $modelId, $stepNumber) {
+        return self::wrapInternalService($app, function(EntityManager $ecEm) use ($modelId, $stepNumber) {
             $qb = $ecEm->createQueryBuilder();
 
             $qb->delete(TranchesEnCoursValeurs::class, 'values')
@@ -349,7 +349,7 @@ class InternalController extends AbstractController
      * @param Application $app
      * @return Response
      */
-    function getV2MyModels(Application $app) {
+    public function getV2MyModels(Application $app) {
         return self::wrapInternalService($app, function (EntityManager $ecEm) use ($app) {
             $qb = $ecEm->createQueryBuilder();
 
@@ -381,8 +381,8 @@ class InternalController extends AbstractController
      * @param string $modelId
      * @return Response
      */
-    function getV2ModelById(Application $app, $modelId) {
-        return self::wrapInternalService($app, function (EntityManager $ecEm) use ($app, $modelId) {
+    public function getV2ModelById(Application $app, $modelId) {
+        return self::wrapInternalService($app, function (EntityManager $ecEm) use ($modelId) {
             $model = $ecEm->getRepository(TranchesEnCoursModeles::class)->find($modelId);
             return new JsonResponse(self::getSerializer()->serialize($model, 'json'), Response::HTTP_OK, [], true);
         });
@@ -395,7 +395,7 @@ class InternalController extends AbstractController
      * @param Application $app
      * @return Response
      */
-    function getV2ModelsPhotoByMeEditedByOthers(Application $app) {
+    public function getV2ModelsPhotoByMeEditedByOthers(Application $app) {
         return self::wrapInternalService($app, function (EntityManager $ecEm) use ($app) {
             $qb = $ecEm->createQueryBuilder();
 
@@ -424,7 +424,7 @@ class InternalController extends AbstractController
      * @param Application $app
      * @return Response
      */
-    function getV2UnassignedModels(Application $app) {
+    public function getV2UnassignedModels(Application $app) {
         return self::wrapInternalService($app, function (EntityManager $ecEm) {
             $models = $ecEm->getRepository(TranchesEnCoursModeles::class)->findBy([
                 'username' => null
@@ -445,7 +445,7 @@ class InternalController extends AbstractController
      * @param string $issueNumber
      * @return Response
      */
-    function getV2ModelByPublicationCodeAndIssueNumber(Application $app, $publicationCode, $issueNumber) {
+    public function getV2ModelByPublicationCodeAndIssueNumber(Application $app, $publicationCode, $issueNumber) {
         return self::wrapInternalService($app, function (EntityManager $ecEm) use ($publicationCode, $issueNumber) {
             list($country, $magazine) = explode('/', $publicationCode);
             $model = $ecEm->getRepository(TranchesEnCoursModeles::class)->findOneBy([
@@ -471,7 +471,7 @@ class InternalController extends AbstractController
      * @param Request $request
      * @return Response
      */
-    function storeMyFontsPreview(Application $app, Request $request) {
+    public function storeMyFontsPreview(Application $app, Request $request) {
         return self::wrapInternalService($app, function (EntityManager $ecEm) use ($request) {
             $preview = new ImagesMyfonts();
 
@@ -497,7 +497,7 @@ class InternalController extends AbstractController
      * @param string $previewId
      * @return Response
      */
-    function deleteMyFontsPreview(Application $app, $previewId) {
+    public function deleteMyFontsPreview(Application $app, $previewId) {
         return self::wrapInternalService($app, function (EntityManager $ecEm) use ($previewId) {
             $preview = $ecEm->getRepository(ImagesMyfonts::class)->find($previewId);
             $ecEm->remove($preview);
@@ -516,7 +516,7 @@ class InternalController extends AbstractController
      * @param string $modelId
      * @return Response
      */
-    function deactivateV2Model(Application $app, $modelId) {
+    public function deactivateV2Model(Application $app, $modelId) {
         return self::wrapInternalService($app, function (EntityManager $ecEm) use ($modelId) {
             $model = $ecEm->getRepository(TranchesEnCoursModeles::class)->find($modelId);
             $model->setActive(false);
@@ -537,7 +537,7 @@ class InternalController extends AbstractController
      * @return Response
      * @internal param Request $request
      */
-    function deleteSteps(Application $app, $modelId) {
+    public function deleteSteps(Application $app, $modelId) {
         return self::wrapInternalService($app, function (EntityManager $ecEm) use ($modelId) {
             $qbDeleteSteps = $ecEm->getRepository(TranchesEnCoursModeles::class)->createQueryBuilder($modelId);
             $qbDeleteSteps
@@ -564,7 +564,7 @@ class InternalController extends AbstractController
      * @param string $isReadyToPublish
      * @return Response
      */
-    function setModelAsReadyToBePublished(Application $app, Request $request, $modelId, $isReadyToPublish) {
+    public function setModelAsReadyToBePublished(Application $app, Request $request, $modelId, $isReadyToPublish) {
         return self::wrapInternalService($app, function (EntityManager $ecEm) use ($request, $modelId, $isReadyToPublish) {
             $designers = $request->request->get('designers');
             $photographers = $request->request->get('photographers');
@@ -618,7 +618,7 @@ class InternalController extends AbstractController
      * @param string $modelId
      * @return Response
      */
-    function setModelMainPhoto(Application $app, Request $request, $modelId) {
+    public function setModelMainPhoto(Application $app, Request $request, $modelId) {
         return self::wrapInternalService($app, function (EntityManager $ecEm) use ($app, $request, $modelId) {
             $photoName = $request->request->get('photoname');
 
@@ -662,12 +662,11 @@ class InternalController extends AbstractController
      *     @SLX\Assert(variable="modelId", regex="^(?<modelid_regex>\d+)$")
      * )
      * @param Application $app
-     * @param Request $request
      * @param string $modelId
      * @return Response
      */
-    function getModelMainPhoto(Application $app, Request $request, $modelId) {
-        return self::wrapInternalService($app, function (EntityManager $ecEm) use ($app, $request, $modelId) {
+    public function getModelMainPhoto(Application $app, $modelId) {
+        return self::wrapInternalService($app, function (EntityManager $ecEm) use ($modelId) {
             $qb = $ecEm->createQueryBuilder();
 
             $qb->select('photo.id, photo.nomfichier')
@@ -696,7 +695,7 @@ class InternalController extends AbstractController
      * @param Application $app
      * @return Response
      */
-    function getMultipleEdgePhotosFromToday(Application $app) {
+    public function getMultipleEdgePhotosFromToday(Application $app) {
         return self::wrapInternalService($app, function (EntityManager $ecEm) use ($app) {
             $qb = $ecEm->createQueryBuilder();
 
@@ -721,7 +720,7 @@ class InternalController extends AbstractController
      * @param string $hash
      * @return Response
      */
-    function getMultipleEdgePhotoFromHash(Application $app, $hash) {
+    public function getMultipleEdgePhotoFromHash(Application $app, $hash) {
         return self::wrapInternalService($app, function (EntityManager $ecEm) use ($app, $hash) {
             $uploadedFile = $ecEm->getRepository(ImagesTranches::class)->findOneBy([
                 'idUtilisateur' => self::getSessionUser($app)['id'],
@@ -739,7 +738,7 @@ class InternalController extends AbstractController
      * @param Request $request
      * @return Response
      */
-    function createMultipleEdgePhoto(Application $app, Request $request) {
+    public function createMultipleEdgePhoto(Application $app, Request $request) {
         return self::wrapInternalService($app, function (EntityManager $ecEm) use ($request, $app) {
             $hash = $request->request->get('hash');
             $fileName = $request->request->get('filename');

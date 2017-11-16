@@ -29,14 +29,13 @@ class InternalController extends AbstractController
      *     @SLX\Assert(variable="publicationCode", regex="^(?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+)$"),
      *     @SLX\Assert(variable="issueNumbers", regex="^((?P<issuenumber_regex>[-A-Z0-9 ]+),){0,49}(?&issuenumber_regex)$")
      * )
-     * @param Request $request
      * @param Application $app
      * @param string $publicationCode
      * @param $issueNumbers
      * @return JsonResponse
      */
-    function getEdges(Request $request, Application $app, $publicationCode, $issueNumbers) {
-        return self::wrapInternalService($app, function(EntityManager $dmEm) use ($request, $publicationCode, $issueNumbers) {
+    public function getEdges(Application $app, $publicationCode, $issueNumbers) {
+        return self::wrapInternalService($app, function(EntityManager $dmEm) use ($publicationCode, $issueNumbers) {
             $qbGetEdges = $dmEm->createQueryBuilder();
             $qbGetEdges
                 ->select('tranches_pretes')
@@ -57,14 +56,13 @@ class InternalController extends AbstractController
      *     @SLX\Assert(variable="publicationCode", regex="^(?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+)$"),
      *     @SLX\Assert(variable="issueNumbers", regex="^((?P<issuenumber_regex>[-A-Z0-9 ]+),){0,49}(?&issuenumber_regex)$")
      * )
-     * @param Request $request
      * @param Application $app
      * @param string $publicationCode
      * @param $issueNumbers
      * @return JsonResponse
      */
-    function getEdgeReferences(Request $request, Application $app, $publicationCode, $issueNumbers) {
-        return self::wrapInternalService($app, function(EntityManager $dmEm) use ($request, $publicationCode, $issueNumbers) {
+    public function getEdgeReferences(Application $app, $publicationCode, $issueNumbers) {
+        return self::wrapInternalService($app, function(EntityManager $dmEm) use ($publicationCode, $issueNumbers) {
             list($country, $shortPublicationCode) = explode('/', $publicationCode);
 
             $qbGetReferenceEdges = $dmEm->createQueryBuilder();

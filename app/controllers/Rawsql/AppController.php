@@ -42,7 +42,7 @@ class AppController extends AbstractController
      * @param Request $request
      * @return Response
      */
-    function runQuery(Application $app, Request $request) {
+    public function runQuery(Application $app, Request $request) {
         return self::callInternal($app, '/rawsql', 'POST', [
             'query' => $request->request->get('query'),
             'db' => $request->request->get('db')

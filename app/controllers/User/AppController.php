@@ -49,7 +49,7 @@ class AppController extends AbstractController
      * @param string $otheruser
      * @return Response
      */
-    function sellToUser(Application $app, $otheruser) {
+    public function sellToUser(Application $app, $otheruser) {
         if (self::callInternal($app, '/ducksmanager/exists', 'GET', [$otheruser])->getStatusCode() === Response::HTTP_NO_CONTENT) {
             return new Response(self::$translator->trans('UTILISATEUR_INVALIDE'), Response::HTTP_BAD_REQUEST);
         }
@@ -72,7 +72,7 @@ class AppController extends AbstractController
      * @param string $date
      * @return Response
      */
-    function getSaleToUserAtDate(Application $app, $otheruser, $date) {
+    public function getSaleToUserAtDate(Application $app, $otheruser, $date) {
         return self::callInternal($app, "/user/sale/$otheruser/$date", 'GET');
     }
 }

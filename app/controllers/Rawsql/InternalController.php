@@ -27,7 +27,7 @@ class InternalController extends AbstractController
      * @param Application $app
      * @return JsonResponse
      */
-    function runQuery(Request $request, Application $app) {
+    public function runQuery(Request $request, Application $app) {
         return self::wrapInternalService($app, function() use ($request, $app) {
             $query = $request->request->get('query');
             $db = $request->request->get('db');

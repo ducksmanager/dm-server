@@ -86,7 +86,7 @@ class AppController extends AbstractController
      * @param string $stepnumber
      * @return Response
      */
-    function addStep (Application $app, Request $request, $publicationcode, $stepnumber) {
+    public function addStep (Application $app, Request $request, $publicationcode, $stepnumber) {
         $functionName = $request->request->get('functionname');
         $optionName = $request->request->get('optionname');
         $optionValue = $request->request->get('optionvalue');
@@ -128,7 +128,7 @@ class AppController extends AbstractController
      * @param Application $app
      * @return Response
      */
-    function getV2MyModels(Application $app) {
+    public function getV2MyModels(Application $app) {
         return self::callInternal($app, "/edgecreator/v2/model", 'GET');
     }
 
@@ -146,7 +146,7 @@ class AppController extends AbstractController
      * @param string $modelId
      * @return Response
      */
-    function getModel(Application $app, $modelId) {
+    public function getModel(Application $app, $modelId) {
         return self::callInternal($app, "/edgecreator/v2/model/$modelId", 'GET');
     }
 
@@ -157,7 +157,7 @@ class AppController extends AbstractController
      * @param Application $app
      * @return Response
      */
-    function getModelsEditedByOthers(Application $app) {
+    public function getModelsEditedByOthers(Application $app) {
         return self::callInternal($app, "/edgecreator/v2/model/editedbyother/all", 'GET');
     }
 
@@ -168,7 +168,7 @@ class AppController extends AbstractController
      * @param Application $app
      * @return Response
      */
-    function getUnassignedModels(Application $app) {
+    public function getUnassignedModels(Application $app) {
         return self::callInternal($app, "/edgecreator/v2/model/unassigned/all", 'GET');
     }
 
@@ -193,7 +193,7 @@ class AppController extends AbstractController
      * @param string $issuenumber
      * @return Response
      */
-    function getV2Model(Application $app, $publicationcode, $issuenumber) {
+    public function getV2Model(Application $app, $publicationcode, $issuenumber) {
         return self::callInternal($app, "/edgecreator/v2/model/$publicationcode/$issuenumber", 'GET');
     }
 
@@ -225,7 +225,7 @@ class AppController extends AbstractController
      * @param string $iseditor
      * @return Response
      */
-    function createModel(Application $app, $publicationcode, $issuenumber, $iseditor) {
+    public function createModel(Application $app, $publicationcode, $issuenumber, $iseditor) {
         try {
             $modelId = self::getResponseIdFromServiceResponse(
                 self::callInternal($app, "/edgecreator/v2/model/$publicationcode/$issuenumber/$iseditor", 'PUT'),
@@ -267,7 +267,7 @@ class AppController extends AbstractController
      * @return Response
      * @throws UnexpectedInternalCallResponseException
      */
-    function cloneSteps(Application $app, Request $request, $publicationcode, $issuenumber) {
+    public function cloneSteps(Application $app, Request $request, $publicationcode, $issuenumber) {
         $steps = $request->request->get('steps');
 
         $targetModelId = null;
@@ -351,7 +351,7 @@ class AppController extends AbstractController
      * @param string $stepnumber
      * @return Response
      */
-    function createOrUpdateStep(Application $app, Request $request, $modelid, $stepnumber) {
+    public function createOrUpdateStep(Application $app, Request $request, $modelid, $stepnumber) {
         $stepFunctionName = $request->request->get('stepfunctionname');
         $optionValues = $request->request->get('options');
 
@@ -398,7 +398,7 @@ class AppController extends AbstractController
      * @param $isincludingthisstep
      * @return Response
      */
-    function shiftStep(Application $app, $modelid, $stepnumber, $isincludingthisstep) {
+    public function shiftStep(Application $app, $modelid, $stepnumber, $isincludingthisstep) {
         return self::callInternal($app, "/edgecreator/v2/step/shift/$modelid/$stepnumber/$isincludingthisstep", 'POST');
     }
 
@@ -430,7 +430,7 @@ class AppController extends AbstractController
      * @param string $newstepnumber
      * @return Response
      */
-    function cloneStep(Application $app, $modelid, $stepnumber, $newstepnumber) {
+    public function cloneStep(Application $app, $modelid, $stepnumber, $newstepnumber) {
         return self::callInternal($app, "/edgecreator/v2/step/clone/$modelid/$stepnumber/$newstepnumber", 'POST');
     }
 
@@ -455,7 +455,7 @@ class AppController extends AbstractController
      * @param string $stepnumber
      * @return Response
      */
-    function deleteStep(Application $app, $modelid, $stepnumber) {
+    public function deleteStep(Application $app, $modelid, $stepnumber) {
         return self::callInternal($app, "/edgecreator/v2/step/$modelid/$stepnumber", 'DELETE');
     }
 
@@ -498,7 +498,7 @@ class AppController extends AbstractController
      * @return Response
      * @throws UnexpectedInternalCallResponseException
      */
-    function storeMyFontsPreview(Application $app, Request $request) {
+    public function storeMyFontsPreview(Application $app, Request $request) {
         $previewId = self::getResponseIdFromServiceResponse(
             self::callInternal($app, "/edgecreator/myfontspreview", 'PUT', [
                 'font' => $request->request->get('font'),
@@ -527,7 +527,7 @@ class AppController extends AbstractController
      * @param string $previewid
      * @return Response
      */
-    function deleteMyFontsPreview(Application $app, $previewid) {
+    public function deleteMyFontsPreview(Application $app, $previewid) {
         return self::callInternal($app, "/edgecreator/myfontspreview/$previewid", 'DELETE');
     }
 
@@ -545,7 +545,7 @@ class AppController extends AbstractController
      * @param string $modelid
      * @return Response
      */
-    function deactivateModel(Application $app, $modelid) {
+    public function deactivateModel(Application $app, $modelid) {
         return self::callInternal($app, "/edgecreator/model/v2/$modelid/deactivate", 'POST');
     }
 
@@ -580,7 +580,7 @@ class AppController extends AbstractController
      * @param string $isreadytopublish
      * @return Response
      */
-    function setModelAsReadyToBePublished(Application $app, Request $request, $modelid, $isreadytopublish) {
+    public function setModelAsReadyToBePublished(Application $app, Request $request, $modelid, $isreadytopublish) {
         return self::callInternal($app, "/edgecreator/model/v2/$modelid/readytopublish/$isreadytopublish", 'POST', [
             'designers' => $request->request->get('designers'),
             'photographers' => $request->request->get('photographers')
@@ -607,7 +607,7 @@ class AppController extends AbstractController
      * @param string $modelid
      * @return Response
      */
-    function setModelMainPhoto(Application $app, Request $request, $modelid) {
+    public function setModelMainPhoto(Application $app, Request $request, $modelid) {
         return self::callInternal($app, "/edgecreator/model/v2/$modelid/photo/main", 'PUT', [
             'photoname' => $request->request->get('photoname')
         ]);
@@ -627,7 +627,7 @@ class AppController extends AbstractController
      * @param string $modelid
      * @return Response
      */
-    function getModelMainPhoto(Application $app, $modelid) {
+    public function getModelMainPhoto(Application $app, $modelid) {
         return self::callInternal($app, "/edgecreator/model/v2/$modelid/photo/main");
     }
 
@@ -638,7 +638,7 @@ class AppController extends AbstractController
      * @param Application $app
      * @return Response
      */
-    function getMultipleEdgePhotosFromToday(Application $app) {
+    public function getMultipleEdgePhotosFromToday(Application $app) {
         return self::callInternal($app, "/edgecreator/multiple_edge_photo/today", 'GET');
     }
 
@@ -655,7 +655,7 @@ class AppController extends AbstractController
      * @param string $hash
      * @return Response
      */
-    function getMultipleEdgePhotoFromHash(Application $app, $hash) {
+    public function getMultipleEdgePhotoFromHash(Application $app, $hash) {
         return self::callInternal($app, "/edgecreator/multiple_edge_photo/$hash", 'GET');
     }
 
@@ -677,7 +677,7 @@ class AppController extends AbstractController
      * @param Application $app
      * @return Response
      */
-    function createMultipleEdgePhoto(Request $request, Application $app) {
+    public function createMultipleEdgePhoto(Request $request, Application $app) {
         return self::callInternal($app, "/edgecreator/multiple_edge_photo", 'PUT', [
             'hash' => $request->request->get('hash'),
             'filename' => $request->request->get('filename')

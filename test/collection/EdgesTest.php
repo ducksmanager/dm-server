@@ -15,7 +15,7 @@ class EdgesTest extends TestCommon
         $publicationcode = 'fr/JM';
 
         $response = $this->buildAuthenticatedServiceWithTestUser(
-            "/edges/$publicationcode/3001", TestCommon::$dmUser, 'GET')->call();
+            "/edges/$publicationcode/3001", self::$dmUser, 'GET')->call();
 
         $objectResponse = json_decode($response->getContent());
         $edge1 = unserialize($objectResponse[0]);
@@ -30,7 +30,7 @@ class EdgesTest extends TestCommon
         $publicationcode = 'fr/JM';
 
         $response = $this->buildAuthenticatedServiceWithTestUser(
-            "/edges/references/$publicationcode/3002", TestCommon::$dmUser, 'GET')->call();
+            "/edges/references/$publicationcode/3002", self::$dmUser, 'GET')->call();
 
         $objectResponse = json_decode($response->getContent());
         $edgeReference1 = unserialize($objectResponse[0]);

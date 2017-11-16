@@ -35,7 +35,7 @@ class InternalController extends AbstractController
      * @param Application $app
      * @return JsonResponse
      */
-    function listIssues(Application $app) {
+    public function listIssues(Application $app) {
         return self::wrapInternalService($app, function(EntityManager $dmEm) use ($app) {
             /** @var Numeros[] $issues */
             $issues = $dmEm->getRepository(Numeros::class)->findBy(
@@ -55,7 +55,7 @@ class InternalController extends AbstractController
      * @param Application $app
      * @return JsonResponse
      */
-    function deleteIssues(Request $request, Application $app) {
+    public function deleteIssues(Request $request, Application $app) {
         return self::wrapInternalService($app, function(EntityManager $dmEm) use ($app, $request) {
             $country = $request->request->get('country');
             $publication = $request->request->get('publication');
@@ -95,7 +95,7 @@ class InternalController extends AbstractController
      * @param string $purchaseId
      * @return JsonResponse
      */
-    function postPurchase(Application $app, Request $request, $purchaseId) {
+    public function postPurchase(Application $app, Request $request, $purchaseId) {
         return self::wrapInternalService($app, function (EntityManager $dmEm) use ($app, $request, $purchaseId) {
 
             $purchaseDate = $request->request->get('date');
@@ -131,7 +131,7 @@ class InternalController extends AbstractController
      * @param Application $app
      * @return JsonResponse
      */
-    function postIssues(Request $request, Application $app) {
+    public function postIssues(Request $request, Application $app) {
         return self::wrapInternalService($app, function(EntityManager $dmEm) use ($app, $request) {
             $country = $request->request->get('country');
             $publication = $request->request->get('publication');
@@ -212,7 +212,7 @@ class InternalController extends AbstractController
      * @param Application $app
      * @return JsonResponse
      */
-    function addExternalAccess(Application $app) {
+    public function addExternalAccess(Application $app) {
         return self::wrapInternalService($app, function(EntityManager $dmEm) use ($app) {
             $key = MiscUtil::getRandomString();
 
@@ -235,9 +235,8 @@ class InternalController extends AbstractController
      * @param string $key
      * @return JsonResponse
      */
-    function getExternalAccess(Application $app, $key) {
-        return self::wrapInternalService($app, function(EntityManager $dmEm) use ($app, $key) {
-
+    public function getExternalAccess(Application $app, $key) {
+        return self::wrapInternalService($app, function(EntityManager $dmEm) use ($key) {
             $access = $dmEm->getRepository(BibliothequeAccesExternes::class)->findBy(
                 ['cle' => $key]
             );
@@ -253,7 +252,7 @@ class InternalController extends AbstractController
      * @param Application $app
      * @return JsonResponse
      */
-    function getBookcaseSorting(Application $app) {
+    public function getBookcaseSorting(Application $app) {
         return self::wrapInternalService($app, function(EntityManager $dmEm) use ($app) {
 
             $sorts = $dmEm->getRepository(BibliothequeOrdreMagazines::class)->findBy(
@@ -273,7 +272,7 @@ class InternalController extends AbstractController
      * @param Application $app
      * @return JsonResponse
      */
-    function getLastPublicationPosition(Application $app) {
+    public function getLastPublicationPosition(Application $app) {
         return self::wrapInternalService($app, function(EntityManager $dmEm) use ($app) {
 
             $qb = $dmEm->createQueryBuilder();

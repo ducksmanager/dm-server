@@ -44,7 +44,7 @@ class AppController extends AbstractController
      * @param string $issuenumbers
      * @return Response
      */
-    function getEdges(Application $app, $publicationcode, $issuenumbers) {
+    public function getEdges(Application $app, $publicationcode, $issuenumbers) {
         return self::callInternal($app, "/edges/$publicationcode/$issuenumbers", 'GET');
     }
 
@@ -69,7 +69,7 @@ class AppController extends AbstractController
      * @param string $issuenumbers
      * @return Response
      */
-    function getEdgeReferences(Application $app, $publicationcode, $issuenumbers) {
+    public function getEdgeReferences(Application $app, $publicationcode, $issuenumbers) {
         return self::callInternal($app, "/edges/references/$publicationcode/$issuenumbers", 'GET');
     }
 }

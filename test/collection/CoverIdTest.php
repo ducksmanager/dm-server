@@ -65,7 +65,7 @@ class CoverIdTest extends TestCommon
         $this->mockCoverSearchResults(self::$coverSearchResultsSimple);
         $response = $this->buildAuthenticatedServiceWithTestUser(
             '/cover-id/issuecodes/'
-            . implode(',', [self::$coverIds[0], self::$coverIds[2]]), TestCommon::$dmUser)->call();
+            . implode(',', [self::$coverIds[0], self::$coverIds[2]]), self::$dmUser)->call();
 
         $objectResponse = json_decode($response->getContent());
 
@@ -82,7 +82,7 @@ class CoverIdTest extends TestCommon
     public function testCoverIdSearchMultipleUploads() {
         $this->mockCoverSearchResults(self::$coverSearchResultsSimple);
         $response = $this->buildAuthenticatedServiceWithTestUser(
-            '/cover-id/search', TestCommon::$dmUser, 'POST', [], [
+            '/cover-id/search', self::$dmUser, 'POST', [], [
                 'wtd_jpg' => self::getCoverIdSearchUploadImage(),
                 'wtd_jpg2' => self::getCoverIdSearchUploadImage()
             ]
@@ -98,10 +98,11 @@ class CoverIdTest extends TestCommon
 
         $similarCoverIssuePublicationCode = 'fr/DDD';
         $similarCoverIssueNumber = '10';
-        $this->createEntryLike('fr/AR 101', self::$coverUrls[array_values(self::$coverIds)[0]], $similarCoverIssuePublicationCode, $similarCoverIssueNumber);
+        self::createEntryLike('fr/AR 101', self::$coverUrls[array_values(self::$coverIds)[0]],
+            $similarCoverIssuePublicationCode, $similarCoverIssueNumber);
 
         $response = $this->buildAuthenticatedServiceWithTestUser(
-            '/cover-id/search', TestCommon::$dmUser, 'POST', [], [
+            '/cover-id/search', self::$dmUser, 'POST', [], [
                 'wtd_jpg' => self::getCoverIdSearchUploadImage()
             ]
         )->call();
@@ -134,10 +135,11 @@ class CoverIdTest extends TestCommon
 
         $similarCoverIssuePublicationCode = 'fr/DDD';
         $similarCoverIssueNumber = '10';
-        $this->createEntryLike('fr/AR 101', self::$coverUrls[array_values(self::$coverIds)[0]], $similarCoverIssuePublicationCode, $similarCoverIssueNumber);
+        self::createEntryLike('fr/AR 101', self::$coverUrls[array_values(self::$coverIds)[0]],
+            $similarCoverIssuePublicationCode, $similarCoverIssueNumber);
 
         $response = $this->buildAuthenticatedServiceWithTestUser(
-            '/cover-id/search', TestCommon::$dmUser, 'POST', [], [
+            '/cover-id/search', self::$dmUser, 'POST', [], [
                 'wtd_jpg' => self::getCoverIdSearchUploadImage()
             ]
         )->call();
@@ -186,7 +188,7 @@ class CoverIdTest extends TestCommon
         $this->assertFileNotExists(implode(DIRECTORY_SEPARATOR, self::$uploadDestination));
 
         $response = $this->buildAuthenticatedServiceWithTestUser(
-            '/cover-id/search', TestCommon::$dmUser, 'POST', [], [
+            '/cover-id/search', self::$dmUser, 'POST', [], [
                 'wtd_jpg' => self::getCoverIdSearchUploadImage()
             ]
         )->call();
@@ -201,7 +203,7 @@ class CoverIdTest extends TestCommon
         $this->assertFileNotExists(implode(DIRECTORY_SEPARATOR, self::$uploadDestination));
 
         $response = $this->buildAuthenticatedServiceWithTestUser(
-            '/cover-id/search', TestCommon::$dmUser, 'POST', [], [
+            '/cover-id/search', self::$dmUser, 'POST', [], [
                 'wtd_invalid_jpg' => self::getCoverIdSearchUploadImage()
             ]
         )->call();
@@ -212,7 +214,7 @@ class CoverIdTest extends TestCommon
 
     public function testDownloadCover() {
         /** @var BinaryFileResponse $response */
-        $response = $this->buildAuthenticatedServiceWithTestUser('/cover-id/download/1', TestCommon::$dmUser)
+        $response = $this->buildAuthenticatedServiceWithTestUser('/cover-id/download/1', self::$dmUser)
             ->call();
 
         file_put_contents('/tmp/test.jpg', $response->getContent());

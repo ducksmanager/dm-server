@@ -31,7 +31,7 @@ class InternalController extends AbstractInternalController
      * @param string $otherUser
      * @return JsonResponse
      */
-    function sellToUser(Application $app, $otherUser) {
+    public function sellToUser(Application $app, $otherUser) {
         return self::wrapInternalService($app, function (EntityManager $dmEm) use ($app, $otherUser) {
             $saleEmail = new EmailsVentes();
 
@@ -54,7 +54,7 @@ class InternalController extends AbstractInternalController
      * @param string $date
      * @return JsonResponse
      */
-    function getSaleToUserAtDate(Application $app, $otherUser, $date) {
+    public function getSaleToUserAtDate(Application $app, $otherUser, $date) {
         return self::wrapInternalService($app, function(EntityManager $dmEm) use ($app, $otherUser, $date) {
             $access = $dmEm->getRepository(EmailsVentes::class)->findBy([
                 'usernameVente' => self::getSessionUser($app)['username'],

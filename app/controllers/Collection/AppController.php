@@ -50,7 +50,7 @@ class AppController extends AbstractController
      * @param Application $app
      * @return JsonResponse
      */
-    function getIssues(Application $app)
+    public function getIssues(Application $app)
     {
         $issuesResponse = self::callInternal($app, '/collection/issues', 'GET');
 
@@ -136,7 +136,7 @@ class AppController extends AbstractController
      * @param Request $request
      * @return JsonResponse
      */
-    function postIssues(Application $app, Request $request) {
+    public function postIssues(Application $app, Request $request) {
         $country = $request->request->get('country');
         $publication = $request->request->get('publication');
         $issuenumbers = $request->request->get('issuenumbers');
@@ -181,7 +181,7 @@ class AppController extends AbstractController
      * @param string $purchaseid
      * @return Response
      */
-    function postPurchase(Application $app, Request $request, $purchaseid) {
+    public function postPurchase(Application $app, Request $request, $purchaseid) {
         $response = self::callInternal(
             $app,
             self::buildUrl('/collection/purchases', is_null($purchaseid) ? [] : [$purchaseid]),
@@ -206,7 +206,7 @@ class AppController extends AbstractController
      * @param Application $app
      * @return Response
      */
-    function addExternalAccess (Application $app) {
+    public function addExternalAccess (Application $app) {
         return self::callInternal($app, '/collection/externalaccess', 'PUT');
     }
 
@@ -223,7 +223,7 @@ class AppController extends AbstractController
      * @param string $key
      * @return Response
      */
-    function getExternalAccess(Application $app, $key) {
+    public function getExternalAccess(Application $app, $key) {
         return self::callInternal($app, "/collection/externalaccess/$key");
     }
 
@@ -234,7 +234,7 @@ class AppController extends AbstractController
      * @param Application $app
      * @return Response
      */
-    function getBookcaseSorting(Application $app) {
+    public function getBookcaseSorting(Application $app) {
         return self::callInternal($app, "/collection/bookcase/sort");
     }
 }

@@ -10,12 +10,12 @@ use Symfony\Component\HttpFoundation\Response;
 class DucksManagerTest extends TestCommon
 {
     public function testResetDemoDataWrongUser() {
-        $response = $this->buildAuthenticatedService('/ducksmanager/resetDemo', TestCommon::$dmUser, [])->call();
+        $response = $this->buildAuthenticatedService('/ducksmanager/resetDemo', self::$dmUser, [])->call();
         $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 
     public function testResetDemoDataNoDemoUser() {
-        $response = $this->buildAuthenticatedService('/ducksmanager/resetDemo', TestCommon::$adminUser, [])->call();
+        $response = $this->buildAuthenticatedService('/ducksmanager/resetDemo', self::$adminUser, [])->call();
         $this->assertEquals(Response::HTTP_EXPECTATION_FAILED, $response->getStatusCode());
     }
 
@@ -51,7 +51,7 @@ class DucksManagerTest extends TestCommon
         $demoUser->setBetauser(true);
         $dmEm->flush($demoUser);
 
-        $response = $this->buildAuthenticatedService('/ducksmanager/resetDemo', TestCommon::$adminUser, [])->call();
+        $response = $this->buildAuthenticatedService('/ducksmanager/resetDemo', self::$adminUser, [])->call();
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
 
         $demoUser = $dmEm->getRepository(Users::class)->findOneBy([
@@ -86,7 +86,7 @@ class DucksManagerTest extends TestCommon
     }
 
     public function testSendBookcaseEmail() {
-        $response = $this->buildAuthenticatedService('/ducksmanager/email/bookstore', TestCommon::$dmUser, [])->call();
+        $response = $this->buildAuthenticatedService('/ducksmanager/email/bookstore', self::$dmUser, [])->call();
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
     }
 
@@ -99,7 +99,7 @@ class DucksManagerTest extends TestCommon
             'username' => 'demo'
         ]);
 
-        $response = $this->buildAuthenticatedService('/ducksmanager/email/bookstore', TestCommon::$dmUser, [], [
+        $response = $this->buildAuthenticatedService('/ducksmanager/email/bookstore', self::$dmUser, [], [
             'userid' => $demoUser->getId()
         ])->call();
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
