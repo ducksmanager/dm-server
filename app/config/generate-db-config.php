@@ -11,39 +11,38 @@ $dbServiceFilter = function ($serviceKey) {
 $composeFile = Yaml::parse(file_get_contents(__DIR__.'/../../docker-compose.yml'));
 $configuredEntityManagerNames = \DmServer\DmServer::$configuredEntityManagerNames;
 
-if (isset($composeFile['services'])) {
-    $dbServices = array_filter($composeFile['services'], $dbServiceFilter, ARRAY_FILTER_USE_KEY);
-    if (count($dbServices) > 0) {
-        $dbConfigs = [];
+try {
+    if (isset($composeFile['services'])) {
+        $dbServices = array_filter($composeFile['services'], $dbServiceFilter, ARRAY_FILTER_USE_KEY);
+        if (count($dbServices) > 0) {
+            $dbConfigs = [];
 
-        foreach($dbServices as $dbEntityManagerName => $dbService) {
-            if (in_array($dbEntityManagerName, $configuredEntityManagerNames)) {
-                $dbConfigs[$dbEntityManagerName] = implode("\n", [
-                    '['.$dbEntityManagerName.']',
-                    implode('=', ['host', $dbService['container_name']]),
-                    implode('=', ['type', 'mysql']),
-                    implode('=', ['port', 3306]),
-                    implode('=', ['dbname', $dbService['environment']['MYSQL_DATABASE']]),
-                    implode('=', ['username', 'root']),
-                    implode('=', ['password', $dbService['environment']['MYSQL_ROOT_PASSWORD']]),
-                ]);
+            foreach ($dbServices as $dbEntityManagerName => $dbService) {
+                if (in_array($dbEntityManagerName, $configuredEntityManagerNames)) {
+                    $dbConfigs[$dbEntityManagerName] = implode("\n", [
+                        '[' . $dbEntityManagerName . ']',
+                        implode('=', ['host', $dbService['container_name']]),
+                        implode('=', ['type', 'mysql']),
+                        implode('=', ['port', 3306]),
+                        implode('=', ['dbname', $dbService['environment']['MYSQL_DATABASE']]),
+                        implode('=', ['username', 'root']),
+                        implode('=', ['password', $dbService['environment']['MYSQL_ROOT_PASSWORD']]),
+                    ]);
+                } else {
+                    throw new Exception("DB service name is invalid : $dbEntityManagerName but it should be one of [" . implode(',', $configuredEntityManagerNames) . "]");
+                }
             }
-            else {
-                echo "DB service name is invalid : $dbEntityManagerName but it should be one of [".implode(',', $configuredEntityManagerNames) ."]";
-                exit(1);
-            }
+            file_put_contents(__DIR__ . '/config.db.ini', implode("\n\n", $dbConfigs));
+        } else {
+            throw new Exception("No DB service found");
         }
-
-        file_put_contents(__DIR__.'/config.db.ini', implode("\n\n", $dbConfigs));
-    }
-    else {
-        echo "No DB service found\n";
-        exit(1);
+    } else {
+        throw new Exception("No services found");
     }
 }
-else {
-    echo "No services found\n";
-    exit(1);
+catch(Exception $e) {
+    echo $e->getMessage();
+    return 1;
 }
 
 
