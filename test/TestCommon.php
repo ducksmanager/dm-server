@@ -92,7 +92,13 @@ class TestCommon extends WebTestCase {
         DmServer::$entityManagers = [];
 
         foreach (DmServer::$configuredEntityManagerNames as $emName) {
-            self::recreateSchema($emName);
+            try {
+                self::recreateSchema($emName);
+            } catch (DBALException $e) {
+                self::fail("Failed to retrieve entity manager $emName");
+            } catch (ORMException $e) {
+                self::fail("Failed to retrieve entity manager $emName");
+            }
         }
     }
 
@@ -126,25 +132,24 @@ class TestCommon extends WebTestCase {
     protected static function initDatabase() {
 
         foreach(DmServer::$configuredEntityManagerNames as $emName) {
-            self::$schemas[$emName]->recreateSchema();
             try {
+                self::$schemas[$emName]->recreateSchema();
                 DmServer::getEntityManager($emName)->clear();
             } catch (DBALException $e) {
-                self::fail("Failed to retrieve entity manager $emName");
+                self::fail("Failed to recreate schema $emName");
             } catch (ORMException $e) {
-                self::fail("Failed to retrieve entity manager $emName");
+                self::fail("Failed to recreate schema $emName");
             }
         }
     }
 
+    /**
+     * @param $emName
+     * @throws DBALException
+     * @throws ORMException
+     */
     protected static function recreateSchema($emName) {
-        try {
-            self::$schemas[$emName] = SchemaWithClasses::createFromEntityManager(DmServer::getEntityManager($emName));
-        } catch (DBALException $e) {
-            self::fail("Failed to retrieve entity manager $emName");
-        } catch (ORMException $e) {
-            self::fail("Failed to retrieve entity manager $emName");
-        }
+        self::$schemas[$emName] = SchemaWithClasses::createFromEntityManager(DmServer::getEntityManager($emName));
     }
 
     /**
