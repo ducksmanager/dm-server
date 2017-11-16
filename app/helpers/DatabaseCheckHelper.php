@@ -1,6 +1,7 @@
 <?php
 namespace DmServer;
 
+use Coa\Models\InducksCountryname;
 use DmServer\Controllers\AbstractController;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\Response;
@@ -46,14 +47,14 @@ class DatabaseCheckHelper {
     {
         $emTables = $em->getConnection()->getSchemaManager()->listTableNames();
 
+        $tableCounts = implode(" UNION ", array_map(function ($tableName) {
+            return "SELECT '$tableName' AS table_name, COUNT(*) AS cpt FROM $tableName";
+        }, $emTables));
+
         return
             "SELECT * FROM (
-              SELECT count(*) AS counter FROM ("
-                . implode(" UNION ", array_map(function ($tableName) {
-                    return "SELECT '$tableName' AS table_name, COUNT(*) AS cpt FROM $tableName";
-                }, $emTables))
-                . ") db_tables 
-                WHERE db_tables.cpt > 0
+              SELECT count(*) AS counter FROM ($tableCounts) db_tables 
+              WHERE db_tables.cpt > 0
             ) AS non_empty_tables WHERE non_empty_tables.counter = " . count($emTables) . "
             ";
     }
