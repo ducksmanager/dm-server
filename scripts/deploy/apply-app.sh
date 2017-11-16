@@ -9,7 +9,7 @@ chmod -R +x scripts && \
 touch development.log pimple.json && \
 chown www-data:www-data development.log pimple.json && \
 \
-composer update --no-dev -o && \
+composer update --no-dev --prefer-dist -o && \
 echo "Generating swagger.json..." && \
 php vendor/radebatz/silex2swagger/bin/silex2swagger silex2swagger:build --file=swagger.json --path=app/controllers && \
 echo "Done." && \
