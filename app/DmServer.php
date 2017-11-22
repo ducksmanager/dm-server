@@ -3,6 +3,8 @@
 namespace DmServer;
 
 use DDesrosiers\SilexAnnotations\AnnotationServiceProvider;
+use DmServer\DoctrineFunctions\Now;
+use DmServer\DoctrineFunctions\UnixTimestamp;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\CachedReader;
 use Doctrine\Common\Cache\ArrayCache;
@@ -10,6 +12,9 @@ use Doctrine\Common\EventManager;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Setup;
+use DoctrineExtensions\Query\Mysql\Date;
+use DoctrineExtensions\Query\Mysql\GroupConcat;
+use DoctrineExtensions\Query\Mysql\Regexp;
 use Gedmo\Timestampable\TimestampableListener;
 use JDesrosiers\Silex\Provider\CorsServiceProvider;
 use Silex\Api\ControllerProviderInterface;
@@ -173,6 +178,11 @@ class DmServer implements ControllerProviderInterface
         $metaDataConfig = Setup::createAnnotationMetadataConfiguration(
             [__DIR__ . "/models/".$config['models_path']], true, null, null, false
         );
+        $metaDataConfig->addCustomStringFunction('UNIX_TIMESTAMP', UnixTimestamp::class);
+        $metaDataConfig->addCustomStringFunction('DATE', Date::class);
+        $metaDataConfig->addCustomStringFunction('GROUP_CONCAT', GroupConcat::class);
+        $metaDataConfig->addCustomStringFunction('REGEXP', Regexp::class);
+
         $connectionParams = self::getConnectionParams($config);
         $conn = DriverManager::getConnection($connectionParams, $metaDataConfig, $evm);
         $conn->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'string');

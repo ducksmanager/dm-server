@@ -1,7 +1,9 @@
 <?php
 namespace DmServer\Test;
 
+use DateTime;
 use Dm\Models\Achats;
+use Dm\Models\Bouquineries;
 use Dm\Models\Numeros;
 use Dm\Models\Users;
 use DmServer\DmServer;
@@ -103,5 +105,106 @@ class DucksManagerTest extends TestCommon
             'userid' => $demoUser->getId()
         ])->call();
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+    }
+
+    public function testGetEvents() {
+        self::createTestCollection(self::$defaultTestDmUserName);
+        self::createTestCollection('user2');
+        self::createEdgesData(1);
+
+        $dmEm = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM);
+
+        $oldIssue = new Numeros();
+        $dmEm->persist(
+            $oldIssue
+                ->setPays('fr')
+                ->setMagazine('DDD')
+                ->setNumero('3')
+                ->setEtat('mauvais')
+                ->setIdUtilisateur(1)
+                ->setDateajout(\DateTime::createFromFormat('Y-m-d', '2017-01-01'))
+        );
+
+        $recentIssue = new Numeros();
+        $dmEm->persist(
+            $recentIssue
+                ->setPays('fr')
+                ->setMagazine('SPG')
+                ->setNumero('1')
+                ->setEtat('bon')
+                ->setIdUtilisateur(1)
+                ->setDateajout((new \DateTime('-1 week')))
+        );
+
+        $bookstore = new Bouquineries();
+        $dmEm->persist(
+            $bookstore
+                ->setActif(1)
+                ->setNom('My bookstore')
+                ->setIdUtilisateur(2)
+                ->setAdresse('Address')
+                ->setAdressecomplete('Full address')
+                ->setCodepostal('Postal code')
+                ->setVille('City')
+                ->setCommentaire('Comment')
+                ->setDateajout((new \DateTime('-2 week')))
+        );
+        $dmEm->flush();
+
+        $response = $this->buildAuthenticatedService('/ducksmanager/recentevents', self::$dmUser, [], [], 'GET')->call();
+        $objectResponse = json_decode($response->getContent());
+
+        $this->assertEventData($objectResponse, ['type' => 'collectioninsert', 'userIds' => [1]], 10, [
+            "example_issue_publicationcode" => "fr/MP",
+            "example_issue_issuenumber" => " 301",
+            "count" => "3"
+        ]);
+
+        $this->assertEventData($objectResponse, ['type' => 'collectioninsert', 'userIds' => [1]], 1 * 7 * 24 * 3600, [
+            "example_issue_publicationcode" => "fr/SPG",
+            "example_issue_issuenumber" => " 1",
+            "count" => "1"
+        ]);
+
+        $this->assertEventData($objectResponse, ['type' => 'collectioninsert', 'userIds' => [2]], 10, [
+            "example_issue_publicationcode" => "fr/MP",
+            "example_issue_issuenumber" => " 301",
+            "count" => "3"
+        ]);
+
+        $this->assertEventData($objectResponse, ['type' => 'signup', 'userIds' => [1]], 10, []);
+        $this->assertEventData($objectResponse, ['type' => 'signup', 'userIds' => [2]], 10, []);
+
+        $this->assertEventData($objectResponse, ['type' => 'bookstorecreation', 'userIds' => [2]], 2 * 7 * 24 * 3600, [
+            "name" => "My bookstore"
+        ]);
+
+        $this->assertEventData($objectResponse, ['type' => 'bookstorecreation', 'userIds' => [2]], 2 * 7 * 24 * 3600, [
+            "name" => "My bookstore"
+        ]);
+
+        $this->assertEventData($objectResponse, ['type' => 'edgecreation', 'userIds' => [1]], 2 * 24 * 3600, [
+            "publicationcode" => "fr/DDD",
+            "issuenumber" => "1"
+        ]);
+    }
+
+    function assertEventData(array $objectResponse, array $filters, int $expectedSecondsDiff, array $expectedData) {
+        $filteredEvents = array_filter($objectResponse, function($event) use ($filters, $expectedSecondsDiff) {
+            if (abs($expectedSecondsDiff - $event->secondsDiff) > 10) {
+                return false;
+            }
+            foreach($filters as $key=>$value) {
+                if ($event->$key !== $value) {
+                    return false;
+                }
+            }
+            return true;
+        });
+        $filteredEvents = array_values($filteredEvents);
+
+        $this->assertCount(1, $filteredEvents, 'Exactly one event should remain after the filter');
+
+        $this->assertEquals($expectedData, (array) $filteredEvents[0]->data);
     }
 }

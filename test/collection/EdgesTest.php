@@ -7,7 +7,7 @@ class EdgesTest extends TestCommon
     public function setUp()
     {
         parent::setUp();
-        self::createEdgesData();
+        self::createEdgesData(1);
     }
 
     public function testGetEdges()

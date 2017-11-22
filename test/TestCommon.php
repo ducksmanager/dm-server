@@ -10,11 +10,13 @@ use Coa\Models\InducksPublication;
 use Coa\Models\InducksStory;
 use Coa\Models\InducksStoryversion;
 use Coverid\Models\Covers;
+use DateTime;
 use Dm\Models\Achats;
 use Dm\Models\BibliothequeOrdreMagazines;
 use Dm\Models\Numeros;
 use Dm\Models\TranchesDoublons;
 use Dm\Models\TranchesPretes;
+use Dm\Models\TranchesPretesContributeurs;
 use Dm\Models\Users;
 use DmServer\DmServer;
 use DmServer\RequestUtil;
@@ -233,7 +235,7 @@ class TestCommon extends WebTestCase {
                 ->setUsername($username)
                 ->setPassword(sha1($password))
                 ->setEmail('test@ducksmanager.net')
-                ->setDateinscription(\DateTime::createFromFormat('Y-m-d', '2000-01-01'))
+                ->setDateinscription(new DateTime())
         );
 
         try {
@@ -959,7 +961,7 @@ class TestCommon extends WebTestCase {
         }
     }
 
-    protected static function createEdgesData()
+    protected static function createEdgesData($userId)
     {
         try {
             $dmEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_DM];
@@ -969,6 +971,15 @@ class TestCommon extends WebTestCase {
                 $edge1
                     ->setPublicationcode('fr/JM')
                     ->setIssuenumber('3001')
+            );
+
+            $edge1Contributor1 = new TranchesPretesContributeurs();
+            $dmEntityManager->persist(
+                $edge1Contributor1
+                    ->setContributeur($userId)
+                    ->setContribution('createur')
+                    ->setPublicationcode($edge1->getPublicationcode())
+                    ->setIssuenumber($edge1->getIssuenumber())
             );
 
             $dupEdge1 = new TranchesDoublons();
@@ -994,6 +1005,70 @@ class TestCommon extends WebTestCase {
                     ->setMagazine('JM')
                     ->setNumero('4002')
                     ->setTranchereference($edge2)
+            );
+
+            $edge3 = new TranchesPretes();
+            $dmEntityManager->persist(
+                $edge3
+                    ->setPublicationcode('fr/DDD')
+                    ->setIssuenumber('1')
+                    ->setDateajout((new \DateTime('-2 day')))
+            );
+
+            $edge3Contributor1 = new TranchesPretesContributeurs();
+            $dmEntityManager->persist(
+                $edge3Contributor1
+                    ->setContributeur($userId)
+                    ->setContribution('createur')
+                    ->setPublicationcode($edge3->getPublicationcode())
+                    ->setIssuenumber($edge3->getIssuenumber())
+            );
+
+            $edge4 = new TranchesPretes();
+            $dmEntityManager->persist(
+                $edge4
+                    ->setPublicationcode('fr/PM')
+                    ->setIssuenumber('2')
+                    ->setDateajout((new \DateTime('-4 day')))
+            );
+
+            $edge4Contributor1 = new TranchesPretesContributeurs();
+            $dmEntityManager->persist(
+                $edge4Contributor1
+                    ->setContributeur($userId)
+                    ->setContribution('createur')
+                    ->setPublicationcode($edge4->getPublicationcode())
+                    ->setIssuenumber($edge4->getIssuenumber())
+            );
+
+            $dmEntityManager->flush();
+
+            $otherUser = self::createUser('otheruser', 'password');
+
+            $edge4Contributor2 = new TranchesPretesContributeurs();
+            $dmEntityManager->persist(
+                $edge4Contributor2
+                    ->setContributeur($otherUser->getId())
+                    ->setContribution('createur')
+                    ->setPublicationcode($edge4->getPublicationcode())
+                    ->setIssuenumber($edge4->getIssuenumber())
+            );
+
+            $edge5 = new TranchesPretes();
+            $dmEntityManager->persist(
+                $edge5
+                    ->setPublicationcode('fr/DDD')
+                    ->setIssuenumber('4')
+                    ->setDateajout((new \DateTime('-4 day')))
+            );
+
+            $edge5Contributor1 = new TranchesPretesContributeurs();
+            $dmEntityManager->persist(
+                $edge5Contributor1
+                    ->setContributeur($userId)
+                    ->setContribution('createur')
+                    ->setPublicationcode($edge5->getPublicationcode())
+                    ->setIssuenumber($edge5->getIssuenumber())
             );
 
             $dmEntityManager->flush();

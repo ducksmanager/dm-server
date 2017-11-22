@@ -16,6 +16,9 @@
     },
     "autoload": {
         "psr-4": {
+            "DmServer\\DoctrineFunctions\\": [
+                "app/helpers/doctrinefunctions"
+            ],
             "Coa\\Contracts\\": [
                 "app/models/Coa/Contracts"
             ],
@@ -102,6 +105,7 @@
         "doctrine/doctrine-bundle": "1.6.*",
         "monolog/monolog": "1.23.*",
         "gedmo/doctrine-extensions": "2.4.*",
+        "beberlei/DoctrineExtensions": "1.0.*",
         "swiftmailer/swiftmailer": "6.0.*",
         "jdesrosiers/silex-cors-provider": "~1.0",
         "roave/security-advisories": "dev-master",

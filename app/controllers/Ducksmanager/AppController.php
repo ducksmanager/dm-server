@@ -2,10 +2,13 @@
 
 namespace DmServer\Controllers\Ducksmanager;
 
+use Dm\Contracts\Results\EventResult;
 use DmServer\Controllers\AbstractController;
 use DmServer\CsvHelper;
 use DmServer\DmServer;
+use DmServer\ModelHelper;
 use Silex\Application;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use DDesrosiers\SilexAnnotations\Annotations as SLX;
@@ -148,5 +151,31 @@ class AppController extends AbstractController
         return self::callInternal($app, '/ducksmanager/email/bookstore', 'POST', [
             'userId' => $request->request->get('userid')
          ]);
+    }
+
+    /**
+     * @SLX\Route(
+     *   @SLX\Request(method="GET", uri="recentevents")
+     * )
+     * @param Application $app
+     * @return Response
+     * @throws \Exception
+     */
+    public function getEvents(Application $app) {
+        $maxEvents = 20;
+
+        $events = array_merge(
+            json_decode(self::callInternal($app, '/ducksmanager/recentevents/signups', 'GET')->getContent()),
+            json_decode(self::callInternal($app, '/ducksmanager/recentevents/collectioninserts', 'GET')->getContent()),
+            json_decode(self::callInternal($app, '/ducksmanager/recentevents/bookstorecreations', 'GET')->getContent()),
+            json_decode(self::callInternal($app, '/ducksmanager/recentevents/creatededges', 'GET')->getContent())
+        );
+
+        uasort($events, function (\stdClass $a, \stdClass $b) {
+            return $a->secondsDiff > $b->secondsDiff;
+        });
+        $events = array_slice($events, 0, $maxEvents);
+
+        return new JsonResponse($events);
     }
 }
