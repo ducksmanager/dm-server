@@ -552,31 +552,37 @@ class EdgeCreatorTest extends TestCommon
     public function testSetModelReadyForPublication() {
         $model = $this->getV2Model('fr', 'PM', '502');
 
-        $designers = [1];
-        $photographers = [1, 2];
+        $sessionUser = self::getSessionUser($this->app);
+        $otherUser = self::createTestCollection('otheruser');
+
+        $designerUsernames = [$sessionUser['username']];
+        $designerIds = [$sessionUser['id']];
+
+        $photographerUsernames = [$sessionUser['username'], $otherUser['username']];
+        $photographerIds = [$sessionUser['id'], $otherUser['id']];
 
         $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/{$model->getId()}/readytopublish/1", self::$edgecreatorUser, 'POST', [
-            'designers' => $designers,
-            'photographers' => $photographers
+            'designers' => $designerUsernames,
+            'photographers' => $photographerUsernames
         ])
             ->call();
 
         $objectResponse = json_decode($response->getContent(), true);
 
         $this->assertEquals($model->getId(), $objectResponse['model']['id']);
-        $helperUsers = $objectResponse['model']['contributeurs'];
+        $contributors = $objectResponse['model']['contributeurs'];
 
-        $creatorsDetails = array_filter($helperUsers, function($helperUser) {
+        $creatorsDetails = array_filter($contributors, function($helperUser) {
             return $helperUser['contribution'] === 'createur';
         });
-        $photographersDetails = array_filter($helperUsers, function($helperUser) {
+        $photographersDetails = array_filter($contributors, function($helperUser) {
             return $helperUser['contribution'] === 'photographe';
         });
 
-        $this->assertEquals($designers, array_values(array_map(function($creator) {
+        $this->assertEquals($designerIds, array_values(array_map(function($creator) {
             return $creator['idUtilisateur'];
         }, $creatorsDetails)));
-        $this->assertEquals($photographers, array_values(array_map(function($photographer) {
+        $this->assertEquals($photographerIds, array_values(array_map(function($photographer) {
             return $photographer['idUtilisateur'];
         }, $photographersDetails)));
 

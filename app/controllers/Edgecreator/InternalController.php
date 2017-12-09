@@ -2,6 +2,7 @@
 
 namespace DmServer\Controllers\Edgecreator;
 
+use Dm\Models\Users;
 use DmServer\Controllers\AbstractController;
 use DmServer\DmServer;
 use Doctrine\Common\Collections\Collection;
@@ -569,35 +570,53 @@ class InternalController extends AbstractController
             $designers = $request->request->get('designers');
             $photographers = $request->request->get('photographers');
 
+            $dmEm = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM);
+
+            $qb = $dmEm->createQueryBuilder();
+            $qb->select('users.id, users.username')
+                ->from(Users::class, 'users')
+                ->andWhere("users.username in (:usernames)")
+                ->setParameter(':usernames', $designers+$photographers)
+            ;
+
+            $contributorsIdsResults = $qb->getQuery()->getResult();
+
+            $contributorsIds = [];
+            array_walk($contributorsIdsResults, function($value) use (&$contributorsIds) {
+                $contributorsIds[$value['username']] = $value['id'];
+            });
+
             /** @var TranchesEnCoursModeles $model */
             $model = $ecEm->getRepository(TranchesEnCoursModeles::class)->find($modelId);
-            $model->setActive(false);
 
-            $helperUsers = [];
+            $contributors = [];
             if (!is_null($photographers)) {
-                $helperUsers = array_merge($helperUsers, array_map(function($photographUsername) use ($model) {
+                $contributors = array_merge($contributors, array_map(function($photographUsername) use ($contributorsIds, $model) {
                     $photographer = new TranchesEnCoursContributeurs();
                     $photographer->setContribution('photographe');
-                    $photographer->setIdUtilisateur($photographUsername);
+                    $photographer->setIdUtilisateur($contributorsIds[$photographUsername]);
                     $photographer->setModele($model);
 
                     return $photographer;
                 }, $photographers));
             }
             if (!is_null($designers)) {
-                $helperUsers = array_merge($helperUsers, array_map(function($designorUsername) use ($model) {
+                $contributors = array_merge($contributors, array_map(function($designorUsername) use ($contributorsIds, $model) {
                     $designer = new TranchesEnCoursContributeurs();
                     $designer->setContribution('createur');
-                    $designer->setIdUtilisateur($designorUsername);
+                    $designer->setIdUtilisateur($contributorsIds[$designorUsername]);
                     $designer->setModele($model);
 
                     return $designer;
                 }, $designers));
             }
-            if (!is_null($photographers) || !is_null($designers)) {
-                $model->setContributeurs($helperUsers);
-            }
+            $model->setActive(false);
             $model->setPretepourpublication($isReadyToPublish === '1');
+
+            if (!is_null($photographers) || !is_null($designers)) {
+                $model->setContributeurs($contributors);
+            }
+
             $ecEm->persist($model);
             $ecEm->flush();
 
