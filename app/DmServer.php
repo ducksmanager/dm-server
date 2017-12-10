@@ -5,6 +5,7 @@ namespace DmServer;
 use DDesrosiers\SilexAnnotations\AnnotationServiceProvider;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\CachedReader;
+use Doctrine\Common\Cache\ApcuCache;
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\EventManager;
 use Doctrine\DBAL\DriverManager;
@@ -203,6 +204,7 @@ class DmServer implements ControllerProviderInterface
         $routing = $app['controllers_factory'];
 
         $app->register(new AnnotationServiceProvider(), [
+            "annot.cache" => new ApcuCache(),
             "annot.controllerDir" => __DIR__."/controllers"
         ]);
 
