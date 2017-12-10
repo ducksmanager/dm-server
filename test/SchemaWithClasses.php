@@ -32,6 +32,9 @@ class SchemaWithClasses
         return $schemaWithClasses;
     }
 
+    /**
+     * @throws ToolsException
+     */
     public function recreateSchema() {
         $this->dropSchemaCached($this->getModelClasses());
         $this->createSchemaCached($this->getModelClasses());

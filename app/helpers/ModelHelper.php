@@ -20,11 +20,10 @@ class ModelHelper {
      */
     public static function getSimpleArray($objectArray) {
         return array_map(/**
-         * @param \stdClass $object
-         * @return mixed
+         * @param GenericReturnObjectInterface $object
+         * @return array
          */
-            function($object) {
-            /** @var GenericReturnObjectInterface $object */
+            function(GenericReturnObjectInterface $object) {
             return $object->toArray();
         }, $objectArray);
     }

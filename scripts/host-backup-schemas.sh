@@ -18,17 +18,20 @@ fi
 
 docker exec ${container_name} grep -Po '^(host|dbname|username|password)=\K.+' ${config_file_path} | sed '$!N;$!N;$!N;s/\n/\t/g' | \
   while read -r host dbname username password; do
-    backup_subdir=${backup_dir}/db_${dbname}
-    backup_file=backup_${container_name}_${dbname}.sql
-    backup_path=${backup_subdir}/${backup_file}
+    backup_subdir=${backup_dir}/db_csv_${dbname}
 
-    echo "Backing up $dbname from $host to $backup_path"
-    docker exec ${container_name} mysqldump --skip-dump-date -u${username} -p${password} -h ${host} ${dbname} > ${backup_path}
-    git -C ${backup_subdir} add ${backup_path} &&
+    echo "Backing up $dbname from $host to $backup_subdir"
+    rm -rf ${backup_subdir}/* && \
+    docker exec ${host} /bin/bash -c "rm -rf /tmp/export && mkdir -p /tmp/export && chmod 777 /tmp/export" && \
+    docker exec ${host} /bin/bash -c "mysqldump -uroot -pchangeme --tab=/tmp/export --skip-dump-date ${dbname} && for i in /tmp/export/*.txt; do mv \$i \"$(basename \$i .txt).csv\"; done" && \
+    docker cp ${host}:/tmp/export ${backup_subdir}
+  
+    git -C ${backup_subdir} init &&
+    git -C ${backup_subdir} add ${backup_subdir}/* &&
     git -C ${backup_subdir} commit -m "Backup $today"
 
     echo "Compressing backup_subdir"
-    rm -f ${backup_subdir}.zip ${backup_path} && zip ${backup_subdir}.zip -r ${backup_subdir}
+    rm -f ${backup_subdir}.zip && zip ${backup_subdir}.zip -r ${backup_subdir}
     if [ $? -eq 0 ]; then
       echo "Backed up locally"
       if [ -z "$remote_backup_config" ]; then

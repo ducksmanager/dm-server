@@ -41,13 +41,13 @@ class EdgeCreatorTest extends TestCommon
         parent::setUp();
         $collectionUserInfo = self::createTestCollection();
         self::setSessionUser($this->app, $collectionUserInfo);
-        $this->createEdgeCreatorData();
+        self::createEdgeCreatorData(self::getSessionUser($this->app)['id']);
     }
 
     public function testCreateV2Model()
     {
         $response = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/v2/model/fr/DDD/10/1',
-            TestCommon::$edgecreatorUser, 'PUT'
+            self::$edgecreatorUser, 'PUT'
         )->call();
 
         $createdModel = $this->getEm()->getRepository(TranchesEnCoursModeles::class)->findOneBy([
@@ -65,7 +65,7 @@ class EdgeCreatorTest extends TestCommon
     public function testCreateV2ModelNoUser()
     {
         $response = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/v2/model/fr/DDD/10/0',
-            TestCommon::$edgecreatorUser, 'PUT'
+            self::$edgecreatorUser, 'PUT'
         )->call();
 
         $createdModel = $this->getEm()->getRepository(TranchesEnCoursModeles::class)->findOneBy([
@@ -83,12 +83,12 @@ class EdgeCreatorTest extends TestCommon
     public function testCreateV2ModelAlreadyExisting()
     {
         $this->buildAuthenticatedServiceWithTestUser('/edgecreator/v2/model/fr/DDD/10/1',
-            TestCommon::$edgecreatorUser, 'PUT'
+            self::$edgecreatorUser, 'PUT'
         )->call();
 
         // Another time
         $response = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/v2/model/fr/DDD/10/1',
-            TestCommon::$edgecreatorUser, 'PUT'
+            self::$edgecreatorUser, 'PUT'
         )->call();
 
         $this->assertEquals(Response::HTTP_INTERNAL_SERVER_ERROR, $response->getStatusCode());
@@ -98,7 +98,7 @@ class EdgeCreatorTest extends TestCommon
     public function testLoadV2Model() {
         $model = $this->getV2Model('fr', 'PM', '502');
 
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/model/{$model->getId()}", TestCommon::$edgecreatorUser, 'GET')->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/model/{$model->getId()}", self::$edgecreatorUser, 'GET')->call();
 
         $responseModel = json_decode($response->getContent());
 
@@ -119,7 +119,7 @@ class EdgeCreatorTest extends TestCommon
     }
 
     public function testLoadV2UserModels() {
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/model", TestCommon::$edgecreatorUser, 'GET')->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/model", self::$edgecreatorUser, 'GET')->call();
 
         $responseObjects = json_decode($response->getContent());
 
@@ -130,7 +130,7 @@ class EdgeCreatorTest extends TestCommon
     }
 
     public function testLoadV2ModelsEditedByOthers() {
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/model/editedbyother/all", TestCommon::$edgecreatorUser, 'GET')->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/model/editedbyother/all", self::$edgecreatorUser, 'GET')->call();
 
         $objectResponse = json_decode($response->getContent());
 
@@ -143,7 +143,7 @@ class EdgeCreatorTest extends TestCommon
     }
 
     public function testLoadV2UnassignedModels() {
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/model/unassigned/all", TestCommon::$edgecreatorUser, 'GET')->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/model/unassigned/all", self::$edgecreatorUser, 'GET')->call();
 
         $objectResponse = json_decode($response->getContent());
 
@@ -157,7 +157,7 @@ class EdgeCreatorTest extends TestCommon
     }
 
     public function testGetModel() {
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/model/fr/PM/502", TestCommon::$edgecreatorUser, 'GET')->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/model/fr/PM/502", self::$edgecreatorUser, 'GET')->call();
 
         $model = json_decode($response->getContent());
         $this->assertEquals('fr', $model->pays);
@@ -166,13 +166,13 @@ class EdgeCreatorTest extends TestCommon
     }
 
     public function testGetModelNotExisting() {
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/model/fr/PM/505", TestCommon::$edgecreatorUser, 'GET')->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/model/fr/PM/505", self::$edgecreatorUser, 'GET')->call();
 
         $this->assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
     }
 
     public function testCreateStepWithOptionValue() {
-        $response = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/step/fr/PM/1', TestCommon::$edgecreatorUser, 'PUT', [
+        $response = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/step/fr/PM/1', self::$edgecreatorUser, 'PUT', [
             'functionname' => 'TexteMyFonts',
             'optionname' => 'Chaine',
             'optionvalue' => 'hello',
@@ -206,7 +206,7 @@ class EdgeCreatorTest extends TestCommon
 //    public function testCreateStepWithOptionValueExistingInterval()
 //    {
 //        $response = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/step/fr/DDD/1',
-//            TestCommon::$edgecreatorUser, 'PUT', [
+//            self::$edgecreatorUser, 'PUT', [
 //                'functionname' => 'Remplir',
 //                'optionname' => 'Couleur',
 //                'optionvalue' => '#FF0000',
@@ -220,7 +220,7 @@ class EdgeCreatorTest extends TestCommon
     public function testCloneStep() {
         $model = $this->getV2Model('fr', 'PM', '502');
 
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/step/clone/{$model->getId()}/1/to/2", TestCommon::$edgecreatorUser, 'POST')->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/step/clone/{$model->getId()}/1/to/2", self::$edgecreatorUser, 'POST')->call();
 
         $objectResponse = json_decode($response->getContent());
 
@@ -232,7 +232,7 @@ class EdgeCreatorTest extends TestCommon
     public function testCloneStepNothingToClone() {
         $model = $this->getV2Model('fr', 'PM', '502');
 
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/step/clone/{$model->getId()}/3/to/4", TestCommon::$edgecreatorUser, 'POST')->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/step/clone/{$model->getId()}/3/to/4", self::$edgecreatorUser, 'POST')->call();
 
         $this->assertEquals('No values to clone for '.json_encode([
             'idModele' => '1',
@@ -243,7 +243,7 @@ class EdgeCreatorTest extends TestCommon
     public function testUpdateNonExistingStep() {
         $model = $this->getV2Model('fr', 'PM', '502');
 
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/step/{$model->getId()}/3", TestCommon::$edgecreatorUser, 'POST', [
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/step/{$model->getId()}/3", self::$edgecreatorUser, 'POST', [
             'options' => [
                 'Couleur' => '#DDDDDD',
                 'Pos_x' => '1',
@@ -257,7 +257,7 @@ class EdgeCreatorTest extends TestCommon
     public function testUpdateStepWithInvalidOptions() {
         $model = $this->getV2Model('fr', 'PM', '502');
 
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/step/{$model->getId()}/3", TestCommon::$edgecreatorUser, 'POST', [
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/step/{$model->getId()}/3", self::$edgecreatorUser, 'POST', [
             'options' => '2'
         ])->call();
 
@@ -267,7 +267,7 @@ class EdgeCreatorTest extends TestCommon
     public function testUpdateStepWithEmptyOptions() {
         $model = $this->getV2Model('fr', 'PM', '502');
 
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/step/{$model->getId()}/3", TestCommon::$edgecreatorUser, 'POST', [
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/step/{$model->getId()}/3", self::$edgecreatorUser, 'POST', [
             'options!!!' => []
         ])->call();
 
@@ -277,7 +277,7 @@ class EdgeCreatorTest extends TestCommon
     public function testUpdateStep() {
         $model = $this->getV2Model('fr', 'PM', '502');
 
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/step/{$model->getId()}/1", TestCommon::$edgecreatorUser, 'POST', [
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/step/{$model->getId()}/1", self::$edgecreatorUser, 'POST', [
             'options' => [
                 'Couleur' => '#DDDDDD',
                 'Pos_x' => '1',
@@ -317,7 +317,7 @@ class EdgeCreatorTest extends TestCommon
     public function testInsertStep() {
         $model = $this->getV2Model('fr', 'PM', '502');
 
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/step/{$model->getId()}/2", TestCommon::$edgecreatorUser, 'POST', [
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/step/{$model->getId()}/2", self::$edgecreatorUser, 'POST', [
             'stepfunctionname' => 'Remplir',
             'options' => [
                 'Couleur' => '#AAAAAA',
@@ -445,7 +445,7 @@ class EdgeCreatorTest extends TestCommon
         };
 
         // Existing model with steps
-        $response = $this->buildAuthenticatedServiceWithTestUser("edgecreator/v2/model/clone/to/fr/PM/502", TestCommon::$edgecreatorUser, 'POST', $stepsToClone)->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser("edgecreator/v2/model/clone/to/fr/PM/502", self::$edgecreatorUser, 'POST', $stepsToClone)->call();
 
         $objectResponse = json_decode($response->getContent());
 
@@ -457,7 +457,7 @@ class EdgeCreatorTest extends TestCommon
 
 
         // New model
-        $response = $this->buildAuthenticatedServiceWithTestUser("edgecreator/v2/model/clone/to/fr/PM/505", TestCommon::$edgecreatorUser, 'POST', $stepsToClone)->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser("edgecreator/v2/model/clone/to/fr/PM/505", self::$edgecreatorUser, 'POST', $stepsToClone)->call();
 
         $objectResponse = json_decode($response->getContent());
 
@@ -471,7 +471,7 @@ class EdgeCreatorTest extends TestCommon
     public function testShiftStep() {
         $model = $this->getV2Model('fr', 'PM', '502');
 
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/step/shift/{$model->getId()}/1/inclusive", TestCommon::$edgecreatorUser, 'POST')->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/step/shift/{$model->getId()}/1/inclusive", self::$edgecreatorUser, 'POST')->call();
         $objectResponse = json_decode($response->getContent());
 
         $this->assertEquals(json_decode(json_encode([
@@ -484,7 +484,7 @@ class EdgeCreatorTest extends TestCommon
         $model = $this->getV2Model('fr', 'PM', '502');
         $stepToRemove = 1;
 
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/step/{$model->getId()}/$stepToRemove", TestCommon::$edgecreatorUser, 'DELETE')->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/step/{$model->getId()}/$stepToRemove", self::$edgecreatorUser, 'DELETE')->call();
         $objectResponse = json_decode($response->getContent());
 
         $this->assertEquals([
@@ -503,7 +503,7 @@ class EdgeCreatorTest extends TestCommon
     }
 
     public function testCreateMyfontsPreview() {
-        $response = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/myfontspreview', TestCommon::$edgecreatorUser, 'PUT', [
+        $response = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/myfontspreview', self::$edgecreatorUser, 'PUT', [
             'font' => 'Arial',
             'fgColor' => '#000000',
             'bgColor' => '#FFFFFF',
@@ -530,7 +530,7 @@ class EdgeCreatorTest extends TestCommon
 
         $newPreviewId = $newPreview->getId();
 
-        $this->buildAuthenticatedServiceWithTestUser("/edgecreator/myfontspreview/$newPreviewId", TestCommon::$edgecreatorUser, 'DELETE')->call();
+        $this->buildAuthenticatedServiceWithTestUser("/edgecreator/myfontspreview/$newPreviewId", self::$edgecreatorUser, 'DELETE')->call();
 
         $this->assertNull($em->getRepository(ImagesMyfonts::class)->find($newPreviewId));
     }
@@ -538,7 +538,7 @@ class EdgeCreatorTest extends TestCommon
     public function testDeactivateModel() {
         $model = $this->getV2Model('fr', 'PM', '502');
 
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/{$model->getId()}/deactivate", TestCommon::$edgecreatorUser, 'POST')
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/{$model->getId()}/deactivate", self::$edgecreatorUser, 'POST')
             ->call();
 
         $objectResponse = json_decode($response->getContent());
@@ -552,31 +552,37 @@ class EdgeCreatorTest extends TestCommon
     public function testSetModelReadyForPublication() {
         $model = $this->getV2Model('fr', 'PM', '502');
 
-        $designers = [1];
-        $photographers = [1, 2];
+        $sessionUser = self::getSessionUser($this->app);
+        $otherUser = self::createTestCollection('otheruser');
 
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/{$model->getId()}/readytopublish/1", TestCommon::$edgecreatorUser, 'POST', [
-            'designers' => $designers,
-            'photographers' => $photographers
+        $designerUsernames = [$sessionUser['username']];
+        $designerIds = [$sessionUser['id']];
+
+        $photographerUsernames = [$sessionUser['username'], $otherUser['username']];
+        $photographerIds = [$sessionUser['id'], $otherUser['id']];
+
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/{$model->getId()}/readytopublish/1", self::$edgecreatorUser, 'POST', [
+            'designers' => $designerUsernames,
+            'photographers' => $photographerUsernames
         ])
             ->call();
 
         $objectResponse = json_decode($response->getContent(), true);
 
         $this->assertEquals($model->getId(), $objectResponse['model']['id']);
-        $helperUsers = $objectResponse['model']['contributeurs'];
+        $contributors = $objectResponse['model']['contributeurs'];
 
-        $creatorsDetails = array_filter($helperUsers, function($helperUser) {
+        $creatorsDetails = array_filter($contributors, function($helperUser) {
             return $helperUser['contribution'] === 'createur';
         });
-        $photographersDetails = array_filter($helperUsers, function($helperUser) {
+        $photographersDetails = array_filter($contributors, function($helperUser) {
             return $helperUser['contribution'] === 'photographe';
         });
 
-        $this->assertEquals($designers, array_values(array_map(function($creator) {
+        $this->assertEquals($designerIds, array_values(array_map(function($creator) {
             return $creator['idUtilisateur'];
         }, $creatorsDetails)));
-        $this->assertEquals($photographers, array_values(array_map(function($photographer) {
+        $this->assertEquals($photographerIds, array_values(array_map(function($photographer) {
             return $photographer['idUtilisateur'];
         }, $photographersDetails)));
 
@@ -612,7 +618,7 @@ class EdgeCreatorTest extends TestCommon
 
         $this->getEm()->flush($model);
 
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/{$model->getId()}/readytopublish/0", TestCommon::$edgecreatorUser, 'POST')
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/{$model->getId()}/readytopublish/0", self::$edgecreatorUser, 'POST')
             ->call();
 
         $objectResponse = json_decode($response->getContent());
@@ -637,7 +643,7 @@ class EdgeCreatorTest extends TestCommon
 
         $model = $this->getV2Model('fr', 'PM', '502');
 
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/{$model->getId()}/photo/main", TestCommon::$edgecreatorUser, 'PUT', [
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/{$model->getId()}/photo/main", self::$edgecreatorUser, 'PUT', [
             'photoname' => $photoName
         ])->call();
 
@@ -671,7 +677,7 @@ class EdgeCreatorTest extends TestCommon
         $this->getEm()->persist($modelPhoto);
         $this->getEm()->flush();
 
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/{$model->getId()}/photo/main", TestCommon::$edgecreatorUser)->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/{$model->getId()}/photo/main", self::$edgecreatorUser)->call();
 
         $objectResponse = json_decode($response->getContent());
 
@@ -683,13 +689,13 @@ class EdgeCreatorTest extends TestCommon
         $this->getEm()->persist($model);
         $this->getEm()->flush();
 
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/{$model->getId()}/photo/main", TestCommon::$edgecreatorUser)->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/{$model->getId()}/photo/main", self::$edgecreatorUser)->call();
 
         $this->assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
     }
 
     public function testAddMultipleEdgePhoto() {
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/multiple_edge_photo", TestCommon::$edgecreatorUser, 'PUT', [
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/multiple_edge_photo", self::$edgecreatorUser, 'PUT', [
             'hash' => sha1('test2'),
             'filename' => 'photo2.jpg'
         ])->call();
@@ -700,7 +706,7 @@ class EdgeCreatorTest extends TestCommon
 
     public function testAddMultipleEdgePhotoInvalidEmail() {
         DmServer::$settings['smtp_username'] = 'user@@ducksmanager.net';
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/multiple_edge_photo", TestCommon::$edgecreatorUser, 'PUT', [
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/multiple_edge_photo", self::$edgecreatorUser, 'PUT', [
             'hash' => sha1('test2'),
             'filename' => 'photo2.jpg'
         ])->call();
@@ -709,7 +715,7 @@ class EdgeCreatorTest extends TestCommon
     }
 
     public function testGetMultipleEdgePhotos() {
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/multiple_edge_photo/today", TestCommon::$edgecreatorUser, 'GET')->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/multiple_edge_photo/today", self::$edgecreatorUser, 'GET')->call();
 
         $photo = $this->getEm()->getRepository(ImagesTranches::class)->findOneBy([
             'hash' => sha1('test')
@@ -727,7 +733,7 @@ class EdgeCreatorTest extends TestCommon
     public function testGetMultipleEdgePhotoByHash() {
 
         $hash = sha1('test');
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/multiple_edge_photo/hash/{$hash}", TestCommon::$edgecreatorUser, 'GET')->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/multiple_edge_photo/hash/{$hash}", self::$edgecreatorUser, 'GET')->call();
 
         $photo = $this->getEm()->getRepository(ImagesTranches::class)->findOneBy([
             'hash' => sha1('test')

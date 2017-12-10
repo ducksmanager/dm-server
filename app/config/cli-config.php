@@ -97,6 +97,13 @@ else {
     if (!in_array('orm:convert-mapping', $_SERVER['argv'])) {
         CliConfig::removeCommandLineParameter('namespace');
     }
-    $em = DmServer::createEntityManager($schemaConfigKey);
-    return \Doctrine\ORM\Tools\Console\ConsoleRunner::createHelperSet($em);
+    try {
+        $em = DmServer::createEntityManager($schemaConfigKey);
+        return \Doctrine\ORM\Tools\Console\ConsoleRunner::createHelperSet($em);
+    } catch (\Doctrine\DBAL\DBALException $e) {
+        echo "Failed to retrieve Entity manager $schemaConfigKey";
+    } catch (\Doctrine\ORM\ORMException $e) {
+        echo "Failed to retrieve Entity manager $schemaConfigKey";
+    }
+
 }

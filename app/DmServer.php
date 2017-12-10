@@ -2,22 +2,20 @@
 
 namespace DmServer;
 
-use DmServer\Controllers;
-
+use DDesrosiers\SilexAnnotations\AnnotationServiceProvider;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\CachedReader;
-
+use Doctrine\Common\Cache\ApcuCache;
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\EventManager;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Setup;
 use Gedmo\Timestampable\TimestampableListener;
+use JDesrosiers\Silex\Provider\CorsServiceProvider;
 use Silex\Api\ControllerProviderInterface;
 use Silex\Application;
 use Silex\ControllerCollection;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class DmServer implements ControllerProviderInterface
 {
@@ -136,6 +134,8 @@ class DmServer implements ControllerProviderInterface
     /**
      * @param string $dbName
      * @return EntityManager|null
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\ORM\ORMException
      */
     public static function getEntityManager($dbName) {
         if (!in_array($dbName, self::$configuredEntityManagerNames)) {
@@ -152,6 +152,8 @@ class DmServer implements ControllerProviderInterface
     /**
      * @param string $dbKey
      * @return EntityManager
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\ORM\ORMException
      */
     public static function createEntityManager($dbKey)
     {
@@ -201,44 +203,15 @@ class DmServer implements ControllerProviderInterface
         /** @var ControllerCollection $routing */
         $routing = $app['controllers_factory'];
 
-        $routing->before(/**
-         * @param Request $request
-         * @param Application $app
-         * @return Response|void
-         */
-            function(Request $request, Application $app) {
-                return self::checkRequestVersionAndUser($request, $app);
-            }
-        );
+        $app->register(new AnnotationServiceProvider(), [
+            "annot.cache" => new ApcuCache(),
+            "annot.controllerDir" => __DIR__."/controllers"
+        ]);
 
-        Controllers\User\AppController::addRoutes($routing);
-        Controllers\User\InternalController::addRoutes($routing);
-
-        Controllers\Collection\AppController::addRoutes($routing);
-        Controllers\Collection\InternalController::addRoutes($routing);
-
-        Controllers\Coa\AppController::addRoutes($routing);
-        Controllers\Coa\InternalController::addRoutes($routing);
-
-        Controllers\Coverid\AppController::addRoutes($routing);
-        Controllers\Coverid\InternalController::addRoutes($routing);
-
-        Controllers\Rawsql\AppController::addRoutes($routing);
-        Controllers\Rawsql\InternalController::addRoutes($routing);
-
-        Controllers\Status\AppController::addRoutes($routing);
-
-        Controllers\Stats\AppController::addRoutes($routing);
-        Controllers\Stats\InternalController::addRoutes($routing);
-
-        Controllers\Edgecreator\AppController::addRoutes($routing);
-        Controllers\Edgecreator\InternalController::addRoutes($routing);
-
-        Controllers\Edges\AppController::addRoutes($routing);
-        Controllers\Edges\InternalController::addRoutes($routing);
-
-        Controllers\Ducksmanager\AppController::addRoutes($routing);
-        Controllers\Ducksmanager\InternalController::addRoutes($routing);
+        $app->register(new CorsServiceProvider(), [
+            "cors.allowOrigin" => "*",
+        ]);
+        $app["cors-enabled"]($routing);
 
         return $routing;
     }

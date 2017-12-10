@@ -58,17 +58,17 @@
             "DmServer\\Controllers\\Coverid\\": [
                 "app/controllers/Coverid"
             ],
-            "DmServer\\Controllers\\DucksManager\\": [
+            "DmServer\\Controllers\\Ducksmanager\\": [
                 "app/controllers/Ducksmanager"
-            ],
-            "DmServer\\Controllers\\RawSql\\": [
-                "app/controllers/Rawsql"
             ],
             "DmServer\\Controllers\\Edgecreator\\": [
                 "app/controllers/Edgecreator"
             ],
             "DmServer\\Controllers\\Edges\\": [
                 "app/controllers/Edges"
+            ],
+            "DmServer\\Controllers\\Rawsql\\": [
+                "app/controllers/Rawsql"
             ],
             "DmServer\\Controllers\\Stats\\": [
                 "app/controllers/Stats"
@@ -103,7 +103,9 @@
         "monolog/monolog": "1.23.*",
         "gedmo/doctrine-extensions": "2.4.*",
         "swiftmailer/swiftmailer": "6.0.*",
-        "roave/security-advisories": "dev-master"
+        "jdesrosiers/silex-cors-provider": "~1.0",
+        "roave/security-advisories": "dev-master",
+        "radebatz/silex2swagger": "3.0.*"
     },
     "require-dev": {
         "phpunit/phpunit": "6.4.*",

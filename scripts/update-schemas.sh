@@ -8,7 +8,7 @@ else
   force=0
 fi
 
-app_dir=$DIR/../app
+app_dir=${DIR}/../app
 
 cd ${app_dir}/config
 php generate-db-config.php

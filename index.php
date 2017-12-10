@@ -27,18 +27,12 @@ $app->match('/', function () {
     return '';
 });
 
-$app->match("{url}", function () {
-    $response = new Response('', 200);
-    $response->headers->set("Access-Control-Allow-Headers", "x-dm-version");
-    return $response;
-})->assert('url', '.*')->method("OPTIONS");
-
 $app->before(function (Request $request) {
     if (strpos($request->getRequestUri(), '/internal') === 0) {
         return new Response('Unauthorized', Response::HTTP_FORBIDDEN);
     }
     return true;
-});
+}, Application::EARLY_EVENT);
 
 $app->register(new Sorien\Provider\PimpleDumpProvider(), [
     'pimpledump.output_dir' => __DIR__]

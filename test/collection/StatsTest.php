@@ -10,11 +10,11 @@ class StatsTest extends TestCommon
         self::createCoaData();
         $collectionUserInfo = self::createTestCollection();
         self::setSessionUser($this->app, $collectionUserInfo);
-        $this->createStatsData();
+        self::createStatsData(self::getSessionUser($this->app)['id']);
     }
 
     public function testGetWatchedAuthors() {
-        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/stats/watchedauthorsstorycount', TestCommon::$dmUser)->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/stats/watchedauthorsstorycount', self::$dmUser)->call();
 
         $objectResponse = json_decode($response->getContent());
         $this->assertInternalType('object', $objectResponse);
@@ -31,7 +31,7 @@ class StatsTest extends TestCommon
     }
 
     public function testGetSuggestions() {
-        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/stats/suggestedissues', TestCommon::$dmUser)->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/stats/suggestedissues', self::$dmUser)->call();
 
         $objectResponse = json_decode($response->getContent());
         $this->assertInternalType('object', $objectResponse);
@@ -87,7 +87,7 @@ class StatsTest extends TestCommon
     }
 
     public function testGetSuggestionsCountryFilter() {
-        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/stats/suggestedissues/fr', TestCommon::$dmUser)->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/stats/suggestedissues/fr', self::$dmUser)->call();
 
         $objectResponse = json_decode($response->getContent());
         $this->assertInternalType('object', $objectResponse);

@@ -13,7 +13,7 @@ class RawSqlTest extends TestCommon
     }
 
     public function testRawSqlWithUserWithoutPermission() {
-        $response = $this->buildAuthenticatedServiceWithTestUser('/rawsql', TestCommon::$dmUser, 'POST', [
+        $response = $this->buildAuthenticatedServiceWithTestUser('/rawsql', self::$dmUser, 'POST', [
             'query' => 'SELECT * FROM numeros',
             'db'    => DmServer::CONFIG_DB_KEY_DM
         ])
@@ -23,7 +23,7 @@ class RawSqlTest extends TestCommon
     }
 
     public function testRawSqlWithUserWithBadDbParameter() {
-        $service = $this->buildAuthenticatedServiceWithTestUser('/rawsql', TestCommon::$rawSqlUser, 'POST', [
+        $service = $this->buildAuthenticatedServiceWithTestUser('/rawsql', self::$rawSqlUser, 'POST', [
             'query' => 'SELECT * FROM numeros',
             'db'    => 'db_wrong'
         ]);
@@ -35,7 +35,7 @@ class RawSqlTest extends TestCommon
     }
 
     public function testRawSql() {
-        $response = $this->buildAuthenticatedServiceWithTestUser('/rawsql', TestCommon::$rawSqlUser, 'POST', [
+        $response = $this->buildAuthenticatedServiceWithTestUser('/rawsql', self::$rawSqlUser, 'POST', [
             'query' => 'SELECT * FROM numeros',
             'db'    => DmServer::CONFIG_DB_KEY_DM
         ])->call();
@@ -50,7 +50,7 @@ class RawSqlTest extends TestCommon
     }
 
     public function testRawSqlInvalidSelect() {
-        $response = $this->buildAuthenticatedServiceWithTestUser('/rawsql', TestCommon::$rawSqlUser, 'POST', [
+        $response = $this->buildAuthenticatedServiceWithTestUser('/rawsql', self::$rawSqlUser, 'POST', [
             'query' => 'SELECT invalid FROM numeros',
             'db'    => DmServer::CONFIG_DB_KEY_DM
         ])->call();
@@ -60,7 +60,7 @@ class RawSqlTest extends TestCommon
     }
 
     public function testRawSqlMultipleStatements() {
-        $response = $this->buildAuthenticatedServiceWithTestUser('/rawsql', TestCommon::$rawSqlUser, 'POST', [
+        $response = $this->buildAuthenticatedServiceWithTestUser('/rawsql', self::$rawSqlUser, 'POST', [
             'query' => 'SELECT * FROM numeros; DELETE FROM numeros',
             'db'    => DmServer::CONFIG_DB_KEY_DM
         ])

@@ -2,7 +2,6 @@
 
 namespace DmServer\Controllers\Edges;
 
-use Coa\Models\BaseModel;
 use Dm\Models\TranchesDoublons;
 use Dm\Models\TranchesPretes;
 use DmServer\Controllers\AbstractController;
@@ -11,11 +10,13 @@ use DmServer\ModelHelper;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query;
 use Silex\Application;
-use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use DDesrosiers\SilexAnnotations\Annotations as SLX;
 
-
+/**
+ * @SLX\Controller(prefix="/internal/edges")
+ */
 class InternalController extends AbstractController
 {
     protected static function wrapInternalService($app, $function) {
@@ -23,53 +24,61 @@ class InternalController extends AbstractController
     }
 
     /**
-     * @param $routing ControllerCollection
+     * @SLX\Route(
+     *     @SLX\Request(method="GET", uri="{publicationCode}/{issueNumbers}"),
+     *     @SLX\Assert(variable="publicationCode", regex="^(?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+)$"),
+     *     @SLX\Assert(variable="issueNumbers", regex="^((?P<issuenumber_regex>[-A-Z0-9 ]+),){0,49}(?&issuenumber_regex)$")
+     * )
+     * @param Application $app
+     * @param string $publicationCode
+     * @param $issueNumbers
+     * @return JsonResponse
      */
-    public static function addRoutes($routing)
-    {
-        $routing->get(
-            '/internal/edges/{publicationCode}/{issueNumbers}',
-            function (Request $request, Application $app, $publicationCode, $issueNumbers) {
-                return self::wrapInternalService($app, function(EntityManager $dmEm) use ($request, $publicationCode, $issueNumbers) {
-                    $qbGetEdges = $dmEm->createQueryBuilder();
-                    $qbGetEdges
-                        ->select('tranches_pretes')
-                        ->from(TranchesPretes::class, 'tranches_pretes')
-                        ->where($qbGetEdges->expr()->eq('tranches_pretes.publicationcode', ':publicationCode'))
-                        ->setParameter('publicationCode', explode(',', $publicationCode))
-                        ->andWhere($qbGetEdges->expr()->in('tranches_pretes.issuenumber', ':issueNumbers'))
-                        ->setParameter('issueNumbers', explode(',', $issueNumbers));
+    public function getEdges(Application $app, $publicationCode, $issueNumbers) {
+        return self::wrapInternalService($app, function(EntityManager $dmEm) use ($publicationCode, $issueNumbers) {
+            $qbGetEdges = $dmEm->createQueryBuilder();
+            $qbGetEdges
+                ->select('tranches_pretes')
+                ->from(TranchesPretes::class, 'tranches_pretes')
+                ->where($qbGetEdges->expr()->eq('tranches_pretes.publicationcode', ':publicationCode'))
+                ->setParameter('publicationCode', explode(',', $publicationCode))
+                ->andWhere($qbGetEdges->expr()->in('tranches_pretes.issuenumber', ':issueNumbers'))
+                ->setParameter('issueNumbers', explode(',', $issueNumbers));
 
-                    $edgeResults = $qbGetEdges->getQuery()->getResult();
-                    return new JsonResponse(ModelHelper::getSerializedArray($edgeResults));
-                });
-            }
-        )
-            ->assert('publicationCode', self::getParamAssertRegex(BaseModel::PUBLICATION_CODE_VALIDATION));
+            $edgeResults = $qbGetEdges->getQuery()->getResult();
+            return new JsonResponse(ModelHelper::getSerializedArray($edgeResults));
+        });
+    }
 
-        $routing->get(
-            '/internal/edges/references/{publicationCode}/{issueNumbers}',
-            function (Request $request, Application $app, $publicationCode, $issueNumbers) {
-                return self::wrapInternalService($app, function(EntityManager $dmEm) use ($request, $publicationCode, $issueNumbers) {
-                    list($country, $shortPublicationCode) = explode('/', $publicationCode);
+    /**
+     * @SLX\Route(
+     *     @SLX\Request(method="GET", uri="references/{publicationCode}/{issueNumbers}"),
+     *     @SLX\Assert(variable="publicationCode", regex="^(?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+)$"),
+     *     @SLX\Assert(variable="issueNumbers", regex="^((?P<issuenumber_regex>[-A-Z0-9 ]+),){0,49}(?&issuenumber_regex)$")
+     * )
+     * @param Application $app
+     * @param string $publicationCode
+     * @param $issueNumbers
+     * @return JsonResponse
+     */
+    public function getEdgeReferences(Application $app, $publicationCode, $issueNumbers) {
+        return self::wrapInternalService($app, function(EntityManager $dmEm) use ($publicationCode, $issueNumbers) {
+            list($country, $shortPublicationCode) = explode('/', $publicationCode);
 
-                    $qbGetReferenceEdges = $dmEm->createQueryBuilder();
-                    $qbGetReferenceEdges
-                        ->select('tranches_doublons.numero as issuenumber, reference.issuenumber AS referenceissuenumber')
-                        ->from(TranchesDoublons::class, 'tranches_doublons')
-                        ->innerJoin('tranches_doublons.tranchereference', 'reference')
-                        ->where($qbGetReferenceEdges->expr()->eq('tranches_doublons.pays', ':country'))
-                        ->setParameter('country', explode(',', $country))
-                        ->andWhere($qbGetReferenceEdges->expr()->in('tranches_doublons.magazine', ':shortPublicationCode'))
-                        ->setParameter('shortPublicationCode', explode(',', $shortPublicationCode))
-                        ->andWhere($qbGetReferenceEdges->expr()->in('tranches_doublons.numero', ':issueNumbers'))
-                        ->setParameter('issueNumbers', explode(',', $issueNumbers));
+            $qbGetReferenceEdges = $dmEm->createQueryBuilder();
+            $qbGetReferenceEdges
+                ->select('tranches_doublons.numero as issuenumber, reference.issuenumber AS referenceissuenumber')
+                ->from(TranchesDoublons::class, 'tranches_doublons')
+                ->innerJoin('tranches_doublons.tranchereference', 'reference')
+                ->where($qbGetReferenceEdges->expr()->eq('tranches_doublons.pays', ':country'))
+                ->setParameter('country', explode(',', $country))
+                ->andWhere($qbGetReferenceEdges->expr()->in('tranches_doublons.magazine', ':shortPublicationCode'))
+                ->setParameter('shortPublicationCode', explode(',', $shortPublicationCode))
+                ->andWhere($qbGetReferenceEdges->expr()->in('tranches_doublons.numero', ':issueNumbers'))
+                ->setParameter('issueNumbers', explode(',', $issueNumbers));
 
-                    $edgeResults = $qbGetReferenceEdges->getQuery()->getResult(Query::HYDRATE_OBJECT);
-                    return new JsonResponse(ModelHelper::getSerializedArray($edgeResults));
-                });
-            }
-        )
-            ->assert('publicationCode', self::getParamAssertRegex(BaseModel::PUBLICATION_CODE_VALIDATION));
+            $edgeResults = $qbGetReferenceEdges->getQuery()->getResult(Query::HYDRATE_OBJECT);
+            return new JsonResponse(ModelHelper::getSerializedArray($edgeResults));
+        });
     }
 }

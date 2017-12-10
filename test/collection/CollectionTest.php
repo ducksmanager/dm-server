@@ -17,7 +17,7 @@ class CollectionTest extends TestCommon
 
         self::createTestCollection(self::$defaultTestDmUserName); // Creates a collection with 3 issues
 
-        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/issues', TestCommon::$dmUser, 'POST', [
+        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/issues', self::$dmUser, 'POST', [
             'country' => 'fr',
             'publication' => 'DDD',
             'issuenumbers' => ['3'],
@@ -47,7 +47,7 @@ class CollectionTest extends TestCommon
         $publication = 'DDD';
         $issueToUpdate = '1';
 
-        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/issues', TestCommon::$dmUser, 'POST', [
+        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/issues', self::$dmUser, 'POST', [
             'country' => $country,
             'publication' => $publication,
             'issuenumbers' => [$issueToUpdate],
@@ -85,7 +85,7 @@ class CollectionTest extends TestCommon
         $collectionUserInfo = self::createTestCollection();
         self::setSessionUser($this->app, $collectionUserInfo);
 
-        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/issues', TestCommon::$dmUser, 'POST', [
+        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/issues', self::$dmUser, 'POST', [
             'country' => 'fr',
             'publication' => 'DDD',
             'issuenumbers' => ['1'],
@@ -109,7 +109,7 @@ class CollectionTest extends TestCommon
         $issueToUpdate = '1';
         $issueToCreate = '3';
 
-        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/issues', TestCommon::$dmUser, 'POST', [
+        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/issues', self::$dmUser, 'POST', [
             'country' => $country,
             'publication' => $publication,
             'issuenumbers' => [$issueToUpdate, $issueToCreate],
@@ -151,7 +151,7 @@ class CollectionTest extends TestCommon
 
         self::createCoaData();
 
-        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/issues', TestCommon::$dmUser)->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/issues', self::$dmUser)->call();
 
         $objectResponse = json_decode($response->getContent());
 
@@ -184,7 +184,7 @@ class CollectionTest extends TestCommon
 
         $purchaseToUpdate = $collectionUserInfo['purchaseIds'][0];
 
-        $this->buildAuthenticatedServiceWithTestUser("/collection/purchases/$purchaseToUpdate", TestCommon::$dmUser, 'POST', [
+        $this->buildAuthenticatedServiceWithTestUser("/collection/purchases/$purchaseToUpdate", self::$dmUser, 'POST', [
             'date' => '2017-01-01',
             'description' => 'New description'
         ])->call();
@@ -203,7 +203,7 @@ class CollectionTest extends TestCommon
         $collectionUserInfo = self::createTestCollection('dm_test_user');
         self::setSessionUser($this->app, $collectionUserInfo);
 
-        $response = $this->buildAuthenticatedServiceWithTestUser("/collection/purchases/3", TestCommon::$dmUser, 'POST', [
+        $response = $this->buildAuthenticatedServiceWithTestUser("/collection/purchases/3", self::$dmUser, 'POST', [
             'date' => '2017-01-01',
             'description' => 'New description'
         ])->call();
@@ -211,12 +211,19 @@ class CollectionTest extends TestCommon
         $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 
+    public function testCallOptionsService()
+    {
+        $response = $this->buildAuthenticatedServiceWithTestUser("/collection/purchases/3", self::$dmUser, 'OPTIONS')->call();
+
+        $this->assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
+    }
+
     public function testCreateExternalAccess()
     {
         $collectionUserInfo = self::createTestCollection('dm_test_user');
         self::setSessionUser($this->app, $collectionUserInfo);
 
-        $response = $this->buildAuthenticatedServiceWithTestUser("/collection/externalaccess", TestCommon::$dmUser, 'PUT')->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser("/collection/externalaccess", self::$dmUser, 'PUT')->call();
         $objectResponse = json_decode($response->getContent());
 
         $this->assertObjectHasAttribute('key', $objectResponse);
@@ -228,10 +235,10 @@ class CollectionTest extends TestCommon
         $collectionUserInfo = self::createTestCollection('dm_test_user');
         self::setSessionUser($this->app, $collectionUserInfo);
 
-        $creationResponse = $this->buildAuthenticatedServiceWithTestUser("/collection/externalaccess", TestCommon::$dmUser, 'PUT')->call();
+        $creationResponse = $this->buildAuthenticatedServiceWithTestUser("/collection/externalaccess", self::$dmUser, 'PUT')->call();
         $key = json_decode($creationResponse->getContent())->key;
 
-        $getResponse = $this->buildAuthenticatedServiceWithTestUser("/collection/externalaccess/$key", TestCommon::$dmUser)->call();
+        $getResponse = $this->buildAuthenticatedServiceWithTestUser("/collection/externalaccess/$key", self::$dmUser)->call();
         $objectResponse = json_decode($getResponse->getContent());
 
         $this->assertCount(1, $objectResponse);
@@ -245,7 +252,7 @@ class CollectionTest extends TestCommon
         $collectionUserInfo = self::createTestCollection('dm_test_user');
         self::setSessionUser($this->app, $collectionUserInfo);
 
-        $getResponse = $this->buildAuthenticatedServiceWithTestUser("/collection/externalaccess/123", TestCommon::$dmUser)->call();
+        $getResponse = $this->buildAuthenticatedServiceWithTestUser("/collection/externalaccess/123", self::$dmUser)->call();
         $objectResponse = json_decode($getResponse->getContent());
 
         $this->assertCount(0, $objectResponse);
@@ -256,7 +263,7 @@ class CollectionTest extends TestCommon
         $collectionUserInfo = self::createTestCollection('dm_test_user');
         self::setSessionUser($this->app, $collectionUserInfo);
 
-        $getResponse = $this->buildAuthenticatedServiceWithTestUser("/bookcase/sort", TestCommon::$dmUser)->call();
+        $getResponse = $this->buildAuthenticatedServiceWithTestUser("/collection/bookcase/sort", self::$dmUser)->call();
         $objectResponse = json_decode($getResponse->getContent());
 
         $this->assertCount(2, $objectResponse);
