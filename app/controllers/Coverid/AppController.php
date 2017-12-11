@@ -41,7 +41,7 @@ class AppController extends AbstractController
      *     in="path",
      *     required=true
      *   ),
-     *	 @SLX\Assert(variable="issueUrl", regex="^(?<issueurl_regex>.+)$")
+     *	 @SLX\Assert(variable="issueUrl", regex="^(?P<issueurl_regex>.+)$")
      * )
      * @param Application $app
      * @param string $issueUrl
@@ -157,7 +157,7 @@ class AppController extends AbstractController
      *     in="path",
      *     required=true
      *   ),
-     *	 @SLX\Assert(variable="$coverids", regex="^((?<coverid_regex>[0-9]+),){0,3}(?&coverid_regex)$")
+     *	 @SLX\Assert(variable="$coverids", regex="^((?P<coverid_regex>[0-9]+),){0,3}(?&coverid_regex)$")
      * )
      * @param Application $app
      * @param string $coverids

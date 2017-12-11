@@ -77,8 +77,8 @@ class AppController extends AbstractController
      *     in="query",
      *     required=true
      *   ),
-     *	 @SLX\Assert(variable="publicationcode", regex="^(?<publicationcode_regex>[a-z]+/[-A-Z0-9]+)$"),
-     *	 @SLX\Assert(variable="stepnumber", regex="^(?<stepnumber_regex>\d+)$")
+     *	 @SLX\Assert(variable="publicationcode", regex="^(?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+)$"),
+     *	 @SLX\Assert(variable="stepnumber", regex="^(?P<stepnumber_regex>\-?\d+)$")
      * )
      * @param Application $app
      * @param Request $request
@@ -140,7 +140,7 @@ class AppController extends AbstractController
      *     in="path",
      *     required=true
      *   ),
-     *	 @SLX\Assert(variable="modelId", regex="^(?<modelid_regex>\d+)$")
+     *	 @SLX\Assert(variable="modelId", regex="^(?P<modelid_regex>\d+)$")
      * )
      * @param Application $app
      * @param string $modelId
@@ -185,8 +185,8 @@ class AppController extends AbstractController
      *     in="path",
      *     required=true
      *   ),
-     *	 @SLX\Assert(variable="publicationcode", regex="^(?<publicationcode_regex>[a-z]+/[-A-Z0-9]+)$"),
-     *	 @SLX\Assert(variable="issuenumber", regex="^(?<issuenumber_regex>[-A-Z0-9 ]+)$")
+     *	 @SLX\Assert(variable="publicationcode", regex="^(?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+)$"),
+     *	 @SLX\Assert(variable="issuenumber", regex="^(?P<issuenumber_regex>[-A-Z0-9 ]+)$")
      * )
      * @param Application $app
      * @param string $publicationcode
@@ -215,8 +215,8 @@ class AppController extends AbstractController
      *     in="path",
      *     required=true
      *   ),
-     *	 @SLX\Assert(variable="publicationcode", regex="^(?<publicationcode_regex>[a-z]+/[-A-Z0-9]+)$"),
-     *	 @SLX\Assert(variable="issuenumber", regex="^(?<issuenumber_regex>[-A-Z0-9 ]+)$"),
+     *	 @SLX\Assert(variable="publicationcode", regex="^(?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+)$"),
+     *	 @SLX\Assert(variable="issuenumber", regex="^(?P<issuenumber_regex>[-A-Z0-9 ]+)$"),
      *	 @SLX\Value(variable="iseditor", default=0)
      * )
      * @param Application $app
@@ -257,8 +257,8 @@ class AppController extends AbstractController
      *     in="query",
      *     required=true
      *   ),
-     *	 @SLX\Assert(variable="publicationcode", regex="^(?<publicationcode_regex>[a-z]+/[-A-Z0-9]+)$"),
-     *	 @SLX\Assert(variable="issuenumber", regex="^(?<issuenumber_regex>[-A-Z0-9 ]+)$")
+     *	 @SLX\Assert(variable="publicationcode", regex="^(?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+)$"),
+     *	 @SLX\Assert(variable="issuenumber", regex="^(?P<issuenumber_regex>[-A-Z0-9 ]+)$")
      * )
      * @param Application $app
      * @param Request $request
@@ -342,8 +342,8 @@ class AppController extends AbstractController
      *     in="query",
      *     required=true
      *   ),
-     *	 @SLX\Assert(variable="modelid", regex="^(?<modelid_regex>\d+)$"),
-     *	 @SLX\Assert(variable="stepnumber", regex="^(?<stepnumber_regex>\d+)$")
+     *	 @SLX\Assert(variable="modelid", regex="^(?P<modelid_regex>\d+)$"),
+     *	 @SLX\Assert(variable="stepnumber", regex="^(?P<stepnumber_regex>\-?\d+)$")
      * )
      * @param Application $app
      * @param Request $request
@@ -389,8 +389,8 @@ class AppController extends AbstractController
      *     in="path",
      *     required=true
      *   ),
-     *	 @SLX\Assert(variable="modelid", regex="^(?<modelid_regex>\d+)$"),
-     *	 @SLX\Assert(variable="stepnumber", regex="^(?<stepnumber_regex>\d+)$")
+     *	 @SLX\Assert(variable="modelid", regex="^(?P<modelid_regex>\d+)$"),
+     *	 @SLX\Assert(variable="stepnumber", regex="^(?P<stepnumber_regex>\-?\d+)$")
      * )
      * @param Application $app
      * @param string $modelid
@@ -420,8 +420,8 @@ class AppController extends AbstractController
      *     in="path",
      *     required=true
      *   ),
-     *	 @SLX\Assert(variable="modelid", regex="^(?<modelid_regex>\d+)$"),
-     *	 @SLX\Assert(variable="stepnumber", regex="^(?<stepnumber_regex>\d+)$"),
+     *	 @SLX\Assert(variable="modelid", regex="^(?P<modelid_regex>\d+)$"),
+     *	 @SLX\Assert(variable="stepnumber", regex="^(?P<stepnumber_regex>\-?\d+)$"),
      *	 @SLX\Assert(variable="newstepnumber", regex="^(?&stepnumber_regex)$")
      * )
      * @param Application $app
@@ -447,8 +447,8 @@ class AppController extends AbstractController
      *     in="path",
      *     required=true
      *   ),
-     *	 @SLX\Assert(variable="modelid", regex="^(?<modelid_regex>\d+)$"),
-     *	 @SLX\Assert(variable="stepnumber", regex="^(?<stepnumber_regex>\d+)$")
+     *	 @SLX\Assert(variable="modelid", regex="^(?P<modelid_regex>\d+)$"),
+     *	 @SLX\Assert(variable="stepnumber", regex="^(?P<stepnumber_regex>\-?\d+)$")
      * )
      * @param Application $app
      * @param string $modelid
@@ -539,7 +539,7 @@ class AppController extends AbstractController
      *     in="query",
      *     required=true
      *   ),
-     *	 @SLX\Assert(variable="modelid", regex="^(?<modelid_regex>\d+)$")
+     *	 @SLX\Assert(variable="modelid", regex="^(?P<modelid_regex>\d+)$")
      * )
      * @param Application $app
      * @param string $modelid
@@ -572,7 +572,7 @@ class AppController extends AbstractController
      *     in="query",
      *     required=true
      *   ),
-     *	 @SLX\Assert(variable="modelid", regex="^(?<modelid_regex>\d+)$")
+     *	 @SLX\Assert(variable="modelid", regex="^(?P<modelid_regex>\d+)$")
      * )
      * @param Application $app
      * @param Request $request
@@ -600,7 +600,7 @@ class AppController extends AbstractController
      *     in="query",
      *     required=true
      *   ),
-     *	 @SLX\Assert(variable="modelid", regex="^(?<modelid_regex>\d+)$")
+     *	 @SLX\Assert(variable="modelid", regex="^(?P<modelid_regex>\d+)$")
      * )
      * @param Application $app
      * @param Request $request
@@ -621,7 +621,7 @@ class AppController extends AbstractController
      *     in="path",
      *     required=true
      *   ),
-     *	 @SLX\Assert(variable="modelid", regex="^(?<modelid_regex>\d+)$")
+     *	 @SLX\Assert(variable="modelid", regex="^(?P<modelid_regex>\d+)$")
      * )
      * @param Application $app
      * @param string $modelid

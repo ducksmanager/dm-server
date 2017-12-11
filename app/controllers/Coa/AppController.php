@@ -48,7 +48,7 @@ class AppController extends AbstractController
      *     in="path",
      *     required=true
      *   ),
-     *	 @SLX\Assert(variable="countries", regex="^((?<countrycode_regex>[a-z]+),){0,9}(?&countrycode_regex)$")
+     *	 @SLX\Assert(variable="countries", regex="^((?P<countrycode_regex>[a-z]+),){0,9}(?&countrycode_regex)$")
      * )
      * @param Application $app
      * @param string $countries
@@ -70,7 +70,7 @@ class AppController extends AbstractController
      *     in="path",
      *     required=true
      *   ),
-     *	 @SLX\Assert(variable="country", regex="^(?<countrycode_regex>[a-z]+)$")
+     *	 @SLX\Assert(variable="country", regex="^(?P<countrycode_regex>[a-z]+)$")
      * )
      * @param Application $app
      * @param string $country
@@ -136,7 +136,7 @@ class AppController extends AbstractController
      *     in="path",
      *     required=true
      *   ),
-     *	 @SLX\Assert(variable="issuecodes", regex="^((?<issuecode_regex>[a-z]+/[-A-Z0-9 ]+),){0,3}(?&issuecode_regex)$")
+     *	 @SLX\Assert(variable="issuecodes", regex="^((?P<issuecode_regex>[a-z]+/[-A-Z0-9 ]+),){0,3}(?&issuecode_regex)$")
      * )
      * @param Application $app
      * @param string $issuecodes
