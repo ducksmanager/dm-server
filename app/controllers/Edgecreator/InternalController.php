@@ -569,6 +569,7 @@ class InternalController extends AbstractController
         return self::wrapInternalService($app, function (EntityManager $ecEm) use ($request, $modelId, $isReadyToPublish) {
             $designers = $request->request->get('designers');
             $photographers = $request->request->get('photographers');
+            $contributorsUsernames = array_merge($designers ?? [], $photographers ?? []);
 
             $dmEm = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM);
 
@@ -576,7 +577,7 @@ class InternalController extends AbstractController
             $qb->select('users.id, users.username')
                 ->from(Users::class, 'users')
                 ->andWhere("users.username in (:usernames)")
-                ->setParameter(':usernames', $designers+$photographers)
+                ->setParameter(':usernames', $contributorsUsernames)
             ;
 
             $contributorsIdsResults = $qb->getQuery()->getResult();
@@ -598,7 +599,7 @@ class InternalController extends AbstractController
                     $photographer->setModele($model);
 
                     return $photographer;
-                }, $photographers));
+                }, array_values(array_unique($photographers))));
             }
             if (!is_null($designers)) {
                 $contributors = array_merge($contributors, array_map(function($designorUsername) use ($contributorsIds, $model) {
@@ -608,7 +609,7 @@ class InternalController extends AbstractController
                     $designer->setModele($model);
 
                     return $designer;
-                }, $designers));
+                }, array_values(array_unique($designers))));
             }
             $model->setActive(false);
             $model->setPretepourpublication($isReadyToPublish === '1');
