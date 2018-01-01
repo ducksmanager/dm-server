@@ -611,6 +611,13 @@ class InternalController extends AbstractController
                     return $designer;
                 }, array_values(array_unique($designers))));
             }
+
+            $qbDeleteExistingContributors = $ecEm->createQueryBuilder();
+            $qbDeleteExistingContributors->delete(TranchesEnCoursContributeurs::class, 'existingContributors')
+                ->where($qb->expr()->eq('existingContributors.modele', ':modelId'))
+                ->setParameter(':modelId', $modelId);
+            $qbDeleteExistingContributors->getQuery()->execute();
+
             $model->setActive(false);
             $model->setPretepourpublication($isReadyToPublish === '1');
 

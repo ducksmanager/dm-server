@@ -611,7 +611,7 @@ class EdgeCreatorTest extends TestCommon
     }
 
     public function testSetModelReadyForPublicationDuplicateUsers() {
-        $model = $this->getV2Model('fr', 'PM', '502');
+        $model = $this->getV2Model('fr', 'MP', '401');
 
         $sessionUser = self::getSessionUser($this->app);
         $otherUser = self::createTestCollection('otheruser');
@@ -782,11 +782,11 @@ class EdgeCreatorTest extends TestCommon
     }
 
     /**
-     * @param $model
-     * @param $designerUsernames
-     * @param $photographerUsernames
-     * @param $designerIds
-     * @param $photographerIds
+     * @param TranchesEnCoursModeles $model
+     * @param string[] $designerUsernames
+     * @param string[] $photographerUsernames
+     * @param int[] $designerIds
+     * @param int[] $photographerIds
      */
     private function assertSetModelReadyForPublicationOK($model, $designerUsernames, $photographerUsernames, $designerIds, $photographerIds)
     {
@@ -815,7 +815,7 @@ class EdgeCreatorTest extends TestCommon
             return $photographer['idUtilisateur'];
         }, $photographersDetails)));
 
-        $newModel = $this->getV2Model('fr', 'PM', '502');
+        $newModel = $this->getV2Model($model->getPays(), $model->getMagazine(), $model->getNumero());
         $this->assertEquals(true, $newModel->getPretepourpublication());
     }
 }
