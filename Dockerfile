@@ -1,4 +1,4 @@
-FROM php:7.0-apache
+FROM php:7.1-apache
 MAINTAINER Bruno Perel
 
 COPY composer.json /var/www/html/dm-server/composer.json
@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y git wget unzip mariadb-client nano ssmt
 
 RUN echo 'sendmail_path = "/usr/sbin/ssmtp -t"' > /usr/local/etc/php/conf.d/mail.ini
 
-RUN yes '' | pecl install channel://pecl.php.net/apcu_bc-1.0.3
+RUN yes '' | pecl install channel://pecl.php.net/apcu-5.1.9
 RUN echo 'extension=apcu.so' > /usr/local/etc/php/conf.d/apcu.ini
 
 RUN docker-php-ext-install pdo pdo_mysql opcache
