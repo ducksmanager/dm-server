@@ -12,7 +12,7 @@ RUN echo 'sendmail_path = "/usr/sbin/ssmtp -t"' > /usr/local/etc/php/conf.d/mail
 RUN yes '' | pecl install channel://pecl.php.net/apcu-5.1.9
 RUN echo 'extension=apcu.so' > /usr/local/etc/php/conf.d/apcu.ini
 
-RUN docker-php-ext-install pdo pdo_mysql opcache
+RUN docker-php-ext-install pdo pdo_mysql exif opcache
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 

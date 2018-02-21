@@ -20,7 +20,7 @@ RUN pecl install xdebug-2.5.5
 RUN yes '' | pecl install channel://pecl.php.net/apcu_bc-1.0.3
 RUN echo 'extension=apcu.so' > /usr/local/etc/php/conf.d/apcu.ini
 
-RUN docker-php-ext-install -j$(nproc) pdo pdo_mysql opcache && docker-php-ext-enable xdebug
+RUN docker-php-ext-install -j$(nproc) pdo pdo_mysql exif opcache && docker-php-ext-enable xdebug
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
