@@ -25,7 +25,7 @@ class InternalController extends AbstractController
     /**
      * @SLX\Route(
      *     @SLX\Request(method="GET", uri="issuecodes/{coverids}"),
-     *     @SLX\Assert(variable="coverids", regex="^((?<coverid_regex>[0-9]+),){0,19}(?&coverid_regex)$")
+     *     @SLX\Assert(variable="coverids", regex="^((?P<coverid_regex>[0-9]+),){0,19}(?&coverid_regex)$")
      * )
      * @param Application $app
      * @param string $coverids
@@ -58,7 +58,7 @@ class InternalController extends AbstractController
     /**
      * @SLX\Route(
      *     @SLX\Request(method="GET", uri="download/{coverId}"),
-     *     @SLX\Assert(variable="coverids", regex="^(?<coverid_regex>[0-9]+)$")
+     *     @SLX\Assert(variable="coverids", regex="^(?P<coverid_regex>[0-9]+)$")
      * )
      * @param Application $app
      * @param string $coverId

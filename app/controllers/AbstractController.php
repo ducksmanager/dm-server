@@ -86,6 +86,6 @@ abstract class AbstractController
         if ($maxOccurrences === 1) {
             return '^'.$baseRegex.'$';
         }
-        return '^((?<base>'.$baseRegex.'),){0,'.($maxOccurrences-1).'}(?&base)$';
+        return '^((?P<base>'.$baseRegex.'),){0,'.($maxOccurrences-1).'}(?&base)$';
     }
 }

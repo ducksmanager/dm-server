@@ -82,7 +82,7 @@ class AppController extends AbstractController
      *     in="path",
      *     required=true
      *   ),
-     *	 @SLX\Assert(variable="countrycode", regex="^(?<countrycode_regex>[a-z]+)$"),
+     *	 @SLX\Assert(variable="countrycode", regex="^(?P<countrycode_regex>[a-z]+)$"),
      *	 @SLX\Value(variable="countrycode", default="ALL")
      * )
      * @param Application $app

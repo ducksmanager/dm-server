@@ -314,6 +314,52 @@ class EdgeCreatorTest extends TestCommon
         $this->assertEquals('#000000', $values[0]->getOptionValeur());
     }
 
+    public function testInsertStepNegativeStepNumber() {
+        $model = $this->getV2Model('fr', 'PM', '502');
+
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/v2/step/{$model->getId()}/-1", self::$edgecreatorUser, 'POST', [
+            'stepfunctionname' => 'Remplir',
+            'options' => [
+                'Couleur' => '#AAAAAA',
+                'Pos_x' => '5',
+                'Pos_y' => '10'
+            ]
+        ])->call();
+
+        $objectResponse = json_decode($response->getContent());
+
+        $this->assertEquals(
+            [
+                [
+                    'name' => 'Couleur',
+                    'value' => '#AAAAAA'
+                ],[
+                'name' => 'Pos_x',
+                'value' => '5'
+            ],[
+                'name' => 'Pos_y',
+                'value' => '10'
+            ]
+            ],
+            json_decode(json_encode($objectResponse->valueids), true)
+        );
+        /** @var TranchesEnCoursValeurs[] $values */
+        $values = $this->getEm()->getRepository(TranchesEnCoursValeurs::class)->findBy([
+            'idModele' => $model->getId(),
+            'ordre' => -1
+        ]);
+
+        $this->assertCount(3, $values);
+        $this->assertEquals('Couleur', $values[0]->getOptionNom());
+        $this->assertEquals('#AAAAAA', $values[0]->getOptionValeur());
+
+        $this->assertEquals('Pos_x', $values[1]->getOptionNom());
+        $this->assertEquals('5', $values[1]->getOptionValeur());
+
+        $this->assertEquals('Pos_y', $values[2]->getOptionNom());
+        $this->assertEquals('10', $values[2]->getOptionValeur());
+    }
+
     public function testInsertStep() {
         $model = $this->getV2Model('fr', 'PM', '502');
 
@@ -561,33 +607,22 @@ class EdgeCreatorTest extends TestCommon
         $photographerUsernames = [$sessionUser['username'], $otherUser['username']];
         $photographerIds = [$sessionUser['id'], $otherUser['id']];
 
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/{$model->getId()}/readytopublish/1", self::$edgecreatorUser, 'POST', [
-            'designers' => $designerUsernames,
-            'photographers' => $photographerUsernames
-        ])
-            ->call();
+        $this->assertSetModelReadyForPublicationOK($model, $designerUsernames, $photographerUsernames, $designerIds, $photographerIds);
+    }
 
-        $objectResponse = json_decode($response->getContent(), true);
+    public function testSetModelReadyForPublicationDuplicateUsers() {
+        $model = $this->getV2Model('fr', 'MP', '401');
 
-        $this->assertEquals($model->getId(), $objectResponse['model']['id']);
-        $contributors = $objectResponse['model']['contributeurs'];
+        $sessionUser = self::getSessionUser($this->app);
+        $otherUser = self::createTestCollection('otheruser');
 
-        $creatorsDetails = array_filter($contributors, function($helperUser) {
-            return $helperUser['contribution'] === 'createur';
-        });
-        $photographersDetails = array_filter($contributors, function($helperUser) {
-            return $helperUser['contribution'] === 'photographe';
-        });
+        $designerUsernames = [$sessionUser['username'], $sessionUser['username']];
+        $designerIds = [$sessionUser['id'], $sessionUser['id']];
 
-        $this->assertEquals($designerIds, array_values(array_map(function($creator) {
-            return $creator['idUtilisateur'];
-        }, $creatorsDetails)));
-        $this->assertEquals($photographerIds, array_values(array_map(function($photographer) {
-            return $photographer['idUtilisateur'];
-        }, $photographersDetails)));
+        $photographerUsernames = [$sessionUser['username'], $otherUser['username']];
+        $photographerIds = [$sessionUser['id'], $otherUser['id']];
 
-        $newModel = $this->getV2Model('fr', 'PM', '502');
-        $this->assertEquals(true, $newModel->getPretepourpublication());
+        $this->assertSetModelReadyForPublicationOK($model, $designerUsernames, $photographerUsernames, $designerIds, $photographerIds);
     }
 
 
@@ -744,5 +779,43 @@ class EdgeCreatorTest extends TestCommon
         $this->assertEquals($photo->getIdUtilisateur(), $photoResult->idUtilisateur);
         $this->assertEquals($photo->getHash(), $photoResult->hash);
         $this->assertEquals($photo->getDateheure()->getTimestamp(), $photoResult->dateheure->timestamp);
+    }
+
+    /**
+     * @param TranchesEnCoursModeles $model
+     * @param string[] $designerUsernames
+     * @param string[] $photographerUsernames
+     * @param int[] $designerIds
+     * @param int[] $photographerIds
+     */
+    private function assertSetModelReadyForPublicationOK($model, $designerUsernames, $photographerUsernames, $designerIds, $photographerIds)
+    {
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/{$model->getId()}/readytopublish/1", self::$edgecreatorUser, 'POST', [
+            'designers' => $designerUsernames,
+            'photographers' => $photographerUsernames
+        ])
+            ->call();
+
+        $objectResponse = json_decode($response->getContent(), true);
+
+        $this->assertEquals($model->getId(), $objectResponse['model']['id']);
+        $contributors = $objectResponse['model']['contributeurs'];
+
+        $creatorsDetails = array_filter($contributors, function ($helperUser) {
+            return $helperUser['contribution'] === 'createur';
+        });
+        $photographersDetails = array_filter($contributors, function ($helperUser) {
+            return $helperUser['contribution'] === 'photographe';
+        });
+
+        $this->assertEquals(array_unique($designerIds), array_values(array_map(function ($creator) {
+            return $creator['idUtilisateur'];
+        }, $creatorsDetails)));
+        $this->assertEquals(array_unique($photographerIds), array_values(array_map(function ($photographer) {
+            return $photographer['idUtilisateur'];
+        }, $photographersDetails)));
+
+        $newModel = $this->getV2Model($model->getPays(), $model->getMagazine(), $model->getNumero());
+        $this->assertEquals(true, $newModel->getPretepourpublication());
     }
 }

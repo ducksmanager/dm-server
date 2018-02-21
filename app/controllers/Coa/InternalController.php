@@ -33,7 +33,7 @@ class InternalController extends AbstractController
     /**
      * @SLX\Route(
      *     @SLX\Request(method="GET", uri="countrynames/{countryCodes}"),
-     *     @SLX\Assert(variable="countryCodes", regex="^((?<countrycode_regex>[a-z]+),){0,9}(?&countrycode_regex)$"),
+     *     @SLX\Assert(variable="countryCodes", regex="^((?P<countrycode_regex>[a-z]+),){0,9}(?&countrycode_regex)$"),
      *     @SLX\Value(variable="countryCodes", default=null)
      * )
      * @param Application $app

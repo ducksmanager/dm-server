@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping\ManyToOne;
 /**
  * TranchesEnCoursContributeurs
  *
- * @ORM\Table(name="tranches_en_cours_contributeurs", indexes={@ORM\Index(name="IDX_1D8956AC4A1ED576", columns={"ID_Modele"})})
+ * @ORM\Table(name="tranches_en_cours_contributeurs", uniqueConstraints={@ORM\UniqueConstraint(name="tranches_en_cours_contributeurs__unique", columns={"ID_Modele", "ID_Utilisateur", "contribution"})}, indexes={@ORM\Index(name="IDX_1D8956AC4A1ED576", columns={"ID_Modele"})})
  * @ORM\Entity
  */
 class TranchesEnCoursContributeurs extends \Edgecreator\Models\BaseModel
