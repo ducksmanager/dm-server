@@ -17,7 +17,7 @@ RUN echo 'sendmail_path = "/usr/sbin/ssmtp -t"' > /usr/local/etc/php/conf.d/mail
 
 RUN pecl install xdebug-2.5.5
 
-RUN yes '' | pecl install channel://pecl.php.net/apcu_bc-1.0.3
+RUN yes '' | pecl install channel://pecl.php.net/apcu_bc-1.0.4
 RUN echo 'extension=apcu.so' > /usr/local/etc/php/conf.d/apcu.ini
 
 RUN docker-php-ext-install -j$(nproc) pdo pdo_mysql exif opcache && docker-php-ext-enable xdebug
