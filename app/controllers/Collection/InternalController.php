@@ -283,9 +283,14 @@ class InternalController extends AbstractController
                 ->andWhere($qb->expr()->eq('sorts.idUtilisateur', ':userId'))
                 ->setParameter(':userId', self::getSessionUser($app)['id']);
 
+            $sql = $qb->getQuery()->getSQL();
             $maxSort = $qb->getQuery()->getResult(Query::HYDRATE_SCALAR);
 
-            return new JsonResponse(['max' => $maxSort]);
+            if (count($maxSort) === 0) {
+                return new Response('No publication found for the bookcase', Response::HTTP_NO_CONTENT);
+            }
+
+            return new JsonResponse(['max' => intval(array_values($maxSort[0])[0])]);
         });
     }
 }
