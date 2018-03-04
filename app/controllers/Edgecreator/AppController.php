@@ -683,4 +683,15 @@ class AppController extends AbstractController
             'filename' => $request->request->get('filename')
         ]);
     }
+
+    /**
+     * @SLX\Route(
+     *   @SLX\Request(method="GET", uri="elements/images/{nameSubString}")
+     * )
+     * @param Application $app
+     * @return Response
+     */
+    public function getElementImagesByNameSubstring(Application $app, $nameSubString) {
+        return self::callInternal($app, "/edgecreator/elements/images/$nameSubString", 'GET');
+    }
 }

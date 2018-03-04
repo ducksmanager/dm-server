@@ -7,6 +7,7 @@ use DmServer\Controllers\AbstractController;
 use DmServer\DmServer;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NoResultException;
 use Edgecreator\Models\EdgecreatorIntervalles;
@@ -795,6 +796,59 @@ class InternalController extends AbstractController
             }
 
             return new JsonResponse(['photo' => ['id' => $photo->getId()]]);
+        });
+    }
+
+
+    /**
+     * @SLX\Route(
+     *     @SLX\Request(method="GET", uri="elements/images/{nameSubString}")
+     * )
+     * @param Application $app
+     * @param string $nameSubString
+     * @return Response
+     */
+    public function getElementImagesByNameSubstring(Application $app, $nameSubString) {
+        return self::wrapInternalService($app, function (EntityManager $ecEm) use ($app, $nameSubString) {
+
+            $templatedValues = $ecEm->getConnection()->executeQuery(
+                '
+                    SELECT Pays, Magazine, Option_valeur, Numero_debut, Numero_fin
+                    FROM edgecreator_valeurs valeurs
+                      INNER JOIN edgecreator_modeles2 modeles ON valeurs.ID_Option = modeles.ID
+                      INNER JOIN edgecreator_intervalles intervalles ON valeurs.ID = intervalles.ID_Valeur
+                    WHERE Nom_fonction = :functionName AND Option_nom = :optionName AND (Option_valeur = :optionValue OR (Option_valeur LIKE :optionValueTemplate AND Option_valeur LIKE :optionValueExtension))
+                    GROUP BY Pays, Magazine, Ordre, Option_nom, Numero_debut, Numero_fin
+                    UNION
+                    SELECT Pays, Magazine, Option_valeur, Numero AS Numero_debut, Numero AS Numero_fin
+                    FROM tranches_en_cours_modeles modeles
+                      INNER JOIN tranches_en_cours_valeurs valeurs ON modeles.ID = valeurs.ID_Modele
+                    WHERE Nom_fonction = :functionName AND Option_nom = :optionName AND (Option_valeur = :optionValue OR (Option_valeur LIKE :optionValueTemplate AND Option_valeur LIKE :optionValueExtension))
+                ',
+                [
+                    'functionName' => 'Image',
+                    'optionName' => 'Source',
+                    'optionValue' => $nameSubString,
+                    'optionValueTemplate' => '%[Numero]%',
+                    'optionValueExtension' => '%.png',
+                ], [
+                    Type::STRING,
+                    Type::STRING,
+                    Type::STRING,
+                    Type::STRING,
+                    Type::STRING,
+                ])->fetchAll();
+
+            $matches = array_filter($templatedValues, function($match) use ($nameSubString) {
+                $string_chunks = preg_split('/\[[^\]]+\]/', $match['Option_valeur']);
+                foreach($string_chunks as $string_chunk) {
+                    if (strpos($nameSubString, $string_chunk) === false) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+            return new JsonResponse(self::getSerializer()->serialize(array_values($matches), 'json'), Response::HTTP_OK, [], true);
         });
     }
 }

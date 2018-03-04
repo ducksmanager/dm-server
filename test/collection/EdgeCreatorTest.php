@@ -3,6 +3,7 @@ namespace DmServer\Test;
 
 
 use DmServer\DmServer;
+use Doctrine\ORM\OptimisticLockException;
 use Edgecreator\Models\EdgecreatorIntervalles;
 use Edgecreator\Models\EdgecreatorModeles2;
 use Edgecreator\Models\EdgecreatorValeurs;
@@ -768,7 +769,7 @@ class EdgeCreatorTest extends TestCommon
     public function testGetMultipleEdgePhotoByHash() {
 
         $hash = sha1('test');
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/multiple_edge_photo/hash/{$hash}", self::$edgecreatorUser, 'GET')->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/multiple_edge_photo/hash/$hash", self::$edgecreatorUser, 'GET')->call();
 
         $photo = $this->getEm()->getRepository(ImagesTranches::class)->findOneBy([
             'hash' => sha1('test')
@@ -779,6 +780,31 @@ class EdgeCreatorTest extends TestCommon
         $this->assertEquals($photo->getIdUtilisateur(), $photoResult->idUtilisateur);
         $this->assertEquals($photo->getHash(), $photoResult->hash);
         $this->assertEquals($photo->getDateheure()->getTimestamp(), $photoResult->dateheure->timestamp);
+    }
+
+    public function testGetElementImagesByNameSubstring() {
+        try {
+            self::createModelEcV1($this->getEm(), self::$edgecreatorUser, 'fr/MP', 1, 'Image', 'Source', 'MP.Tete.1.png', '1', '1');
+            self::createModelEcV1($this->getEm(), self::$edgecreatorUser, 'fr/MP', 2, 'Image', 'Source', 'MP.Tete.[Numero].png', '1', '1');
+            self::createModelEcV1($this->getEm(), self::$edgecreatorUser, 'fr/MP', 1, 'Image', 'Source', 'MP.Tete2.[Numero].png', '2', '2');
+
+            self::createModelEcV2($this->getEm(), self::$edgecreatorUser, 'fr/PM', '1', [1 => ['functionName' => 'Image', 'options' => ['Source' => 'MP.Tete.1.png']]]);
+            self::createModelEcV2($this->getEm(), self::$edgecreatorUser, 'fr/TP', '1', [2 => ['functionName' => 'Image', 'options' => ['Source' => 'MP.[Numero].png']]]);
+
+            $name = 'MP.Tete.1.png';
+            $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/elements/images/$name", self::$edgecreatorUser, 'GET')->call();
+
+            $objectResponse = json_decode($response->getContent());
+            $this->assertEquals(
+                ['MP.Tete.1.png', 'MP.Tete.[Numero].png', 'MP.Tete.1.png', 'MP.[Numero].png'],
+                array_map(function($element) {
+                    return $element->Option_valeur;
+                }, $objectResponse)
+            );
+        }
+        catch(OptimisticLockException $e) {
+            $this->fail($e->getMessage());
+        }
     }
 
     /**

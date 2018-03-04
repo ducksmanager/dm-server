@@ -19,6 +19,7 @@ use Dm\Models\Users;
 use DmServer\DmServer;
 use DmServer\RequestUtil;
 use Doctrine\DBAL\DBALException;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Stats\Models\AuteursHistoires;
@@ -697,58 +698,27 @@ class TestCommon extends WebTestCase {
                 $userId
             );
 
-            $model = new EdgecreatorModeles2();
-            $edgeCreatorEntityManager->persist(
-                $model
-                    ->setPays('fr')
-                    ->setMagazine('DDD')
-                    ->setOrdre(1)
-                    ->setNomFonction('Remplir')
-                    ->setOptionNom('Couleur')
-            );
-            $edgeCreatorEntityManager->flush();
-            $idOption = $model->getId();
-
-            $value = new EdgecreatorValeurs();
-            $edgeCreatorEntityManager->persist(
-                $value
-                    ->setIdOption($idOption)
-                    ->setOptionValeur('#FF0000')
-            );
-            $edgeCreatorEntityManager->flush();
-            $valueId = $value->getId();
-
-            $interval = new EdgecreatorIntervalles();
-            $edgeCreatorEntityManager->persist(
-                $interval
-                    ->setIdValeur($valueId)
-                    ->setNumeroDebut(1)
-                    ->setNumeroFin(3)
-                    ->setUsername($edgeCreatorUser->getUsername())
-            );
-
-            $edgeCreatorEntityManager->flush();
+            self::createModelEcV1($edgeCreatorEntityManager, $edgeCreatorUser->getUsername(), 'fr/DDD', 1, 'Remplir', 'Couleur', '#FF0000', 1, 3);
 
             // Models v2
 
-            $ongoingModel1 = new TranchesEnCoursModeles();
-            $edgeCreatorEntityManager->persist(
-                $ongoingModel1
-                    ->setPays('fr')
-                    ->setMagazine('PM')
-                    ->setNumero('502')
-                    ->setUsername($edgeCreatorUser->getUsername())
-            );
-            $edgeCreatorEntityManager->flush();
+            $ongoingModel1 = self::createModelEcV2($edgeCreatorEntityManager, $edgeCreatorUser->getUsername(), 'fr/PM', '502', [
+                1 => [
+                    'functionName' => 'Remplir',
+                    'options' => [
+                        'Couleur' => '#FF00FF',
+                        'Pos_x' => '0'
+                    ]
+                ],
+                2 => [
+                    'functionName' => 'TexteMyFonts',
+                    'options' => [
+                        'Couleur_texte' => '#000000'
+                    ]
+                ]
+            ]);
 
-            $ongoingModel2 = new TranchesEnCoursModeles();
-            $edgeCreatorEntityManager->persist(
-                $ongoingModel2
-                    ->setPays('fr')
-                    ->setMagazine('PM')
-                    ->setNumero('503')
-                    ->setUsername(null)
-            );
+            $ongoingModel2 = self::createModelEcV2($edgeCreatorEntityManager, null, 'fr/PM', '503', []);
 
             $edgePicture = new ImagesTranches();
             $edgeCreatorEntityManager->persist(
@@ -777,54 +747,9 @@ class TestCommon extends WebTestCase {
                     ->setContribution('photographe')
             );
 
-            $ongoingModel1Step1Value1 = new TranchesEnCoursValeurs();
-            $edgeCreatorEntityManager->persist(
-                $ongoingModel1Step1Value1
-                    ->setIdModele($ongoingModel1)
-                    ->setOrdre(1)
-                    ->setNomFonction('Remplir')
-                    ->setOptionNom('Couleur')
-                    ->setOptionValeur('#FF00FF')
-            );
+            $ongoingModel3 = self::createModelEcV2($edgeCreatorEntityManager, null, 'fr/MP', '400', []);
 
-            $ongoingModel1Step1Value2 = new TranchesEnCoursValeurs();
-            $edgeCreatorEntityManager->persist(
-                $ongoingModel1Step1Value2
-                    ->setIdModele($ongoingModel1)
-                    ->setOrdre(1)
-                    ->setNomFonction('Remplir')
-                    ->setOptionNom('Pos_x')
-                    ->setOptionValeur('0')
-            );
-
-            $ongoingModel1Step2Value1 = new TranchesEnCoursValeurs();
-            $edgeCreatorEntityManager->persist(
-                $ongoingModel1Step2Value1
-                    ->setIdModele($ongoingModel1)
-                    ->setOrdre(2)
-                    ->setNomFonction('TexteMyFonts')
-                    ->setOptionNom('Couleur_texte')
-                    ->setOptionValeur('#000000')
-            );
-            $edgeCreatorEntityManager->flush();
-
-            $ongoingModel3 = new TranchesEnCoursModeles();
-            $edgeCreatorEntityManager->persist(
-                $ongoingModel3
-                    ->setPays('fr')
-                    ->setMagazine('MP')
-                    ->setNumero('400')
-                    ->setUsername(null)
-            );
-
-            $ongoingModel4 = new TranchesEnCoursModeles();
-            $edgeCreatorEntityManager->persist(
-                $ongoingModel4
-                    ->setPays('fr')
-                    ->setMagazine('MP')
-                    ->setNumero('401')
-                    ->setUsername(null)
-            );
+            $ongoingModel4 = self::createModelEcV2($edgeCreatorEntityManager, null, 'fr/MP', '401', []);
 
             $ongoingModel4Contributor1 = new TranchesEnCoursContributeurs();
             $edgeCreatorEntityManager->persist(
@@ -838,6 +763,93 @@ class TestCommon extends WebTestCase {
         } catch (OptimisticLockException $e) {
             self::fail("Failed to create EdgeCreator data");
         }
+    }
+
+    /**
+     * @param EntityManager $edgeCreatorEntityManager
+     * @param string $userName
+     * @param string $publicationCode
+     * @param integer $stepNumber
+     * @param string $functionName
+     * @param string $optionName
+     * @param string $optionValue
+     * @param string $firstIssueNumber
+     * @param string $lastIssueNumber
+     * @throws OptimisticLockException
+     */
+    protected static function createModelEcV1($edgeCreatorEntityManager, $userName, $publicationCode, $stepNumber, $functionName, $optionName, $optionValue, $firstIssueNumber, $lastIssueNumber) {
+        $model = new EdgecreatorModeles2();
+        list($country, $magazine) = explode('/', $publicationCode);
+        $edgeCreatorEntityManager->persist(
+            $model
+                ->setPays($country)
+                ->setMagazine($magazine)
+                ->setOrdre($stepNumber)
+                ->setNomFonction($functionName)
+                ->setOptionNom($optionName)
+        );
+        $edgeCreatorEntityManager->flush();
+        $idOption = $model->getId();
+
+        $value = new EdgecreatorValeurs();
+        $edgeCreatorEntityManager->persist(
+            $value
+                ->setIdOption($idOption)
+                ->setOptionValeur($optionValue)
+        );
+        $edgeCreatorEntityManager->flush();
+        $valueId = $value->getId();
+
+        $interval = new EdgecreatorIntervalles();
+        $edgeCreatorEntityManager->persist(
+            $interval
+                ->setIdValeur($valueId)
+                ->setNumeroDebut($firstIssueNumber)
+                ->setNumeroFin($lastIssueNumber)
+                ->setUsername($userName)
+        );
+
+        $edgeCreatorEntityManager->flush();
+    }
+
+    /**
+     * @param EntityManager $edgeCreatorEntityManager
+     * @param string $userName
+     * @param string $publicationCode
+     * @param string $issueNumber
+     * @param array $steps
+     * @return TranchesEnCoursModeles
+     * @throws OptimisticLockException
+     */
+    protected static function createModelEcV2($edgeCreatorEntityManager, $userName, $publicationCode, $issueNumber, $steps) {
+        list($country, $magazine) = explode('/', $publicationCode);
+
+        $ongoingModel = new TranchesEnCoursModeles();
+        $edgeCreatorEntityManager->persist(
+            $ongoingModel
+                ->setPays($country)
+                ->setMagazine($magazine)
+                ->setNumero($issueNumber)
+                ->setUsername($userName)
+        );
+
+        foreach($steps as $stepNumber => $step) {
+            foreach($step['options'] as $optionName => $optionValue) {
+                $ongoingModel1Step1Value1 = new TranchesEnCoursValeurs();
+                $edgeCreatorEntityManager->persist(
+                    $ongoingModel1Step1Value1
+                        ->setIdModele($ongoingModel)
+                        ->setOrdre($stepNumber)
+                        ->setNomFonction($step['functionName'])
+                        ->setOptionNom($optionName)
+                        ->setOptionValeur($optionValue)
+                );
+            }
+        }
+
+        $edgeCreatorEntityManager->flush();
+
+        return $ongoingModel;
     }
 
     protected static function createCoverIds() {
