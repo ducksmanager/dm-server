@@ -237,4 +237,15 @@ class AppController extends AbstractController
     public function getBookcaseSorting(Application $app) {
         return self::callInternal($app, "/collection/bookcase/sort");
     }
+
+    /**
+     * @SLX\Route(
+     *   @SLX\Request(method="GET", uri="bookcase/sort/max")
+     * )
+     * @param Application $app
+     * @return Response
+     */
+    public function getLastPublicationPosition(Application $app) {
+        return self::callInternal($app, "/collection/bookcase/sort/max");
+    }
 }

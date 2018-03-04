@@ -81,11 +81,4 @@ abstract class AbstractController
             return new Response($e->getMessage(), $e->getCode() === 0 ? Response::HTTP_INTERNAL_SERVER_ERROR : $e->getCode());
         }
     }
-
-    protected static function getParamAssertRegex($baseRegex, $maxOccurrences = 1) {
-        if ($maxOccurrences === 1) {
-            return '^'.$baseRegex.'$';
-        }
-        return '^((?P<base>'.$baseRegex.'),){0,'.($maxOccurrences-1).'}(?&base)$';
-    }
 }
