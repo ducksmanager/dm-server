@@ -408,6 +408,10 @@ class EdgeCreatorTest extends TestCommon
     }
 
     public function testCloneModel() {
+        $model = $this->getV2Model('fr', 'PM', '502');
+        $model->setUsername(null); // Reset the assigned username to check that the clone service assigns it again
+        self::getEm()->flush($model);
+
         $stepsToClone = [
             'steps' => [
                 '1' => [
@@ -457,6 +461,9 @@ class EdgeCreatorTest extends TestCommon
         ];
 
         $assertValues = function($modelId) {
+
+            $model = $this->getEm()->getRepository(TranchesEnCoursModeles::class)->find($modelId);
+            $this->assertEquals(self::$defaultTestDmUserName, $model->getUsername());
 
             /** @var TranchesEnCoursValeurs[] $valuesStep1 */
             $valuesStep1 = $this->getEm()->getRepository(TranchesEnCoursValeurs::class)->findBy([

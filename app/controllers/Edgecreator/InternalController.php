@@ -124,6 +124,27 @@ class InternalController extends AbstractController
 
     /**
      * @SLX\Route(
+     *     @SLX\Request(method="POST", uri="v2/model/assign/{modelId}"),
+     *     @SLX\Assert(variable="modelId", regex="^(?P<modelid_regex>\d+)$")
+     * )
+     * @param Application $app
+     * @param string $modelId
+     * @return Response
+     */
+    public function assignModel(Application $app, $modelId) {
+        return self::wrapInternalService($app, function(EntityManager $ecEm) use ($app, $modelId) {
+            $model = $ecEm->getRepository(TranchesEnCoursModeles::class)->find($modelId);
+            $model->setUsername(self::getSessionUser($app)['username']);
+
+            $ecEm->persist($model);
+            $ecEm->flush();
+
+            return new Response(Response::HTTP_OK);
+        });
+    }
+
+    /**
+     * @SLX\Route(
      *     @SLX\Request(method="PUT", uri="v2/step/{modelId}/{stepNumber}"),
      *     @SLX\Assert(variable="modelId", regex="^(?P<modelid_regex>\d+)$"),
      *     @SLX\Assert(variable="stepNumber", regex="^(?P<stepnumber_regex>\-?\d+)$")
