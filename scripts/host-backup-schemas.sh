@@ -29,14 +29,15 @@ docker exec ${container_name} grep -Po '^(host|dbname|username|password)=\K.+' $
     rm -rf ${backup_subdir}/inducks_*nofulltext.*
 
     echo "Compressing backup_subdir"
-    backup_file="${today}-backup_dm-server-box_${dbname}.7z"
+    backup_file="backup_dm-server-box_${dbname}.7z"
     rm -f ${backup_file} && 7z a -t7z ${backup_file} -m0=lzma2 -mx=9 -aoa -mfb=64 -md=32m ${backup_subdir}
     if [ $? -eq 0 ]; then
       echo "Backed up locally"
       if [ -z "$remote_backup_config" ]; then
         echo "No remote backup configuration was provided, skipping remote backup"
       else
-        scp ${backup_file} ${remote_backup_config}/db_${dbname}.7z
+        backup_file_remote="backup_dm-server-box_${dbname}-${today}.7z"
+        scp ${backup_file} ${remote_backup_config}/${backup_file_remote}
         if [ $? -eq 0 ]; then
           echo "Backed up remotely"
         else
