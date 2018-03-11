@@ -25,19 +25,18 @@ docker exec ${container_name} grep -Po '^(host|dbname|username|password)=\K.+' $
     docker exec ${host} /bin/bash -c "rm -rf /tmp/export && mkdir -p /tmp/export && chmod 777 /tmp/export" && \
     docker exec ${host} /bin/bash -c "mysqldump -uroot -pchangeme --tab=/tmp/export --skip-dump-date ${dbname} && for i in /tmp/export/*.txt; do mv \$i \"$(basename \$i .txt).csv\"; done" && \
     docker cp ${host}:/tmp/export ${backup_subdir}
-  
-    git -C ${backup_subdir} init &&
-    git -C ${backup_subdir} add ${backup_subdir}/* &&
-    git -C ${backup_subdir} commit -m "Backup $today"
+
+    rm -rf ${backup_subdir}/inducks_*nofulltext.*
 
     echo "Compressing backup_subdir"
-    rm -f ${backup_subdir}.zip && zip ${backup_subdir}.zip -r ${backup_subdir}
+    backup_file="${today}-backup_dm-server-box_${dbname}.7z"
+    rm -f ${backup_file} && 7z a -t7z ${backup_file} -m0=lzma2 -mx=9 -aoa -mfb=64 -md=32m ${backup_subdir}
     if [ $? -eq 0 ]; then
       echo "Backed up locally"
       if [ -z "$remote_backup_config" ]; then
         echo "No remote backup configuration was provided, skipping remote backup"
       else
-        scp ${backup_subdir}.zip ${remote_backup_config}/db_${dbname}.zip
+        scp ${backup_file} ${remote_backup_config}/db_${dbname}.7z
         if [ $? -eq 0 ]; then
           echo "Backed up remotely"
         else
