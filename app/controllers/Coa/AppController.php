@@ -27,37 +27,56 @@ class AppController extends AbstractController
 {
     /**
      * @SLX\Route(
-     *   @SLX\Request(method="GET", uri="list/countries")
+     *   @SLX\Request(method="GET", uri="list/countries/{locale}"),
+     *   @SWG\Parameter(
+     *     name="locale",
+     *     in="path",
+     *     required=true
+     *   ),
+     *   @SWG\Parameter(
+     *     name="locale",
+     *     in="path",
+     *     required=true
+     *   ),
+     *	 @SLX\Assert(variable="locale", regex="^(?P<locale_regex>[a-z]+)$")
      * )
      * @param Application $app
+     * @param string $locale
      * @return JsonResponse
      */
-    public function listCountries(Application $app) {
+    public function listCountriesForLocale(Application $app, $locale) {
         return new JsonResponse(
             ModelHelper::getUnserializedArrayFromJson(
-                self::callInternal($app, '/coa/countrynames', 'GET', [])->getContent()
+                self::callInternal($app, "/coa/countrynames/$locale", 'GET', [])->getContent()
             )
         );
     }
 
     /**
      * @SLX\Route(
-     *   @SLX\Request(method="GET", uri="list/countries/{countries}"),
+     *   @SLX\Request(method="GET", uri="list/countries/{locale}/{countries}"),
+     *   @SWG\Parameter(
+     *     name="locale",
+     *     in="path",
+     *     required=true
+     *   ),
      *   @SWG\Parameter(
      *     name="countries",
      *     in="path",
      *     required=true
      *   ),
+     *	 @SLX\Assert(variable="locale", regex="^(?P<locale_regex>[a-z]+)$"),
      *	 @SLX\Assert(variable="countries", regex="^((?P<countrycode_regex>[a-z]+),){0,9}(?&countrycode_regex)$")
      * )
      * @param Application $app
+     * @param string $locale
      * @param string $countries
      * @return JsonResponse
      */
-    public function listCountriesFromCodes(Application $app, $countries) {
+    public function listCountriesFromCodes(Application $app, $locale, $countries) {
         return new JsonResponse(
             ModelHelper::getUnserializedArrayFromJson(
-                self::callInternal($app, '/coa/countrynames', 'GET', [$countries])->getContent()
+                self::callInternal($app, "/coa/countrynames/$locale", 'GET', [$countries])->getContent()
             )
         );
     }

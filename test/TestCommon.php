@@ -328,28 +328,52 @@ class TestCommon extends WebTestCase {
     protected static function createCoaData() {
         $coaEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_COA];
         
-        self::$testCountries['fr'] = new InducksCountryname();
+        self::$testCountries['frLocale-fr'] = new InducksCountryname();
         $coaEntityManager->persist(
-            self::$testCountries['fr']
+            self::$testCountries['frLocale-fr']
                 ->setCountrycode('fr')
                 ->setLanguagecode('fr')
                 ->setCountryname('France')
         );
 
-        self::$testCountries['es'] = new InducksCountryname();
+        self::$testCountries['frLocale-es'] = new InducksCountryname();
         $coaEntityManager->persist(
-            self::$testCountries['es']
+            self::$testCountries['frLocale-es']
                 ->setCountrycode('es')
                 ->setLanguagecode('fr')
                 ->setCountryname('Espagne')
         );
 
-        self::$testCountries['us'] = new InducksCountryname();
+        self::$testCountries['frLocale-us'] = new InducksCountryname();
         $coaEntityManager->persist(
-            self::$testCountries['us']
+            self::$testCountries['frLocale-us']
                 ->setCountrycode('us')
                 ->setLanguagecode('fr')
                 ->setCountryname('USA')
+        );
+
+        self::$testCountries['esLocale-fr'] = new InducksCountryname();
+        $coaEntityManager->persist(
+            self::$testCountries['esLocale-fr']
+                ->setCountrycode('fr')
+                ->setLanguagecode('es')
+                ->setCountryname('Francia')
+        );
+
+        self::$testCountries['esLocale-es'] = new InducksCountryname();
+        $coaEntityManager->persist(
+            self::$testCountries['esLocale-es']
+                ->setCountrycode('es')
+                ->setLanguagecode('es')
+                ->setCountryname('España')
+        );
+
+        self::$testCountries['esLocale-us'] = new InducksCountryname();
+        $coaEntityManager->persist(
+            self::$testCountries['esLocale-us']
+                ->setCountrycode('us')
+                ->setLanguagecode('es')
+                ->setCountryname('EE.UU.')
         );
 
         self::$testPublications['fr/DDD'] = new InducksPublication();

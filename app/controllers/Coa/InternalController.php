@@ -32,23 +32,26 @@ class InternalController extends AbstractController
 
     /**
      * @SLX\Route(
-     *     @SLX\Request(method="GET", uri="countrynames/{countryCodes}"),
+     *     @SLX\Request(method="GET", uri="countrynames/{locale}/{countryCodes}"),
+     *	   @SLX\Assert(variable="locale", regex="^(?P<locale_regex>[a-z]+)$"),
      *     @SLX\Assert(variable="countryCodes", regex="^((?P<countrycode_regex>[a-z]+),){0,9}(?&countrycode_regex)$"),
      *     @SLX\Value(variable="countryCodes", default=null)
      * )
      * @param Application $app
+     * @param string $locale
      * @param string $countryCodes
      * @return JsonResponse
      */
-    public function listCountries(Application $app, $countryCodes) {
-        return self::wrapInternalService($app, function(EntityManager $coaEm) use ($countryCodes) {
+    public function listCountries(Application $app, $locale, $countryCodes) {
+        return self::wrapInternalService($app, function(EntityManager $coaEm) use ($locale, $countryCodes) {
             $qb = $coaEm->createQueryBuilder();
             $qb
                 ->select('inducks_countryname.countrycode, inducks_countryname.countryname')
-                ->from(InducksCountryname::class, 'inducks_countryname');
+                ->from(InducksCountryname::class, 'inducks_countryname')
+                ->where($qb->expr()->eq('inducks_countryname.languagecode', "'".$locale."'"));
 
             if (!empty($countryCodes)) {
-                $qb->where($qb->expr()->in('inducks_countryname.countrycode', explode(',', $countryCodes)));
+                $qb->andWhere($qb->expr()->in('inducks_countryname.countrycode', explode(',', $countryCodes)));
             }
 
             $results = $qb->getQuery()->getResult();

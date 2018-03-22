@@ -15,23 +15,37 @@ class CoaListsTest extends TestCommon
     }
 
     public function testGetCountryList() {
-        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/countries', self::$dmUser)->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/countries/fr', self::$dmUser)->call();
 
         $objectResponse = json_decode($response->getContent());
 
         $this->assertInternalType('object', $objectResponse);
         $this->assertEquals('France', $objectResponse->fr);
         $this->assertEquals('Espagne', $objectResponse->es);
+        $this->assertEquals('USA', $objectResponse->us);
+        $this->assertCount(3, (array)$objectResponse);
     }
 
     public function testGetCountryListFromCountryCodes() {
-        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/countries/fr,us', self::$dmUser)->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/countries/fr/fr,us', self::$dmUser)->call();
 
         $objectResponse = json_decode($response->getContent());
 
         $this->assertInternalType('object', $objectResponse);
         $this->assertEquals('France', $objectResponse->fr);
         $this->assertEquals('USA', $objectResponse->us);
+        $this->assertCount(2, (array)$objectResponse);
+    }
+
+    public function testGetCountryListFromCountryCodesOtherLocale() {
+        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/countries/es/fr,us', self::$dmUser)->call();
+
+        $objectResponse = json_decode($response->getContent());
+
+        $this->assertInternalType('object', $objectResponse);
+        $this->assertEquals('Francia', $objectResponse->fr);
+        $this->assertEquals('EE.UU.', $objectResponse->us);
+        $this->assertCount(2, (array)$objectResponse);
     }
 
     public function testGetPublicationListFromCountry() {
