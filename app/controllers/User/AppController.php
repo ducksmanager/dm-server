@@ -10,7 +10,7 @@ use Radebatz\Silex2Swagger\Swagger\Annotations as S2S;
 use Swagger\Annotations as SWG;
 
 /**
- * @S2S\Controller(prefix="/user/sale",
+ * @S2S\Controller(prefix="/user",
  *   @SWG\Parameter(
  *     name="x-dm-version",
  *     in="header",
@@ -37,7 +37,7 @@ class AppController extends AbstractController
 {
     /**
      * @SLX\Route(
-     *   @SLX\Request(method="POST", uri="{otheruser}"),
+     *   @SLX\Request(method="POST", uri="sale/{otheruser}"),
      *   @SWG\Parameter(
      *     name="otheruser",
      *     in="path",
@@ -59,7 +59,7 @@ class AppController extends AbstractController
 
     /**
      * @SLX\Route(
-     *   @SLX\Request(method="GET", uri="{otheruser}/{date}"),
+     *   @SLX\Request(method="GET", uri="sale/{otheruser}/{date}"),
      *   @SWG\Parameter(
      *     name="otheruser",
      *     in="path",
@@ -74,5 +74,17 @@ class AppController extends AbstractController
      */
     public function getSaleToUserAtDate(Application $app, $otheruser, $date) {
         return self::callInternal($app, "/user/sale/$otheruser/$date", 'GET');
+    }
+
+    /**
+     * @SLX\Route(
+     *   @SLX\Request(method="GET", uri="privileges")
+     * )
+     * @codeCoverageIgnore
+     * @param Application $app
+     * @return Response
+     */
+    public function getUserPrivileges(Application $app) {
+        return self::callInternal($app, "/user/privileges", 'GET');
     }
 }

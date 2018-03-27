@@ -73,6 +73,29 @@ class AppController extends AbstractController
 
     /**
      * @SLX\Route(
+     *   @SLX\Request(method="GET", uri="user/get/{username}/{password}"),
+     *   @SWG\Parameter(
+     *     name="username",
+     *     in="query",
+     *     required=true
+     *   ),
+     *   @SWG\Parameter(
+     *     name="password",
+     *     in="query",
+     *     required=true
+     *   )
+     * )
+     * @param Application $app
+     * @param string $username
+     * @param string $password
+     * @return Response
+     */
+    public function getUser(Application $app, $username, $password) {
+        return self::callInternal($app, "/ducksmanager/user/get/$username/$password");
+    }
+
+    /**
+     * @SLX\Route(
      *   @SLX\Request(method="POST", uri="resetDemo")
      * )
      * @param Application $app

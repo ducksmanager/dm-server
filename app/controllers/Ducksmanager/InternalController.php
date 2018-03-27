@@ -12,9 +12,11 @@ use DmServer\Controllers\AbstractInternalController;
 use DmServer\DmServer;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Query;
 use Silex\Application;
 
 use Swift_Mailer;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use DDesrosiers\SilexAnnotations\Annotations as SLX;
@@ -87,22 +89,41 @@ class InternalController extends AbstractInternalController
 
     /**
      * @SLX\Route(
-     *     @SLX\Request(method="GET", uri="check/{username}/{password}"),
+     *     @SLX\Request(method="GET", uri="user/get/{username}/{password}"),
      * )
      * @param Application $app
      * @param string $username
      * @param string $password
      * @return Response
      */
-    public function checkExistingUser(Application $app, $username, $password) {
+    public function getUser(Application $app, $username, $password) {
         return self::wrapInternalService($app, function(EntityManager $dmEm) use ($username, $password) {
             /** @var Users $existingUser */
-            $existingUser = $dmEm->getRepository(Users::class)->findOneBy([
-                'username' => $username,
-                'password' => $password
-            ]);
+            $privilegeQb = $dmEm->createQueryBuilder();
+            $qb = $dmEm->createQueryBuilder();
+            $qb
+                ->select('DISTINCT u')
+//                ->addSelect('('.
+//                    $privilegeQb
+//                        ->select('u_permissions.privilege')
+//                        ->from(UsersPermissions::class, 'u_permissions')
+//                        ->where($qb->expr()->andX(
+//                            $qb->expr()->eq('u.username', 'u_permissions.username'),
+//                            $qb->expr()->eq('u_permissions.role', ':ec_role')
+//                        ))
+//                        ->getDQL()
+//                .') AS privilege')
+                ->from(Users::class, 'u')
+                ->andWhere($qb->expr()->eq('u.username', ':username'))
+                ->andWhere($qb->expr()->eq('u.password', ':password'));
+
+            $qb->setParameters([':username' => $username, 'password' => $password]);
+//            , ':ec_role' => '"EdgeCreator"']);
+
+            $sql=$qb->getQuery()->getSQL();
+            $existingUser = $qb->getQuery()->getSingleResult(Query::HYDRATE_ARRAY);
             if (!is_null($existingUser)) {
-                return new Response($existingUser->getId(), Response::HTTP_OK);
+                return new JsonResponse($existingUser, Response::HTTP_OK);
             } else {
                 return new Response('', Response::HTTP_UNAUTHORIZED);
             }

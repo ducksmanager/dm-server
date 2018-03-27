@@ -5,6 +5,7 @@ namespace DmServer\Controllers\User;
 use Dm\Models\EmailsVentes;
 
 
+use Dm\Models\UsersPermissions;
 use DmServer\Controllers\AbstractInternalController;
 use DmServer\DmServer;
 use DmServer\ModelHelper;
@@ -63,6 +64,32 @@ class InternalController extends AbstractInternalController
             ]);
 
             return new JsonResponse(ModelHelper::getSerializedArray($access));
+        });
+    }
+    /**
+     * @SLX\Route(
+     *   @SLX\Request(method="GET", uri="privileges")
+     * )
+     * @codeCoverageIgnore
+     * @param Application $app
+     * @return Response
+     */
+    public function getUserPrivileges(Application $app) {
+        return self::wrapInternalService($app, function(EntityManager $dmEm) use ($app) {
+            $privileges = $dmEm->getRepository(UsersPermissions::class)->findBy([
+                'username' => self::getSessionUser($app)['username']
+            ]);
+
+            $privilegesAssoc = [];
+
+            array_walk(/**
+             * @param UsersPermissions $value
+             */
+                $privileges, function($value) use(&$privilegesAssoc) {
+                $privilegesAssoc[$value->getRole()] = $value->getPrivilege();
+            });
+
+            return new JsonResponse($privilegesAssoc);
         });
     }
 }

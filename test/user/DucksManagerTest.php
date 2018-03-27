@@ -104,4 +104,23 @@ class DucksManagerTest extends TestCommon
         ])->call();
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
     }
+
+    public function testGetUser() {
+        self::createTestCollection('demo');
+        $sha1Password = sha1('password');
+        $userResponse = $this->buildAuthenticatedService("/ducksmanager/user/get/demo/$sha1Password", self::$dmUser, [], [], 'GET')->call();
+        $objectResponse = json_decode($userResponse->getContent());
+        $this->assertEquals('demo', $objectResponse->username);
+    }
+
+    public function testGetPrivileges() {
+        self::createTestCollection('demo', ['EdgeCreator' => 'Affichage']);
+        $sha1Password = sha1('password');
+        $response = $this->buildAuthenticatedService("/user/privileges", self::$dmUser, [
+            'username' => 'demo',
+            'password' => $sha1Password
+        ], [], 'GET')->call();
+        $objectResponse = json_decode($response->getContent());
+        $this->assertEquals('Affichage', $objectResponse->EdgeCreator);
+    }
 }

@@ -16,6 +16,7 @@ use Dm\Models\Numeros;
 use Dm\Models\TranchesDoublons;
 use Dm\Models\TranchesPretes;
 use Dm\Models\Users;
+use Dm\Models\UsersPermissions;
 use DmServer\DmServer;
 use DmServer\RequestUtil;
 use Doctrine\DBAL\DBALException;
@@ -192,7 +193,7 @@ class TestCommon extends WebTestCase {
      * @return TestServiceCallCommon
      */
     protected function buildService(
-        $path, $userCredentials, $parameters = [], $systemCredentials = [], $method = 'POST', $files = []
+        $path, $userCredentials = [], $parameters = [], $systemCredentials = [], $method = 'POST', $files = []
     ) {
         $service = new TestServiceCallCommon($this->createClient());
         $service->setPath($path);
@@ -224,7 +225,7 @@ class TestCommon extends WebTestCase {
         );
     }
 
-    protected static function createUser($username, $password) {
+    protected static function createUser($username, $password, $roles = []) {
         $dmEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_DM];
 
         $user = new Users();
@@ -236,6 +237,16 @@ class TestCommon extends WebTestCase {
                 ->setEmail('test@ducksmanager.net')
                 ->setDateinscription(\DateTime::createFromFormat('Y-m-d', '2000-01-01'))
         );
+
+        foreach($roles as $role=>$privilege) {
+            $userPermission = new UsersPermissions();
+            $dmEntityManager->persist(
+                $userPermission
+                    ->setUsername($username)
+                    ->setRole($role)
+                    ->setPrivilege($privilege)
+            );
+        }
 
         try {
             $dmEntityManager->flush();
@@ -249,12 +260,15 @@ class TestCommon extends WebTestCase {
 
     /**
      * @param string $username
+     * @param array  $roles
      * @return array user info
+     * @throws ORMException
+     * @throws \Doctrine\Common\Persistence\Mapping\MappingException
      */
-    protected static function createTestCollection($username = 'dm_test_user') {
+    protected static function createTestCollection($username = 'dm_test_user', $roles = []) {
         $dmEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_DM];
 
-        $user = self::createUser($username, self::$testDmUsers[$username] ?? 'password');
+        $user = self::createUser($username, self::$testDmUsers[$username] ?? 'password', $roles);
 
         $numero1 = new Numeros();
         $dmEntityManager->persist(

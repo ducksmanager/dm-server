@@ -40,14 +40,15 @@ trait RequestInterceptor
         if (isset($username, $password)) {
             $app['monolog']->addInfo("Authenticating $username...");
 
-            $userCheck = self::callInternal($app, '/ducksmanager/check', 'GET', [
+            $userCheck = self::callInternal($app, '/ducksmanager/user/get', 'GET', [
                 'username' => $username,
                 'password' => $password
             ]);
             if ($userCheck->getStatusCode() !== Response::HTTP_OK) {
                 return new Response('', Response::HTTP_UNAUTHORIZED);
             } else {
-                self::setSessionUser($app, $username, $userCheck->getContent());
+                $userId = json_decode($userCheck->getContent())->id;
+                self::setSessionUser($app, $username, $userId);
                 $app['monolog']->addInfo("$username is logged in");
             }
         }
