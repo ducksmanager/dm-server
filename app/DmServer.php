@@ -157,7 +157,7 @@ class DmServer implements ControllerProviderInterface
      */
     public static function createEntityManager($dbKey)
     {
-        $cache = new ArrayCache();
+        $cache = new ApcuCache();
         // standard annotation reader
         $annotationReader = new AnnotationReader();
         $cachedAnnotationReader = new CachedReader(
