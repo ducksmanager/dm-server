@@ -89,7 +89,7 @@ class InternalController extends AbstractController
      *     @SLX\Value(variable="countrycode", default="ALL")
      * )
      * @param Application $app
-     * @param string $countrycode
+     * @param string      $countrycode
      * @return JsonResponse
      */
     public function getSuggestedIssues(Application $app, $countrycode) {

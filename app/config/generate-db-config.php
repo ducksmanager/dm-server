@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__."/../../vendor/autoload.php";
-require_once __DIR__."/../DmServer.php";
+require_once __DIR__. '/../../vendor/autoload.php';
+require_once __DIR__. '/../DmServer.php';
 
 use Symfony\Component\Yaml\Yaml;
 
@@ -29,15 +29,15 @@ try {
                         implode('=', ['password', $dbService['environment']['MYSQL_ROOT_PASSWORD']]),
                     ]);
                 } else {
-                    throw new Exception("DB service name is invalid : $dbEntityManagerName but it should be one of [" . implode(',', $configuredEntityManagerNames) . "]");
+                    throw new InvalidArgumentException("DB service name is invalid : $dbEntityManagerName but it should be one of [" . implode(',', $configuredEntityManagerNames) . ']');
                 }
             }
             file_put_contents(__DIR__ . '/config.db.ini', implode("\n\n", $dbConfigs));
         } else {
-            throw new Exception("No DB service found");
+            throw new RuntimeException('No DB service found');
         }
     } else {
-        throw new Exception("No services found");
+        throw new RuntimeException('No services found');
     }
 }
 catch(Exception $e) {

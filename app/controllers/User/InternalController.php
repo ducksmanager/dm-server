@@ -29,8 +29,11 @@ class InternalController extends AbstractInternalController
      *     @SLX\Request(method="POST", uri="sale/{otherUser}"),
      * )
      * @param Application $app
-     * @param string $otherUser
+     * @param string      $otherUser
      * @return JsonResponse
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
+     * @throws \InvalidArgumentException
+     * @throws \Exception
      */
     public function sellToUser(Application $app, $otherUser) {
         return self::wrapInternalService($app, function (EntityManager $dmEm) use ($app, $otherUser) {
@@ -51,9 +54,10 @@ class InternalController extends AbstractInternalController
      *     @SLX\Request(method="GET", uri="sale/{otherUser}/{date}"),
      * )
      * @param Application $app
-     * @param string $otherUser
-     * @param string $date
+     * @param string      $otherUser
+     * @param string      $date
      * @return JsonResponse
+     * @throws \Exception
      */
     public function getSaleToUserAtDate(Application $app, $otherUser, $date) {
         return self::wrapInternalService($app, function(EntityManager $dmEm) use ($app, $otherUser, $date) {
@@ -66,6 +70,7 @@ class InternalController extends AbstractInternalController
             return new JsonResponse(ModelHelper::getSerializedArray($access));
         });
     }
+
     /**
      * @SLX\Route(
      *   @SLX\Request(method="GET", uri="privileges")
@@ -73,19 +78,18 @@ class InternalController extends AbstractInternalController
      * @codeCoverageIgnore
      * @param Application $app
      * @return Response
+     * @throws \Exception
      */
     public function getUserPrivileges(Application $app) {
         return self::wrapInternalService($app, function(EntityManager $dmEm) use ($app) {
+            /** @var UsersPermissions[] $privileges */
             $privileges = $dmEm->getRepository(UsersPermissions::class)->findBy([
                 'username' => self::getSessionUser($app)['username']
             ]);
 
             $privilegesAssoc = [];
 
-            array_walk(/**
-             * @param UsersPermissions $value
-             */
-                $privileges, function($value) use(&$privilegesAssoc) {
+            array_walk($privileges, function($value) use(&$privilegesAssoc) {
                 $privilegesAssoc[$value->getRole()] = $value->getPrivilege();
             });
 

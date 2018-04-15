@@ -98,7 +98,7 @@ class AppController extends AbstractController
     public function listPublicationsFromCountryCode(Application $app, $country) {
         return new JsonResponse(
             ModelHelper::getUnserializedArrayFromJson(
-                self::callInternal($app, '/coa/publicationtitles', 'GET', [$country.'/%'])->getContent()
+                self::callInternal($app, '/coa/publicationtitles', 'GET', [$country . '/%'])->getContent()
             )
         );
     }

@@ -100,6 +100,7 @@ class AppController extends AbstractController
      * )
      * @param Application $app
      * @return Response
+     * @throws \InvalidArgumentException
      */
     public function resetDemo(Application $app) {
         $demoUserResponse = self::callInternal($app, '/rawsql', 'POST', [

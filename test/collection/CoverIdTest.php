@@ -16,36 +16,36 @@ class CoverIdTest extends TestCommon
     public static $exampleImageToUpload = 'cover_example_to_upload.jpg';
 
     public static $coverSearchResultsSimple = [
-        "bounding_rects" => [
-            "height" => 846,
-            "width"  => 625,
-            "x" => 67,
-            "y" => 44
+        'bounding_rects' => [
+            'height' => 846,
+            'width' => 625,
+            'x' => 67,
+            'y' => 44
         ],
-        "image_ids" => [1],
-        "scores" => [58.0],
-        "tags" => [''],
-        "type" => "SEARCH_RESULTS"
+        'image_ids' => [1],
+        'scores' => [58.0],
+        'tags' => [''],
+        'type' => 'SEARCH_RESULTS'
     ];
 
     public static $coverSearchResultsMany = [
-        "bounding_rects" => [
-            "height" => 846,
-            "width"  => 625,
-            "x" => 67,
-            "y" => 44
+        'bounding_rects' => [
+            'height' => 846,
+            'width' => 625,
+            'x' => 67,
+            'y' => 44
         ],
-        "image_ids" => [1,2,3,4,5,6,7,8,9,10,11],
-        "scores" => [58.0,59.0,60.0,61.0,62.0,63.0,64.0,65.0,66.0,67.0,68.0],
-        "tags" => [''],
-        "type" => "SEARCH_RESULTS"
+        'image_ids' => [1,2,3,4,5,6,7,8,9,10,11],
+        'scores' => [58.0,59.0,60.0,61.0,62.0,63.0,64.0,65.0,66.0,67.0,68.0],
+        'tags' => [''],
+        'type' => 'SEARCH_RESULTS'
     ];
 
     public function setUp()
     {
         parent::setUp();
         self::createCoaData();
-        list(self::$coverIds, self::$coverUrls) = self::createCoverIds();
+        [self::$coverIds, self::$coverUrls] = self::createCoverIds();
 
         @unlink(implode(DIRECTORY_SEPARATOR, self::$uploadDestination));
         copy(self::getPathToFileToUpload(self::$exampleImage), self::getPathToFileToUpload(self::$exampleImageToUpload));
@@ -109,13 +109,13 @@ class CoverIdTest extends TestCommon
 
         $this->assertFileExists(implode(DIRECTORY_SEPARATOR, self::$uploadDestination));
         $this->assertJsonStringEqualsJsonString(json_encode([
-            "issues" => [
-                "fr/DDD 1" => [
-                    "countrycode" => "fr",
-                    "publicationcode" => "fr/DDD",
-                    "publicationtitle" => "Dynastie",
-                    "issuenumber" => "1",
-                    "coverid" => 1
+            'issues' => [
+                'fr/DDD 1' => [
+                    'countrycode' => 'fr',
+                    'publicationcode' => 'fr/DDD',
+                    'publicationtitle' => 'Dynastie',
+                    'issuenumber' => '1',
+                    'coverid' => 1
                 ]/*, // Related issue: same cover story code
                 $similarCoverIssuePublicationCode.' '.$similarCoverIssueNumber => [
                     "countrycode" => explode('/', $similarCoverIssuePublicationCode)[0],
@@ -125,7 +125,7 @@ class CoverIdTest extends TestCommon
                     "coverid" => count(self::$coverIds) + 1
                     ]*/
                 ],
-            "imageIds" => [1]
+            'imageIds' => [1]
             ]), $response->getContent());
     }
 
@@ -146,43 +146,43 @@ class CoverIdTest extends TestCommon
 
         $this->assertFileExists(implode(DIRECTORY_SEPARATOR, self::$uploadDestination));
         $this->assertJsonStringEqualsJsonString(json_encode([
-            "issues" => [
-                "fr/DDD 1" => [
-                    "countrycode" => "fr",
-                    "publicationcode" => "fr/DDD",
-                    "publicationtitle" => "Dynastie",
-                    "issuenumber" => "1",
-                    "coverid" => 1
+            'issues' => [
+                'fr/DDD 1' => [
+                    'countrycode' => 'fr',
+                    'publicationcode' => 'fr/DDD',
+                    'publicationtitle' => 'Dynastie',
+                    'issuenumber' => '1',
+                    'coverid' => 1
                 ],
-                "fr/DDD 10" => [
-                    "countrycode" => "fr",
-                    "publicationcode" => "fr/DDD",
-                    "publicationtitle" => "Dynastie",
-                    "issuenumber" => "10",
-                    "coverid" => 5
+                'fr/DDD 10' => [
+                    'countrycode' => 'fr',
+                    'publicationcode' => 'fr/DDD',
+                    'publicationtitle' => 'Dynastie',
+                    'issuenumber' => '10',
+                    'coverid' => 5
                 ],
-                "fr/DDD 2" => [
-                    "countrycode" => "fr",
-                    "publicationcode" => "fr/DDD",
-                    "publicationtitle" => "Dynastie",
-                    "issuenumber" => "2",
-                    "coverid" => 2
+                'fr/DDD 2' => [
+                    'countrycode' => 'fr',
+                    'publicationcode' => 'fr/DDD',
+                    'publicationtitle' => 'Dynastie',
+                    'issuenumber' => '2',
+                    'coverid' => 2
                 ],
-                "fr/MP 300" => [
-                    "countrycode" => "fr",
-                    "publicationcode" => "fr/MP",
-                    "publicationtitle" => "Parade",
-                    "issuenumber" => "300",
-                    "coverid" => 3
+                'fr/MP 300' => [
+                    'countrycode' => 'fr',
+                    'publicationcode' => 'fr/MP',
+                    'publicationtitle' => 'Parade',
+                    'issuenumber' => '300',
+                    'coverid' => 3
                 ]
             ],
-            "imageIds" => [1,2,3,4,5,6,7,8,9,10]
+            'imageIds' => [1,2,3,4,5,6,7,8,9,10]
         ]), $response->getContent());
     }
 
     public function testCoverIdSearchSizeTooSmall() {
         $this->mockCoverSearchResults([
-            "type" => "IMAGE_SIZE_TOO_SMALL"
+            'type' => 'IMAGE_SIZE_TOO_SMALL'
         ]);
 
         $this->assertFileNotExists(implode(DIRECTORY_SEPARATOR, self::$uploadDestination));
@@ -194,7 +194,7 @@ class CoverIdTest extends TestCommon
         )->call();
 
         $this->assertJsonStringEqualsJsonString(json_encode([
-            "type" => "IMAGE_SIZE_TOO_SMALL"
+            'type' => 'IMAGE_SIZE_TOO_SMALL'
             ]), $response->getContent());
     }
 

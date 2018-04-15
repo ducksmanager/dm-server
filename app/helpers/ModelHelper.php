@@ -1,6 +1,7 @@
 <?php
 namespace DmServer;
 
+
 use Generic\Contracts\Results\GenericReturnObjectInterface;
 
 class ModelHelper {

@@ -235,7 +235,7 @@ class AppController extends AbstractController
      * @return Response
      */
     public function getBookcaseSorting(Application $app) {
-        return self::callInternal($app, "/collection/bookcase/sort");
+        return self::callInternal($app, '/collection/bookcase/sort');
     }
 
     /**
@@ -246,6 +246,6 @@ class AppController extends AbstractController
      * @return Response
      */
     public function getLastPublicationPosition(Application $app) {
-        return self::callInternal($app, "/collection/bookcase/sort/max");
+        return self::callInternal($app, '/collection/bookcase/sort/max');
     }
 }

@@ -116,7 +116,7 @@ class DucksManagerTest extends TestCommon
     public function testGetPrivileges() {
         self::createTestCollection('demo', ['EdgeCreator' => 'Affichage']);
         $sha1Password = sha1('password');
-        $response = $this->buildAuthenticatedService("/user/privileges", self::$dmUser, [
+        $response = $this->buildAuthenticatedService('/user/privileges', self::$dmUser, [
             'username' => 'demo',
             'password' => $sha1Password
         ], [], 'GET')->call();

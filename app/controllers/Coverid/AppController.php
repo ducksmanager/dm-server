@@ -44,8 +44,9 @@ class AppController extends AbstractController
      *	 @SLX\Assert(variable="issueUrl", regex="^(?P<issueurl_regex>.+)$")
      * )
      * @param Application $app
-     * @param string $issueUrl
+     * @param string      $issueUrl
      * @return Response
+     * @throws \InvalidArgumentException
      */
     public function downloadCover(Application $app, $issueUrl) {
         /** @var BinaryFileResponse $internalRequestResponse */
@@ -71,8 +72,10 @@ class AppController extends AbstractController
      *   )
      * )
      * @param Application $app
-     * @param Request $request
+     * @param Request     $request
      * @return Response
+     * @throws \InvalidArgumentException
+     * @throws \Symfony\Component\HttpFoundation\File\Exception\FileException
      */
     public function searchCover(Application $app, Request $request) {
         $app['monolog']->addInfo('Cover ID search: start');

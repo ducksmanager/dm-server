@@ -11,5 +11,5 @@ namespace Coverid\Models;
  */
 class BaseModel
 {
-    const COVER_ID_VALIDATION = '[0-9]+';
+    public const COVER_ID_VALIDATION = '[0-9]+';
 }

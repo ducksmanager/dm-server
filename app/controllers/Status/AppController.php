@@ -34,6 +34,7 @@ class AppController extends AbstractController
      * @codeCoverageIgnore
      * @param Application $app
      * @return Response
+     * @throws \InvalidArgumentException
      */
     public function getSwaggerJson(Application $app) {
         return AbstractController::returnErrorOnException($app, null, function () {
@@ -65,6 +66,7 @@ class AppController extends AbstractController
      * @codeCoverageIgnore
      * @param Application $app
      * @return Response
+     * @throws \InvalidArgumentException
      */
     public function getPastecStatus(Application $app) {
         return AbstractController::returnErrorOnException($app, null, function () {
@@ -77,7 +79,7 @@ class AppController extends AbstractController
                     $log[] = "Pastec OK with $pastecIndexesImagesNumber images indexed";
                 }
                 else {
-                    $errors[] = "Pastec has no images indexed";
+                    $errors[] = 'Pastec has no images indexed';
                 }
             }
             catch(\Exception $e) {
@@ -102,6 +104,7 @@ class AppController extends AbstractController
      * @codeCoverageIgnore
      * @param Application $app
      * @return Response
+     * @throws \InvalidArgumentException
      */
     public function getDbStatus(Application $app) {
         return AbstractController::returnErrorOnException($app, null, function () use ($app) {

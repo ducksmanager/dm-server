@@ -45,39 +45,49 @@ trait RequestUtil
         return $url . (count($getParameters) === 0 ? '' : '/' . implode('/', array_values($getParameters)));
     }
 
+    /**
+     * @param Application $app
+     * @param string      $url
+     * @param array       $parameters
+     * @return Response
+     * @throws \InvalidArgumentException
+     */
     public static function callInternalGetRequest(Application $app, $url, $parameters = []) {
         $subRequest = Request::create(self::buildUrl('/internal'.$url, $parameters));
-        return $app->handle($subRequest, HttpKernelInterface::SUB_REQUEST, false);
+        try {
+            return $app->handle($subRequest, HttpKernelInterface::SUB_REQUEST, false);
+        } catch (\Exception $e) {
+            return new Response("Failed to call internal method GET {$subRequest->getUri()}", Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
      * @param Application $app
-     * @param string $url
-     * @param string $type
-     * @param array $parameters
-     * @param int $chunkSize
+     * @param string      $url
+     * @param string      $type
+     * @param array       $parameters
+     * @param int         $chunkSize
      * @return Response|array
+     * @throws \InvalidArgumentException
      */
     public static function callInternal(Application $app, $url, $type = 'GET', $parameters = [], $chunkSize = 0) {
         if ($chunkSize > 1) {
             if (count($parameters) > 1) {
                 return new Response('Attempt to call callInternal with chunkSize > 1 and more than one parameter', Response::HTTP_INTERNAL_SERVER_ERROR);
-            } elseif (count($parameters) === 1) {
+            }
+
+            if (count($parameters) === 1) {
                 if ($type !== 'GET') {
                     return new Response('Attempt to call callInternal with chunkSize > 1 and non-GET method', Response::HTTP_INTERNAL_SERVER_ERROR);
                 }
                 $parameterListChunks = array_chunk($parameters[0], $chunkSize);
-                $results = [];
-                foreach ($parameterListChunks as $parameterListChunk) {
-                    $results = array_merge(
-                        $results,
-                        ModelHelper::getUnserializedArrayFromJson(
-                            self::callInternalGetRequest(
-                                $app, $url, [implode(',', $parameterListChunk)]
-                            )->getContent()
-                        )
+                $results = array_merge(...array_map(function($parameterListChunk) use ($url, $app) {
+                    return ModelHelper::getUnserializedArrayFromJson(
+                        self::callInternalGetRequest(
+                            $app, $url, [implode(',', $parameterListChunk)]
+                        )->getContent()
                     );
-                }
+                }, $parameterListChunks));
 
                 return $results;
             }
@@ -86,9 +96,12 @@ trait RequestUtil
         if ($type === 'GET') {
             return self::callInternalGetRequest($app, $url, $parameters);
         }
-        else {
-            $subRequest = Request::create('/internal' . $url, $type, $parameters);
+
+        $subRequest = Request::create('/internal' . $url, $type, $parameters);
+        try {
             return $app->handle($subRequest, HttpKernelInterface::SUB_REQUEST, false);
+        } catch (\Exception $e) {
+            return new Response("Failed to call internal method $type $url", Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }

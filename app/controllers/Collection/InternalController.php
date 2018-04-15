@@ -91,8 +91,8 @@ class InternalController extends AbstractController
      *     @SLX\Value(variable="purchaseId", default=null)
      * )
      * @param Application $app
-     * @param Request $request
-     * @param string $purchaseId
+     * @param Request     $request
+     * @param string      $purchaseId
      * @return JsonResponse
      */
     public function postPurchase(Application $app, Request $request, $purchaseId) {
@@ -127,7 +127,7 @@ class InternalController extends AbstractController
      * @SLX\Route(
      *     @SLX\Request(method="POST", uri="issues")
      * )
-     * @param Request $request
+     * @param Request     $request
      * @param Application $app
      * @return JsonResponse
      */
@@ -271,6 +271,7 @@ class InternalController extends AbstractController
      * )
      * @param Application $app
      * @return JsonResponse
+     * @throws \InvalidArgumentException
      */
     public function getLastPublicationPosition(Application $app) {
         return self::wrapInternalService($app, function(EntityManager $dmEm) use ($app) {
@@ -283,14 +284,13 @@ class InternalController extends AbstractController
                 ->andWhere($qb->expr()->eq('sorts.idUtilisateur', ':userId'))
                 ->setParameter(':userId', self::getSessionUser($app)['id']);
 
-            $sql = $qb->getQuery()->getSQL();
             $maxSort = $qb->getQuery()->getResult(Query::HYDRATE_SCALAR);
 
             if (count($maxSort) === 0) {
                 return new Response('No publication found for the bookcase', Response::HTTP_NO_CONTENT);
             }
 
-            return new JsonResponse(['max' => intval(array_values($maxSort[0])[0])]);
+            return new JsonResponse(['max' => (int)(array_values($maxSort[0])[0])]);
         });
     }
 }

@@ -7,8 +7,8 @@ class CsvHelper
         $headers = [];
         $outputData = [];
         $row = 0;
-        if (($handle = fopen($fileName, "r")) !== FALSE) {
-            while (($data = fgetcsv($handle, 1000, ";")) !== FALSE) {
+        if (($handle = fopen($fileName, 'r')) !== FALSE) {
+            while (($data = fgetcsv($handle, 1000, ';')) !== FALSE) {
                 if ($row === 0) {
                     $headers = $data;
                 }

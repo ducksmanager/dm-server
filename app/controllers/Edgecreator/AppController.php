@@ -81,10 +81,11 @@ class AppController extends AbstractController
      *	 @SLX\Assert(variable="stepnumber", regex="^(?P<stepnumber_regex>\-?\d+)$")
      * )
      * @param Application $app
-     * @param Request $request
-     * @param string $publicationcode
-     * @param string $stepnumber
+     * @param Request     $request
+     * @param string      $publicationcode
+     * @param string      $stepnumber
      * @return Response
+     * @throws \InvalidArgumentException
      */
     public function addStep (Application $app, Request $request, $publicationcode, $stepnumber) {
         $functionName = $request->request->get('functionname');
@@ -102,7 +103,7 @@ class AppController extends AbstractController
                 'optionid');
 
             $valueId = self::getResponseIdFromServiceResponse(
-                self::callInternal($app, "/edgecreator/value", 'PUT', [
+                self::callInternal($app, '/edgecreator/value', 'PUT', [
                     'optionid' => $optionId,
                     'optionvalue' => $optionValue
                 ]),
@@ -129,7 +130,7 @@ class AppController extends AbstractController
      * @return Response
      */
     public function getV2MyModels(Application $app) {
-        return self::callInternal($app, "/edgecreator/v2/model", 'GET');
+        return self::callInternal($app, '/edgecreator/v2/model', 'GET');
     }
 
     /**
@@ -158,7 +159,7 @@ class AppController extends AbstractController
      * @return Response
      */
     public function getModelsEditedByOthers(Application $app) {
-        return self::callInternal($app, "/edgecreator/v2/model/editedbyother/all", 'GET');
+        return self::callInternal($app, '/edgecreator/v2/model/editedbyother/all', 'GET');
     }
 
     /**
@@ -169,7 +170,7 @@ class AppController extends AbstractController
      * @return Response
      */
     public function getUnassignedModels(Application $app) {
-        return self::callInternal($app, "/edgecreator/v2/model/unassigned/all", 'GET');
+        return self::callInternal($app, '/edgecreator/v2/model/unassigned/all', 'GET');
     }
 
     /**
@@ -220,10 +221,11 @@ class AppController extends AbstractController
      *	 @SLX\Value(variable="iseditor", default=0)
      * )
      * @param Application $app
-     * @param string $publicationcode
-     * @param string $issuenumber
-     * @param string $iseditor
+     * @param string      $publicationcode
+     * @param string      $issuenumber
+     * @param string      $iseditor
      * @return Response
+     * @throws \InvalidArgumentException
      */
     public function createModel(Application $app, $publicationcode, $issuenumber, $iseditor) {
         try {
@@ -261,13 +263,15 @@ class AppController extends AbstractController
      *	 @SLX\Assert(variable="issuenumber", regex="^(?P<issuenumber_regex>[-A-Z0-9 ]+)$")
      * )
      * @param Application $app
-     * @param Request $request
-     * @param string $publicationcode
-     * @param string $issuenumber
+     * @param Request     $request
+     * @param string      $publicationcode
+     * @param string      $issuenumber
      * @return Response
+     * @throws \InvalidArgumentException
      * @throws UnexpectedInternalCallResponseException
      */
     public function cloneSteps(Application $app, Request $request, $publicationcode, $issuenumber) {
+        /** @var string[] $steps */
         $steps = $request->request->get('steps');
 
         $targetModelId = null;
@@ -348,10 +352,11 @@ class AppController extends AbstractController
      *	 @SLX\Assert(variable="stepnumber", regex="^(?P<stepnumber_regex>\-?\d+)$")
      * )
      * @param Application $app
-     * @param Request $request
-     * @param string $modelid
-     * @param string $stepnumber
+     * @param Request     $request
+     * @param string      $modelid
+     * @param string      $stepnumber
      * @return Response
+     * @throws \InvalidArgumentException
      */
     public function createOrUpdateStep(Application $app, Request $request, $modelid, $stepnumber) {
         $stepFunctionName = $request->request->get('stepfunctionname');
@@ -502,7 +507,7 @@ class AppController extends AbstractController
      */
     public function storeMyFontsPreview(Application $app, Request $request) {
         $previewId = self::getResponseIdFromServiceResponse(
-            self::callInternal($app, "/edgecreator/myfontspreview", 'PUT', [
+            self::callInternal($app, '/edgecreator/myfontspreview', 'PUT', [
                 'font' => $request->request->get('font'),
                 'fgColor' => $request->request->get('fgColor'),
                 'bgColor' => $request->request->get('bgColor'),
@@ -641,7 +646,7 @@ class AppController extends AbstractController
      * @return Response
      */
     public function getMultipleEdgePhotosFromToday(Application $app) {
-        return self::callInternal($app, "/edgecreator/multiple_edge_photo/today", 'GET');
+        return self::callInternal($app, '/edgecreator/multiple_edge_photo/today', 'GET');
     }
 
     /**
@@ -680,7 +685,7 @@ class AppController extends AbstractController
      * @return Response
      */
     public function createMultipleEdgePhoto(Request $request, Application $app) {
-        return self::callInternal($app, "/edgecreator/multiple_edge_photo", 'PUT', [
+        return self::callInternal($app, '/edgecreator/multiple_edge_photo', 'PUT', [
             'hash' => $request->request->get('hash'),
             'filename' => $request->request->get('filename')
         ]);
@@ -691,7 +696,9 @@ class AppController extends AbstractController
      *   @SLX\Request(method="GET", uri="elements/images/{nameSubString}")
      * )
      * @param Application $app
+     * @param string      $nameSubString
      * @return Response
+     * @throws \Exception
      */
     public function getElementImagesByNameSubstring(Application $app, $nameSubString) {
         return self::callInternal($app, "/edgecreator/elements/images/$nameSubString", 'GET');

@@ -4,6 +4,7 @@ namespace DmServer\Controllers;
 use DmServer\DmServer;
 use DmServer\RequestUtil;
 use Edgecreator\Models\TranchesEnCoursModeles;
+
 use Silex\Application;
 use Silex\Application\TranslationTrait;
 use Symfony\Component\HttpFoundation\Response;
@@ -66,9 +67,10 @@ abstract class AbstractController
 
     /**
      * @param Application $app
-     * @param string $integratedEm
-     * @param callable $function
+     * @param string      $integratedEm
+     * @param callable    $function
      * @return mixed|Response
+     * @throws \InvalidArgumentException
      */
     protected static function returnErrorOnException($app, $integratedEm, $function) {
         try {

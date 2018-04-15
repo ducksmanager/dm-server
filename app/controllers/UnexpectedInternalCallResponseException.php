@@ -14,6 +14,7 @@ class UnexpectedInternalCallResponseException extends \Exception
      */
     public function __construct($content, $statusCode)
     {
+        parent::__construct($content, $statusCode);
         $this->content = $content;
         $this->statusCode = $statusCode;
     }

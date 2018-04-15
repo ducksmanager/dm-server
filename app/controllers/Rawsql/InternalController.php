@@ -23,9 +23,10 @@ class InternalController extends AbstractController
      * @SLX\Route(
      *     @SLX\Request(method="POST", uri="/internal/rawsql")
      * )
-     * @param Request $request
+     * @param Request     $request
      * @param Application $app
      * @return JsonResponse
+     * @throws \InvalidArgumentException
      */
     public function runQuery(Request $request, Application $app) {
         return self::wrapInternalService($app, function() use ($request, $app) {

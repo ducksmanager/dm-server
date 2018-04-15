@@ -46,8 +46,9 @@ class AppController extends AbstractController
      * )
      * @codeCoverageIgnore
      * @param Application $app
-     * @param string $otheruser
+     * @param string      $otheruser
      * @return Response
+     * @throws \InvalidArgumentException
      */
     public function sellToUser(Application $app, $otheruser) {
         if (self::callInternal($app, '/ducksmanager/exists', 'GET', [$otheruser])->getStatusCode() === Response::HTTP_NO_CONTENT) {
@@ -85,6 +86,6 @@ class AppController extends AbstractController
      * @return Response
      */
     public function getUserPrivileges(Application $app) {
-        return self::callInternal($app, "/user/privileges", 'GET');
+        return self::callInternal($app, '/user/privileges', 'GET');
     }
 }

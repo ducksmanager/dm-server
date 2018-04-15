@@ -3,9 +3,9 @@ namespace DmServer;
 
 class MiscUtil {
     public static function getRandomString($length = 16) {
-        $validCharacters = "abcdefghijklmnopqrstuxyvwzABCDEFGHIJKLMNOPQRSTUXYVWZ";
+        $validCharacters = 'abcdefghijklmnopqrstuxyvwzABCDEFGHIJKLMNOPQRSTUXYVWZ';
         $validCharNumber = strlen($validCharacters);
-        $result = "";
+        $result = '';
         for ($i = 0; $i < $length; $i++) {
             $result.=$validCharacters[mt_rand(0, $validCharNumber - 1)];
         }

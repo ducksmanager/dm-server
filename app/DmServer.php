@@ -6,7 +6,7 @@ use DDesrosiers\SilexAnnotations\AnnotationServiceProvider;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\CachedReader;
 use Doctrine\Common\Cache\ApcuCache;
-use Doctrine\Common\Cache\ArrayCache;
+
 use Doctrine\Common\EventManager;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
@@ -23,17 +23,17 @@ class DmServer implements ControllerProviderInterface
 
     public static $isTestContext = false;
 
-    const CONFIG_FILE_DEFAULT = 'config.db.ini';
-    const CONFIG_FILE_TEST = 'config.db.test.ini';
+    public const CONFIG_FILE_DEFAULT = 'config.db.ini';
+    public const CONFIG_FILE_TEST = 'config.db.test.ini';
 
     /** @var EntityManager[] $entityManagers */
     public static $entityManagers = [];
 
-    const CONFIG_DB_KEY_DM = 'db_dm';
-    const CONFIG_DB_KEY_COA = 'db_coa';
-    const CONFIG_DB_KEY_COVER_ID = 'db_cover_id';
-    const CONFIG_DB_KEY_DM_STATS = 'db_dm_stats';
-    const CONFIG_DB_KEY_EDGECREATOR = 'db_edgecreator';
+    public const CONFIG_DB_KEY_DM = 'db_dm';
+    public const CONFIG_DB_KEY_COA = 'db_coa';
+    public const CONFIG_DB_KEY_COVER_ID = 'db_cover_id';
+    public const CONFIG_DB_KEY_DM_STATS = 'db_dm_stats';
+    public const CONFIG_DB_KEY_EDGECREATOR = 'db_edgecreator';
 
     public static $configuredEntityManagerNames = [self::CONFIG_DB_KEY_DM, self::CONFIG_DB_KEY_COA, self::CONFIG_DB_KEY_COVER_ID, self::CONFIG_DB_KEY_DM_STATS, self::CONFIG_DB_KEY_EDGECREATOR];
 
@@ -136,6 +136,7 @@ class DmServer implements ControllerProviderInterface
      * @return EntityManager|null
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\Common\Annotations\AnnotationException
      */
     public static function getEntityManager($dbName) {
         if (!in_array($dbName, self::$configuredEntityManagerNames)) {
@@ -152,8 +153,10 @@ class DmServer implements ControllerProviderInterface
     /**
      * @param string $dbKey
      * @return EntityManager
+     * @throws \InvalidArgumentException
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\Common\Annotations\AnnotationException
      */
     public static function createEntityManager($dbKey)
     {
@@ -172,7 +175,7 @@ class DmServer implements ControllerProviderInterface
         $config = self::getAppConfig()[$dbKey];
 
         $metaDataConfig = Setup::createAnnotationMetadataConfiguration(
-            [__DIR__ . "/models/".$config['models_path']], true, null, null, false
+            [__DIR__ . '/models/' .$config['models_path']], true, null, null, false
         );
         $connectionParams = self::getConnectionParams($config);
         $conn = DriverManager::getConnection($connectionParams, $metaDataConfig, $evm);
@@ -204,14 +207,14 @@ class DmServer implements ControllerProviderInterface
         $routing = $app['controllers_factory'];
 
         $app->register(new AnnotationServiceProvider(), [
-            "annot.cache" => new ApcuCache(),
-            "annot.controllerDir" => __DIR__."/controllers"
+            'annot.cache' => new ApcuCache(),
+            'annot.controllerDir' => __DIR__. '/controllers'
         ]);
 
         $app->register(new CorsServiceProvider(), [
-            "cors.allowOrigin" => "*",
+            'cors.allowOrigin' => '*',
         ]);
-        $app["cors-enabled"]($routing);
+        $app['cors-enabled']($routing);
 
         return $routing;
     }

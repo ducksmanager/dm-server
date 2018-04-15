@@ -13,6 +13,7 @@ use DmServer\DmServer;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query;
+use RuntimeException;
 use Silex\Application;
 
 use Swift_Mailer;
@@ -26,6 +27,11 @@ use DDesrosiers\SilexAnnotations\Annotations as SLX;
  */
 class InternalController extends AbstractInternalController
 {
+    /**
+     * @param Application $app
+     * @param callable    $function
+     * @return mixed|Response
+     */
     protected static function wrapInternalService($app, $function) {
         return parent::returnErrorOnException($app, DmServer::CONFIG_DB_KEY_DM, $function);
     }
@@ -35,8 +41,10 @@ class InternalController extends AbstractInternalController
      *     @SLX\Request(method="GET", uri="exists/{username}"),
      * )
      * @param Application $app
-     * @param string $username
+     * @param string      $username
      * @return Response
+     * @throws \InvalidArgumentException
+     * @throws \Exception
      */
     public function getUsernameExists(Application $app, $username) {
         return self::wrapInternalService($app, function(EntityManager $dmEm) use ($username) {
@@ -55,10 +63,11 @@ class InternalController extends AbstractInternalController
      *     @SLX\Request(method="GET", uri="new/check/{username}/{password}/{password2}"),
      * )
      * @param Application $app
-     * @param string $username
-     * @param string $password
-     * @param string $password2
+     * @param string      $username
+     * @param string      $password
+     * @param string      $password2
      * @return Response
+     * @throws \InvalidArgumentException
      */
     public function checkNewUser(Application $app, $username, $password, $password2) {
         $error = null;
@@ -92,9 +101,10 @@ class InternalController extends AbstractInternalController
      *     @SLX\Request(method="GET", uri="user/get/{username}/{password}"),
      * )
      * @param Application $app
-     * @param string $username
-     * @param string $password
+     * @param string      $username
+     * @param string      $password
      * @return Response
+     * @throws \Exception
      */
     public function getUser(Application $app, $username, $password) {
         return self::wrapInternalService($app, function(EntityManager $dmEm) use ($username, $password) {
@@ -134,9 +144,10 @@ class InternalController extends AbstractInternalController
      * @SLX\Route(
      *     @SLX\Request(method="PUT", uri="new"),
      * )
-     * @param Request $request
+     * @param Request     $request
      * @param Application $app
      * @return Response
+     * @throws \Exception
      */
     public function createUser(Request $request, Application $app) {
         return self::wrapInternalService($app, function(EntityManager $dmEm) use ($request) {
@@ -158,8 +169,10 @@ class InternalController extends AbstractInternalController
      *     @SLX\Request(method="DELETE", uri="{userId}/data"),
      * )
      * @param Application $app
-     * @param string $userId
+     * @param string      $userId
      * @return Response
+     * @throws \InvalidArgumentException
+     * @throws \Exception
      */
     public function deleteUserData(Application $app, $userId) {
         return self::wrapInternalService($app, function(EntityManager $dmEm) use ($userId) {
@@ -191,8 +204,11 @@ class InternalController extends AbstractInternalController
      *     @SLX\Request(method="POST", uri="{userId}/data/bookcase/reset"),
      * )
      * @param Application $app
-     * @param string $userId
+     * @param string      $userId
      * @return Response
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
+     * @throws \InvalidArgumentException
+     * @throws \Exception
      */
     public function resetBookcaseOptions(Application $app, $userId) {
         return self::wrapInternalService($app, function(EntityManager $dmEm) use ($userId) {
@@ -237,7 +253,7 @@ class InternalController extends AbstractInternalController
             $message = new \Swift_Message();
             $message
                 ->setSubject('Ajout de bouquinerie')
-                ->setFrom([$userName."@".DmServer::$settings['smtp_origin_email_domain_ducksmanager']])
+                ->setFrom([$userName. '@' .DmServer::$settings['smtp_origin_email_domain_ducksmanager']])
                 ->setTo([DmServer::$settings['smtp_username']])
                 ->setBody('<a href="https://www.ducksmanager.net/backend/bouquineries.php">Validation</a>', 'text/html');
 
@@ -246,7 +262,7 @@ class InternalController extends AbstractInternalController
             $failures = [];
             // Pass a variable name to the send() method
             if (!$mailer->send($message, $failures)) {
-                throw new \Exception("Can't send e-mail '$message': failed with ".print_r($failures, true));
+                throw new RuntimeException("Can't send e-mail '$message': failed with ".print_r($failures, true));
             }
 
             return new Response(Response::HTTP_OK);

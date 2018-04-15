@@ -3,7 +3,9 @@ namespace DmServer;
 
 use Coverid\Contracts\Dtos\SimilarImagesOutput;
 use Exception;
+use InvalidArgumentException;
 use Monolog\Logger;
+use RuntimeException;
 use Symfony\Component\HttpFoundation\File\File;
 
 class SimilarImagesHelper {
@@ -32,13 +34,13 @@ class SimilarImagesHelper {
 
         $resultArray = json_decode($response, true);
         if (is_null($resultArray)) {
-            throw new Exception('Pastec is unreachable');
+            throw new RuntimeException('Pastec is unreachable');
         }
         if ($resultArray['type'] === 'INDEX_IMAGE_IDS') {
             return count($resultArray['image_ids']);
         }
         else {
-            throw new Exception('Invalid return type : '.$resultArray['type']);
+            throw new InvalidArgumentException('Invalid return type : '.$resultArray['type']);
         }
     }
 

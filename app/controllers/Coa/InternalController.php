@@ -137,7 +137,7 @@ class InternalController extends AbstractController
      *     @SLX\Assert(variable="issuecodes", regex="^((?P<issuecode_regex>[a-z]+/[- A-Z0-9]+),){0,19}(?&issuecode_regex)$")
      * )
      * @param Application $app
-     * @param string $issuecodes
+     * @param string      $issuecodes
      * @return JsonResponse
      */
     public function listIssuesFromIssueCodes(Application $app, $issuecodes) {

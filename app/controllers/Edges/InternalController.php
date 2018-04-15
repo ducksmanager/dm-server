@@ -11,7 +11,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
+
 use DDesrosiers\SilexAnnotations\Annotations as SLX;
 
 /**
@@ -63,7 +63,7 @@ class InternalController extends AbstractController
      */
     public function getEdgeReferences(Application $app, $publicationCode, $issueNumbers) {
         return self::wrapInternalService($app, function(EntityManager $dmEm) use ($publicationCode, $issueNumbers) {
-            list($country, $shortPublicationCode) = explode('/', $publicationCode);
+            [$country, $shortPublicationCode] = explode('/', $publicationCode);
 
             $qbGetReferenceEdges = $dmEm->createQueryBuilder();
             $qbGetReferenceEdges

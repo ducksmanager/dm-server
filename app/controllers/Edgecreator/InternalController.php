@@ -19,6 +19,7 @@ use Edgecreator\Models\TranchesEnCoursContributeurs;
 use Edgecreator\Models\TranchesEnCoursModeles;
 use Edgecreator\Models\TranchesEnCoursModelesImages;
 use Edgecreator\Models\TranchesEnCoursValeurs;
+use InvalidArgumentException;
 use Silex\Application;
 use Swift_Mailer;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -41,15 +42,16 @@ class InternalController extends AbstractController
      *     @SLX\Assert(variable="publicationCode", regex="^(?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+)$"),
      *     @SLX\Assert(variable="stepNumber", regex="^(?P<stepnumber_regex>\-?\d+)$")
      * )
-     * @param Request $request
+     * @param Request     $request
      * @param Application $app
-     * @param string $publicationCode
-     * @param string $stepNumber
+     * @param string      $publicationCode
+     * @param string      $stepNumber
      * @return Response
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
      */
     public function createStepV1(Request $request, Application $app, $publicationCode, $stepNumber) {
         return self::wrapInternalService($app, function(EntityManager $ecEm) use ($request, $publicationCode, $stepNumber) {
-            list($country, $publication) = explode('/', $publicationCode);
+            [$country, $publication] = explode('/', $publicationCode);
             $functionName = $request->request->get('functionname');
             $optionName = $request->request->get('optionname');
 
@@ -75,14 +77,15 @@ class InternalController extends AbstractController
      *     @SLX\Assert(variable="isEditor", regex="^(?P<iseditor_regex>0|1)$")
      * )
      * @param Application $app
-     * @param string $publicationCode
-     * @param string $issueNumber
-     * @param string $isEditor
+     * @param string      $publicationCode
+     * @param string      $issueNumber
+     * @param string      $isEditor
      * @return Response
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
      */
     public function createModelV2(Application $app, $publicationCode, $issueNumber, $isEditor) {
         return self::wrapInternalService($app, function(EntityManager $ecEm) use ($app, $publicationCode, $issueNumber, $isEditor) {
-            list($country, $publication) = explode('/', $publicationCode);
+            [$country, $publication] = explode('/', $publicationCode);
 
             $model = new TranchesEnCoursModeles();
             $model->setPays($country);
@@ -102,9 +105,10 @@ class InternalController extends AbstractController
      * @SLX\Route(
      *     @SLX\Request(method="PUT", uri="value")
      * )
-     * @param Request $request
+     * @param Request     $request
      * @param Application $app
      * @return Response
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
      */
     public function createValueV1(Request $request, Application $app) {
         return self::wrapInternalService($app, function(EntityManager $ecEm) use ($request) {
@@ -128,8 +132,10 @@ class InternalController extends AbstractController
      *     @SLX\Assert(variable="modelId", regex="^(?P<modelid_regex>\d+)$")
      * )
      * @param Application $app
-     * @param string $modelId
+     * @param string      $modelId
      * @return Response
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     public function assignModel(Application $app, $modelId) {
         return self::wrapInternalService($app, function(EntityManager $ecEm) use ($app, $modelId) {
@@ -149,11 +155,13 @@ class InternalController extends AbstractController
      *     @SLX\Assert(variable="modelId", regex="^(?P<modelid_regex>\d+)$"),
      *     @SLX\Assert(variable="stepNumber", regex="^(?P<stepnumber_regex>\-?\d+)$")
      * )
-     * @param Request $request
+     * @param Request     $request
      * @param Application $app
-     * @param string $modelId
-     * @param string $stepNumber
+     * @param string      $modelId
+     * @param string      $stepNumber
      * @return Response
+     * @throws InvalidArgumentException
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
      */
     public function createStepV2(Request $request, Application $app, $modelId, $stepNumber) {
         return self::wrapInternalService($app, function(EntityManager $ecEm) use ($request, $modelId, $stepNumber) {
@@ -164,10 +172,10 @@ class InternalController extends AbstractController
             $newFunctionName = $request->request->get('newFunctionName');
 
             if (is_null($options)) {
-                throw new \Exception('No options provided, ignoring step '.$stepNumber);
+                throw new InvalidArgumentException('No options provided, ignoring step '.$stepNumber);
             }
             if (!is_array($options)) {
-                throw new \Exception('Invalid options input : '.print_r($options, true));
+                throw new InvalidArgumentException('Invalid options input : '.print_r($options, true));
             }
 
             if (is_null($newFunctionName)) {
@@ -178,7 +186,7 @@ class InternalController extends AbstractController
                 ]);
 
                 if (is_null($existingValue)) {
-                    throw new \Exception('No option exists for this step and no function name was provided');
+                    throw new InvalidArgumentException('No option exists for this step and no function name was provided');
                 }
                 $newFunctionName = $existingValue->getNomFonction();
             }
@@ -220,10 +228,11 @@ class InternalController extends AbstractController
      *     @SLX\Request(method="PUT", uri="interval/{valueId}/{firstIssueNumber}/{lastIssueNumber}"),
      * )
      * @param Application $app
-     * @param string $valueId
-     * @param string $firstIssueNumber
-     * @param string $lastIssueNumber
+     * @param string      $valueId
+     * @param string      $firstIssueNumber
+     * @param string      $lastIssueNumber
      * @return Response
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
      */
     public function createV1Interval(Application $app, $valueId, $firstIssueNumber, $lastIssueNumber) {
         return self::wrapInternalService($app, function(EntityManager $ecEm) use ($app, $valueId, $firstIssueNumber, $lastIssueNumber) {
@@ -249,10 +258,12 @@ class InternalController extends AbstractController
      *     @SLX\Assert(variable="newStepNumber", regex="^(?&stepnumber_regex)$")
      * )
      * @param Application $app
-     * @param string $modelId
-     * @param string $stepNumber
-     * @param string $newStepNumber
+     * @param string      $modelId
+     * @param string      $stepNumber
+     * @param string      $newStepNumber
      * @return Response
+     * @throws \Exception
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
      */
     public function cloneStepV2(Application $app, $modelId, $stepNumber, $newStepNumber) {
         return self::wrapInternalService($app, function(EntityManager $ecEm) use ($modelId, $stepNumber, $newStepNumber) {
@@ -264,7 +275,7 @@ class InternalController extends AbstractController
             $values = $ecEm->getRepository(TranchesEnCoursValeurs::class)->findBy($criteria);
 
             if (count($values) === 0) {
-                throw new \Exception('No values to clone for '.json_encode($criteria, true));
+                throw new InvalidArgumentException('No values to clone for '.json_encode($criteria, true));
             }
 
             $functionName = $values[0]->getNomFonction();
@@ -298,10 +309,11 @@ class InternalController extends AbstractController
      *     @SLX\Assert(variable="isIncludingThisStep", regex="^(?P<isincludingthisstep_regex>(inclusive)|(exclusive))$")
      * )
      * @param Application $app
-     * @param string $modelId
-     * @param string $stepNumber
-     * @param string $isIncludingThisStep
+     * @param string      $modelId
+     * @param string      $stepNumber
+     * @param string      $isIncludingThisStep
      * @return Response
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
      */
     public function shiftV2Step(Application $app, $modelId, $stepNumber, $isIncludingThisStep) {
         return self::wrapInternalService($app, function(EntityManager $ecEm) use ($modelId, $stepNumber, $isIncludingThisStep) {
@@ -344,8 +356,8 @@ class InternalController extends AbstractController
      *     @SLX\Assert(variable="stepNumber", regex="^(?P<stepnumber_regex>\-?\d+)$")
      * )
      * @param Application $app
-     * @param string $modelId
-     * @param string $stepNumber
+     * @param string      $modelId
+     * @param string      $stepNumber
      * @return Response
      */
     public function deleteV2Step(Application $app, $modelId, $stepNumber) {
@@ -382,9 +394,9 @@ class InternalController extends AbstractController
                 ->leftJoin('modeles.contributeurs', 'helperusers')
                 ->leftJoin('modeles.photos', 'photos')
                 ->leftJoin('photos.image', 'image')
-                ->andWhere("modeles.active = :active")
+                ->andWhere('modeles.active = :active')
                 ->setParameter(':active', true)
-                ->andWhere("modeles.username = :username or helperusers.idUtilisateur = :usernameid")
+                ->andWhere('modeles.username = :username or helperusers.idUtilisateur = :usernameid')
                 ->setParameter(':username', self::getSessionUser($app)['username'])
                 ->setParameter(':usernameid', self::getSessionUser($app)['id'])
             ;
@@ -425,10 +437,10 @@ class InternalController extends AbstractController
             $qb->select('modeles.id, modeles.pays, modeles.magazine, modeles.numero')
                 ->from(TranchesEnCoursModeles::class, 'modeles')
                 ->leftJoin('modeles.contributeurs', 'helperusers')
-                ->andWhere("modeles.active = :active")
+                ->andWhere('modeles.active = :active')
                 ->setParameter(':active', true)
-                ->andWhere("modeles.username != :username or modeles.username is null")
-                ->andWhere("helperusers.idUtilisateur = :usernameid and helperusers.contribution = :contribution")
+                ->andWhere('modeles.username != :username or modeles.username is null')
+                ->andWhere('helperusers.idUtilisateur = :usernameid and helperusers.contribution = :contribution')
                 ->setParameter(':username', self::getSessionUser($app)['username'])
                 ->setParameter(':usernameid', self::getSessionUser($app)['id'])
                 ->setParameter(':contribution', 'photographe')
@@ -464,13 +476,14 @@ class InternalController extends AbstractController
      *     @SLX\Assert(variable="issueNumber", regex="^(?P<issuenumber_regex>[-A-Z0-9 ]+)$")
      * )
      * @param Application $app
-     * @param string $publicationCode
-     * @param string $issueNumber
+     * @param string      $publicationCode
+     * @param string      $issueNumber
      * @return Response
+     * @throws \InvalidArgumentException
      */
     public function getV2ModelByPublicationCodeAndIssueNumber(Application $app, $publicationCode, $issueNumber) {
         return self::wrapInternalService($app, function (EntityManager $ecEm) use ($publicationCode, $issueNumber) {
-            list($country, $magazine) = explode('/', $publicationCode);
+            [$country, $magazine] = explode('/', $publicationCode);
             $model = $ecEm->getRepository(TranchesEnCoursModeles::class)->findOneBy([
                 'pays' => $country,
                 'magazine' => $magazine,
@@ -491,8 +504,9 @@ class InternalController extends AbstractController
      *     @SLX\Request(method="PUT", uri="myfontspreview")
      * )
      * @param Application $app
-     * @param Request $request
+     * @param Request     $request
      * @return Response
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
      */
     public function storeMyFontsPreview(Application $app, Request $request) {
         return self::wrapInternalService($app, function (EntityManager $ecEm) use ($request) {
@@ -517,8 +531,9 @@ class InternalController extends AbstractController
      *     @SLX\Request(method="DELETE", uri="myfontspreview/{previewId}")
      * )
      * @param Application $app
-     * @param string $previewId
+     * @param string      $previewId
      * @return Response
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
      */
     public function deleteMyFontsPreview(Application $app, $previewId) {
         return self::wrapInternalService($app, function (EntityManager $ecEm) use ($previewId) {
@@ -536,8 +551,9 @@ class InternalController extends AbstractController
      *     @SLX\Assert(variable="modelId", regex="^(?P<modelid_regex>\d+)$")
      * )
      * @param Application $app
-     * @param string $modelId
+     * @param string      $modelId
      * @return Response
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
      */
     public function deactivateV2Model(Application $app, $modelId) {
         return self::wrapInternalService($app, function (EntityManager $ecEm) use ($modelId) {
@@ -582,10 +598,11 @@ class InternalController extends AbstractController
      *     @SLX\Assert(variable="modelId", regex="^(?P<modelid_regex>\d+)$")
      * )
      * @param Application $app
-     * @param Request $request
-     * @param string $modelId
-     * @param string $isReadyToPublish
+     * @param Request     $request
+     * @param string      $modelId
+     * @param string      $isReadyToPublish
      * @return Response
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
      */
     public function setModelAsReadyToBePublished(Application $app, Request $request, $modelId, $isReadyToPublish) {
         return self::wrapInternalService($app, function (EntityManager $ecEm) use ($request, $modelId, $isReadyToPublish) {
@@ -598,7 +615,7 @@ class InternalController extends AbstractController
             $qb = $dmEm->createQueryBuilder();
             $qb->select('users.id, users.username')
                 ->from(Users::class, 'users')
-                ->andWhere("users.username in (:usernames)")
+                ->andWhere('users.username in (:usernames)')
                 ->setParameter(':usernames', $contributorsUsernames)
             ;
 
@@ -663,9 +680,10 @@ class InternalController extends AbstractController
      *     @SLX\Assert(variable="modelId", regex="^(?P<modelid_regex>\d+)$")
      * )
      * @param Application $app
-     * @param Request $request
-     * @param string $modelId
+     * @param Request     $request
+     * @param string      $modelId
      * @return Response
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
      */
     public function setModelMainPhoto(Application $app, Request $request, $modelId) {
         return self::wrapInternalService($app, function (EntityManager $ecEm) use ($app, $request, $modelId) {
@@ -711,8 +729,9 @@ class InternalController extends AbstractController
      *     @SLX\Assert(variable="modelId", regex="^(?P<modelid_regex>\d+)$")
      * )
      * @param Application $app
-     * @param string $modelId
+     * @param string      $modelId
      * @return Response
+     * @throws \InvalidArgumentException
      */
     public function getModelMainPhoto(Application $app, $modelId) {
         return self::wrapInternalService($app, function (EntityManager $ecEm) use ($modelId) {
@@ -722,9 +741,9 @@ class InternalController extends AbstractController
                 ->from(TranchesEnCoursModelesImages::class, 'modelsPhotos')
                 ->innerJoin('modelsPhotos.modele', 'model')
                 ->innerJoin('modelsPhotos.image', 'photo')
-                ->andWhere("model.id = :modelId")
+                ->andWhere('model.id = :modelId')
                 ->setParameter(':modelId', $modelId)
-                ->andWhere("modelsPhotos.estphotoprincipale = 1");
+                ->andWhere('modelsPhotos.estphotoprincipale = 1');
 
             try {
                 $mainPhoto = $qb->getQuery()->getSingleResult();
@@ -750,9 +769,9 @@ class InternalController extends AbstractController
 
             $qb->select('photo.id, photo.hash, photo.dateheure, photo.idUtilisateur')
                 ->from(ImagesTranches::class, 'photo')
-                ->andWhere("photo.idUtilisateur = :idUtilisateur")
+                ->andWhere('photo.idUtilisateur = :idUtilisateur')
                 ->setParameter(':idUtilisateur', self::getSessionUser($app)['id'])
-                ->andWhere("photo.dateheure = :today")
+                ->andWhere('photo.dateheure = :today')
                 ->setParameter(':today', new \DateTime('today'));
 
             $uploadedFiles = $qb->getQuery()->getResult();
@@ -784,8 +803,10 @@ class InternalController extends AbstractController
      *     @SLX\Request(method="PUT", uri="multiple_edge_photo")
      * )
      * @param Application $app
-     * @param Request $request
+     * @param Request     $request
      * @return Response
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
+     * @throws \Exception
      */
     public function createMultipleEdgePhoto(Application $app, Request $request) {
         return self::wrapInternalService($app, function (EntityManager $ecEm) use ($request, $app) {
@@ -806,14 +827,14 @@ class InternalController extends AbstractController
             $message = new \Swift_Message();
             $message
                 ->setSubject('Nouvelle photo de tranche')
-                ->setFrom([$user['username']."@".DmServer::$settings['smtp_origin_email_domain_edgecreator']])
+                ->setFrom([$user['username']. '@' .DmServer::$settings['smtp_origin_email_domain_edgecreator']])
                 ->setTo([DmServer::$settings['smtp_username']])
                 ->setBody($fileName);
 
             $failures = [];
             // Pass a variable name to the send() method
             if (!$mailer->send($message, $failures)) {
-                throw new \Exception("Can't send e-mail '$message': failed with ".print_r($failures, true));
+                throw new RuntimeException("Can't send e-mail '$message': failed with ".print_r($failures, true));
             }
 
             return new JsonResponse(['photo' => ['id' => $photo->getId()]]);
@@ -826,11 +847,11 @@ class InternalController extends AbstractController
      *     @SLX\Request(method="GET", uri="elements/images/{nameSubString}")
      * )
      * @param Application $app
-     * @param string $nameSubString
+     * @param string      $nameSubString
      * @return Response
      */
     public function getElementImagesByNameSubstring(Application $app, $nameSubString) {
-        return self::wrapInternalService($app, function (EntityManager $ecEm) use ($app, $nameSubString) {
+        return self::wrapInternalService($app, function (EntityManager $ecEm) use ($nameSubString) {
 
             $templatedValues = $ecEm->getConnection()->executeQuery(
                 '

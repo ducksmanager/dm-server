@@ -16,23 +16,22 @@ trait RequestInterceptor
      */
     public static function checkVersion(Request $request, Application $app)
     {
-        if (strpos($request->getPathInfo(), '/status') !== 0) {
-            if (is_null(self::getClientVersion($app))) {
-                $clientVersion = $request->headers->get('x-dm-version');
-                if (is_null($clientVersion)) {
-                    return new Response('Unspecified client version', Response::HTTP_VERSION_NOT_SUPPORTED);
-                } else {
-                    self::setClientVersion($app, $clientVersion);
-                }
+        if (strpos($request->getPathInfo(), '/status') !== 0 && is_null(self::getClientVersion($app))) {
+            $clientVersion = $request->headers->get('x-dm-version');
+            if (is_null($clientVersion)) {
+                return new Response('Unspecified client version', Response::HTTP_VERSION_NOT_SUPPORTED);
+            } else {
+                self::setClientVersion($app, $clientVersion);
             }
         }
         return null;
     }
 
     /**
-     * @param Request $request
+     * @param Request     $request
      * @param Application $app
      * @return Response|null
+     * @throws \InvalidArgumentException
      */
     public static function authenticateUser(Request $request, Application $app) {
         $username = $request->headers->get('x-dm-user');

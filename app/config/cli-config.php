@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__."/../../vendor/autoload.php";
-require_once __DIR__."/../DmServer.php";
+require_once __DIR__. '/../../vendor/autoload.php';
+require_once __DIR__. '/../DmServer.php';
 
 use DmServer\DmServer;
 
@@ -88,7 +88,7 @@ trait CliConfig
 $schemaConfigKey = CliConfig::getSchemaConfigKeyFromCommandLine();
 
 if ($schemaConfigKey === false) {
-    echo "Namespace in command line not found among schemas : ".$_SERVER['argv']."\n";
+    echo 'Namespace in command line not found among schemas : ' .$_SERVER['argv']."\n";
 }
 else {
     if (!in_array('orm:generate-entities', $_SERVER['argv'])) {

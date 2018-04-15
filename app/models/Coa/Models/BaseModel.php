@@ -11,6 +11,6 @@ namespace Coa\Models;
  */
 class BaseModel
 {
-    const PUBLICATION_CODE_VALIDATION = '[a-z]+/[-A-Z0-9]+';
-    const ISSUE_NUMBER_VALIDATION =     '[-A-Z0-9 ]+';
+    public const PUBLICATION_CODE_VALIDATION = '[a-z]+/[-A-Z0-9]+';
+    public const ISSUE_NUMBER_VALIDATION =     '[-A-Z0-9 ]+';
 }

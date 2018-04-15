@@ -61,7 +61,7 @@ class InternalController extends AbstractController
      *     @SLX\Assert(variable="coverids", regex="^(?P<coverid_regex>[0-9]+)$")
      * )
      * @param Application $app
-     * @param string $coverId
+     * @param string      $coverId
      * @return JsonResponse
      */
     public function downloadCover(Application $app, $coverId) {
@@ -95,7 +95,7 @@ class InternalController extends AbstractController
                     $fullUrl,
                     false,
                     stream_context_create([
-                        "ssl" => [
+                        'ssl' => [
                             'verify_peer' => false,
                             'verify_peer_name' => false
                         ]

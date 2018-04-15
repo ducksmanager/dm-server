@@ -525,21 +525,21 @@ class TestCommon extends WebTestCase {
         $inducksPerson = new InducksPerson();
         $coaEntityManager->persist(
             $inducksPerson
-                ->setPersoncode("CB")
-                ->setFullname("Carl Barks")
+                ->setPersoncode('CB')
+                ->setFullname('Carl Barks')
         );
 
         $inducksPerson = new InducksPerson();
         $coaEntityManager->persist(
-            $inducksPerson->setPersoncode("DR")
-                ->setFullname("Don Rosa")
+            $inducksPerson->setPersoncode('DR')
+                ->setFullname('Don Rosa')
         );
 
         try {
             $coaEntityManager->flush();
             $coaEntityManager->clear();
         } catch (OptimisticLockException $e) {
-            self::fail("Failed to create COA data");
+            self::fail('Failed to create COA data');
         }
     }
 
@@ -719,13 +719,14 @@ class TestCommon extends WebTestCase {
             $dmStatsEntityManager->flush();
             $dmStatsEntityManager->clear();
         } catch (OptimisticLockException $e) {
-            self::fail("Failed to create stats data");
+            self::fail('Failed to create stats data');
             return;
         }
     }
 
     /**
      * @param integer $userId
+     * @throws ORMException
      */
     public static function createEdgeCreatorData($userId) {
         try {
@@ -799,25 +800,26 @@ class TestCommon extends WebTestCase {
 
             $edgeCreatorEntityManager->flush();
         } catch (OptimisticLockException $e) {
-            self::fail("Failed to create EdgeCreator data");
+            self::fail('Failed to create EdgeCreator data');
         }
     }
 
     /**
      * @param EntityManager $edgeCreatorEntityManager
-     * @param string $userName
-     * @param string $publicationCode
-     * @param integer $stepNumber
-     * @param string $functionName
-     * @param string $optionName
-     * @param string $optionValue
-     * @param string $firstIssueNumber
-     * @param string $lastIssueNumber
+     * @param string        $userName
+     * @param string        $publicationCode
+     * @param integer       $stepNumber
+     * @param string        $functionName
+     * @param string        $optionName
+     * @param string        $optionValue
+     * @param string        $firstIssueNumber
+     * @param string        $lastIssueNumber
      * @throws OptimisticLockException
+     * @throws ORMException
      */
     protected static function createModelEcV1($edgeCreatorEntityManager, $userName, $publicationCode, $stepNumber, $functionName, $optionName, $optionValue, $firstIssueNumber, $lastIssueNumber) {
         $model = new EdgecreatorModeles2();
-        list($country, $magazine) = explode('/', $publicationCode);
+        [$country, $magazine] = explode('/', $publicationCode);
         $edgeCreatorEntityManager->persist(
             $model
                 ->setPays($country)
@@ -852,15 +854,16 @@ class TestCommon extends WebTestCase {
 
     /**
      * @param EntityManager $edgeCreatorEntityManager
-     * @param string $userName
-     * @param string $publicationCode
-     * @param string $issueNumber
-     * @param array $steps
+     * @param string        $userName
+     * @param string        $publicationCode
+     * @param string        $issueNumber
+     * @param array         $steps
      * @return TranchesEnCoursModeles
      * @throws OptimisticLockException
+     * @throws ORMException
      */
     protected static function createModelEcV2($edgeCreatorEntityManager, $userName, $publicationCode, $issueNumber, $steps) {
-        list($country, $magazine) = explode('/', $publicationCode);
+        [$country, $magazine] = explode('/', $publicationCode);
 
         $ongoingModel = new TranchesEnCoursModeles();
         $edgeCreatorEntityManager->persist(
@@ -923,7 +926,7 @@ class TestCommon extends WebTestCase {
 
             return [$coverIds, $coverUrls];
         } catch (OptimisticLockException $e) {
-            self::fail("Failed to create covers data");
+            self::fail('Failed to create covers data');
             return null;
         }
     }
@@ -1048,7 +1051,7 @@ class TestCommon extends WebTestCase {
 
             $dmEntityManager->flush();
         } catch (OptimisticLockException $e) {
-            self::fail("Failed to create edge data");
+            self::fail('Failed to create edge data');
             return null;
         }
     }
