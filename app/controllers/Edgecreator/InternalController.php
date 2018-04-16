@@ -745,7 +745,12 @@ class InternalController extends AbstractController
                 ->setParameter(':modelId', $modelId)
                 ->andWhere('modelsPhotos.estphotoprincipale = 1');
 
-            $mainPhoto = $qb->getQuery()->getSingleResult();
+            try {
+                $mainPhoto = $qb->getQuery()->getSingleResult();
+            }
+            catch (NoResultException $e) {
+                return new Response("No photo found for model $modelId", Response::HTTP_NO_CONTENT);
+            }
 
             return new JsonResponse(self::getSerializer()->serialize($mainPhoto, 'json'), Response::HTTP_OK, [], true);
         });
