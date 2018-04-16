@@ -90,7 +90,7 @@
     },
     "require": {
         "php": "7.1.*",
-        "silex/silex": "2.2.*",
+        "silex/silex": "2.3.x-dev",
         "sorien/silex-pimple-dumper": "2.0.*",
         "symfony/browser-kit": "3.4.*",
         "symfony/config": "3.4.*",
