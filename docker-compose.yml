@@ -16,9 +16,7 @@ services:
   db_coa:
     container_name: mariadb-server-for-coa-box
     image: "bperel/coa-box"
-    extends:
-      file: docker-compose-db-with-healthcheck.yml
-      service: db-with-healthcheck
+    env_file: ./.env.prod
     ports:
      - "44000:3306"
     volumes:
@@ -34,45 +32,30 @@ services:
     ports:
      - "44009:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: changeme
       MYSQL_DATABASE: cover_info
     volumes:
      - ../duck-cover-id/scripts:/home/scripts
      - ../duck-cover-id/container.properties:/home/container.properties
-    healthcheck:
-      test: grep 'Server socket created' /var/log/mysql/error.log
-      interval: 2s
-      timeout: 30s
-    command: mysqld --log-error=/var/log/mysql/error.log
   db_dm:
     container_name: mariadb-server-for-dm
-    extends:
-      file: docker-compose-db-with-healthcheck.yml
-      service: db-with-healthcheck
+    image: "bperel/coa-box"
     ports:
      - "44002:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: changeme
       MYSQL_DATABASE: dm
   db_edgecreator:
     container_name: mariadb-server-for-edgecreator
-    extends:
-      file: docker-compose-db-with-healthcheck.yml
-      service: db-with-healthcheck
+    image: "bperel/coa-box"
     ports:
      - "44003:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: changeme
       MYSQL_DATABASE: edgecreator
   db_dm_stats:
     container_name: mariadb-server-for-dm-stats
-    extends:
-      file: docker-compose-db-with-healthcheck.yml
-      service: db-with-healthcheck
+    image: "bperel/coa-box"
     ports:
      - "44010:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: changeme
       MYSQL_DATABASE: dm_stats
     volumes:
      - ../dm-stats/scripts:/home/scripts

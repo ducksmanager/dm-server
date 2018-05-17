@@ -11,9 +11,7 @@ COPY composer.json /var/www/html/dm-server/composer.json
 
 RUN a2enmod rewrite
 
-RUN apt-get update && apt-get install -y git wget unzip mariadb-client nano ssmtp
-
-RUN echo 'sendmail_path = "/usr/sbin/ssmtp -t"' > /usr/local/etc/php/conf.d/mail.ini
+RUN apt-get update && apt-get install -y git wget unzip mariadb-client nano
 
 RUN pecl install xdebug-2.6.0
 

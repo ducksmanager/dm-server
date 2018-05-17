@@ -14,59 +14,42 @@ services:
      - db_dm_stats
      - db_edgecreator
     volumes:
-     - .:/var/www/html/dm-server
-     - ./php.xdebug.ini:/usr/local/etc/php/php.ini
-     - ./ssmtp.conf:/etc/ssmtp/ssmtp.conf
+     - .:/var/www/html/dm-server:z
+     - ./php.xdebug.ini:/usr/local/etc/php/php.ini:z
   db_coa:
     container_name: db_coa
     image: "bperel/coa-box"
-    extends:
-      file: docker-compose-db-with-healthcheck.yml
-      service: db-with-healthcheck
     ports:
      - "64000:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: changeme
       MYSQL_DATABASE: coa
   db_cover_id:
     container_name: db_cover_id
-    extends:
-      file: docker-compose-db-with-healthcheck.yml
-      service: db-with-healthcheck
+    image: "mariadb:10.2"
     ports:
      - "64001:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: changeme
       MYSQL_DATABASE: cover_info
   db_dm:
     container_name: db_dm
-    extends:
-      file: docker-compose-db-with-healthcheck.yml
-      service: db-with-healthcheck
+    image: "mariadb:10.2"
     ports:
      - "64002:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: changeme
       MYSQL_DATABASE: dm
   db_edgecreator:
     container_name: db_edgecreator
-    extends:
-      file: docker-compose-db-with-healthcheck.yml
-      service: db-with-healthcheck
+    image: "mariadb:10.2"
     ports:
      - "64003:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: changeme
       MYSQL_DATABASE: edgecreator
   db_dm_stats:
     container_name: db_dm_stats
-    extends:
-      file: docker-compose-db-with-healthcheck.yml
-      service: db-with-healthcheck
+    image: "mariadb:10.2"
     ports:
      - "64010:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: changeme
       MYSQL_DATABASE: dm_stats
   pastec:
     container_name: pastec

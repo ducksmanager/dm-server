@@ -1,9 +1,0 @@
-version: '2.1'
-services:
-  db-with-healthcheck:
-    image: "bperel/mariadb-with-external-access"
-    healthcheck:
-      test: grep 'Server socket created' /var/log/mysql/error.log
-      interval: 2s
-      timeout: 30s
-    command: mysqld --log-error=/var/log/mysql/error.log

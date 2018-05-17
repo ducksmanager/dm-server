@@ -11,3 +11,4 @@ composer.lock
 composer.phar
 pimple.json
 /ssmtp.conf
+.env.prod
