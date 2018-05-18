@@ -16,9 +16,20 @@ services:
     volumes:
      - .:/var/www/html/dm-server:z
      - ./php.xdebug.ini:/usr/local/etc/php/php.ini:z
+  coa-updater:
+    container_name: coa-updater
+    image: "bperel/coa-updater"
+    depends_on:
+     - db_coa
+    environment:
+      - MYSQL_HOST=db_coa
+      - MYSQL_DATABASE=coa
+    volumes:
+      - ./_inducks:/home/inducks:z
+    command: echo "Not provisionning the COA db on dev"
   db_coa:
     container_name: db_coa
-    image: "bperel/coa-box"
+    image: "mariadb:10.2"
     ports:
      - "64000:3306"
     environment:
