@@ -30,38 +30,53 @@ services:
   db_coa:
     container_name: db_coa
     image: "mariadb:10.2"
+    volumes:
+     - ./sql/schema-coa.sql:/docker-entrypoint-initdb.d/schema.sql:ro
     ports:
      - "64000:3306"
     environment:
       MYSQL_DATABASE: coa
+      MYSQL_ROOT_PASSWORD: changeme
   db_cover_id:
     container_name: db_cover_id
     image: "mariadb:10.2"
+    volumes:
+     - ./sql/schema-cover_info.sql:/docker-entrypoint-initdb.d/schema.sql:ro
     ports:
      - "64001:3306"
     environment:
       MYSQL_DATABASE: cover_info
+      MYSQL_ROOT_PASSWORD: changeme
   db_dm:
     container_name: db_dm
     image: "mariadb:10.2"
+    volumes:
+     - ./sql/schema-dm.sql:/docker-entrypoint-initdb.d/schema.sql:ro
     ports:
      - "64002:3306"
     environment:
       MYSQL_DATABASE: dm
+      MYSQL_ROOT_PASSWORD: changeme
   db_edgecreator:
     container_name: db_edgecreator
     image: "mariadb:10.2"
+    volumes:
+     - ./sql/schema-edgecreator.sql:/docker-entrypoint-initdb.d/schema.sql:ro
     ports:
      - "64003:3306"
     environment:
       MYSQL_DATABASE: edgecreator
+      MYSQL_ROOT_PASSWORD: changeme
   db_dm_stats:
     container_name: db_dm_stats
     image: "mariadb:10.2"
+    volumes:
+     - ./sql/schema-dm_stats.sql:/docker-entrypoint-initdb.d/schema.sql:ro
     ports:
      - "64010:3306"
     environment:
       MYSQL_DATABASE: dm_stats
+      MYSQL_ROOT_PASSWORD: changeme
   pastec:
     container_name: pastec
     image: "bperel/pastec-ubuntu-1704-timestamps"
@@ -75,7 +90,3 @@ services:
     environment:
       API_URL: http://localhost:10001/dm-server/status/swagger.json
       SWAGGER_JSON: http://dm-server/dm-server/status/swagger.json
-networks:
-  default:
-    external:
-      name: dm_network
