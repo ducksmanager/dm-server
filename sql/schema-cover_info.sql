@@ -7,7 +7,7 @@ create table cover_imports
 	constraint uniquefieldset_cover_imports
 		unique (coverid, imported, import_error)
 )
-engine=InnoDB charset=utf8
+engine=MyISAM charset=utf8
 ;
 
 create table covers

@@ -4,32 +4,32 @@ The fastest way to start the project is to use the docker-compose template. In t
 
 #### Web server setup
 
-Copy `config/roles.base.ini` and `config/settings.base.ini` and rename the copies respectively to `config/roles.ini` and `config/settings.ini`. Edit the copies with appropriate values. In particuler, edit `config/roles.ini` to set the application role passwords:
+Edit `config/roles.base.ini` and `config/settings.base.ini` and edit the passwords if necessary:
 * The `ducksmanager` and `whattheduck` roles are only authorized to use the services prefixed with `/collection/`
 * `rawsql` is only authorized to use the services prefixed with `/rawsql`
 * `edgecreator` is only authorized to use the services prefixed with `/edgecreator`
 
 #### Database setup
 
-If you wish to customize the names of the containers, the port bindings or the database credentials, edit `docker-compose.yml`. 
+If you wish to customize the names of the containers, the port bindings or the database credentials, edit `docker-compose.yml` and `.env`.
 
 ### Run !
 
 #### Start the project
 
 ```bash
-docker-compose up --build -d && watch -n 1 'docker ps | grep " second"'
+docker-compose up --build -d && watch -n 1 'docker-compose ps'
 ```
 
 Creating the containers should take less than a minute. 
 
-#### Create database schemas
+#### Generate the DB config files
 
-Once the containers are started, run the following command to generate the DB config files and create the schemas in the databases :
+Once the containers are started, run the following command to generate the DB config files from `docker-compose.yml` :
 ```bash
-docker exec -it web /bin/bash -c dm-server/scripts/create-schemas.sh
+docker-compose run php php app/config/generate-config.php docker-compose.yml .env
 ```
-(considering `web` is the name of the running Web container)
+(supposing that `web` is the name of the running Web container)
 
 
 ### Maintain
@@ -38,7 +38,7 @@ docker exec -it web /bin/bash -c dm-server/scripts/create-schemas.sh
 
 Browse to the path of the source on the host, then run: 
 ```bash
-docker exec -it web /bin/bash -c scripts/deploy/deploy-app.sh web
+./scripts/deploy/deploy-app.sh web
 ```
 
 
@@ -47,5 +47,5 @@ docker exec -it web /bin/bash -c scripts/deploy/deploy-app.sh web
 #### Reset the demo user
 
 ```bash
-docker exec -i web /bin/bash dm-server/scripts/call-service.sh admin /ducksmanager/resetDemo
+docker-compose run web /bin/bash scripts/call-service.sh admin /ducksmanager/resetDemo
 ```
