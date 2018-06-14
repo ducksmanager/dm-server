@@ -9,6 +9,9 @@
          cacheTokens="true"
          processIsolation="false"
          stopOnFailure="false">
+    <php>
+        <ini name="memory_limit" value="256M"/>
+    </php>
     <testsuites>
         <testsuite name="DM Server Test Suite">
             <directory>./test/</directory>
