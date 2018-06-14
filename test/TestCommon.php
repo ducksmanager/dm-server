@@ -204,7 +204,7 @@ class TestCommon extends WebTestCase {
         $service->setFiles($files);
         return $service;
     }
-    
+
     protected function buildAuthenticatedService($path, $appUser, $userCredentials, $parameters = [], $method = 'POST') {
         return $this->buildService($path, $userCredentials, $parameters, self::getSystemCredentials($appUser), $method, []);
     }
@@ -265,7 +265,7 @@ class TestCommon extends WebTestCase {
      * @throws ORMException
      * @throws \Doctrine\Common\Persistence\Mapping\MappingException
      */
-    protected static function createTestCollection($username = 'dm_test_user', $roles = []) {
+    protected static function createTestCollection($username = 'dm_test_user', $roles = [], $withPublicationSorts = true) {
         $dmEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_DM];
 
         $user = self::createUser($username, self::$testDmUsers[$username] ?? 'password', $roles);
@@ -310,23 +310,25 @@ class TestCommon extends WebTestCase {
                 ->setIdUser($user->getId())
         );
 
-        $publicationSort1 = new BibliothequeOrdreMagazines();
-        $dmEntityManager->persist(
-            $publicationSort1
-                ->setPays('fr')
-                ->setMagazine('DDD')
-                ->setIdUtilisateur($user->getId())
-                ->setOrdre(1)
-        );
+        if ($withPublicationSorts) {
+            $publicationSort1 = new BibliothequeOrdreMagazines();
+            $dmEntityManager->persist(
+                $publicationSort1
+                    ->setPays('fr')
+                    ->setMagazine('DDD')
+                    ->setIdUtilisateur($user->getId())
+                    ->setOrdre(1)
+            );
 
-        $publicationSort2 = new BibliothequeOrdreMagazines();
-        $dmEntityManager->persist(
-            $publicationSort2
-                ->setPays('fr')
-                ->setMagazine('JM')
-                ->setIdUtilisateur($user->getId())
-                ->setOrdre(2)
-        );
+            $publicationSort2 = new BibliothequeOrdreMagazines();
+            $dmEntityManager->persist(
+                $publicationSort2
+                    ->setPays('fr')
+                    ->setMagazine('JM')
+                    ->setIdUtilisateur($user->getId())
+                    ->setOrdre(2)
+            );
+        }
 
         try {
             $dmEntityManager->flush();
@@ -341,7 +343,7 @@ class TestCommon extends WebTestCase {
 
     protected static function createCoaData() {
         $coaEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_COA];
-        
+
         self::$testCountries['frLocale-fr'] = new InducksCountryname();
         $coaEntityManager->persist(
             self::$testCountries['frLocale-fr']

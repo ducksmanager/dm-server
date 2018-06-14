@@ -289,4 +289,12 @@ class CollectionTest extends TestCommon
         $this->assertInternalType('int', $objectResponse->max);
         $this->assertEquals(2, $objectResponse->max);
     }
+
+    public function testGetLastPublicationPositionNoPublication() {
+        $collectionUserInfo = self::createTestCollection('dm_test_user', [], false);
+        self::setSessionUser($this->app, $collectionUserInfo);
+
+        $getResponse = $this->buildAuthenticatedServiceWithTestUser('/collection/bookcase/sort/max', self::$dmUser)->call();
+        $this->assertEquals(Response::HTTP_NO_CONTENT, $getResponse->getStatusCode());
+    }
 }

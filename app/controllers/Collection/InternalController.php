@@ -278,7 +278,7 @@ class InternalController extends AbstractController
 
             $qb = $dmEm->createQueryBuilder();
             $qb
-                ->select('max(sorts.ordre)')
+                ->select('max(sorts.ordre) as max')
                 ->from(BibliothequeOrdreMagazines::class, 'sorts')
 
                 ->andWhere($qb->expr()->eq('sorts.idUtilisateur', ':userId'))
@@ -286,11 +286,11 @@ class InternalController extends AbstractController
 
             $maxSort = $qb->getQuery()->getResult(Query::HYDRATE_SCALAR);
 
-            if (count($maxSort) === 0) {
+            if (count($maxSort) === 0 || is_null($maxSort[0]['max'])) {
                 return new Response('No publication found for the bookcase', Response::HTTP_NO_CONTENT);
             }
 
-            return new JsonResponse(['max' => (int)(array_values($maxSort[0])[0])]);
+            return new JsonResponse(['max' => (int)($maxSort[0]['max'])]);
         });
     }
 }
