@@ -8,7 +8,7 @@ services:
     depends_on:
      - db_coa
      - db_cover_id
-     - db_dm
+     - db_dm_copy
      - db_dm_stats
      - db_edgecreator
     volumes:
@@ -44,11 +44,12 @@ services:
     container_name: mariadb-server-for-coa-box
     image: "mariadb:10.2"
     volumes:
-     - ./sql/schema-coa.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+     - $MYSQL_INIT_SCRIPT_COA:/docker-entrypoint-initdb.d/$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
     ports:
      - "44000:3306"
     environment:
       MYSQL_DATABASE: coa
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
     networks:
      - db-network
      - cover-id-network
@@ -76,53 +77,54 @@ services:
     container_name: mariadb-server-for-cover-info-box
     image: "mariadb:10.2"
     volumes:
-     - ./sql/schema-cover_info.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+     - $MYSQL_INIT_SCRIPT_COVER_INFO:/docker-entrypoint-initdb.d/$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
     ports:
      - "44009:3306"
     environment:
       MYSQL_DATABASE: cover_info
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
     networks:
      - db-network
   pastec:
     container_name: pastec-ubuntu-1704-timestamps
     image: "bperel/pastec-ubuntu-1704-timestamps"
-    ports:
-     - "4214:4212"
-    restart: always
     networks:
      - cover-id-network
 
-  db_dm:
+  db_dm_copy:
     container_name: mariadb-server-for-dm
     image: "mariadb:10.2"
     volumes:
-     - ./sql/schema-dm.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+     - $MYSQL_INIT_SCRIPT_DM:/docker-entrypoint-initdb.d/$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
     ports:
      - "44002:3306"
     environment:
       MYSQL_DATABASE: dm
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
     networks:
      - db-network
   db_edgecreator:
     container_name: mariadb-server-for-edgecreator
     image: "mariadb:10.2"
     volumes:
-     - ./sql/schema-edgecreator.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+     - $MYSQL_INIT_SCRIPT_DM_STATS:/docker-entrypoint-initdb.d/$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
     ports:
      - "44003:3306"
     environment:
       MYSQL_DATABASE: edgecreator
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
     networks:
      - db-network
   db_dm_stats:
     container_name: mariadb-server-for-dm-stats
     image: "mariadb:10.2"
     volumes:
-     - ./sql/schema-dm_stats.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+     - $MYSQL_INIT_SCRIPT_EDGECREATOR:/docker-entrypoint-initdb.d/$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
     ports:
      - "44010:3306"
     environment:
       MYSQL_DATABASE: dm_stats
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
     networks:
      - db-network
   swagger:
@@ -131,7 +133,7 @@ services:
     ports:
      - "8081:8080"
     environment:
-      API_URL: http://${DMSERVER_HOST}:8001/dm-server/status/swagger.json
+      API_URL: http://${DMSERVER_HOST}:${DMSERVER_PORT}/dm-server/status/swagger.json
       SWAGGER_JSON: http://dm-server/dm-server/status/swagger.json
 
 networks:

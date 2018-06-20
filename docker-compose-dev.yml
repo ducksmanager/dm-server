@@ -46,11 +46,12 @@ services:
     container_name: db_coa
     image: "mariadb:10.2"
     volumes:
-     - ./sql/schema-coa.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+     - $MYSQL_INIT_SCRIPT_COA:/docker-entrypoint-initdb.d/$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
     ports:
      - "64000:3306"
     environment:
       MYSQL_DATABASE: coa
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
     networks:
      - db-network
      - cover-id-network
@@ -78,11 +79,12 @@ services:
     container_name: db_cover_id
     image: "mariadb:10.2"
     volumes:
-     - ./sql/schema-cover_info.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+     - $MYSQL_INIT_SCRIPT_COVER_INFO:/docker-entrypoint-initdb.d/$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
     ports:
      - "64001:3306"
     environment:
       MYSQL_DATABASE: cover_info
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
     networks:
      - db-network
   pastec:
@@ -92,14 +94,15 @@ services:
      - cover-id-network
 
   db_dm:
-    container_name: db_dm
+    container_name: db_dm_copy
     image: "mariadb:10.2"
     volumes:
-     - ./sql/schema-dm.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+     - $MYSQL_INIT_SCRIPT_DM:/docker-entrypoint-initdb.d/$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
     ports:
      - "64002:3306"
     environment:
       MYSQL_DATABASE: dm
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
     networks:
      - db-network
 
@@ -107,11 +110,12 @@ services:
     container_name: db_edgecreator
     image: "mariadb:10.2"
     volumes:
-     - ./sql/schema-edgecreator.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+     - $MYSQL_INIT_SCRIPT_DM_STATS:/docker-entrypoint-initdb.d/$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
     ports:
      - "64003:3306"
     environment:
       MYSQL_DATABASE: edgecreator
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
     networks:
      - db-network
 
@@ -119,11 +123,12 @@ services:
     container_name: db_dm_stats
     image: "mariadb:10.2"
     volumes:
-     - ./sql/schema-dm_stats.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+     - $MYSQL_INIT_SCRIPT_EDGECREATOR:/docker-entrypoint-initdb.d/$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
     ports:
      - "64010:3306"
     environment:
       MYSQL_DATABASE: dm_stats
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
     networks:
      - db-network
 
@@ -133,7 +138,7 @@ services:
     ports:
      - "8081:8080"
     environment:
-      API_URL: http://localhost:10001/dm-server/status/swagger.json
+      API_URL: http://${DMSERVER_HOST}:${DMSERVER_PORT}/dm-server/status/swagger.json
       SWAGGER_JSON: http://dm-server/dm-server/status/swagger.json
 
 networks:

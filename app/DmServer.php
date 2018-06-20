@@ -29,7 +29,7 @@ class DmServer implements ControllerProviderInterface
     /** @var EntityManager[] $entityManagers */
     public static $entityManagers = [];
 
-    public const CONFIG_DB_KEY_DM = 'db_dm';
+    public const CONFIG_DB_KEY_DM = 'db_dm_copy';
     public const CONFIG_DB_KEY_COA = 'db_coa';
     public const CONFIG_DB_KEY_COVER_ID = 'db_cover_id';
     public const CONFIG_DB_KEY_DM_STATS = 'db_dm_stats';
