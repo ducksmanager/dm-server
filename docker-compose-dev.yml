@@ -2,15 +2,16 @@ version: '2.1'
 services:
   web:
     container_name: dm-server
-    image: nginx:latest
+    image: "nginx:1.15"
     ports:
      - "10001:80"
     depends_on:
      - db_coa
      - db_cover_id
-     - db_dm
+     - db_dm_copy
      - db_dm_stats
      - db_edgecreator
+     - php
     volumes:
      - .:/var/www/html/dm-server:z
      - ./nginx.conf:/etc/nginx/conf.d/default.conf
@@ -73,6 +74,7 @@ services:
       - PASTEC_HOST=pastec
       - PASTEC_PORT=4212
       - PASTEC_CONTAINER_HOME=/pastec/build
+    command: echo "Not provisionning the Cover ID db on dev"
     networks:
      - db-network
      - cover-id-network
@@ -94,7 +96,7 @@ services:
     networks:
      - cover-id-network
 
-  db_dm:
+  db_dm_copy:
     container_name: db_dm_copy
     image: "mariadb:10.2"
     volumes:
@@ -111,7 +113,7 @@ services:
     container_name: db_edgecreator
     image: "mariadb:10.2"
     volumes:
-     - $MYSQL_INIT_SCRIPT_DM_STATS:/docker-entrypoint-initdb.d/$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
+     - $MYSQL_INIT_SCRIPT_EDGECREATOR:/docker-entrypoint-initdb.d/$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
     ports:
      - "64003:3306"
     environment:
@@ -124,7 +126,7 @@ services:
     container_name: db_dm_stats
     image: "mariadb:10.2"
     volumes:
-     - $MYSQL_INIT_SCRIPT_EDGECREATOR:/docker-entrypoint-initdb.d/$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
+     - $MYSQL_INIT_SCRIPT_DM_STATS:/docker-entrypoint-initdb.d/$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
     ports:
      - "64010:3306"
     environment:
