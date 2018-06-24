@@ -21,7 +21,13 @@ foreach($filesToCopy as $source => $destination) {
 
 $composeConfig = [];
 foreach(array_slice($argv, 1) as $configFile) {
-    $composeConfig = array_merge($composeConfig, Yaml::parse(file_get_contents(getcwd()."/$configFile")));
+    if (preg_match('#\.env(\.|$)#', $configFile)) {
+        $values = parse_ini_file(getcwd()."/$configFile");
+    }
+    else {
+        $values = Yaml::parse(file_get_contents(getcwd()."/$configFile"));
+    }
+    $composeConfig = array_merge($composeConfig, $values);
 }
 
 $configuredEntityManagerNames = \DmServer\DmServer::$configuredEntityManagerNames;

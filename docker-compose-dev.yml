@@ -28,6 +28,7 @@ services:
     networks:
      - front-network
      - db-network
+    command: sh -c 'php app/config/generate-config.php docker-compose-dev.yml .env && php-fpm'
 
   coa-updater:
     container_name: coa-updater
