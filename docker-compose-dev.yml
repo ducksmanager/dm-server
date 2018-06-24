@@ -141,8 +141,10 @@ services:
     ports:
      - "8081:8080"
     environment:
-      API_URL: http://${DMSERVER_HOST}:${DMSERVER_PORT}/dm-server/status/swagger.json
-      SWAGGER_JSON: http://dm-server/dm-server/status/swagger.json
+      API_URL: http://${DMSERVER_HOST}:${DMSERVER_PORT}/status/swagger.json
+      SWAGGER_JSON: http://dm-server/status/swagger.json
+    networks:
+     - front-network
 
 networks:
   front-network:
