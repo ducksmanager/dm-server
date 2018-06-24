@@ -15,8 +15,7 @@ php vendor/radebatz/silex2swagger/bin/silex2swagger silex2swagger:build --file=s
 echo "Done." && \
 \
 bash scripts/update-schemas.sh 0 && \
-echo -e "\nThe schema update has to be applied now. Afterwards press y to continue the deployment process. Continue ? (y/n)" && read answer
-if echo "$answer" | grep -iq "^y" ;then
+echo -e "\nThe schema update has to be applied now. Afterwards press y to continue the deployment process. Continue ? (y/n)" && read answer && if echo "$answer" | grep -iq "^y" ;then
   rm -rf ${webdir} && mv ${webdir_new} ${webdir} && \
   echo "Deployed:" && cat ${webdir}/deployment_commit_id.txt
 fi

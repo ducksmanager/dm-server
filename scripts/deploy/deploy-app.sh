@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 
 deploy() {
-  docker cp scripts ${container_name}:${webdir} \
+  docker    exec ${container_name} mkdir -p ${webdir} \
+  && docker cp scripts ${container_name}:${webdir} \
   && docker exec ${container_name} /bin/bash ${webdir}/scripts/deploy/backup-app.sh \
   && docker exec ${container_name} /bin/bash -c "rm -rf ${webdir}_new && mkdir -p ${webdir}_new" \
   \
-  && for f in .htaccess app assets scripts test favicon.ico index.php composer.json docker-compose.yml; \
+  && for f in .env .htaccess app assets scripts test favicon.ico index.php composer.json docker-compose.yml; \
   do \
     docker cp ${f} ${container_name}:${webdir}_new; \
   done \

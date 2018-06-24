@@ -29,7 +29,7 @@ services:
     networks:
      - front-network
      - db-network
-    command: sh -c 'php app/config/generate-config.php docker-compose-dev.yml .env && php-fpm'
+    command: sh -c 'php app/config/generate-config.php docker-compose-dev.yml .env && php vendor/radebatz/silex2swagger/bin/silex2swagger silex2swagger:build --file=swagger.json --path=app/controllers && php-fpm'
 
   coa-updater:
     container_name: coa-updater
@@ -140,6 +140,8 @@ services:
     image: "swaggerapi/swagger-ui"
     ports:
      - "8081:8080"
+    depends_on:
+     - dm-server
     environment:
       API_URL: http://${DMSERVER_HOST}:${DMSERVER_PORT}/status/swagger.json
       SWAGGER_JSON: http://dm-server/status/swagger.json

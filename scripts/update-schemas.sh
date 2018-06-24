@@ -11,7 +11,7 @@ fi
 app_dir=${DIR}/../app
 
 cd ${app_dir}/config
-php generate-db-config.php
+php generate-config.php ../../docker-compose.yml ../../.env
 if [ $? -eq 0 ]; then
   cd ${app_dir}
   grep -Po '^models_namespace=\K.+' config/schemas.ini | \

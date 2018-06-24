@@ -17,7 +17,6 @@ COPY composer.json /var/www/html/dm-server/composer.json
 RUN cd /var/www/html/dm-server && \
   composer install --no-plugins --no-scripts && \
   touch development.log && chown www-data:www-data development.log && \
-  touch pimple.json && chown www-data:www-data pimple.json && \
-  chmod +x scripts/*
+  touch pimple.json && chown www-data:www-data pimple.json
 
 WORKDIR /var/www/html/dm-server
