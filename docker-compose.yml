@@ -21,7 +21,7 @@ services:
     container_name: dm-server-php
     build:
       context: .
-      dockerfile: Dockerfile-dev
+      dockerfile: Dockerfile
     volumes:
      - ./ssmtp.conf:/etc/ssmtp/ssmtp.conf
     networks:
