@@ -3,7 +3,7 @@
 source_container_name=$1
 target_container_name=$2
 backup_dir=$3
-config_file_path=dm-server/app/config/config.db.ini
+config_file_path=app/config/config.db.ini
 
 usage="Usage : $0 <source_container_name> <target_container_name> <backup_dir>"
 

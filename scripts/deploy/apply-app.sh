@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-webdir=/var/www/html/dm-server
+webdir=/var/www/html
 webdir_new=${webdir}_new
 
 cd ${webdir_new}

@@ -3,7 +3,7 @@
 container_name=$1
 backup_dir=$2
 remote_backup_config=$3 # For instance user@192.168.0.2:/home/user/workspace/mybackup
-config_file_path=dm-server/app/config/config.db.ini
+config_file_path=app/config/config.db.ini
 today=`date +%Y-%m-%d`
 
 if [ -z "$container_name" ]; then

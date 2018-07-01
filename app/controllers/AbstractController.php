@@ -16,7 +16,7 @@ use Swagger\Annotations as SWG;
 /**
  * @SWG\Swagger(
  *     schemes={"http","https"},
- *     basePath="/dm-server",
+ *     basePath="",
  *     host="163.172.211.199:8001",
  *     @SWG\Info(
  *         version="1.0.0",

@@ -5,7 +5,7 @@
 	"version": "1.0.0"
   },
   "host": "127.0.0.1:8001",
-  "basePath": "\/dm-server",
+  "basePath": "",
   "schemes": [
 	"http",
 	"https"

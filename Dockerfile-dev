@@ -10,15 +10,15 @@ RUN docker-php-ext-install -j$(nproc) pdo pdo_mysql exif opcache
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-COPY .htaccess /var/www/html/dm-server/.htaccess
-COPY docker-compose.yml /var/www/html/dm-server/docker-compose.yml
-COPY app /var/www/html/dm-server/app
-COPY assets /var/www/html/dm-server/assets
-COPY scripts /var/www/html/dm-server/scripts
-COPY index.php /var/www/html/dm-server/index.php
-COPY composer.json /var/www/html/dm-server/composer.json
+COPY .htaccess /var/www/html/.htaccess
+COPY docker-compose.yml /var/www/html/docker-compose.yml
+COPY app /var/www/html/app
+COPY assets /var/www/html/assets
+COPY scripts /var/www/html/scripts
+COPY index.php /var/www/html/index.php
+COPY composer.json /var/www/html/composer.json
 
-RUN cd /var/www/html/dm-server && \
+RUN cd /var/www/html && \
   composer install --no-plugins --no-scripts && \
   touch development.log && chown www-data:www-data development.log && \
   touch pimple.json && chown www-data:www-data pimple.json && \
@@ -26,4 +26,4 @@ RUN cd /var/www/html/dm-server && \
 
 RUN pecl install xdebug-2.6.0 && docker-php-ext-enable xdebug
 
-WORKDIR /var/www/html/dm-server
+WORKDIR /var/www/html

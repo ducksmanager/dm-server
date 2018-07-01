@@ -13,7 +13,7 @@ services:
      - db_edgecreator
      - php
     volumes:
-     - .:/var/www/html/dm-server:z
+     - .:/var/www/html:z
      - ./nginx.conf:/etc/nginx/conf.d/default.conf
      - ./php.xdebug.ini:/usr/local/etc/php/php.ini:z
     networks:
@@ -25,7 +25,7 @@ services:
       context: .
       dockerfile: Dockerfile-dev
     volumes:
-     - .:/var/www/html/dm-server:z
+     - .:/var/www/html:z
     networks:
      - front-network
      - db-network
@@ -141,7 +141,8 @@ services:
     ports:
      - "8081:8080"
     depends_on:
-     - dm-server
+     - web
+     - php
     environment:
       API_URL: http://${DMSERVER_HOST}:${DMSERVER_PORT}/status/swagger.json
       SWAGGER_JSON: http://dm-server/status/swagger.json

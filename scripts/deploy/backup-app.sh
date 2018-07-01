@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-webdir=/var/www/html/dm-server
+webdir=/var/www/html
 
 mkdir -p ${webdir}_old && rm -rf ${webdir}_old/*
 
