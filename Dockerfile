@@ -11,12 +11,3 @@ RUN echo 'extension=apcu.so' > /usr/local/etc/php/conf.d/apcu.ini
 RUN docker-php-ext-install -j$(nproc) pdo pdo_mysql exif opcache
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
-COPY composer.json /var/www/html/composer.json
-
-RUN cd /var/www/html && \
-  composer install --no-plugins --no-scripts && \
-  touch development.log && chown www-data:www-data development.log && \
-  touch pimple.json && chown www-data:www-data pimple.json
-
-WORKDIR /var/www/html
