@@ -40,7 +40,6 @@ services:
       - MYSQL_DATABASE=coa
     volumes:
       - ./_inducks:/home/inducks:z
-    command: echo "Not provisionning the COA db on dev"
     networks:
      - db-network
   db_coa:
