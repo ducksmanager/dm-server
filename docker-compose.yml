@@ -14,7 +14,7 @@ services:
      - php
     volumes:
      - ./nginx.conf:/etc/nginx/conf.d/default.conf
-     - ./current:/var/www/html:z
+     - ./current:/var/www:z
     networks:
      - front-network
 
@@ -25,7 +25,7 @@ services:
       dockerfile: Dockerfile
     volumes:
      - ./ssmtp.conf:/etc/ssmtp/ssmtp.conf
-     - ./current:/var/www/html:z
+     - ./current:/var/www:z
     networks:
      - front-network
      - db-network
