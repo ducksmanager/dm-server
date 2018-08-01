@@ -98,7 +98,7 @@
         "symfony/serializer": "4.1.*",
         "symfony/yaml": "4.1.*",
         "symfony/translation": "4.1.*",
-        "doctrine/dbal": "2.7.*",
+        "doctrine/dbal": "2.8.*",
         "doctrine/orm": "2.6.*",
         "doctrine/doctrine-bundle": "1.9.*",
         "monolog/monolog": "1.23.*",
