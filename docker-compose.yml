@@ -17,6 +17,11 @@ services:
      - ./current:/var/www:z
     networks:
      - front-network
+    logging:
+      driver: gelf
+      options:
+        gelf-address: $LOG_SERVER_ADDRESS
+        tag: "dm-server-web"
 
   php:
     container_name: dm-server-php
@@ -29,6 +34,12 @@ services:
     networks:
      - front-network
      - db-network
+     - cover-id-network
+    logging:
+      driver: gelf
+      options:
+        gelf-address: $LOG_SERVER_ADDRESS
+        tag: "dm-server-web"
 
   coa-updater:
     container_name: coa-updater
@@ -38,6 +49,7 @@ services:
     environment:
       - MYSQL_HOST=db_coa
       - MYSQL_DATABASE=coa
+      - MYSQL_PASSWORD=$MYSQL_ROOT_PASSWORD
     volumes:
       - ./_inducks:/home/inducks:z
     networks:
@@ -138,8 +150,8 @@ services:
      - web
      - php
     environment:
-      API_URL: http://${DMSERVER_HOST}:${DMSERVER_PORT}/status/swagger.json
-      SWAGGER_JSON: http://dm-server/status/swagger.json
+      API_URL: "http://$DM_SERVER_HOST:$DM_SERVER_PORT/status/swagger.json"
+      SWAGGER_JSON: "http://$DM_SERVER_HOST:$DM_SERVER_PORT/status/swagger.json"
     networks:
      - front-network
 
