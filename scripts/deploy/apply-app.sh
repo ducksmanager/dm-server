@@ -6,8 +6,8 @@ webdir_new=${webdir}_new
 cd ${webdir_new}
 
 chmod -R +x scripts && \
-touch development.log pimple.json && \
-chown www-data:www-data development.log pimple.json && \
+touch pimple.json && \
+chown www-data:www-data pimple.json && \
 \
 composer update --no-dev --prefer-dist -o && \
 echo "Generating swagger.json..." && \

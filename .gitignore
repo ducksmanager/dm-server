@@ -4,7 +4,6 @@
 /app/config/settings.ini
 /bin
 /build
-/development.log
 **/*.sqlite
 /vendor
 composer.lock

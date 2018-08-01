@@ -47,7 +47,7 @@ if ($forTest) {
 }
 else {
     $app->register(new Silex\Provider\MonologServiceProvider(), [
-        'monolog.logfile' => __DIR__ . '/development.log',
+        'monolog.logfile' => 'php://stdout',
         'monolog.level' => \Monolog\Logger::INFO,
     ]);
 }
