@@ -100,34 +100,34 @@ class AppController extends AbstractController
      *   @SLX\Request(method="POST", uri="issues"),
      *   @SWG\Parameter(
      *     name="country",
-     *     in="query",
+     *     in="body",
      *     required=true
      *   ),
      *   @SWG\Parameter(
      *     name="publication",
-     *     in="query",
+     *     in="body",
      *     required=true
      *   ),
      *   @SWG\Parameter(
      *     name="issuenumbers",
-     *     in="query",
+     *     in="body",
      *     required=true
      *   ),
      *   @SWG\Parameter(
      *     name="condition",
-     *     in="query",
+     *     in="body",
      *     required=false
      *   ),
      *	 @SLX\Value(variable="condition", default=null),
      *   @SWG\Parameter(
      *     name="istosell",
-     *     in="query",
+     *     in="body",
      *     required=false
      *   ),
      *	 @SLX\Value(variable="istosell", default=null),
      *   @SWG\Parameter(
      *     name="purchaseid",
-     *     in="query",
+     *     in="body",
      *     required=false
      *   ),
      *	 @SLX\Value(variable="purchaseid", default=null)

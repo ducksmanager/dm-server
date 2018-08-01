@@ -31,22 +31,22 @@ class AppController extends AbstractController
      *   @SLX\Request(method="POST", uri="user/new"),
      *   @SWG\Parameter(
      *     name="username",
-     *     in="query",
+     *     in="body",
      *     required=true
      *   ),
      *   @SWG\Parameter(
      *     name="password",
-     *     in="query",
+     *     in="body",
      *     required=true
      *   ),
      *   @SWG\Parameter(
      *     name="password2",
-     *     in="query",
+     *     in="body",
      *     required=true
      *   ),
      *   @SWG\Parameter(
      *     name="email",
-     *     in="query",
+     *     in="body",
      *     required=true
      *   )
      * )
@@ -76,12 +76,12 @@ class AppController extends AbstractController
      *   @SLX\Request(method="GET", uri="user/get/{username}/{password}"),
      *   @SWG\Parameter(
      *     name="username",
-     *     in="query",
+     *     in="path",
      *     required=true
      *   ),
      *   @SWG\Parameter(
      *     name="password",
-     *     in="query",
+     *     in="path",
      *     required=true
      *   )
      * )
@@ -158,7 +158,7 @@ class AppController extends AbstractController
      *   @SLX\Request(method="POST", uri="email/bookstore"),
      *   @SWG\Parameter(
      *     name="userid",
-     *     in="query",
+     *     in="body",
      *     required=false
      *   ),
      *	 @SLX\Value(variable="userid", default=null)

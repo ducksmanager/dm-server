@@ -54,27 +54,27 @@ class AppController extends AbstractController
      *   ),
      *   @SWG\Parameter(
      *     name="functionname",
-     *     in="query",
+     *     in="body",
      *     required=true
      *   ),
      *   @SWG\Parameter(
      *     name="optionname",
-     *     in="query",
+     *     in="body",
      *     required=true
      *   ),
      *   @SWG\Parameter(
      *     name="optionvalue",
-     *     in="query",
+     *     in="body",
      *     required=true
      *   ),
      *   @SWG\Parameter(
      *     name="firstissuenumber",
-     *     in="query",
+     *     in="body",
      *     required=true
      *   ),
      *   @SWG\Parameter(
      *     name="lastissuenumber",
-     *     in="query",
+     *     in="body",
      *     required=true
      *   ),
      *	 @SLX\Assert(variable="publicationcode", regex="^(?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+)$"),
@@ -256,7 +256,7 @@ class AppController extends AbstractController
      *   ),
      *   @SWG\Parameter(
      *     name="steps",
-     *     in="query",
+     *     in="body",
      *     required=true
      *   ),
      *	 @SLX\Assert(variable="publicationcode", regex="^(?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+)$"),
@@ -340,12 +340,12 @@ class AppController extends AbstractController
      *   ),
      *   @SWG\Parameter(
      *     name="stepfunctionname",
-     *     in="query",
+     *     in="body",
      *     required=true
      *   ),
      *   @SWG\Parameter(
      *     name="options",
-     *     in="query",
+     *     in="body",
      *     required=true
      *   ),
      *	 @SLX\Assert(variable="modelid", regex="^(?P<modelid_regex>\d+)$"),
@@ -471,32 +471,32 @@ class AppController extends AbstractController
      *   @SLX\Request(method="PUT", uri="myfontspreview"),
      *   @SWG\Parameter(
      *     name="font",
-     *     in="query",
+     *     in="body",
      *     required=true
      *   ),
      *   @SWG\Parameter(
      *     name="fgColor",
-     *     in="query",
+     *     in="body",
      *     required=true
      *   ),
      *   @SWG\Parameter(
      *     name="bgColor",
-     *     in="query",
+     *     in="body",
      *     required=true
      *   ),
      *   @SWG\Parameter(
      *     name="width",
-     *     in="query",
+     *     in="body",
      *     required=true
      *   ),
      *   @SWG\Parameter(
      *     name="text",
-     *     in="query",
+     *     in="body",
      *     required=true
      *   ),
      *   @SWG\Parameter(
      *     name="precision",
-     *     in="query",
+     *     in="body",
      *     required=true
      *   )
      * )
@@ -526,7 +526,7 @@ class AppController extends AbstractController
      *   @SLX\Request(method="DELETE", uri="myfontspreview/{previewid}"),
      *   @SWG\Parameter(
      *     name="previewid",
-     *     in="query",
+     *     in="path",
      *     required=true
      *   ),
      * )
@@ -543,7 +543,7 @@ class AppController extends AbstractController
      *   @SLX\Request(method="POST", uri="model/v2/{modelid}/deactivate"),
      *   @SWG\Parameter(
      *     name="modelid",
-     *     in="query",
+     *     in="path",
      *     required=true
      *   ),
      *	 @SLX\Assert(variable="modelid", regex="^(?P<modelid_regex>\d+)$")
@@ -571,12 +571,12 @@ class AppController extends AbstractController
      *   ),
      *   @SWG\Parameter(
      *     name="designers",
-     *     in="query",
+     *     in="body",
      *     required=true
      *   ),
      *   @SWG\Parameter(
      *     name="photographers",
-     *     in="query",
+     *     in="body",
      *     required=true
      *   ),
      *	 @SLX\Assert(variable="modelid", regex="^(?P<modelid_regex>\d+)$")
@@ -604,7 +604,7 @@ class AppController extends AbstractController
      *   ),
      *   @SWG\Parameter(
      *     name="photoname",
-     *     in="query",
+     *     in="body",
      *     required=true
      *   ),
      *	 @SLX\Assert(variable="modelid", regex="^(?P<modelid_regex>\d+)$")
@@ -671,12 +671,12 @@ class AppController extends AbstractController
      *   @SLX\Request(method="PUT", uri="multiple_edge_photo"),
      *   @SWG\Parameter(
      *     name="hash",
-     *     in="query",
+     *     in="body",
      *     required=true
      *   ),
      *   @SWG\Parameter(
      *     name="filename",
-     *     in="query",
+     *     in="body",
      *     required=true
      *   )
      * )

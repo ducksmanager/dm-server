@@ -29,12 +29,12 @@ class AppController extends AbstractController
      *   @SLX\Request(method="POST", uri="/rawsql"),
      *   @SWG\Parameter(
      *     name="query",
-     *     in="query",
+     *     in="body",
      *     required=true
      *   ),
      *   @SWG\Parameter(
-     *     name="query",
-     *     in="query",
+     *     name="db",
+     *     in="body",
      *     required=true
      *   )
      * )
