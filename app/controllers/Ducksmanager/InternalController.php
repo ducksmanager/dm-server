@@ -12,6 +12,8 @@ use DmServer\Controllers\AbstractInternalController;
 use DmServer\DmServer;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query;
 use RuntimeException;
 use Silex\Application;
@@ -128,13 +130,16 @@ class InternalController extends AbstractInternalController
                 ->andWhere($qb->expr()->eq('u.password', ':password'));
 
             $qb->setParameters([':username' => $username, 'password' => $password]);
-//            , ':ec_role' => '"EdgeCreator"']);
 
-            $sql=$qb->getQuery()->getSQL();
-            $existingUser = $qb->getQuery()->getSingleResult(Query::HYDRATE_ARRAY);
-            if (!is_null($existingUser)) {
-                return new JsonResponse($existingUser, Response::HTTP_OK);
-            } else {
+            try {
+                $existingUser = $qb->getQuery()->getSingleResult(Query::HYDRATE_ARRAY);
+                if (!is_null($existingUser)) {
+                    return new JsonResponse($existingUser, Response::HTTP_OK);
+                } else {
+                    return new Response('', Response::HTTP_UNAUTHORIZED);
+                }
+            }
+            catch(NoResultException|NonUniqueResultException $e) {
                 return new Response('', Response::HTTP_UNAUTHORIZED);
             }
         });
