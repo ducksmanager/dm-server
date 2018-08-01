@@ -1,7 +1,7 @@
 version: '2.1'
 services:
   web:
-    container_name: dm-server
+    container_name: dm-server-web
     image: "nginx:1.15"
     ports:
      - "8001:80"
