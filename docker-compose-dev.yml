@@ -144,8 +144,8 @@ services:
      - web
      - php
     environment:
-      API_URL: http://${DMSERVER_HOST}:${DMSERVER_PORT}/status/swagger.json
-      SWAGGER_JSON: http://dm-server/status/swagger.json
+      API_URL: "http://$DM_SERVER_HOST:$DM_SERVER_PORT/status/swagger.json"
+      SWAGGER_JSON: "http://$DM_SERVER_HOST:$DM_SERVER_PORT/status/swagger.json"
     networks:
      - front-network
 
