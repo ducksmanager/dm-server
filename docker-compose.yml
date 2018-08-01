@@ -31,6 +31,8 @@ services:
     volumes:
      - ./ssmtp.conf:/etc/ssmtp/ssmtp.conf
      - ./current:/var/www:z
+    environment:
+      DM_SERVER_ADDRESS: "$DM_SERVER_HOST:$DM_SERVER_PORT"
     networks:
      - front-network
      - db-network

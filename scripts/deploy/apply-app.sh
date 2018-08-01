@@ -11,7 +11,7 @@ chown www-data:www-data pimple.json && \
 \
 composer update --no-dev --prefer-dist -o && \
 echo "Generating swagger.json..." && \
-php vendor/radebatz/silex2swagger/bin/silex2swagger silex2swagger:build --file=swagger.json --path=app/controllers && \
+php scripts/generate-swagger.php && \
 echo "Done." && \
 \
 bash scripts/update-schemas.sh 0 && \

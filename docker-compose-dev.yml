@@ -26,10 +26,12 @@ services:
       dockerfile: Dockerfile-dev
     volumes:
      - .:/var/www/html:z
+    environment:
+      DM_SERVER_ADDRESS: "$DM_SERVER_HOST:$DM_SERVER_PORT"
     networks:
      - front-network
      - db-network
-    command: sh -c 'php app/config/generate-config.php docker-compose-dev.yml .env && php vendor/radebatz/silex2swagger/bin/silex2swagger silex2swagger:build --file=swagger.json --path=app/controllers && php-fpm'
+    command: sh -c 'php app/config/generate-config.php docker-compose-dev.yml .env && php scripts/generate-swagger.php && php-fpm'
 
   coa-updater:
     container_name: coa-updater

@@ -17,7 +17,7 @@ use Swagger\Annotations as SWG;
  * @SWG\Swagger(
  *     schemes={"http","https"},
  *     basePath="",
- *     host="163.172.211.199:8001",
+ *     host="DM_SERVER_ADDRESS",
  *     @SWG\Info(
  *         version="1.0.0",
  *         title="DM server API"
