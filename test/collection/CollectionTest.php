@@ -12,6 +12,10 @@ use DmServer\DmServer;
 
 class CollectionTest extends TestCommon
 {
+    protected function getEm() {
+        return parent::getEntityManagerByName(DmServer::CONFIG_DB_KEY_DM);
+    }
+
     public function testAddIssue() {
         $this->assertCount(0, $this->getCurrentUserIssues());
 
@@ -68,7 +72,7 @@ class CollectionTest extends TestCommon
         $this->assertCount(3, $userIssues);
 
         /** @var Numeros $updatedIssue */
-        $updatedIssue = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->getRepository(Numeros::class)->findOneBy(
+        $updatedIssue = $this->getEm()->getRepository(Numeros::class)->findOneBy(
             ['idUtilisateur' => AbstractController::getSessionUser($this->app)['id'], 'pays' => $country, 'magazine' => $publication, 'numero' => $issueToUpdate]
         );
         $this->assertEquals('fr', $updatedIssue->getPays());
@@ -124,7 +128,7 @@ class CollectionTest extends TestCommon
         $this->assertEquals(1, $responseObject[0]->numberOfIssues);
 
         /** @var Numeros $updatedIssue */
-        $updatedIssue = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->getRepository(Numeros::class)->findOneBy(
+        $updatedIssue = $this->getEm()->getRepository(Numeros::class)->findOneBy(
             ['idUtilisateur' => AbstractController::getSessionUser($this->app)['id'], 'pays' => $country, 'magazine' => $publication, 'numero' => $issueToUpdate]
         );
         $this->assertNotNull($updatedIssue);
@@ -136,7 +140,7 @@ class CollectionTest extends TestCommon
         $this->assertEquals(1, $responseObject[1]->numberOfIssues);
 
         /** @var Numeros $createdIssue */
-        $createdIssue = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->getRepository(Numeros::class)->findOneBy(
+        $createdIssue = $this->getEm()->getRepository(Numeros::class)->findOneBy(
             ['idUtilisateur' => AbstractController::getSessionUser($this->app)['id'], 'pays' => $country, 'magazine' => $publication, 'numero' => $issueToCreate]
         );
         $this->assertNotNull($createdIssue);
@@ -190,9 +194,7 @@ class CollectionTest extends TestCommon
         ])->call();
 
         /** @var Achats $updatedPurchase */
-        $updatedPurchase = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->getRepository(Achats::class)->find(
-            $purchaseToUpdate
-        );
+        $updatedPurchase = $this->getEm()->getRepository(Achats::class)->find($purchaseToUpdate);
 
         $this->assertEquals(\DateTime::createFromFormat('Y-m-d H:i:s', '2017-01-01 00:00:00'), $updatedPurchase->getDate());
         $this->assertEquals('New description', $updatedPurchase->getDescription());

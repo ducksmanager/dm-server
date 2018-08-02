@@ -110,8 +110,6 @@ class InternalController extends AbstractInternalController
      */
     public function getUser(Application $app, $username, $password) {
         return self::wrapInternalService($app, function(EntityManager $dmEm) use ($username, $password) {
-            /** @var Users $existingUser */
-            $privilegeQb = $dmEm->createQueryBuilder();
             $qb = $dmEm->createQueryBuilder();
             $qb
                 ->select('DISTINCT u')
@@ -132,6 +130,7 @@ class InternalController extends AbstractInternalController
             $qb->setParameters([':username' => $username, 'password' => $password]);
 
             try {
+                /** @var Users $existingUser */
                 $existingUser = $qb->getQuery()->getSingleResult(Query::HYDRATE_ARRAY);
                 if (!is_null($existingUser)) {
                     return new JsonResponse($existingUser, Response::HTTP_OK);

@@ -308,6 +308,7 @@ class AppController extends AbstractController
             self::callInternal($app, "/edgecreator/v2/model/assign/$targetModelId", 'POST');
 
             $valueIds = [];
+            /** @var array $stepOptions */
             foreach($steps as $stepNumber => $stepOptions) {
                 $valueIds[$stepNumber] = self::getResponseIdFromServiceResponse(
                     self::callInternal($app, "/edgecreator/v2/step/$targetModelId/$stepNumber", 'PUT', [

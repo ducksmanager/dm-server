@@ -19,6 +19,8 @@ use Dm\Models\Users;
 use Dm\Models\UsersPermissions;
 use DmServer\DmServer;
 use DmServer\RequestUtil;
+use Doctrine\Common\Annotations\AnnotationException;
+use Doctrine\Common\Persistence\Mapping\MappingException;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\OptimisticLockException;
@@ -94,13 +96,16 @@ class TestCommon extends WebTestCase {
         DmServer::$entityManagers = [];
 
         foreach (DmServer::$configuredEntityManagerNames as $emName) {
-            try {
-                self::recreateSchema($emName);
-            } catch (DBALException $e) {
-                self::fail("Failed to retrieve entity manager $emName");
-            } catch (ORMException $e) {
-                self::fail("Failed to retrieve entity manager $emName");
-            }
+            self::recreateSchema($emName);
+        }
+    }
+
+    protected function getEntityManagerByName($emName) {
+        try {
+            return DmServer::getEntityManager($emName);
+        } catch (AnnotationException|DBALException|ORMException $e) {
+            $this->fail("Failed to retrieve entity manager $emName : {$e->getMessage()}");
+            return null;
         }
     }
 
@@ -122,36 +127,34 @@ class TestCommon extends WebTestCase {
                     unset(DmServer::$entityManagers[$emName]);
                     self::recreateSchema($emName);
                 }
-            } catch (DBALException $e) {
-                self::fail("Failed to retrieve entity manager $emName");
-            } catch (ORMException $e) {
-                self::fail("Failed to retrieve entity manager $emName");
+            } catch (DBALException|ORMException|AnnotationException $e) {
+                self::fail("Failed to retrieve entity manager $emName : {$e->getMessage()}");
             }
         }
         parent::tearDown();
     }
 
     protected static function initDatabase() {
-
         foreach(DmServer::$configuredEntityManagerNames as $emName) {
             try {
                 self::$schemas[$emName]->recreateSchema();
                 DmServer::getEntityManager($emName)->clear();
-            } catch (DBALException $e) {
-                self::fail("Failed to recreate schema $emName");
-            } catch (ORMException $e) {
-                self::fail("Failed to recreate schema $emName");
+            } catch (MappingException|DBALException|ORMException|AnnotationException $e) {
+                self::fail("Failed to init database $emName : {$e->getMessage()}");
             }
         }
     }
 
     /**
      * @param $emName
-     * @throws DBALException
-     * @throws ORMException
      */
     protected static function recreateSchema($emName) {
-        self::$schemas[$emName] = SchemaWithClasses::createFromEntityManager(DmServer::getEntityManager($emName));
+        try {
+            self::$schemas[$emName] = SchemaWithClasses::createFromEntityManager(DmServer::getEntityManager($emName));
+        }
+        catch (DBALException|ORMException|AnnotationException $e) {
+            self::fail("Failed to recreate schema $emName : {$e->getMessage()}");
+        }
     }
 
     /**
@@ -225,118 +228,125 @@ class TestCommon extends WebTestCase {
         );
     }
 
+    /**
+     * @param $username
+     * @param $password
+     * @param array $roles
+     * @return Users|null
+     */
     protected static function createUser($username, $password, $roles = []) {
         $dmEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_DM];
 
         $user = new Users();
-        $dmEntityManager->persist(
-            $user
-                ->setBetauser(false)
-                ->setUsername($username)
-                ->setPassword(sha1($password))
-                ->setEmail('test@ducksmanager.net')
-                ->setDateinscription(\DateTime::createFromFormat('Y-m-d', '2000-01-01'))
-        );
-
-        foreach($roles as $role=>$privilege) {
-            $userPermission = new UsersPermissions();
-            $dmEntityManager->persist(
-                $userPermission
-                    ->setUsername($username)
-                    ->setRole($role)
-                    ->setPrivilege($privilege)
-            );
-        }
 
         try {
+            $dmEntityManager->persist(
+                $user
+                    ->setBetauser(false)
+                    ->setUsername($username)
+                    ->setPassword(sha1($password))
+                    ->setEmail('test@ducksmanager.net')
+                    ->setDateinscription(\DateTime::createFromFormat('Y-m-d', '2000-01-01'))
+            );
+
+            foreach($roles as $role=>$privilege) {
+                $userPermission = new UsersPermissions();
+                $dmEntityManager->persist(
+                    $userPermission
+                        ->setUsername($username)
+                        ->setRole($role)
+                        ->setPrivilege($privilege)
+                );
+            }
+
             $dmEntityManager->flush();
-        } catch (OptimisticLockException $e) {
-            self::fail("Failed to create user $username");
+
+            return $user;
+        } catch (OptimisticLockException|ORMException $e) {
+            self::fail("Failed to create user $username : {$e->getMessage()}");
             return null;
         }
-
-        return $user;
     }
 
     /**
      * @param string $username
-     * @param array  $roles
+     * @param array $roles
+     * @param bool $withPublicationSorts
      * @return array user info
-     * @throws ORMException
-     * @throws \Doctrine\Common\Persistence\Mapping\MappingException
      */
     protected static function createTestCollection($username = 'dm_test_user', $roles = [], $withPublicationSorts = true) {
         $dmEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_DM];
 
         $user = self::createUser($username, self::$testDmUsers[$username] ?? 'password', $roles);
 
-        $numero1 = new Numeros();
-        $dmEntityManager->persist(
-            $numero1
-                ->setPays('fr')
-                ->setMagazine('DDD')
-                ->setNumero('1')
-                ->setEtat('indefini')
-                ->setIdAcquisition('-2')
-                ->setAv(false)
-                ->setIdUtilisateur($user->getId())
-        );
+        try {
 
-        $numero2 = new Numeros();
-        $dmEntityManager->persist(
-            $numero2
-                ->setPays('fr')
-                ->setMagazine('MP')
-                ->setNumero('300')
-                ->setEtat('bon')
-                ->setIdUtilisateur($user->getId())
-        );
-
-        $numero3 = new Numeros();
-        $dmEntityManager->persist(
-            $numero3
-                ->setPays('fr')
-                ->setMagazine('MP')
-                ->setNumero('301')
-                ->setEtat('mauvais')
-                ->setIdUtilisateur($user->getId())
-        );
-
-        $purchase1 = new Achats();
-        $dmEntityManager->persist(
-            $purchase1
-                ->setDate(\DateTime::createFromFormat('Y-m-d', '2010-01-01'))
-                ->setDescription('Purchase')
-                ->setIdUser($user->getId())
-        );
-
-        if ($withPublicationSorts) {
-            $publicationSort1 = new BibliothequeOrdreMagazines();
+            $numero1 = new Numeros();
             $dmEntityManager->persist(
-                $publicationSort1
+                $numero1
                     ->setPays('fr')
                     ->setMagazine('DDD')
+                    ->setNumero('1')
+                    ->setEtat('indefini')
+                    ->setIdAcquisition('-2')
+                    ->setAv(false)
                     ->setIdUtilisateur($user->getId())
-                    ->setOrdre(1)
             );
 
-            $publicationSort2 = new BibliothequeOrdreMagazines();
+            $numero2 = new Numeros();
             $dmEntityManager->persist(
-                $publicationSort2
+                $numero2
                     ->setPays('fr')
-                    ->setMagazine('JM')
+                    ->setMagazine('MP')
+                    ->setNumero('300')
+                    ->setEtat('bon')
                     ->setIdUtilisateur($user->getId())
-                    ->setOrdre(2)
             );
-        }
 
-        try {
+            $numero3 = new Numeros();
+            $dmEntityManager->persist(
+                $numero3
+                    ->setPays('fr')
+                    ->setMagazine('MP')
+                    ->setNumero('301')
+                    ->setEtat('mauvais')
+                    ->setIdUtilisateur($user->getId())
+            );
+
+            $purchase1 = new Achats();
+            $dmEntityManager->persist(
+                $purchase1
+                    ->setDate(\DateTime::createFromFormat('Y-m-d', '2010-01-01'))
+                    ->setDescription('Purchase')
+                    ->setIdUser($user->getId())
+            );
+
+            if ($withPublicationSorts) {
+                $publicationSort1 = new BibliothequeOrdreMagazines();
+                $dmEntityManager->persist(
+                    $publicationSort1
+                        ->setPays('fr')
+                        ->setMagazine('DDD')
+                        ->setIdUtilisateur($user->getId())
+                        ->setOrdre(1)
+                );
+
+                $publicationSort2 = new BibliothequeOrdreMagazines();
+                $dmEntityManager->persist(
+                    $publicationSort2
+                        ->setPays('fr')
+                        ->setMagazine('JM')
+                        ->setIdUtilisateur($user->getId())
+                        ->setOrdre(2)
+                );
+            }
+
             $dmEntityManager->flush();
             $dmEntityManager->clear();
 
             return ['username' => $user->getUsername(), 'id' => $user->getId(), 'purchaseIds' => [$purchase1->getIdAcquisition()] ];
-        } catch (OptimisticLockException $e) {
-            self::fail("Failed to create test collection for $username");
+        } catch (OptimisticLockException|ORMException|MappingException $e) {
+            self::fail("Failed to create test collection for $username : {$e->getMessage()}");
             return null;
         }
     }
@@ -345,206 +355,208 @@ class TestCommon extends WebTestCase {
         $coaEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_COA];
 
         self::$testCountries['frLocale-fr'] = new InducksCountryname();
-        $coaEntityManager->persist(
-            self::$testCountries['frLocale-fr']
-                ->setCountrycode('fr')
-                ->setLanguagecode('fr')
-                ->setCountryname('France')
-        );
-
-        self::$testCountries['frLocale-es'] = new InducksCountryname();
-        $coaEntityManager->persist(
-            self::$testCountries['frLocale-es']
-                ->setCountrycode('es')
-                ->setLanguagecode('fr')
-                ->setCountryname('Espagne')
-        );
-
-        self::$testCountries['frLocale-us'] = new InducksCountryname();
-        $coaEntityManager->persist(
-            self::$testCountries['frLocale-us']
-                ->setCountrycode('us')
-                ->setLanguagecode('fr')
-                ->setCountryname('USA')
-        );
-
-        self::$testCountries['esLocale-fr'] = new InducksCountryname();
-        $coaEntityManager->persist(
-            self::$testCountries['esLocale-fr']
-                ->setCountrycode('fr')
-                ->setLanguagecode('es')
-                ->setCountryname('Francia')
-        );
-
-        self::$testCountries['esLocale-es'] = new InducksCountryname();
-        $coaEntityManager->persist(
-            self::$testCountries['esLocale-es']
-                ->setCountrycode('es')
-                ->setLanguagecode('es')
-                ->setCountryname('España')
-        );
-
-        self::$testCountries['esLocale-us'] = new InducksCountryname();
-        $coaEntityManager->persist(
-            self::$testCountries['esLocale-us']
-                ->setCountrycode('us')
-                ->setLanguagecode('es')
-                ->setCountryname('EE.UU.')
-        );
-
-        self::$testPublications['fr/DDD'] = new InducksPublication();
-        $coaEntityManager->persist(
-            self::$testPublications['fr/DDD']
-                ->setPublicationCode('fr/DDD')
-                ->setCountrycode('fr')
-                ->setTitle('Dynastie')
-        );
-
-        self::$testPublications['fr/MP'] = new InducksPublication();
-        $coaEntityManager->persist(
-            self::$testPublications['fr/MP']
-                ->setPublicationCode('fr/MP')
-                ->setCountrycode('fr')
-                ->setTitle('Parade')
-        );
-
-        self::$testPublications['us/CBL'] = new InducksPublication();
-        $coaEntityManager->persist(
-            self::$testPublications['us/CBL']
-                ->setPublicationCode('us/CBL')
-                ->setCountrycode('us')
-                ->setTitle('Carl Barks Library')
-        );
-
-        self::$testIssues['fr/DDD 1'] = new InducksIssue();
-        $coaEntityManager->persist(
-            self::$testIssues['fr/DDD 1']
-                ->setPublicationcode('fr/DDD')
-                ->setIssuenumber('1')
-                ->setIssuecode('fr/DDD 1')
-        );
-
-        self::$testIssues['fr/DDD 2'] = new InducksIssue();
-        $coaEntityManager->persist(
-            self::$testIssues['fr/DDD 2']
-                ->setPublicationcode('fr/DDD')
-                ->setIssuenumber('2')
-                ->setIssuecode('fr/DDD 2')
-        );
-
-        self::$testIssues['fr/MP 300'] = new InducksIssue();
-        $coaEntityManager->persist(
-            self::$testIssues['fr/MP 300']
-                ->setPublicationcode('fr/MP')
-                ->setIssuenumber('300')
-                ->setIssuecode('fr/MP 300')
-        );
-
-        self::$testIssues['fr/PM 315'] = new InducksIssue();
-        $coaEntityManager->persist(
-            self::$testIssues['fr/PM 315']
-                ->setPublicationcode('fr/PM')
-                ->setIssuenumber('315')
-                ->setIssuecode('fr/PM 315')
-        );
-
-        self::$testIssues['us/CBL 7'] = new InducksIssue();
-        $coaEntityManager->persist(
-            self::$testIssues['us/CBL 7']
-                ->setPublicationcode('us/CBL')
-                ->setIssuenumber('7')
-                ->setIssuecode('us/CBL 7')
-        );
-
-        self::$testStories['W WDC  31-05'] = new InducksStory();
-        $coaEntityManager->persist(
-            self::$testStories['W WDC  31-05']
-                ->setTitle('Title of story W WDC  31-05')
-                ->setStorycomment('Comment of story W WDC  31-05')
-                ->setStorycode('W WDC  31-05')
-        );
-
-        self::$testStories['W WDC  32-02'] = new InducksStory();
-        $coaEntityManager->persist(
-            self::$testStories['W WDC  32-02']
-                ->setTitle('Title of story W WDC  32-02')
-                ->setStorycomment('Comment of story W WDC  32-02')
-                ->setStorycode('W WDC  32-02')
-        );
-
-        self::$testStories['ARC CBL 5B'] = new InducksStory();
-        $coaEntityManager->persist(
-        self::$testStories['ARC CBL 5B']
-            ->setTitle('Title of story ARC CBL 5B')
-            ->setStorycomment('Comment of story ARC CBL 5B')
-            ->setStorycode('ARC CBL 5B')
-        );
-
-        self::$testStories['W WDC 130-02'] = new InducksStory();
-        $coaEntityManager->persist(
-            self::$testStories['W WDC 130-02']
-                ->setTitle('Title of story W WDC 130-02')
-                ->setStorycomment('Comment of story W WDC 130-02')
-                ->setStorycode('W WDC 130-02')
-        );
-
-        self::$testStories['AR 201'] = new InducksStory();
-        $coaEntityManager->persist(
-            self::$testStories['AR 201']
-                ->setTitle('Title of story AR 201')
-                ->setStorycomment('Comment of story AR 201')
-                ->setStorycode('AR 201')
-        );
-
-        self::$testStoryversions['W WDC  31-05'] = new InducksStoryversion();
-        $coaEntityManager->persist(
-            self::$testStoryversions['W WDC  31-05']
-                ->setStorycode('W WDC  31-05')
-        );
-
-        self::$testStoryversions['de/SPBL 136c'] = new InducksStoryversion();
-        $coaEntityManager->persist(
-            self::$testStoryversions['W WDC  31-05']
-                ->setStorycode('W WDC  31-05')
-        );
-
-        self::$testEntries['us/CBL 7a'] = new InducksEntry();
-        $coaEntityManager->persist(
-            self::$testEntries['us/CBL 7a']
-                ->setEntrycode('us/CBL 7a')
-                ->setIssuecode('fr/DDD 1')
-                ->setStoryversioncode('W WDC  31-05')
-        );
-
-        self::$testEntryurls['us/CBL 7p000a'] = new InducksEntryurl();
-        $coaEntityManager->persist(
-            self::$testEntryurls['us/CBL 7p000a']
-                ->setEntrycode('us/CBL 7p000a')
-                ->setUrl('us/cbl/us_cbl_7p000a_001.png')
-                ->setSitecode('thumbnails')
-        );
-
-        $inducksPerson = new InducksPerson();
-        $coaEntityManager->persist(
-            $inducksPerson
-                ->setPersoncode('CB')
-                ->setFullname('Carl Barks')
-        );
-
-        $inducksPerson = new InducksPerson();
-        $coaEntityManager->persist(
-            $inducksPerson->setPersoncode('DR')
-                ->setFullname('Don Rosa')
-        );
-
         try {
+            $coaEntityManager->persist(
+                self::$testCountries['frLocale-fr']
+                    ->setCountrycode('fr')
+                    ->setLanguagecode('fr')
+                    ->setCountryname('France')
+            );
+
+            self::$testCountries['frLocale-es'] = new InducksCountryname();
+            $coaEntityManager->persist(
+                self::$testCountries['frLocale-es']
+                    ->setCountrycode('es')
+                    ->setLanguagecode('fr')
+                    ->setCountryname('Espagne')
+            );
+
+            self::$testCountries['frLocale-us'] = new InducksCountryname();
+            $coaEntityManager->persist(
+                self::$testCountries['frLocale-us']
+                    ->setCountrycode('us')
+                    ->setLanguagecode('fr')
+                    ->setCountryname('USA')
+            );
+
+            self::$testCountries['esLocale-fr'] = new InducksCountryname();
+            $coaEntityManager->persist(
+                self::$testCountries['esLocale-fr']
+                    ->setCountrycode('fr')
+                    ->setLanguagecode('es')
+                    ->setCountryname('Francia')
+            );
+
+            self::$testCountries['esLocale-es'] = new InducksCountryname();
+            $coaEntityManager->persist(
+                self::$testCountries['esLocale-es']
+                    ->setCountrycode('es')
+                    ->setLanguagecode('es')
+                    ->setCountryname('España')
+            );
+
+            self::$testCountries['esLocale-us'] = new InducksCountryname();
+            $coaEntityManager->persist(
+                self::$testCountries['esLocale-us']
+                    ->setCountrycode('us')
+                    ->setLanguagecode('es')
+                    ->setCountryname('EE.UU.')
+            );
+
+            self::$testPublications['fr/DDD'] = new InducksPublication();
+            $coaEntityManager->persist(
+                self::$testPublications['fr/DDD']
+                    ->setPublicationCode('fr/DDD')
+                    ->setCountrycode('fr')
+                    ->setTitle('Dynastie')
+            );
+
+            self::$testPublications['fr/MP'] = new InducksPublication();
+            $coaEntityManager->persist(
+                self::$testPublications['fr/MP']
+                    ->setPublicationCode('fr/MP')
+                    ->setCountrycode('fr')
+                    ->setTitle('Parade')
+            );
+
+            self::$testPublications['us/CBL'] = new InducksPublication();
+            $coaEntityManager->persist(
+                self::$testPublications['us/CBL']
+                    ->setPublicationCode('us/CBL')
+                    ->setCountrycode('us')
+                    ->setTitle('Carl Barks Library')
+            );
+
+            self::$testIssues['fr/DDD 1'] = new InducksIssue();
+            $coaEntityManager->persist(
+                self::$testIssues['fr/DDD 1']
+                    ->setPublicationcode('fr/DDD')
+                    ->setIssuenumber('1')
+                    ->setIssuecode('fr/DDD 1')
+            );
+
+            self::$testIssues['fr/DDD 2'] = new InducksIssue();
+            $coaEntityManager->persist(
+                self::$testIssues['fr/DDD 2']
+                    ->setPublicationcode('fr/DDD')
+                    ->setIssuenumber('2')
+                    ->setIssuecode('fr/DDD 2')
+            );
+
+            self::$testIssues['fr/MP 300'] = new InducksIssue();
+            $coaEntityManager->persist(
+                self::$testIssues['fr/MP 300']
+                    ->setPublicationcode('fr/MP')
+                    ->setIssuenumber('300')
+                    ->setIssuecode('fr/MP 300')
+            );
+
+            self::$testIssues['fr/PM 315'] = new InducksIssue();
+            $coaEntityManager->persist(
+                self::$testIssues['fr/PM 315']
+                    ->setPublicationcode('fr/PM')
+                    ->setIssuenumber('315')
+                    ->setIssuecode('fr/PM 315')
+            );
+
+            self::$testIssues['us/CBL 7'] = new InducksIssue();
+            $coaEntityManager->persist(
+                self::$testIssues['us/CBL 7']
+                    ->setPublicationcode('us/CBL')
+                    ->setIssuenumber('7')
+                    ->setIssuecode('us/CBL 7')
+            );
+
+            self::$testStories['W WDC  31-05'] = new InducksStory();
+            $coaEntityManager->persist(
+                self::$testStories['W WDC  31-05']
+                    ->setTitle('Title of story W WDC  31-05')
+                    ->setStorycomment('Comment of story W WDC  31-05')
+                    ->setStorycode('W WDC  31-05')
+            );
+
+            self::$testStories['W WDC  32-02'] = new InducksStory();
+            $coaEntityManager->persist(
+                self::$testStories['W WDC  32-02']
+                    ->setTitle('Title of story W WDC  32-02')
+                    ->setStorycomment('Comment of story W WDC  32-02')
+                    ->setStorycode('W WDC  32-02')
+            );
+
+            self::$testStories['ARC CBL 5B'] = new InducksStory();
+            $coaEntityManager->persist(
+            self::$testStories['ARC CBL 5B']
+                ->setTitle('Title of story ARC CBL 5B')
+                ->setStorycomment('Comment of story ARC CBL 5B')
+                ->setStorycode('ARC CBL 5B')
+            );
+
+            self::$testStories['W WDC 130-02'] = new InducksStory();
+            $coaEntityManager->persist(
+                self::$testStories['W WDC 130-02']
+                    ->setTitle('Title of story W WDC 130-02')
+                    ->setStorycomment('Comment of story W WDC 130-02')
+                    ->setStorycode('W WDC 130-02')
+            );
+
+            self::$testStories['AR 201'] = new InducksStory();
+            $coaEntityManager->persist(
+                self::$testStories['AR 201']
+                    ->setTitle('Title of story AR 201')
+                    ->setStorycomment('Comment of story AR 201')
+                    ->setStorycode('AR 201')
+            );
+
+            self::$testStoryversions['W WDC  31-05'] = new InducksStoryversion();
+            $coaEntityManager->persist(
+                self::$testStoryversions['W WDC  31-05']
+                    ->setStorycode('W WDC  31-05')
+            );
+
+            self::$testStoryversions['de/SPBL 136c'] = new InducksStoryversion();
+            $coaEntityManager->persist(
+                self::$testStoryversions['W WDC  31-05']
+                    ->setStorycode('W WDC  31-05')
+            );
+
+            self::$testEntries['us/CBL 7a'] = new InducksEntry();
+            $coaEntityManager->persist(
+                self::$testEntries['us/CBL 7a']
+                    ->setEntrycode('us/CBL 7a')
+                    ->setIssuecode('fr/DDD 1')
+                    ->setStoryversioncode('W WDC  31-05')
+            );
+
+            self::$testEntryurls['us/CBL 7p000a'] = new InducksEntryurl();
+            $coaEntityManager->persist(
+                self::$testEntryurls['us/CBL 7p000a']
+                    ->setEntrycode('us/CBL 7p000a')
+                    ->setUrl('us/cbl/us_cbl_7p000a_001.png')
+                    ->setSitecode('thumbnails')
+            );
+
+            $inducksPerson = new InducksPerson();
+            $coaEntityManager->persist(
+                $inducksPerson
+                    ->setPersoncode('CB')
+                    ->setFullname('Carl Barks')
+            );
+
+            $inducksPerson = new InducksPerson();
+            $coaEntityManager->persist(
+                $inducksPerson->setPersoncode('DR')
+                    ->setFullname('Don Rosa')
+            );
             $coaEntityManager->flush();
             $coaEntityManager->clear();
-        } catch (OptimisticLockException $e) {
-            self::fail('Failed to create COA data');
+        } catch (OptimisticLockException|ORMException|MappingException $e) {
+            self::fail("Failed to create COA data : {$e->getMessage()}");
         }
     }
 
+    /**
+     * @param integer $userId
+     */
     public static function createStatsData($userId) {
         try {
             $dmStatsEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_DM_STATS];
@@ -720,15 +732,14 @@ class TestCommon extends WebTestCase {
             );
             $dmStatsEntityManager->flush();
             $dmStatsEntityManager->clear();
-        } catch (OptimisticLockException $e) {
-            self::fail('Failed to create stats data');
+        } catch (OptimisticLockException|MappingException|ORMException $e) {
+            self::fail("Failed to create stats data : {$e->getMessage()}");
             return;
         }
     }
 
     /**
      * @param integer $userId
-     * @throws ORMException
      */
     public static function createEdgeCreatorData($userId) {
         try {
@@ -743,7 +754,8 @@ class TestCommon extends WebTestCase {
 
             // Models v2
 
-            $ongoingModel1 = self::createModelEcV2($edgeCreatorEntityManager, $edgeCreatorUser->getUsername(), 'fr/PM', '502', [
+            // $ongoingModel1
+            self::createModelEcV2($edgeCreatorEntityManager, $edgeCreatorUser->getUsername(), 'fr/PM', '502', [
                 1 => [
                     'functionName' => 'Remplir',
                     'options' => [
@@ -788,7 +800,8 @@ class TestCommon extends WebTestCase {
                     ->setContribution('photographe')
             );
 
-            $ongoingModel3 = self::createModelEcV2($edgeCreatorEntityManager, null, 'fr/MP', '400', []);
+            // $ongoingModel3
+            self::createModelEcV2($edgeCreatorEntityManager, null, 'fr/MP', '400', []);
 
             $ongoingModel4 = self::createModelEcV2($edgeCreatorEntityManager, null, 'fr/MP', '401', []);
 
@@ -801,8 +814,8 @@ class TestCommon extends WebTestCase {
             );
 
             $edgeCreatorEntityManager->flush();
-        } catch (OptimisticLockException $e) {
-            self::fail('Failed to create EdgeCreator data');
+        } catch (OptimisticLockException|ORMException $e) {
+            self::fail("Failed to create EdgeCreator data : {$e->getMessage()}");
         }
     }
 
@@ -816,42 +829,45 @@ class TestCommon extends WebTestCase {
      * @param string        $optionValue
      * @param string        $firstIssueNumber
      * @param string        $lastIssueNumber
-     * @throws OptimisticLockException
-     * @throws ORMException
      */
     protected static function createModelEcV1($edgeCreatorEntityManager, $userName, $publicationCode, $stepNumber, $functionName, $optionName, $optionValue, $firstIssueNumber, $lastIssueNumber) {
-        $model = new EdgecreatorModeles2();
-        [$country, $magazine] = explode('/', $publicationCode);
-        $edgeCreatorEntityManager->persist(
-            $model
-                ->setPays($country)
-                ->setMagazine($magazine)
-                ->setOrdre($stepNumber)
-                ->setNomFonction($functionName)
-                ->setOptionNom($optionName)
-        );
-        $edgeCreatorEntityManager->flush();
-        $idOption = $model->getId();
+        try {
+            $model = new EdgecreatorModeles2();
+            [$country, $magazine] = explode('/', $publicationCode);
+            $edgeCreatorEntityManager->persist(
+                $model
+                    ->setPays($country)
+                    ->setMagazine($magazine)
+                    ->setOrdre($stepNumber)
+                    ->setNomFonction($functionName)
+                    ->setOptionNom($optionName)
+            );
+            $edgeCreatorEntityManager->flush();
+            $idOption = $model->getId();
 
-        $value = new EdgecreatorValeurs();
-        $edgeCreatorEntityManager->persist(
-            $value
-                ->setIdOption($idOption)
-                ->setOptionValeur($optionValue)
-        );
-        $edgeCreatorEntityManager->flush();
-        $valueId = $value->getId();
+            $value = new EdgecreatorValeurs();
+            $edgeCreatorEntityManager->persist(
+                $value
+                    ->setIdOption($idOption)
+                    ->setOptionValeur($optionValue)
+            );
+            $edgeCreatorEntityManager->flush();
+            $valueId = $value->getId();
 
-        $interval = new EdgecreatorIntervalles();
-        $edgeCreatorEntityManager->persist(
-            $interval
-                ->setIdValeur($valueId)
-                ->setNumeroDebut($firstIssueNumber)
-                ->setNumeroFin($lastIssueNumber)
-                ->setUsername($userName)
-        );
+            $interval = new EdgecreatorIntervalles();
+            $edgeCreatorEntityManager->persist(
+                $interval
+                    ->setIdValeur($valueId)
+                    ->setNumeroDebut($firstIssueNumber)
+                    ->setNumeroFin($lastIssueNumber)
+                    ->setUsername($userName)
+            );
 
-        $edgeCreatorEntityManager->flush();
+            $edgeCreatorEntityManager->flush();
+        }
+        catch(OptimisticLockException|ORMException $e) {
+            self::fail("Failed to create EdgeCreator v1 data : {$e->getMessage()}");
+        }
     }
 
     /**
@@ -861,40 +877,47 @@ class TestCommon extends WebTestCase {
      * @param string        $issueNumber
      * @param array         $steps
      * @return TranchesEnCoursModeles
-     * @throws OptimisticLockException
-     * @throws ORMException
      */
-    protected static function createModelEcV2($edgeCreatorEntityManager, $userName, $publicationCode, $issueNumber, $steps) {
+    protected static function createModelEcV2($edgeCreatorEntityManager, $userName, $publicationCode, $issueNumber, $steps)
+    {
         [$country, $magazine] = explode('/', $publicationCode);
 
-        $ongoingModel = new TranchesEnCoursModeles();
-        $edgeCreatorEntityManager->persist(
-            $ongoingModel
-                ->setPays($country)
-                ->setMagazine($magazine)
-                ->setNumero($issueNumber)
-                ->setUsername($userName)
-        );
+        try {
+            $ongoingModel = new TranchesEnCoursModeles();
+            $edgeCreatorEntityManager->persist(
+                $ongoingModel
+                    ->setPays($country)
+                    ->setMagazine($magazine)
+                    ->setNumero($issueNumber)
+                    ->setUsername($userName)
+            );
 
-        foreach($steps as $stepNumber => $step) {
-            foreach($step['options'] as $optionName => $optionValue) {
-                $ongoingModel1Step1Value1 = new TranchesEnCoursValeurs();
-                $edgeCreatorEntityManager->persist(
-                    $ongoingModel1Step1Value1
-                        ->setIdModele($ongoingModel)
-                        ->setOrdre($stepNumber)
-                        ->setNomFonction($step['functionName'])
-                        ->setOptionNom($optionName)
-                        ->setOptionValeur($optionValue)
-                );
+            foreach ($steps as $stepNumber => $step) {
+                foreach ($step['options'] as $optionName => $optionValue) {
+                    $ongoingModel1Step1Value1 = new TranchesEnCoursValeurs();
+                    $edgeCreatorEntityManager->persist(
+                        $ongoingModel1Step1Value1
+                            ->setIdModele($ongoingModel)
+                            ->setOrdre($stepNumber)
+                            ->setNomFonction($step['functionName'])
+                            ->setOptionNom($optionName)
+                            ->setOptionValeur($optionValue)
+                    );
+                }
             }
+
+            $edgeCreatorEntityManager->flush();
+
+            return $ongoingModel;
+        } catch (OptimisticLockException|ORMException $e) {
+            self::fail("Failed to create EdgeCreator v1 data : {$e->getMessage()}");
+            return null;
         }
-
-        $edgeCreatorEntityManager->flush();
-
-        return $ongoingModel;
     }
 
+    /**
+     * @return array|null
+     */
     protected static function createCoverIds() {
         try {
             $coverIdEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_COVER_ID];
@@ -927,12 +950,19 @@ class TestCommon extends WebTestCase {
             }
 
             return [$coverIds, $coverUrls];
-        } catch (OptimisticLockException $e) {
+        } catch (OptimisticLockException|ORMException $e) {
             self::fail('Failed to create covers data');
             return null;
         }
     }
 
+    /**
+     * @param string $storyCode
+     * @param string $entryUrl
+     * @param string $publicationCode
+     * @param string $issueNumber
+     * @return void
+     */
     protected static function createEntryLike($storyCode, $entryUrl, $publicationCode, $issueNumber) {
         try {
             $coaEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_COA];
@@ -1008,12 +1038,14 @@ class TestCommon extends WebTestCase {
             );
 
             $coverIdEntityManager->flush();
-        } catch (OptimisticLockException $e) {
-            self::fail("Failed to create entry like $storyCode, $entryUrl, $publicationCode, $issueNumber");
-            return null;
+        } catch (OptimisticLockException|ORMException $e) {
+            self::fail("Failed to create entry like $storyCode, $entryUrl, $publicationCode, $issueNumber : {$e->getMessage()}");
         }
     }
 
+    /**
+     * @return void
+     */
     protected static function createEdgesData()
     {
         try {
@@ -1052,9 +1084,8 @@ class TestCommon extends WebTestCase {
             );
 
             $dmEntityManager->flush();
-        } catch (OptimisticLockException $e) {
-            self::fail('Failed to create edge data');
-            return null;
+        } catch (OptimisticLockException|ORMException $e) {
+            self::fail("Failed to create edge data : {$e->getMessage()}");
         }
     }
 

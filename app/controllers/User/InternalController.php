@@ -89,7 +89,7 @@ class InternalController extends AbstractInternalController
 
             $privilegesAssoc = [];
 
-            array_walk($privileges, function($value) use(&$privilegesAssoc) {
+            array_walk($privileges, function(UsersPermissions $value) use(&$privilegesAssoc) {
                 $privilegesAssoc[$value->getRole()] = $value->getPrivilege();
             });
 

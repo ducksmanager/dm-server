@@ -3,6 +3,7 @@ namespace DmServer\Test;
 
 use Coverid\Models\Covers;
 use DmServer\DmServer;
+use Doctrine\ORM\ORMException;
 use Symfony\Component\HttpFoundation\Response;
 
 class CoaListsTest extends TestCommon
@@ -113,13 +114,18 @@ class CoaListsTest extends TestCommon
     }
 
     public function testGetIssueListByIssueCodesNoCoaIssue() {
-        DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_COVER_ID]->persist(
-            $cover = (new Covers())
-                ->setIssuecode('fr/DDDDD 1')
-                ->setSitecode('webusers')
-                ->setUrl('abc.jpg')
-        );
-        DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_COVER_ID]->flush();
+        try {
+            DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_COVER_ID]->persist(
+                $cover = (new Covers())
+                    ->setIssuecode('fr/DDDDD 1')
+                    ->setSitecode('webusers')
+                    ->setUrl('abc.jpg')
+            );
+            DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_COVER_ID]->flush();
+        }
+        catch (ORMException $e) {
+            $this->fail("Failed to create cover : {$e->getMessage()}");
+        }
 
         $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issuesbycodes/fr/DDDDD 1', self::$dmUser)->call();
 

@@ -5,10 +5,16 @@ use Dm\Models\Achats;
 use Dm\Models\Numeros;
 use Dm\Models\Users;
 use DmServer\DmServer;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Symfony\Component\HttpFoundation\Response;
 
 class DucksManagerTest extends TestCommon
 {
+    protected function getEm() {
+        return parent::getEntityManagerByName(DmServer::CONFIG_DB_KEY_DM);
+    }
+
     public function testResetDemoDataWrongUser() {
         $response = $this->buildAuthenticatedService('/ducksmanager/resetDemo', self::$dmUser, [])->call();
         $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
@@ -22,13 +28,11 @@ class DucksManagerTest extends TestCommon
     public function testResetDemoData() {
         self::createTestCollection('demo');
 
-        $dmEm = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM);
-
-        $demoUser = $dmEm->getRepository(Users::class)->findOneBy([
+        $demoUser = $this->getEm()->getRepository(Users::class)->findOneBy([
             'username' => 'demo'
         ]);
 
-        $purchasesOfDemoUser = $dmEm->getRepository(Achats::class)->findBy([
+        $purchasesOfDemoUser = $this->getEm()->getRepository(Achats::class)->findBy([
             'idUser' => $demoUser->getId()
         ]);
 
@@ -36,7 +40,7 @@ class DucksManagerTest extends TestCommon
             return $purchase->getDate()->format('Y-m-d') === '2010-01-01' && $purchase->getDescription() === 'Purchase';
         }));
 
-        $issuesOfDemoUser = $dmEm->getRepository(Numeros::class)->findBy([
+        $issuesOfDemoUser = $this->getEm()->getRepository(Numeros::class)->findBy([
             'idUtilisateur' => $demoUser->getId()
         ]);
         $this->assertCount(1, array_filter($issuesOfDemoUser, function(Numeros $issue) {
@@ -49,12 +53,16 @@ class DucksManagerTest extends TestCommon
         $demoUser->setBibliothequeSousTexture2('D');
         $demoUser->setBibliothequeGrossissement(1);
         $demoUser->setBetauser(true);
-        $dmEm->flush($demoUser);
+        try {
+            $this->getEm()->flush($demoUser);
+        } catch (OptimisticLockException|ORMException $e) {
+            $this->fail("Failed to save user : {$e->getMessage()}");
+        }
 
         $response = $this->buildAuthenticatedService('/ducksmanager/resetDemo', self::$adminUser, [])->call();
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
 
-        $demoUser = $dmEm->getRepository(Users::class)->findOneBy([
+        $demoUser = $this->getEm()->getRepository(Users::class)->findOneBy([
             'username' => 'demo'
         ]);
 
@@ -66,7 +74,7 @@ class DucksManagerTest extends TestCommon
 
         $this->assertEquals(true, $demoUser->getBetauser()); // This property shouldn't have reset
 
-        $issuesOfDemoUser = $dmEm->getRepository(Numeros::class)->findBy([
+        $issuesOfDemoUser = $this->getEm()->getRepository(Numeros::class)->findBy([
             'idUtilisateur' => $demoUser->getId()
         ]);
 
@@ -75,7 +83,7 @@ class DucksManagerTest extends TestCommon
             return $issue->getPays() === 'fr' && $issue->getMagazine() === 'MP' && $issue->getNumero() === '300';
         })); // Previous issue has been reset
 
-        $purchasesOfDemoUser = $dmEm->getRepository(Achats::class)->findBy([
+        $purchasesOfDemoUser = $this->getEm()->getRepository(Achats::class)->findBy([
             'idUser' => $demoUser->getId()
         ]);
 
@@ -93,9 +101,7 @@ class DucksManagerTest extends TestCommon
     public function testSendBookcaseEmailWithUser() {
         self::createTestCollection('demo');
 
-        $dmEm = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM);
-
-        $demoUser = $dmEm->getRepository(Users::class)->findOneBy([
+        $demoUser = $this->getEm()->getRepository(Users::class)->findOneBy([
             'username' => 'demo'
         ]);
 

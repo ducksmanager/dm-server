@@ -1,9 +1,10 @@
 <?php
 namespace DmServer\Test;
 
-
+use Countable;
 use DmServer\DmServer;
 use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Edgecreator\Models\EdgecreatorIntervalles;
 use Edgecreator\Models\EdgecreatorModeles2;
 use Edgecreator\Models\EdgecreatorValeurs;
@@ -17,9 +18,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class EdgeCreatorTest extends TestCommon
 {
-
-    private function getEm() {
-        return DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_EDGECREATOR);
+    protected function getEm() {
+        return parent::getEntityManagerByName(DmServer::CONFIG_DB_KEY_EDGECREATOR);
     }
 
     /**
@@ -344,7 +344,7 @@ class EdgeCreatorTest extends TestCommon
             ],
             json_decode(json_encode($objectResponse->valueids), true)
         );
-        /** @var TranchesEnCoursValeurs[] $values */
+        /** @var TranchesEnCoursValeurs[]|Countable $values */
         $values = $this->getEm()->getRepository(TranchesEnCoursValeurs::class)->findBy([
             'idModele' => $model->getId(),
             'ordre' => -1
@@ -390,7 +390,7 @@ class EdgeCreatorTest extends TestCommon
             ],
             json_decode(json_encode($objectResponse->valueids), true)
         );
-        /** @var TranchesEnCoursValeurs[] $values */
+        /** @var TranchesEnCoursValeurs[]|Countable $values */
         $values = $this->getEm()->getRepository(TranchesEnCoursValeurs::class)->findBy([
             'idModele' => $model->getId(),
             'ordre' => 2
@@ -408,9 +408,14 @@ class EdgeCreatorTest extends TestCommon
     }
 
     public function testCloneModel() {
-        $model = $this->getV2Model('fr', 'PM', '502');
-        $model->setUsername(null); // Reset the assigned username to check that the clone service assigns it again
-        $this->getEm()->flush($model);
+        try {
+            $model = $this->getV2Model('fr', 'PM', '502');
+            $model->setUsername(null); // Reset the assigned username to check that the clone service assigns it again
+            $this->getEm()->flush($model);
+        }
+        catch (OptimisticLockException|ORMException $e) {
+            $this->fail("Failed to update model : {$e->getMessage()}");
+        }
 
         $stepsToClone = [
             'steps' => [
@@ -465,7 +470,7 @@ class EdgeCreatorTest extends TestCommon
             $model = $this->getEm()->getRepository(TranchesEnCoursModeles::class)->find($modelId);
             $this->assertEquals(self::$defaultTestDmUserName, $model->getUsername());
 
-            /** @var TranchesEnCoursValeurs[] $valuesStep1 */
+            /** @var TranchesEnCoursValeurs[]|Countable $valuesStep1 */
             $valuesStep1 = $this->getEm()->getRepository(TranchesEnCoursValeurs::class)->findBy([
                 'idModele' => $modelId,
                 'ordre' => 1
@@ -481,7 +486,7 @@ class EdgeCreatorTest extends TestCommon
             $this->assertEquals('Pos_y', $valuesStep1[2]->getOptionNom());
             $this->assertEquals('20', $valuesStep1[2]->getOptionValeur());
 
-            /** @var TranchesEnCoursValeurs[] $valuesStep2 */
+            /** @var TranchesEnCoursValeurs[]|Countable $valuesStep2 */
             $valuesStep2 = $this->getEm()->getRepository(TranchesEnCoursValeurs::class)->findBy([
                 'idModele' => $modelId,
                 'ordre' => 2
@@ -576,17 +581,19 @@ class EdgeCreatorTest extends TestCommon
     }
 
     public function testDeleteMyFontsPreview() {
-        $em = $this->getEm();
-
         $newPreview = new ImagesMyfonts();
-        $em->persist($newPreview);
-        $em->flush();
+        try {
+            $this->getEm()->persist($newPreview);
+            $this->getEm()->flush();
+        } catch (OptimisticLockException|ORMException $e) {
+            $this->fail("Failed to create font preview : {$e->getMessage()}");
+        }
 
         $newPreviewId = $newPreview->getId();
 
         $this->buildAuthenticatedServiceWithTestUser("/edgecreator/myfontspreview/$newPreviewId", self::$edgecreatorUser, 'DELETE')->call();
 
-        $this->assertNull($em->getRepository(ImagesMyfonts::class)->find($newPreviewId));
+        $this->assertNull($this->getEm()->getRepository(ImagesMyfonts::class)->find($newPreviewId));
     }
 
     public function testDeactivateModel() {
@@ -657,9 +664,13 @@ class EdgeCreatorTest extends TestCommon
                 ->setIdUtilisateur(1)
                 ->setContribution('createur')
                 ->setModele($model)
-            ]);
+        ]);
 
-        $this->getEm()->flush($model);
+        try {
+            $this->getEm()->flush($model);
+        } catch (OptimisticLockException|ORMException $e) {
+            $this->fail("Failed to add contributors : {$e->getMessage()}");
+        }
 
         $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/{$model->getId()}/readytopublish/0", self::$edgecreatorUser, 'POST')
             ->call();
@@ -711,14 +722,22 @@ class EdgeCreatorTest extends TestCommon
         $photo = new ImagesTranches();
         $photo->setIdUtilisateur(self::getSessionUser($this->app)['id']);
         $photo->setNomfichier('abc.jpg');
-        $this->getEm()->persist($photo);
+        try {
+            $this->getEm()->persist($photo);
+        } catch (ORMException $e) {
+            $this->fail("Failed to create edge photo : {$e->getMessage()}");
+        }
 
-        $modelPhoto = new TranchesEnCoursModelesImages();
-        $modelPhoto->setEstphotoprincipale(true);
-        $modelPhoto->setModele($model);
-        $modelPhoto->setImage($photo);
-        $this->getEm()->persist($modelPhoto);
-        $this->getEm()->flush();
+        try {
+            $modelPhoto = new TranchesEnCoursModelesImages();
+            $modelPhoto->setEstphotoprincipale(true);
+            $modelPhoto->setModele($model);
+            $modelPhoto->setImage($photo);
+            $this->getEm()->persist($modelPhoto);
+            $this->getEm()->flush();
+        } catch (ORMException $e) {
+            $this->fail("Failed to assign photo edge to edge : {$e->getMessage()}");
+        }
 
         $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/{$model->getId()}/photo/main", self::$edgecreatorUser)->call();
 
@@ -729,8 +748,13 @@ class EdgeCreatorTest extends TestCommon
 
     public function testGetMainPhotoNotExisting() {
         $model = $this->getV2Model('fr', 'PM', '502');
-        $this->getEm()->persist($model);
-        $this->getEm()->flush();
+        try {
+            $this->getEm()->persist($model);
+            $this->getEm()->flush();
+        }
+        catch (ORMException $e) {
+            $this->fail("Failed to create model : {$e->getMessage()}");
+        }
 
         $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/{$model->getId()}/photo/main", self::$edgecreatorUser)->call();
 
@@ -790,28 +814,23 @@ class EdgeCreatorTest extends TestCommon
     }
 
     public function testGetElementImagesByNameSubstring() {
-        try {
-            self::createModelEcV1($this->getEm(), self::$edgecreatorUser, 'fr/MP', 1, 'Image', 'Source', 'MP.Tete.1.png', '1', '1');
-            self::createModelEcV1($this->getEm(), self::$edgecreatorUser, 'fr/MP', 2, 'Image', 'Source', 'MP.Tete.[Numero].png', '1', '1');
-            self::createModelEcV1($this->getEm(), self::$edgecreatorUser, 'fr/MP', 1, 'Image', 'Source', 'MP.Tete2.[Numero].png', '2', '2');
+        self::createModelEcV1($this->getEm(), self::$edgecreatorUser, 'fr/MP', 1, 'Image', 'Source', 'MP.Tete.1.png', '1', '1');
+        self::createModelEcV1($this->getEm(), self::$edgecreatorUser, 'fr/MP', 2, 'Image', 'Source', 'MP.Tete.[Numero].png', '1', '1');
+        self::createModelEcV1($this->getEm(), self::$edgecreatorUser, 'fr/MP', 1, 'Image', 'Source', 'MP.Tete2.[Numero].png', '2', '2');
 
-            self::createModelEcV2($this->getEm(), self::$edgecreatorUser, 'fr/PM', '1', [1 => ['functionName' => 'Image', 'options' => ['Source' => 'MP.Tete.1.png']]]);
-            self::createModelEcV2($this->getEm(), self::$edgecreatorUser, 'fr/TP', '1', [2 => ['functionName' => 'Image', 'options' => ['Source' => 'MP.[Numero].png']]]);
+        self::createModelEcV2($this->getEm(), self::$edgecreatorUser, 'fr/PM', '1', [1 => ['functionName' => 'Image', 'options' => ['Source' => 'MP.Tete.1.png']]]);
+        self::createModelEcV2($this->getEm(), self::$edgecreatorUser, 'fr/TP', '1', [2 => ['functionName' => 'Image', 'options' => ['Source' => 'MP.[Numero].png']]]);
 
-            $name = 'MP.Tete.1.png';
-            $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/elements/images/$name", self::$edgecreatorUser, 'GET')->call();
+        $name = 'MP.Tete.1.png';
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/elements/images/$name", self::$edgecreatorUser, 'GET')->call();
 
-            $objectResponse = json_decode($response->getContent());
-            $this->assertEquals(
-                ['MP.Tete.1.png', 'MP.Tete.[Numero].png', 'MP.Tete.1.png', 'MP.[Numero].png'],
-                array_map(function($element) {
-                    return $element->Option_valeur;
-                }, $objectResponse)
-            );
-        }
-        catch(OptimisticLockException $e) {
-            $this->fail($e->getMessage());
-        }
+        $objectResponse = json_decode($response->getContent());
+        $this->assertEquals(
+            ['MP.Tete.1.png', 'MP.Tete.[Numero].png', 'MP.Tete.1.png', 'MP.[Numero].png'],
+            array_map(function($element) {
+                return $element->Option_valeur;
+            }, $objectResponse)
+        );
     }
 
     /**

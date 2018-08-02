@@ -1,15 +1,18 @@
 <?php
 namespace DmServer\Test;
 
+use Countable;
 use Dm\Models\EmailsVentes;
 use Dm\Models\Users;
 use DmServer\DmServer;
-use Doctrine\DBAL\DBALException;
-use Doctrine\ORM\ORMException;
 use Symfony\Component\HttpFoundation\Response;
 
 class UserTest extends TestCommon
 {
+    protected function getEm() {
+        return parent::getEntityManagerByName(DmServer::CONFIG_DB_KEY_DM);
+    }
+
     public function testCallServiceWithoutSystemCredentials() {
         $response = $this->buildService('/collection/issues', [], [], [], 'POST')->call();
         $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
@@ -52,14 +55,10 @@ class UserTest extends TestCommon
         ])->call();
         $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
 
-        /** @var Users[] $usersWithUsername */
-        try {
-            $usersWithUsername = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM)->getRepository(Users::class)->findBy(
-                ['username' => self::$defaultTestDmUserName]
-            );
-        } catch (DBALException $e) {
-        } catch (ORMException $e) {
-        }
+        /** @var $usersWithUsername Users[]|Countable */
+        $usersWithUsername = $this->getEm()->getRepository(Users::class)->findBy(
+            ['username' => self::$defaultTestDmUserName]
+        );
 
         $this->assertCount(1, $usersWithUsername);
         $this->assertEquals(Users::class, get_class($usersWithUsername[0]));

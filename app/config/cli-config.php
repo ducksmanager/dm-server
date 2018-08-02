@@ -3,6 +3,9 @@ require_once __DIR__. '/../../vendor/autoload.php';
 require_once __DIR__. '/../DmServer.php';
 
 use DmServer\DmServer;
+use Doctrine\Common\Annotations\AnnotationException;
+use Doctrine\DBAL\DBALException;
+use Doctrine\ORM\ORMException;
 
 trait CliConfig
 {
@@ -100,10 +103,8 @@ else {
     try {
         $em = DmServer::createEntityManager($schemaConfigKey);
         return \Doctrine\ORM\Tools\Console\ConsoleRunner::createHelperSet($em);
-    } catch (\Doctrine\DBAL\DBALException $e) {
-        echo "Failed to retrieve Entity manager $schemaConfigKey";
-    } catch (\Doctrine\ORM\ORMException $e) {
-        echo "Failed to retrieve Entity manager $schemaConfigKey";
+    } catch (DBALException|ORMException|AnnotationException $e) {
+        echo "Failed to retrieve Entity manager $schemaConfigKey : {$e->getMessage()}";
     }
 
 }

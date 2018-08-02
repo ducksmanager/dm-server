@@ -55,6 +55,10 @@ class SchemaWithClasses
         }
     }
 
+    /**
+     * @param array $classes
+     * @throws ToolsException
+     */
     public function createSchemaCached(array $classes)
     {
         if (count($this->cachedCreateSchemaSql) === 0) {
