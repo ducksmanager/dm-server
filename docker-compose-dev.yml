@@ -31,7 +31,7 @@ services:
     networks:
      - front-network
      - db-network
-    command: sh -c 'php app/config/generate-config.php docker-compose-dev.yml .env && php scripts/generate-swagger.php && php-fpm'
+    command: sh -c 'composer install --no-plugins --no-scripts && php app/config/generate-config.php docker-compose-dev.yml .env && php scripts/generate-swagger.php && php-fpm'
 
   coa-updater:
     container_name: coa-updater
