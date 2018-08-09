@@ -13,7 +13,7 @@ deploy() {
   \
   && docker exec ${container_name} /bin/bash -c "echo `git rev-parse HEAD` > ${webdir}_new/deployment_commit_id.txt" \
   && docker exec -it ${container_name} /bin/bash ${webdir}_new/scripts/deploy/apply-app.sh \
-  && docker-compose rm -s -f swagger && docker-compose up -d --no-recreate swagger
+  && docker-compose rm -s -f swagger && docker-compose up -d --no-deps swagger
 }
 
 container_name=$1

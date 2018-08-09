@@ -9,6 +9,7 @@ chmod -R +x scripts && \
 touch pimple.json && \
 chown www-data:www-data pimple.json && \
 \
+cp -r ${webdir}/vendor ${webdir_new} && \
 composer update --no-dev --prefer-dist -o && \
 echo "Generating swagger.json..." && \
 php scripts/generate-swagger.php && \
