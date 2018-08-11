@@ -1,4 +1,11 @@
-version: '2.1'
+version: '2.4'
+
+x-gelf-logging: &gelf-logging
+  logging:
+    driver: gelf
+    options:
+      gelf-address: $LOG_SERVER_ADDRESS
+
 services:
   web:
     container_name: dm-server-web
@@ -17,11 +24,7 @@ services:
      - ./current:/var/www:z
     networks:
      - front-network
-    logging:
-      driver: gelf
-      options:
-        gelf-address: $LOG_SERVER_ADDRESS
-        tag: "dm-server-web"
+    << : *gelf-logging
 
   php:
     container_name: dm-server-php
@@ -37,11 +40,7 @@ services:
      - front-network
      - db-network
      - cover-id-network
-    logging:
-      driver: gelf
-      options:
-        gelf-address: $LOG_SERVER_ADDRESS
-        tag: "dm-server-web"
+    << : *gelf-logging
 
   coa-updater:
     container_name: coa-updater
@@ -52,10 +51,9 @@ services:
       - MYSQL_HOST=db_coa
       - MYSQL_DATABASE=coa
       - MYSQL_PASSWORD=$MYSQL_ROOT_PASSWORD
-    volumes:
-      - ./_inducks:/home/inducks:z
     networks:
      - db-network
+    << : *gelf-logging
   db_coa:
     container_name: mariadb-server-for-coa-box
     image: "mariadb:10.2"
@@ -66,9 +64,11 @@ services:
     environment:
       MYSQL_DATABASE: coa
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+    command: ['mysqld', '--character-set-server=utf8', '--collation-server=utf8_unicode_ci']
     networks:
      - db-network
      - cover-id-network
+    << : *gelf-logging
 
   cover-updater:
     container_name: cover-updater
@@ -77,18 +77,19 @@ services:
      - db_cover_id
      - db_coa
     environment:
-      - MYSQL_COVER_INFO_HOST=mariadb-server-for-cover-info-box
+      - MYSQL_COVER_INFO_HOST=db_cover_id
       - MYSQL_COVER_INFO_PASSWORD=${MYSQL_ROOT_PASSWORD}
       - MYSQL_COVER_INFO_DATABASE=cover_info
-      - MYSQL_COA_HOST=mariadb-server-for-coa-box
+      - MYSQL_COA_HOST=db_coa
       - MYSQL_COA_PASSWORD=${MYSQL_ROOT_PASSWORD}
       - MYSQL_COA_DATABASE=coa
-      - PASTEC_HOST=pastec-ubuntu-1704-timestamps
+      - PASTEC_HOST=pastec
       - PASTEC_PORT=4212
       - PASTEC_CONTAINER_HOME=/pastec/build
     networks:
      - db-network
      - cover-id-network
+    << : *gelf-logging
   db_cover_id:
     container_name: mariadb-server-for-cover-info-box
     image: "mariadb:10.2"
@@ -101,9 +102,13 @@ services:
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
     networks:
      - db-network
+    << : *gelf-logging
   pastec:
     container_name: pastec-ubuntu-1704-timestamps
     image: "bperel/pastec-ubuntu-1704-timestamps"
+    volumes:
+     - $PASTEC_INIT_INDEX:/pastec-index-last.dat:ro
+    command: "./pastec -p 4212 -i /pastec-index-last.dat /pastec/data/visualWordsORB.dat"
     networks:
      - cover-id-network
 
@@ -119,6 +124,7 @@ services:
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
     networks:
      - db-network
+    << : *gelf-logging
   db_edgecreator:
     container_name: mariadb-server-for-edgecreator
     image: "mariadb:10.2"
@@ -131,6 +137,24 @@ services:
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
     networks:
      - db-network
+    << : *gelf-logging
+
+  stats-updater:
+    container_name: stats-updater
+    image: "bperel/dm-stats-updater"
+    depends_on:
+    - db_coa
+    - db_dm_stats
+    environment:
+    - MYSQL_COA_HOST=db_coa
+    - MYSQL_COA_DATABASE=coa
+    - MYSQL_DM_STATS_HOST=db_dm_stats
+    - MYSQL_DM_STATS_DATABASE=dm_stats
+    - MYSQL_PASSWORD=$MYSQL_ROOT_PASSWORD
+    - DUCKSMANAGER_SECURITY_PASSWORD=$DUCKSMANAGER_SECURITY_PASSWORD
+    networks:
+    - db-network
+    << : *gelf-logging
   db_dm_stats:
     container_name: mariadb-server-for-dm-stats
     image: "mariadb:10.2"
@@ -143,6 +167,7 @@ services:
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
     networks:
      - db-network
+    << : *gelf-logging
   swagger:
     container_name: swagger
     image: "swaggerapi/swagger-ui"
@@ -156,6 +181,7 @@ services:
       SWAGGER_JSON: "http://$DM_SERVER_HOST:$DM_SERVER_PORT/status/swagger.json"
     networks:
      - front-network
+    << : *gelf-logging
 
 networks:
   front-network:
