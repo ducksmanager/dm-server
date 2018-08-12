@@ -1,4 +1,4 @@
-version: '2.1'
+version: '2.4'
 services:
   web:
     container_name: dm-server-web
@@ -31,21 +31,14 @@ services:
     networks:
      - front-network
      - db-network
+     - cover-id-network
     command: sh -c 'composer install --no-plugins --no-scripts && php app/config/generate-config.php docker-compose-dev.yml .env && php scripts/generate-swagger.php && php-fpm'
 
   coa-updater:
-    container_name: coa-updater
-    image: "bperel/coa-updater"
-    depends_on:
-     - db_coa
-    environment:
-      - MYSQL_HOST=db_coa
-      - MYSQL_DATABASE=coa
-    volumes:
-      - ./_inducks:/home/inducks:z
+    extends:
+      file: docker-compose.yml
+      service: coa-updater
     command: echo "Not provisionning the COA db on dev"
-    networks:
-     - db-network
   db_coa:
     container_name: db_coa
     image: "mariadb:10.2"
@@ -56,30 +49,16 @@ services:
     environment:
       MYSQL_DATABASE: coa
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+    command: ['mysqld', '--character-set-server=utf8', '--collation-server=utf8_unicode_ci']
     networks:
      - db-network
      - cover-id-network
 
   cover-updater:
-    container_name: cover-updater
-    image: "bperel/duck-cover-id-updater"
-    depends_on:
-     - db_cover_id
-     - db_coa
-    environment:
-      - MYSQL_COVER_INFO_HOST=db_cover_id
-      - MYSQL_COVER_INFO_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_COVER_INFO_DATABASE=cover_info
-      - MYSQL_COA_HOST=db_coa
-      - MYSQL_COA_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_COA_DATABASE=coa
-      - PASTEC_HOST=pastec
-      - PASTEC_PORT=4212
-      - PASTEC_CONTAINER_HOME=/pastec/build
+    extends:
+      file: docker-compose.yml
+      service: cover-updater
     command: echo "Not provisionning the Cover ID db on dev"
-    networks:
-     - db-network
-     - cover-id-network
   db_cover_id:
     container_name: db_cover_id
     image: "mariadb:10.2"
@@ -123,6 +102,12 @@ services:
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
     networks:
      - db-network
+
+  stats-updater:
+    extends:
+      file: docker-compose.yml
+      service: stats-updater
+    command: echo "Not provisionning the DM stats db on dev"
 
   db_dm_stats:
     container_name: db_dm_stats
