@@ -145,13 +145,15 @@ services:
     depends_on:
     - db_coa
     - db_dm_stats
+    - db_dm_copy
     environment:
     - MYSQL_COA_HOST=db_coa
     - MYSQL_COA_DATABASE=coa
     - MYSQL_DM_STATS_HOST=db_dm_stats
     - MYSQL_DM_STATS_DATABASE=dm_stats
+    - MYSQL_DM_HOST=db_dm_copy
+    - MYSQL_DM_DATABASE=dm
     - MYSQL_PASSWORD=$MYSQL_ROOT_PASSWORD
-    - DUCKSMANAGER_SECURITY_PASSWORD=$DUCKSMANAGER_SECURITY_PASSWORD
     networks:
     - db-network
     << : *gelf-logging
