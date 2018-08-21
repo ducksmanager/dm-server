@@ -14,19 +14,24 @@ class SimilarImagesHelper {
     public static $mockedResults;
 
     /**
+     * @param string $pastecHost
      * @return int
-     * @throws Exception
+     * @throws \InvalidArgumentException|\RuntimeException
      */
-    public static function getIndexedImagesNumber()
+    public static function getIndexedImagesNumber($pastecHost)
     {
+        $PASTEC_HOSTS=explode(',', DmServer::$settings['pastec_hosts']);
+        if (!in_array($pastecHost, $PASTEC_HOSTS)) {
+            throw new InvalidArgumentException("Invalid Pastec host : $pastecHost");
+        }
+        $PASTEC_PORT=DmServer::$settings['pastec_port'];
         if (!is_null(self::$mockedResults)) {
             $response = self::$mockedResults;
         }
         else {
             // @codeCoverageIgnoreStart
             $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL,
-                'http://' . DmServer::$settings['pastec_host'] . ':' . DmServer::$settings['pastec_port'] . '/index/imageIds');
+            curl_setopt($ch, CURLOPT_URL,"http://$pastecHost:$PASTEC_PORT/index/imageIds");
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
             $response = curl_exec($ch);
@@ -40,7 +45,7 @@ class SimilarImagesHelper {
             return count($resultArray['image_ids']);
         }
         else {
-            throw new InvalidArgumentException('Invalid return type : '.$resultArray['type']);
+            throw new InvalidArgumentException("Invalid return type : {$resultArray['type']}");
         }
     }
 

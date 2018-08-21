@@ -61,20 +61,28 @@ class AppController extends AbstractController
 
     /**
      * @SLX\Route(
-     *   @SLX\Request(method="GET", uri="pastec")
+     *   @SLX\Request(method="GET", uri="pastec/{pastecHost}"),
+     *   @SWG\Parameter(
+     *     name="pastecHost",
+     *     in="path",
+     *     required=true
+     *   ),
+     *	 @SLX\Assert(variable="pastecHost", regex="^(?P<pastec_host_regex>[-_a-z0-9]+)$"),
+     *	 @SLX\Value(variable="pastecHost", default="pastec")
      * )
      * @codeCoverageIgnore
      * @param Application $app
+     * @param string $pastecHost
      * @return Response
      * @throws \InvalidArgumentException
      */
-    public function getPastecStatus(Application $app) {
-        return AbstractController::returnErrorOnException($app, null, function () {
+    public function getPastecStatus(Application $app, $pastecHost) {
+        return AbstractController::returnErrorOnException($app, null, function () use ($pastecHost) {
             $errors = [];
             $log = [];
 
             try {
-                $pastecIndexesImagesNumber = SimilarImagesHelper::getIndexedImagesNumber();
+                $pastecIndexesImagesNumber = SimilarImagesHelper::getIndexedImagesNumber($pastecHost);
                 if ($pastecIndexesImagesNumber > 0) {
                     $log[] = "Pastec OK with $pastecIndexesImagesNumber images indexed";
                 }
