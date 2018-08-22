@@ -77,7 +77,7 @@ class SimilarImagesHelper {
             // @codeCoverageIgnoreStart
             $pastecUrl = self::getPastecUrl();
             $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, "$$pastecUrl/searcher");
+            curl_setopt($ch, CURLOPT_URL, "$pastecUrl/searcher");
             curl_setopt($ch, CURLOPT_POST, 1);
             curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
