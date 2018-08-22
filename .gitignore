@@ -6,7 +6,6 @@
 /build
 **/*.sqlite
 /vendor
-composer.lock
 composer.phar
 pimple.json
 /ssmtp.conf
