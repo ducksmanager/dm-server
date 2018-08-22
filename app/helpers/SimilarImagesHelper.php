@@ -10,6 +10,24 @@ use Symfony\Component\HttpFoundation\File\File;
 
 class SimilarImagesHelper {
 
+    /**
+     * @param string $pastecHost
+     * @return string
+     * @throws \InvalidArgumentException
+     */
+    private static function getPastecUrl($pastecHost = null) {
+        $PASTEC_HOSTS=explode(',', DmServer::$settings['pastec_hosts']);
+        if (is_null($pastecHost)) {
+            $pastecHost = $PASTEC_HOSTS[0];
+        }
+        else if (!in_array($pastecHost, $PASTEC_HOSTS)) {
+            throw new InvalidArgumentException("Invalid Pastec host : $pastecHost");
+        }
+        $PASTEC_PORT=DmServer::$settings['pastec_port'];
+
+        return "http://$pastecHost:$PASTEC_PORT/index";
+    }
+
     /** @var string $mockedResults */
     public static $mockedResults;
 
@@ -20,18 +38,14 @@ class SimilarImagesHelper {
      */
     public static function getIndexedImagesNumber($pastecHost)
     {
-        $PASTEC_HOSTS=explode(',', DmServer::$settings['pastec_hosts']);
-        if (!in_array($pastecHost, $PASTEC_HOSTS)) {
-            throw new InvalidArgumentException("Invalid Pastec host : $pastecHost");
-        }
-        $PASTEC_PORT=DmServer::$settings['pastec_port'];
+        $pastecUrl = self::getPastecUrl($pastecHost);
         if (!is_null(self::$mockedResults)) {
             $response = self::$mockedResults;
         }
         else {
             // @codeCoverageIgnoreStart
             $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL,"http://$pastecHost:$PASTEC_PORT/index/imageIds");
+            curl_setopt($ch, CURLOPT_URL,"$pastecUrl/imageIds");
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
             $response = curl_exec($ch);
@@ -61,8 +75,9 @@ class SimilarImagesHelper {
         }
         else {
             // @codeCoverageIgnoreStart
+            $pastecUrl = self::getPastecUrl();
             $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, 'http://' . DmServer::$settings['pastec_host'] . ':' . DmServer::$settings['pastec_port'] . '/index/searcher');
+            curl_setopt($ch, CURLOPT_URL, "$$pastecUrl/searcher");
             curl_setopt($ch, CURLOPT_POST, 1);
             curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
