@@ -7,26 +7,67 @@ use Symfony\Component\HttpFoundation\Response;
 
 class StatusTest extends TestCommon
 {
-    public function testGetCoverIdStatus() {
+    private function getCoverIdStatusForMockedResults($url, $mockedResults) {
         $collectionUserInfo = self::createTestCollection();
         self::setSessionUser($this->app, $collectionUserInfo);
 
-        SimilarImagesHelper::$mockedResults = json_encode(['image_ids' => [1,2,3], 'type' => 'INDEX_IMAGE_IDS']);
+        SimilarImagesHelper::$mockedResults = $mockedResults;
 
-        $response = $this->buildAuthenticatedService('/status/pastec', self::$dmUser, [], [], 'GET')->call();
+        return $this->buildAuthenticatedService($url, self::$dmUser, [], [], 'GET')->call();
+    }
+
+    public function testGetCoverIdStatus() {
+        $response = $this->getCoverIdStatusForMockedResults(
+            '/status/pastec',
+            json_encode([
+                'image_ids' => [1,2,3],
+                'type' => 'INDEX_IMAGE_IDS'
+            ])
+        );
 
         $this->assertEquals('Pastec OK with 3 images indexed', $response->getContent());
     }
 
+    public function testGetCoverIdStatusInvalidHost() {
+        $response = $this->getCoverIdStatusForMockedResults(
+            '/status/pastec/invalidpastechost',
+            json_encode([])
+        );
+
+        $this->assertEquals('Invalid Pastec host : invalidpastechost', $response->getContent());
+    }
+
     public function testGetCoverIdStatusNoCoverData() {
-        $collectionUserInfo = self::createTestCollection();
-        self::setSessionUser($this->app, $collectionUserInfo);
+        $response = $this->getCoverIdStatusForMockedResults(
+            '/status/pastec',
+            json_encode([
+                'image_ids' => [],
+                'type' => 'INDEX_IMAGE_IDS'
+            ])
+        );
 
-        SimilarImagesHelper::$mockedResults = json_encode(['image_ids' => [], 'type' => 'INDEX_IMAGE_IDS']);
+        $this->assertEquals('Pastec has no images indexed', $response->getContent());
+    }
 
-        $response = $this->buildAuthenticatedService('/status/pastec', self::$dmUser, [], [], 'GET')->call();
+    public function testGetCoverIdStatusInvalidCoverData() {
+        $response = $this->getCoverIdStatusForMockedResults(
+            '/status/pastec',
+            json_encode([
+                'image_ids' => [],
+                'type' => 'INVALID_TYPE'
+            ])
+        );
 
-        $this->assertEquals('<b>Pastec has no images indexed</b>', $response->getContent());
+        $this->assertEquals('Invalid return type : INVALID_TYPE', $response->getContent());
+    }
+
+    public function testGetCoverIdStatusUnreachable() {
+        $response = $this->getCoverIdStatusForMockedResults(
+            '/status/pastec',
+            json_encode(null)
+        );
+
+        $this->assertEquals('Pastec is unreachable', $response->getContent());
     }
 
     public function testGetDbStatus() {

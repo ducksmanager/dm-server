@@ -22,24 +22,19 @@ class DatabaseCheckHelper {
             'log' => 0
         ]);
 
-        if (!empty($response)) {
-            $objectResponse = json_decode($response->getContent());
+        $objectResponse = json_decode($response->getContent());
 
-            if (is_null($objectResponse)) {
-                return new Response("Error for $db : JSON cannot be decoded: $response", Response::HTTP_INTERNAL_SERVER_ERROR);
-            }
-
-            if (count($objectResponse) > 0) {
-                $app['monolog']->addInfo("DB check for $db was successful");
-                return new Response('OK');
-            } else {
-                $responseText = print_r($objectResponse, true);
-                $app['monolog']->addInfo("DB check for $db failed with error $responseText");
-                return new Response("Error for $db : received response $responseText", Response::HTTP_INTERNAL_SERVER_ERROR);
-            }
+        if (is_null($objectResponse)) {
+            return new Response("Error for $db : JSON cannot be decoded: $response", Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-        else {
-            return new Response('Error : empty response');
+
+        if (count($objectResponse) > 0) {
+            $app['monolog']->addInfo("DB check for $db was successful");
+            return new Response('OK');
+        } else {
+            $responseText = print_r($objectResponse, true);
+            $app['monolog']->addInfo("DB check for $db failed with error $responseText");
+            return new Response("Error for $db : received response $responseText", Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 

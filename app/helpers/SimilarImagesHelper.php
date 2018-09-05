@@ -49,6 +49,7 @@ class SimilarImagesHelper {
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
             $response = curl_exec($ch);
+            // @codeCoverageIgnoreEnd
         }
 
         $resultArray = json_decode($response, true);
@@ -70,12 +71,12 @@ class SimilarImagesHelper {
      */
     public static function getSimilarImages(File $file, Logger $monolog)
     {
+        $pastecUrl = self::getPastecUrl();
         if (!is_null(self::$mockedResults)) {
             $response = self::$mockedResults;
         }
         else {
             // @codeCoverageIgnoreStart
-            $pastecUrl = self::getPastecUrl();
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, "$pastecUrl/searcher");
             curl_setopt($ch, CURLOPT_POST, 1);

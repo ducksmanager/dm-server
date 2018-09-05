@@ -96,10 +96,7 @@ class AppController extends AbstractController
 
             $output = implode('<br />', $log);
             if (count($errors) > 0) {
-                if (count($log) > 0) {
-                    $output.='<br />';
-                }
-                $output .= '<b>' . implode('</b><br /><b>', $errors) . '</b>';
+                return new Response(implode('<br />', $errors), Response::HTTP_INTERNAL_SERVER_ERROR);
             }
             return new Response($output);
         });
@@ -109,7 +106,6 @@ class AppController extends AbstractController
      * @SLX\Route(
      *   @SLX\Request(method="GET", uri="db")
      * )
-     * @codeCoverageIgnore
      * @param Application $app
      * @return Response
      * @throws \InvalidArgumentException
@@ -156,7 +152,7 @@ class AppController extends AbstractController
 
             $output = implode('<br />', $log);
             if (count($errors) > 0) {
-                $output.='<br /><b>'.implode('</b><br /><b>', $errors).'</b>';
+                return new Response('<br /><b>'.implode('</b><br /><b>', $errors).'</b>', Response::HTTP_INTERNAL_SERVER_ERROR);
             }
             return new Response($output);
         });
