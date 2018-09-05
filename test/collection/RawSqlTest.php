@@ -55,7 +55,7 @@ class RawSqlTest extends TestCommon
             'db'    => DmServer::CONFIG_DB_KEY_DM
         ])->call();
 
-        $this->assertEquals(500, $response->getStatusCode());
+        $this->assertEquals(Response::HTTP_INTERNAL_SERVER_ERROR, $response->getStatusCode());
         $this->assertStringStartsWith('An exception occurred while executing', $response->getContent());
     }
 
@@ -66,7 +66,7 @@ class RawSqlTest extends TestCommon
         ])
             ->call();
 
-        $this->assertEquals(400, $response->getStatusCode());
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
         $this->assertEquals($response->getContent(), 'Raw queries shouldn\'t contain the ";" symbol');
     }
 }

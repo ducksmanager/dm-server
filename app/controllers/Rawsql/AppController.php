@@ -36,6 +36,11 @@ class AppController extends AbstractController
      *     name="db",
      *     in="body",
      *     required=true
+     *   ),
+     *   @SWG\Parameter(
+     *     name="log",
+     *     in="body",
+     *     required=true
      *   )
      * )
      * @param Application $app
@@ -45,7 +50,8 @@ class AppController extends AbstractController
     public function runQuery(Application $app, Request $request) {
         return self::callInternal($app, '/rawsql', 'POST', [
             'query' => $request->request->get('query'),
-            'db' => $request->request->get('db')
+            'db' => $request->request->get('db'),
+            'log' => $request->request->get('log')
         ]);
     }
 }

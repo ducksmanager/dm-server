@@ -32,6 +32,7 @@ class InternalController extends AbstractController
         return self::wrapInternalService($app, function() use ($request, $app) {
             $query = $request->request->get('query');
             $db = $request->request->get('db');
+            $log = $request->request->get('log');
 
             $em = DmServer::getEntityManager($db);
             if (is_null($em)) {
@@ -41,7 +42,7 @@ class InternalController extends AbstractController
                 return new Response('Raw queries shouldn\'t contain the ";" symbol', Response::HTTP_BAD_REQUEST);
             }
 
-            if (isset($app['monolog'])) {
+            if (!(isset($log) && $log === 0)) {
                 $app['monolog']->addInfo('Raw sql sent : '.$query);
             }
             $results = $em->getConnection()->fetchAll($query);
