@@ -35,14 +35,14 @@ docker-compose config --services | grep '^db' | \
 
     echo "Compressing backup_subdir"
     backup_file="${backup_dir}/backup_dm-server-box_${dbname}.7z"
-    rm -f ${backup_file} && 7z a -t7z ${backup_file} -m0=lzma2 -mx=9 -aoa -mfb=64 -md=32m ${backup_subdir}
+    rm -f ${backup_dir}/${backup_file} && 7z a -t7z ${backup_dir}/${backup_file} -m0=lzma2 -mx=9 -aoa -mfb=64 -md=32m ${backup_subdir}
     if [ $? -eq 0 ]; then
       echo "Backed up locally"
       if [ -z "$remote_backup_config" ]; then
         echo "No remote backup configuration was provided, skipping remote backup"
       else
         backup_file_remote="backup_dm-server-box_${dbname}-${today}.7z"
-        scp ${backup_file} ${remote_backup_config}/${backup_file_remote}
+        scp ${backup_dir}/${backup_file} ${remote_backup_config}/${backup_file_remote}
         if [ $? -eq 0 ]; then
           echo "Backed up remotely"
         else
