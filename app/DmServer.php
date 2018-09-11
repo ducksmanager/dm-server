@@ -106,7 +106,7 @@ class DmServer implements ControllerProviderInterface
                     'password' => $password,
                     'host' => $dbConf['host'],
                     'driver' => 'pdo_mysql',
-                    'server_version' => '15.1',
+                    'server_version' => 'mariadb-10.2.16',
                     'driverOptions' => [
                         1002 => 'SET NAMES utf8'
                     ]
