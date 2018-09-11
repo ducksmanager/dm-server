@@ -107,8 +107,8 @@ class UserTest extends TestCommon
     }
 
     public function testCreateSaleEmail() {
-        $collectionUserInfo = self::createTestCollection();
-        self::setSessionUser($this->app, $collectionUserInfo);
+        $user = self::createTestCollection();
+        self::setSessionUser($this->app, $user);
 
         $otherUsername = 'otheruser';
         self::createTestCollection($otherUsername);
@@ -118,16 +118,16 @@ class UserTest extends TestCommon
     }
 
     public function testCreateSaleEmailInvalidUser() {
-        $collectionUserInfo = self::createTestCollection();
-        self::setSessionUser($this->app, $collectionUserInfo);
+        $user = self::createTestCollection();
+        self::setSessionUser($this->app, $user);
 
         $response = $this->buildAuthenticatedServiceWithTestUser('/user/sale/testuser', self::$dmUser, 'POST')->call();
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
 
     public function testGetSaleEmail() {
-        $collectionUserInfo = self::createTestCollection();
-        self::setSessionUser($this->app, $collectionUserInfo);
+        $user = self::createTestCollection();
+        self::setSessionUser($this->app, $user);
 
         $otherUsername = 'otheruser';
         self::createTestCollection($otherUsername);
@@ -143,7 +143,7 @@ class UserTest extends TestCommon
         $this->assertCount(1, $objectResponse);
         /** @var EmailsVentes $access */
         $access = unserialize($objectResponse[0]);
-        $this->assertEquals($collectionUserInfo['username'], $access->getUsernameVente());
+        $this->assertEquals($user->getUsername(), $access->getUsernameVente());
         $this->assertEquals($otherUsername, $access->getUsernameAchat());
         $this->assertEquals(new \DateTime('today'), $access->getDate());
     }

@@ -33,7 +33,7 @@ class AuteursHistoires extends \Stats\Models\BaseModel
 
 
     /**
-     * Set personcode
+     * Set personcode.
      *
      * @param string $personcode
      *
@@ -47,7 +47,7 @@ class AuteursHistoires extends \Stats\Models\BaseModel
     }
 
     /**
-     * Get personcode
+     * Get personcode.
      *
      * @return string
      */
@@ -57,7 +57,7 @@ class AuteursHistoires extends \Stats\Models\BaseModel
     }
 
     /**
-     * Set storycode
+     * Set storycode.
      *
      * @param string $storycode
      *
@@ -71,7 +71,7 @@ class AuteursHistoires extends \Stats\Models\BaseModel
     }
 
     /**
-     * Get storycode
+     * Get storycode.
      *
      * @return string
      */

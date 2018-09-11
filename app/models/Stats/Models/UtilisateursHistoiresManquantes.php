@@ -31,7 +31,7 @@ class UtilisateursHistoiresManquantes extends \Stats\Models\BaseModel
     private $storycode;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ID_User", type="integer", nullable=false)
      * @ORM\Id
@@ -42,7 +42,7 @@ class UtilisateursHistoiresManquantes extends \Stats\Models\BaseModel
 
 
     /**
-     * Set personcode
+     * Set personcode.
      *
      * @param string $personcode
      *
@@ -56,7 +56,7 @@ class UtilisateursHistoiresManquantes extends \Stats\Models\BaseModel
     }
 
     /**
-     * Get personcode
+     * Get personcode.
      *
      * @return string
      */
@@ -66,7 +66,7 @@ class UtilisateursHistoiresManquantes extends \Stats\Models\BaseModel
     }
 
     /**
-     * Set storycode
+     * Set storycode.
      *
      * @param string $storycode
      *
@@ -80,7 +80,7 @@ class UtilisateursHistoiresManquantes extends \Stats\Models\BaseModel
     }
 
     /**
-     * Get storycode
+     * Get storycode.
      *
      * @return string
      */
@@ -90,9 +90,9 @@ class UtilisateursHistoiresManquantes extends \Stats\Models\BaseModel
     }
 
     /**
-     * Set idUser
+     * Set idUser.
      *
-     * @param integer $idUser
+     * @param int $idUser
      *
      * @return UtilisateursHistoiresManquantes
      */
@@ -104,9 +104,9 @@ class UtilisateursHistoiresManquantes extends \Stats\Models\BaseModel
     }
 
     /**
-     * Get idUser
+     * Get idUser.
      *
-     * @return integer
+     * @return int
      */
     public function getIdUser()
     {

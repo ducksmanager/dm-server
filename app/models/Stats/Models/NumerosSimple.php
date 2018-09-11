@@ -45,7 +45,7 @@ class NumerosSimple extends \Stats\Models\BaseModel
 
 
     /**
-     * Set publicationcode
+     * Set publicationcode.
      *
      * @param string $publicationcode
      *
@@ -59,7 +59,7 @@ class NumerosSimple extends \Stats\Models\BaseModel
     }
 
     /**
-     * Get publicationcode
+     * Get publicationcode.
      *
      * @return string
      */
@@ -69,7 +69,7 @@ class NumerosSimple extends \Stats\Models\BaseModel
     }
 
     /**
-     * Set numero
+     * Set numero.
      *
      * @param string $numero
      *
@@ -83,7 +83,7 @@ class NumerosSimple extends \Stats\Models\BaseModel
     }
 
     /**
-     * Get numero
+     * Get numero.
      *
      * @return string
      */
@@ -93,7 +93,7 @@ class NumerosSimple extends \Stats\Models\BaseModel
     }
 
     /**
-     * Set idUtilisateur
+     * Set idUtilisateur.
      *
      * @param \Stats\Models\AuteursPseudosSimple $idUtilisateur
      *
@@ -107,7 +107,7 @@ class NumerosSimple extends \Stats\Models\BaseModel
     }
 
     /**
-     * Get idUtilisateur
+     * Get idUtilisateur.
      *
      * @return \Stats\Models\AuteursPseudosSimple
      */

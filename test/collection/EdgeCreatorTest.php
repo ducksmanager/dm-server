@@ -2,6 +2,7 @@
 namespace DmServer\Test;
 
 use Countable;
+use Dm\Models\Users;
 use DmServer\DmServer;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
@@ -18,6 +19,9 @@ use Symfony\Component\HttpFoundation\Response;
 
 class EdgeCreatorTest extends TestCommon
 {
+    /** @var Users $userInSession */
+    private $userInSession;
+
     protected function getEm() {
         return parent::getEntityManagerByName(DmServer::CONFIG_DB_KEY_EDGECREATOR);
     }
@@ -40,9 +44,9 @@ class EdgeCreatorTest extends TestCommon
     public function setUp()
     {
         parent::setUp();
-        $collectionUserInfo = self::createTestCollection();
-        self::setSessionUser($this->app, $collectionUserInfo);
-        self::createEdgeCreatorData(self::getSessionUser($this->app)['id']);
+        $this->userInSession = self::createTestCollection();
+        self::setSessionUser($this->app, $this->userInSession);
+        self::createEdgeCreatorData($this->userInSession->getId());
     }
 
     public function testCreateV2Model()
@@ -55,7 +59,7 @@ class EdgeCreatorTest extends TestCommon
             'pays' => 'fr',
             'magazine' => 'DDD',
             'numero' => '10',
-            'username' => self::getSessionUser($this->app)['username']
+            'username' => $this->userInSession->getUserName()
         ]);
 
         $objectResponse = json_decode($response->getContent());
@@ -610,32 +614,36 @@ class EdgeCreatorTest extends TestCommon
         $this->assertEquals(false, $newModel->getActive());
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testSetModelReadyForPublication() {
         $model = $this->getV2Model('fr', 'PM', '502');
 
-        $sessionUser = self::getSessionUser($this->app);
         $otherUser = self::createTestCollection('otheruser');
 
-        $designerUsernames = [$sessionUser['username']];
-        $designerIds = [$sessionUser['id']];
+        $designerUsernames = [$this->userInSession->getUsername()];
+        $designerIds = [$this->userInSession->getId()];
 
-        $photographerUsernames = [$sessionUser['username'], $otherUser['username']];
-        $photographerIds = [$sessionUser['id'], $otherUser['id']];
+        $photographerUsernames = [$this->userInSession->getUsername(), $otherUser->getUsername()];
+        $photographerIds = [$this->userInSession->getId(), $otherUser->getId()];
 
         $this->assertSetModelReadyForPublicationOK($model, $designerUsernames, $photographerUsernames, $designerIds, $photographerIds);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testSetModelReadyForPublicationDuplicateUsers() {
         $model = $this->getV2Model('fr', 'MP', '401');
 
-        $sessionUser = self::getSessionUser($this->app);
         $otherUser = self::createTestCollection('otheruser');
 
-        $designerUsernames = [$sessionUser['username'], $sessionUser['username']];
-        $designerIds = [$sessionUser['id'], $sessionUser['id']];
+        $designerUsernames = [$this->userInSession->getUsername(), $this->userInSession->getUsername()];
+        $designerIds = [$this->userInSession->getId(), $this->userInSession->getId()];
 
-        $photographerUsernames = [$sessionUser['username'], $otherUser['username']];
-        $photographerIds = [$sessionUser['id'], $otherUser['id']];
+        $photographerUsernames = [$this->userInSession->getUsername(), $otherUser->getUsername()];
+        $photographerIds = [$this->userInSession->getId(), $otherUser->getId()];
 
         $this->assertSetModelReadyForPublicationOK($model, $designerUsernames, $photographerUsernames, $designerIds, $photographerIds);
     }
@@ -720,7 +728,7 @@ class EdgeCreatorTest extends TestCommon
         $model = $this->getV2Model('fr', 'PM', '502');
 
         $photo = new ImagesTranches();
-        $photo->setIdUtilisateur(self::getSessionUser($this->app)['id']);
+        $photo->setIdUtilisateur($this->userInSession->getId());
         $photo->setNomfichier('abc.jpg');
         try {
             $this->getEm()->persist($photo);
@@ -839,6 +847,7 @@ class EdgeCreatorTest extends TestCommon
      * @param string[] $photographerUsernames
      * @param int[] $designerIds
      * @param int[] $photographerIds
+     * @throws \Exception
      */
     private function assertSetModelReadyForPublicationOK($model, $designerUsernames, $photographerUsernames, $designerIds, $photographerIds)
     {
@@ -848,7 +857,7 @@ class EdgeCreatorTest extends TestCommon
         ])
             ->call();
 
-        $objectResponse = json_decode($response->getContent(), true);
+        $objectResponse = json_decode($this->getResponseContent($response), true);
 
         $this->assertEquals($model->getId(), $objectResponse['model']['id']);
         $contributors = $objectResponse['model']['contributeurs'];

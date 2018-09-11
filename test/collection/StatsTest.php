@@ -8,9 +8,9 @@ class StatsTest extends TestCommon
     {
         parent::setUp();
         self::createCoaData();
-        $collectionUserInfo = self::createTestCollection();
-        self::setSessionUser($this->app, $collectionUserInfo);
-        self::createStatsData(self::getSessionUser($this->app)['id']);
+        $user = self::createTestCollection();
+        self::setSessionUser($this->app, $user);
+        self::createStatsData($user->getId());
     }
 
     public function testGetWatchedAuthors() {

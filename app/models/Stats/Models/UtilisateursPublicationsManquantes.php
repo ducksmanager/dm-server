@@ -13,25 +13,11 @@ use Doctrine\ORM\Mapping as ORM;
 class UtilisateursPublicationsManquantes extends \Stats\Models\BaseModel
 {
     /**
-     * @var integer
-     *
-     * @ORM\Column(name="ID", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
-    private $id;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="ID_User", type="integer", nullable=false)
-     */
-    private $idUser;
-
-    /**
      * @var string
      *
      * @ORM\Column(name="personcode", type="string", length=22, nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
      */
     private $personcode;
 
@@ -39,6 +25,8 @@ class UtilisateursPublicationsManquantes extends \Stats\Models\BaseModel
      * @var string
      *
      * @ORM\Column(name="storycode", type="string", length=19, nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
      */
     private $storycode;
 
@@ -46,6 +34,8 @@ class UtilisateursPublicationsManquantes extends \Stats\Models\BaseModel
      * @var string
      *
      * @ORM\Column(name="publicationcode", type="string", length=12, nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
      */
     private $publicationcode;
 
@@ -53,11 +43,22 @@ class UtilisateursPublicationsManquantes extends \Stats\Models\BaseModel
      * @var string
      *
      * @ORM\Column(name="issuenumber", type="string", length=12, nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
      */
     private $issuenumber;
 
     /**
-     * @var boolean
+     * @var int
+     *
+     * @ORM\Column(name="ID_User", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
+     */
+    private $idUser;
+
+    /**
+     * @var bool
      *
      * @ORM\Column(name="Notation", type="boolean", nullable=false)
      */
@@ -66,41 +67,7 @@ class UtilisateursPublicationsManquantes extends \Stats\Models\BaseModel
 
 
     /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Set idUser
-     *
-     * @param integer $idUser
-     *
-     * @return UtilisateursPublicationsManquantes
-     */
-    public function setIdUser($idUser)
-    {
-        $this->idUser = $idUser;
-
-        return $this;
-    }
-
-    /**
-     * Get idUser
-     *
-     * @return integer
-     */
-    public function getIdUser()
-    {
-        return $this->idUser;
-    }
-
-    /**
-     * Set personcode
+     * Set personcode.
      *
      * @param string $personcode
      *
@@ -114,7 +81,7 @@ class UtilisateursPublicationsManquantes extends \Stats\Models\BaseModel
     }
 
     /**
-     * Get personcode
+     * Get personcode.
      *
      * @return string
      */
@@ -124,7 +91,7 @@ class UtilisateursPublicationsManquantes extends \Stats\Models\BaseModel
     }
 
     /**
-     * Set storycode
+     * Set storycode.
      *
      * @param string $storycode
      *
@@ -138,7 +105,7 @@ class UtilisateursPublicationsManquantes extends \Stats\Models\BaseModel
     }
 
     /**
-     * Get storycode
+     * Get storycode.
      *
      * @return string
      */
@@ -148,7 +115,7 @@ class UtilisateursPublicationsManquantes extends \Stats\Models\BaseModel
     }
 
     /**
-     * Set publicationcode
+     * Set publicationcode.
      *
      * @param string $publicationcode
      *
@@ -162,7 +129,7 @@ class UtilisateursPublicationsManquantes extends \Stats\Models\BaseModel
     }
 
     /**
-     * Get publicationcode
+     * Get publicationcode.
      *
      * @return string
      */
@@ -172,7 +139,7 @@ class UtilisateursPublicationsManquantes extends \Stats\Models\BaseModel
     }
 
     /**
-     * Set issuenumber
+     * Set issuenumber.
      *
      * @param string $issuenumber
      *
@@ -186,7 +153,7 @@ class UtilisateursPublicationsManquantes extends \Stats\Models\BaseModel
     }
 
     /**
-     * Get issuenumber
+     * Get issuenumber.
      *
      * @return string
      */
@@ -196,9 +163,33 @@ class UtilisateursPublicationsManquantes extends \Stats\Models\BaseModel
     }
 
     /**
-     * Set notation
+     * Set idUser.
      *
-     * @param boolean $notation
+     * @param int $idUser
+     *
+     * @return UtilisateursPublicationsManquantes
+     */
+    public function setIdUser($idUser)
+    {
+        $this->idUser = $idUser;
+
+        return $this;
+    }
+
+    /**
+     * Get idUser.
+     *
+     * @return int
+     */
+    public function getIdUser()
+    {
+        return $this->idUser;
+    }
+
+    /**
+     * Set notation.
+     *
+     * @param bool $notation
      *
      * @return UtilisateursPublicationsManquantes
      */
@@ -210,9 +201,9 @@ class UtilisateursPublicationsManquantes extends \Stats\Models\BaseModel
     }
 
     /**
-     * Get notation
+     * Get notation.
      *
-     * @return boolean
+     * @return bool
      */
     public function getNotation()
     {

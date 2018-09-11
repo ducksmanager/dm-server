@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * UtilisateursPublicationsSuggerees
  *
- * @ORM\Table(name="utilisateurs_publications_suggerees", indexes={@ORM\Index(name="ups_index_id_user", columns={"ID_User"})})
+ * @ORM\Table(name="utilisateurs_publications_suggerees", indexes={@ORM\Index(name="user", columns={"ID_User"})})
  * @ORM\Entity
  */
 class UtilisateursPublicationsSuggerees extends \Stats\Models\BaseModel
@@ -31,7 +31,7 @@ class UtilisateursPublicationsSuggerees extends \Stats\Models\BaseModel
     private $issuenumber;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="Score", type="integer", nullable=false)
      */
@@ -49,7 +49,7 @@ class UtilisateursPublicationsSuggerees extends \Stats\Models\BaseModel
 
 
     /**
-     * Set publicationcode
+     * Set publicationcode.
      *
      * @param string $publicationcode
      *
@@ -63,7 +63,7 @@ class UtilisateursPublicationsSuggerees extends \Stats\Models\BaseModel
     }
 
     /**
-     * Get publicationcode
+     * Get publicationcode.
      *
      * @return string
      */
@@ -73,7 +73,7 @@ class UtilisateursPublicationsSuggerees extends \Stats\Models\BaseModel
     }
 
     /**
-     * Set issuenumber
+     * Set issuenumber.
      *
      * @param string $issuenumber
      *
@@ -87,7 +87,7 @@ class UtilisateursPublicationsSuggerees extends \Stats\Models\BaseModel
     }
 
     /**
-     * Get issuenumber
+     * Get issuenumber.
      *
      * @return string
      */
@@ -97,9 +97,9 @@ class UtilisateursPublicationsSuggerees extends \Stats\Models\BaseModel
     }
 
     /**
-     * Set score
+     * Set score.
      *
-     * @param integer $score
+     * @param int $score
      *
      * @return UtilisateursPublicationsSuggerees
      */
@@ -111,9 +111,9 @@ class UtilisateursPublicationsSuggerees extends \Stats\Models\BaseModel
     }
 
     /**
-     * Get score
+     * Get score.
      *
-     * @return integer
+     * @return int
      */
     public function getScore()
     {
@@ -121,7 +121,7 @@ class UtilisateursPublicationsSuggerees extends \Stats\Models\BaseModel
     }
 
     /**
-     * Set idUser
+     * Set idUser.
      *
      * @param integer $idUser
      *
@@ -135,7 +135,7 @@ class UtilisateursPublicationsSuggerees extends \Stats\Models\BaseModel
     }
 
     /**
-     * Get idUser
+     * Get idUser.
      *
      * @return integer
      */

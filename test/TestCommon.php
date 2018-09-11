@@ -25,6 +25,7 @@ use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Exception;
 use Stats\Models\AuteursHistoires;
 use Stats\Models\AuteursPseudosSimple;
 use Stats\Models\UtilisateursHistoiresManquantes;
@@ -40,6 +41,7 @@ use Edgecreator\Models\TranchesEnCoursModelesImages;
 use Edgecreator\Models\TranchesEnCoursValeurs;
 use Silex\Application;
 use Silex\WebTestCase;
+use Symfony\Component\HttpFoundation\Response;
 
 class TestCommon extends WebTestCase {
 
@@ -272,7 +274,7 @@ class TestCommon extends WebTestCase {
      * @param string $username
      * @param array $roles
      * @param bool $withPublicationSorts
-     * @return array user info
+     * @return Users
      */
     protected static function createTestCollection($username = 'dm_test_user', $roles = [], $withPublicationSorts = true) {
         $dmEntityManager = DmServer::$entityManagers[DmServer::CONFIG_DB_KEY_DM];
@@ -344,7 +346,7 @@ class TestCommon extends WebTestCase {
             $dmEntityManager->flush();
             $dmEntityManager->clear();
 
-            return ['username' => $user->getUsername(), 'id' => $user->getId(), 'purchaseIds' => [$purchase1->getIdAcquisition()] ];
+            return $user;
         } catch (OptimisticLockException|ORMException|MappingException $e) {
             self::fail("Failed to create test collection for $username : {$e->getMessage()}");
             return null;
@@ -701,6 +703,7 @@ class TestCommon extends WebTestCase {
                     ->setNotation($authorUser2->getNotation())
             );
 
+            $dmStatsEntityManager->flush();
 
             // Suggested issues
 
@@ -709,7 +712,7 @@ class TestCommon extends WebTestCase {
                 $suggestedIssue1ForUser
                     ->setPublicationcode(self::$testIssues['us/CBL 7']->getPublicationcode())
                     ->setIssuenumber(self::$testIssues['us/CBL 7']->getIssuenumber())
-                    ->setIdUser($userId)
+                    ->setIdUser($authorUser1->getIdUser())
                     ->setScore($missingAuthor1Issue1Story2ForUser->getNotation() + $missingAuthor1Issue1Story2ForUser->getNotation())
             );
 
@@ -718,7 +721,7 @@ class TestCommon extends WebTestCase {
                 $suggestedIssue2ForUser
                     ->setPublicationcode(self::$testIssues['fr/DDD 1']->getPublicationcode())
                     ->setIssuenumber(self::$testIssues['fr/DDD 1']->getIssuenumber())
-                    ->setIdUser($userId)
+                    ->setIdUser($authorUser1->getIdUser())
                     ->setScore($missingAuthor1Issue2Story2ForUser->getNotation())
             );
 
@@ -727,7 +730,7 @@ class TestCommon extends WebTestCase {
                 $suggestedIssue3ForUser
                     ->setPublicationcode(self::$testIssues['fr/PM 315']->getPublicationcode())
                     ->setIssuenumber(self::$testIssues['fr/PM 315']->getIssuenumber())
-                    ->setIdUser($userId)
+                    ->setIdUser($authorUser1->getIdUser())
                     ->setScore($missingAuthor1Issue1Story4ForUser->getNotation() + $missingAuthor2Issue5Story5ForUser->getNotation())
             );
             $dmStatsEntityManager->flush();
@@ -1095,9 +1098,26 @@ class TestCommon extends WebTestCase {
 
     /**
      * @param Application $app
-     * @param $userInfo array
+     * @param Users $user
      */
-    protected static function setSessionUser(Application $app, $userInfo) {
-        $app['session']->set('user', $userInfo);
+    protected static function setSessionUser(Application $app, $user) {
+        $app['session']->set('user', [
+            'username' => $user->getUsername(),
+            'id' => $user->getId()
+        ]);
+    }
+
+    /**
+     * @param Response $response
+     * @return string
+     * @throws Exception
+     */
+    protected function getResponseContent($response) {
+        if ($response->isSuccessful()) {
+            return $response->getContent();
+        }
+        else {
+            throw new Exception($response->getContent(), $response->getStatusCode());
+        }
     }
 }

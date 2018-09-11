@@ -15,6 +15,15 @@ class HistoiresPublications extends \Stats\Models\BaseModel
     /**
      * @var string
      *
+     * @ORM\Column(name="storycode", type="string", length=19, nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
+     */
+    private $storycode;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="publicationcode", type="string", length=12, nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
@@ -30,67 +39,10 @@ class HistoiresPublications extends \Stats\Models\BaseModel
      */
     private $issuenumber;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="storycode", type="string", length=19, nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
-     */
-    private $storycode;
-
 
 
     /**
-     * Set publicationcode
-     *
-     * @param string $publicationcode
-     *
-     * @return HistoiresPublications
-     */
-    public function setPublicationcode($publicationcode)
-    {
-        $this->publicationcode = $publicationcode;
-
-        return $this;
-    }
-
-    /**
-     * Get publicationcode
-     *
-     * @return string
-     */
-    public function getPublicationcode()
-    {
-        return $this->publicationcode;
-    }
-
-    /**
-     * Set issuenumber
-     *
-     * @param string $issuenumber
-     *
-     * @return HistoiresPublications
-     */
-    public function setIssuenumber($issuenumber)
-    {
-        $this->issuenumber = $issuenumber;
-
-        return $this;
-    }
-
-    /**
-     * Get issuenumber
-     *
-     * @return string
-     */
-    public function getIssuenumber()
-    {
-        return $this->issuenumber;
-    }
-
-    /**
-     * Set storycode
+     * Set storycode.
      *
      * @param string $storycode
      *
@@ -104,12 +56,60 @@ class HistoiresPublications extends \Stats\Models\BaseModel
     }
 
     /**
-     * Get storycode
+     * Get storycode.
      *
      * @return string
      */
     public function getStorycode()
     {
         return $this->storycode;
+    }
+
+    /**
+     * Set publicationcode.
+     *
+     * @param string $publicationcode
+     *
+     * @return HistoiresPublications
+     */
+    public function setPublicationcode($publicationcode)
+    {
+        $this->publicationcode = $publicationcode;
+
+        return $this;
+    }
+
+    /**
+     * Get publicationcode.
+     *
+     * @return string
+     */
+    public function getPublicationcode()
+    {
+        return $this->publicationcode;
+    }
+
+    /**
+     * Set issuenumber.
+     *
+     * @param string $issuenumber
+     *
+     * @return HistoiresPublications
+     */
+    public function setIssuenumber($issuenumber)
+    {
+        $this->issuenumber = $issuenumber;
+
+        return $this;
+    }
+
+    /**
+     * Get issuenumber.
+     *
+     * @return string
+     */
+    public function getIssuenumber()
+    {
+        return $this->issuenumber;
     }
 }

@@ -8,8 +8,8 @@ use Symfony\Component\HttpFoundation\Response;
 class StatusTest extends TestCommon
 {
     private function getCoverIdStatusForMockedResults($url, $mockedResults) {
-        $collectionUserInfo = self::createTestCollection();
-        self::setSessionUser($this->app, $collectionUserInfo);
+        $user = self::createTestCollection();
+        self::setSessionUser($this->app, $user);
 
         SimilarImagesHelper::$mockedResults = $mockedResults;
 
@@ -71,12 +71,12 @@ class StatusTest extends TestCommon
     }
 
     public function testGetDbStatus() {
-        $collectionUserInfo = self::createTestCollection();
-        self::setSessionUser($this->app, $collectionUserInfo);
+        $user = self::createTestCollection();
+        self::setSessionUser($this->app, $user);
         self::createCoaData();
         self::createCoverIds();
-        self::createStatsData(self::getSessionUser($this->app)['id']);
-        self::createEdgeCreatorData(self::getSessionUser($this->app)['id']);
+        self::createStatsData($user->getId());
+        self::createEdgeCreatorData($user->getId());
 
         $response = $this->buildAuthenticatedService('/status/db', self::$dmUser, [], [], 'GET')->call();
 
@@ -84,10 +84,10 @@ class StatusTest extends TestCommon
     }
 
     public function testGetDbStatusMissingCoaData() {
-        $collectionUserInfo = self::createTestCollection();
-        self::setSessionUser($this->app, $collectionUserInfo);
+        $user = self::createTestCollection();
+        self::setSessionUser($this->app, $user);
         self::createCoverIds();
-        self::createStatsData(self::getSessionUser($this->app)['id']);
+        self::createStatsData($user->getId());
 
         $response = $this->buildAuthenticatedService('/status/db', self::$dmUser, [], [], 'GET')->call();
 

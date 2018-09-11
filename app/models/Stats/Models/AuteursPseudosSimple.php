@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 class AuteursPseudosSimple extends \Stats\Models\BaseModel
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ID", type="integer", nullable=false)
      * @ORM\Id
@@ -22,7 +22,7 @@ class AuteursPseudosSimple extends \Stats\Models\BaseModel
     private $id;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ID_User", type="integer", nullable=false)
      */
@@ -36,7 +36,7 @@ class AuteursPseudosSimple extends \Stats\Models\BaseModel
     private $nomauteurabrege;
 
     /**
-     * @var boolean
+     * @var bool|null
      *
      * @ORM\Column(name="Notation", type="boolean", nullable=true)
      */
@@ -45,9 +45,9 @@ class AuteursPseudosSimple extends \Stats\Models\BaseModel
 
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -55,9 +55,9 @@ class AuteursPseudosSimple extends \Stats\Models\BaseModel
     }
 
     /**
-     * Set idUser
+     * Set idUser.
      *
-     * @param integer $idUser
+     * @param int $idUser
      *
      * @return AuteursPseudosSimple
      */
@@ -69,9 +69,9 @@ class AuteursPseudosSimple extends \Stats\Models\BaseModel
     }
 
     /**
-     * Get idUser
+     * Get idUser.
      *
-     * @return integer
+     * @return int
      */
     public function getIdUser()
     {
@@ -79,7 +79,7 @@ class AuteursPseudosSimple extends \Stats\Models\BaseModel
     }
 
     /**
-     * Set nomauteurabrege
+     * Set nomauteurabrege.
      *
      * @param string $nomauteurabrege
      *
@@ -93,7 +93,7 @@ class AuteursPseudosSimple extends \Stats\Models\BaseModel
     }
 
     /**
-     * Get nomauteurabrege
+     * Get nomauteurabrege.
      *
      * @return string
      */
@@ -103,13 +103,13 @@ class AuteursPseudosSimple extends \Stats\Models\BaseModel
     }
 
     /**
-     * Set notation
+     * Set notation.
      *
-     * @param boolean $notation
+     * @param bool|null $notation
      *
      * @return AuteursPseudosSimple
      */
-    public function setNotation($notation)
+    public function setNotation($notation = null)
     {
         $this->notation = $notation;
 
@@ -117,9 +117,9 @@ class AuteursPseudosSimple extends \Stats\Models\BaseModel
     }
 
     /**
-     * Get notation
+     * Get notation.
      *
-     * @return boolean
+     * @return bool|null
      */
     public function getNotation()
     {
