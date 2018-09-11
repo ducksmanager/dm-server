@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 class TranchesEnCoursValeurs extends \Edgecreator\Models\BaseModel
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ID", type="integer", nullable=false)
      * @ORM\Id
@@ -36,14 +36,14 @@ class TranchesEnCoursValeurs extends \Edgecreator\Models\BaseModel
     private $nomFonction;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="Option_nom", type="string", length=30, nullable=true)
      */
     private $optionNom;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="Option_valeur", type="string", length=200, nullable=true)
      */
@@ -62,9 +62,9 @@ class TranchesEnCoursValeurs extends \Edgecreator\Models\BaseModel
 
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -72,7 +72,7 @@ class TranchesEnCoursValeurs extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Set ordre
+     * Set ordre.
      *
      * @param float $ordre
      *
@@ -86,7 +86,7 @@ class TranchesEnCoursValeurs extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Get ordre
+     * Get ordre.
      *
      * @return float
      */
@@ -96,7 +96,7 @@ class TranchesEnCoursValeurs extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Set nomFonction
+     * Set nomFonction.
      *
      * @param string $nomFonction
      *
@@ -110,7 +110,7 @@ class TranchesEnCoursValeurs extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Get nomFonction
+     * Get nomFonction.
      *
      * @return string
      */
@@ -120,13 +120,13 @@ class TranchesEnCoursValeurs extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Set optionNom
+     * Set optionNom.
      *
-     * @param string $optionNom
+     * @param string|null $optionNom
      *
      * @return TranchesEnCoursValeurs
      */
-    public function setOptionNom($optionNom)
+    public function setOptionNom($optionNom = null)
     {
         $this->optionNom = $optionNom;
 
@@ -134,9 +134,9 @@ class TranchesEnCoursValeurs extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Get optionNom
+     * Get optionNom.
      *
-     * @return string
+     * @return string|null
      */
     public function getOptionNom()
     {
@@ -144,13 +144,13 @@ class TranchesEnCoursValeurs extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Set optionValeur
+     * Set optionValeur.
      *
-     * @param string $optionValeur
+     * @param string|null $optionValeur
      *
      * @return TranchesEnCoursValeurs
      */
-    public function setOptionValeur($optionValeur)
+    public function setOptionValeur($optionValeur = null)
     {
         $this->optionValeur = $optionValeur;
 
@@ -158,9 +158,9 @@ class TranchesEnCoursValeurs extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Get optionValeur
+     * Get optionValeur.
      *
-     * @return string
+     * @return string|null
      */
     public function getOptionValeur()
     {
@@ -168,9 +168,9 @@ class TranchesEnCoursValeurs extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Set idModele
+     * Set idModele.
      *
-     * @param \Edgecreator\Models\TranchesEnCoursModeles $idModele
+     * @param \Edgecreator\Models\TranchesEnCoursModeles|null $idModele
      *
      * @return TranchesEnCoursValeurs
      */
@@ -182,9 +182,9 @@ class TranchesEnCoursValeurs extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Get idModele
+     * Get idModele.
      *
-     * @return \Edgecreator\Models\TranchesEnCoursModeles
+     * @return \Edgecreator\Models\TranchesEnCoursModeles|null
      */
     public function getIdModele()
     {

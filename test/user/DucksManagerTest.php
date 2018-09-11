@@ -126,7 +126,7 @@ class DucksManagerTest extends TestCommon
             'username' => 'demo',
             'password' => $sha1Password
         ], [], 'GET')->call();
-        $objectResponse = json_decode($response->getContent());
+        $objectResponse = json_decode($this->getResponseContent($response));
         $this->assertEquals('Affichage', $objectResponse->EdgeCreator);
     }
 }

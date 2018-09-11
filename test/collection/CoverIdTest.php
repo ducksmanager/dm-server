@@ -67,7 +67,7 @@ class CoverIdTest extends TestCommon
             '/cover-id/issuecodes/'
             . implode(',', [self::$coverIds[0], self::$coverIds[2]]), self::$dmUser)->call();
 
-        $objectResponse = json_decode($response->getContent());
+        $objectResponse = json_decode($this->getResponseContent($response));
 
         $this->assertInternalType('object', $objectResponse);
         $this->assertCount(2, get_object_vars($objectResponse));
@@ -88,8 +88,10 @@ class CoverIdTest extends TestCommon
             ]
         )->call();
 
-        $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
-        $this->assertEquals('Invalid number of uploaded files : should be 1, was 2', $response->getContent());
+        $this->assertUnsuccessfulResponse($response, function(Response $response) {
+            $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+            $this->assertEquals('Invalid number of uploaded files : should be 1, was 2',$response->getContent());
+        });
     }
 
     public function testCoverIdSearch() {
@@ -126,7 +128,7 @@ class CoverIdTest extends TestCommon
                     ]*/
                 ],
             'imageIds' => [1]
-            ]), $response->getContent());
+            ]), $this->getResponseContent($response));
     }
 
     public function testCoverIdSearchManyResults() {
@@ -177,7 +179,7 @@ class CoverIdTest extends TestCommon
                 ]
             ],
             'imageIds' => [1,2,3,4,5,6,7,8,9,10]
-        ]), $response->getContent());
+        ]), $this->getResponseContent($response));
     }
 
     public function testCoverIdSearchSizeTooSmall() {
@@ -195,7 +197,7 @@ class CoverIdTest extends TestCommon
 
         $this->assertJsonStringEqualsJsonString(json_encode([
             'type' => 'IMAGE_SIZE_TOO_SMALL'
-            ]), $response->getContent());
+            ]), $this->getResponseContent($response));
     }
 
     public function testCoverIdSearchInvalidFileName() {
@@ -208,8 +210,10 @@ class CoverIdTest extends TestCommon
             ]
         )->call();
 
-        $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
-        $this->assertEquals('Invalid upload file : expected file name wtd_jpg', $response->getContent());
+        $this->assertUnsuccessfulResponse($response, function(Response $response) {
+            $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+            $this->assertEquals('Invalid upload file : expected file name wtd_jpg', $response->getContent());
+        });
     }
 
     public function testDownloadCover() {
@@ -217,7 +221,7 @@ class CoverIdTest extends TestCommon
         $response = $this->buildAuthenticatedServiceWithTestUser('/cover-id/download/1', self::$dmUser)
             ->call();
 
-        file_put_contents('/tmp/test.jpg', $response->getContent());
+        file_put_contents('/tmp/test.jpg', $this->getResponseContent($response));
         $type=\exif_imagetype('/tmp/test.jpg');
         $this->assertEquals(IMAGETYPE_JPEG, $type);   //A specific image type
 

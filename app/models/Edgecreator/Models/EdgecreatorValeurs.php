@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 class EdgecreatorValeurs extends \Edgecreator\Models\BaseModel
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ID", type="integer", nullable=false)
      * @ORM\Id
@@ -22,14 +22,14 @@ class EdgecreatorValeurs extends \Edgecreator\Models\BaseModel
     private $id;
 
     /**
-     * @var integer
+     * @var int|null
      *
      * @ORM\Column(name="ID_Option", type="integer", nullable=true)
      */
     private $idOption;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="Option_valeur", type="string", length=200, nullable=true)
      */
@@ -38,9 +38,9 @@ class EdgecreatorValeurs extends \Edgecreator\Models\BaseModel
 
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -48,13 +48,13 @@ class EdgecreatorValeurs extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Set idOption
+     * Set idOption.
      *
-     * @param integer $idOption
+     * @param int|null $idOption
      *
      * @return EdgecreatorValeurs
      */
-    public function setIdOption($idOption)
+    public function setIdOption($idOption = null)
     {
         $this->idOption = $idOption;
 
@@ -62,9 +62,9 @@ class EdgecreatorValeurs extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Get idOption
+     * Get idOption.
      *
-     * @return integer
+     * @return int|null
      */
     public function getIdOption()
     {
@@ -72,13 +72,13 @@ class EdgecreatorValeurs extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Set optionValeur
+     * Set optionValeur.
      *
-     * @param string $optionValeur
+     * @param string|null $optionValeur
      *
      * @return EdgecreatorValeurs
      */
-    public function setOptionValeur($optionValeur)
+    public function setOptionValeur($optionValeur = null)
     {
         $this->optionValeur = $optionValeur;
 
@@ -86,9 +86,9 @@ class EdgecreatorValeurs extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Get optionValeur
+     * Get optionValeur.
      *
-     * @return string
+     * @return string|null
      */
     public function getOptionValeur()
     {

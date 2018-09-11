@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 class EdgecreatorIntervalles extends \Edgecreator\Models\BaseModel
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ID", type="integer", nullable=false)
      * @ORM\Id
@@ -22,7 +22,7 @@ class EdgecreatorIntervalles extends \Edgecreator\Models\BaseModel
     private $id;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ID_Valeur", type="integer", nullable=false)
      */
@@ -52,9 +52,9 @@ class EdgecreatorIntervalles extends \Edgecreator\Models\BaseModel
 
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -62,9 +62,9 @@ class EdgecreatorIntervalles extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Set idValeur
+     * Set idValeur.
      *
-     * @param integer $idValeur
+     * @param int $idValeur
      *
      * @return EdgecreatorIntervalles
      */
@@ -76,9 +76,9 @@ class EdgecreatorIntervalles extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Get idValeur
+     * Get idValeur.
      *
-     * @return integer
+     * @return int
      */
     public function getIdValeur()
     {
@@ -86,7 +86,7 @@ class EdgecreatorIntervalles extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Set numeroDebut
+     * Set numeroDebut.
      *
      * @param string $numeroDebut
      *
@@ -100,7 +100,7 @@ class EdgecreatorIntervalles extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Get numeroDebut
+     * Get numeroDebut.
      *
      * @return string
      */
@@ -110,7 +110,7 @@ class EdgecreatorIntervalles extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Set numeroFin
+     * Set numeroFin.
      *
      * @param string $numeroFin
      *
@@ -124,7 +124,7 @@ class EdgecreatorIntervalles extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Get numeroFin
+     * Get numeroFin.
      *
      * @return string
      */
@@ -134,7 +134,7 @@ class EdgecreatorIntervalles extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Set username
+     * Set username.
      *
      * @param string $username
      *
@@ -148,7 +148,7 @@ class EdgecreatorIntervalles extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Get username
+     * Get username.
      *
      * @return string
      */

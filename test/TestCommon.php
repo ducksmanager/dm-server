@@ -25,7 +25,6 @@ use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
-use Exception;
 use Stats\Models\AuteursHistoires;
 use Stats\Models\AuteursPseudosSimple;
 use Stats\Models\UtilisateursHistoiresManquantes;
@@ -44,7 +43,6 @@ use Silex\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
 class TestCommon extends WebTestCase {
-
     use RequestUtil;
 
     protected static $conf;
@@ -788,8 +786,8 @@ class TestCommon extends WebTestCase {
             $ongoingModel2MainEdgePicture = new TranchesEnCoursModelesImages();
             $edgeCreatorEntityManager->persist(
                 $ongoingModel2MainEdgePicture
-                    ->setModele($ongoingModel2)
-                    ->setImage($edgePicture)
+                    ->setIdModele($ongoingModel2)
+                    ->setIdImage($edgePicture)
                     ->setEstphotoprincipale(true)
             );
 
@@ -798,7 +796,7 @@ class TestCommon extends WebTestCase {
             $ongoingModel2Contributor1 = new TranchesEnCoursContributeurs();
             $edgeCreatorEntityManager->persist(
                 $ongoingModel2Contributor1
-                    ->setModele($ongoingModel2)
+                    ->setIdModele($ongoingModel2)
                     ->setIdUtilisateur($edgeCreatorUser->getId())
                     ->setContribution('photographe')
             );
@@ -811,7 +809,7 @@ class TestCommon extends WebTestCase {
             $ongoingModel4Contributor1 = new TranchesEnCoursContributeurs();
             $edgeCreatorEntityManager->persist(
                 $ongoingModel4Contributor1
-                    ->setModele($ongoingModel4)
+                    ->setIdModele($ongoingModel4)
                     ->setIdUtilisateur($edgeCreatorUser->getId())
                     ->setContribution('createur')
             );
@@ -893,6 +891,8 @@ class TestCommon extends WebTestCase {
                     ->setMagazine($magazine)
                     ->setNumero($issueNumber)
                     ->setUsername($userName)
+                    ->setActive(true)
+                    ->setPretepourpublication(false)
             );
 
             foreach ($steps as $stepNumber => $step) {
@@ -1110,14 +1110,23 @@ class TestCommon extends WebTestCase {
     /**
      * @param Response $response
      * @return string
-     * @throws Exception
      */
     protected function getResponseContent($response) {
         if ($response->isSuccessful()) {
             return $response->getContent();
         }
         else {
-            throw new Exception($response->getContent(), $response->getStatusCode());
+            $this->fail($response->getContent());
         }
+        return null;
+    }
+
+    /**
+     * @param Response $response
+     * @param $checkCallback
+     */
+    protected function assertUnsuccessfulResponse($response, $checkCallback) {
+        $this->assertFalse($response->isSuccessful());
+        $checkCallback($response);
     }
 }

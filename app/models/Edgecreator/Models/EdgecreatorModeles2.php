@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 class EdgecreatorModeles2 extends \Edgecreator\Models\BaseModel
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ID", type="integer", nullable=false)
      * @ORM\Id
@@ -36,7 +36,7 @@ class EdgecreatorModeles2 extends \Edgecreator\Models\BaseModel
     private $magazine;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="Ordre", type="integer", nullable=false)
      */
@@ -50,7 +50,7 @@ class EdgecreatorModeles2 extends \Edgecreator\Models\BaseModel
     private $nomFonction;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="Option_nom", type="string", length=20, nullable=true)
      */
@@ -59,9 +59,9 @@ class EdgecreatorModeles2 extends \Edgecreator\Models\BaseModel
 
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -69,7 +69,7 @@ class EdgecreatorModeles2 extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Set pays
+     * Set pays.
      *
      * @param string $pays
      *
@@ -83,7 +83,7 @@ class EdgecreatorModeles2 extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Get pays
+     * Get pays.
      *
      * @return string
      */
@@ -93,7 +93,7 @@ class EdgecreatorModeles2 extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Set magazine
+     * Set magazine.
      *
      * @param string $magazine
      *
@@ -107,7 +107,7 @@ class EdgecreatorModeles2 extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Get magazine
+     * Get magazine.
      *
      * @return string
      */
@@ -117,9 +117,9 @@ class EdgecreatorModeles2 extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Set ordre
+     * Set ordre.
      *
-     * @param integer $ordre
+     * @param int $ordre
      *
      * @return EdgecreatorModeles2
      */
@@ -131,9 +131,9 @@ class EdgecreatorModeles2 extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Get ordre
+     * Get ordre.
      *
-     * @return integer
+     * @return int
      */
     public function getOrdre()
     {
@@ -141,7 +141,7 @@ class EdgecreatorModeles2 extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Set nomFonction
+     * Set nomFonction.
      *
      * @param string $nomFonction
      *
@@ -155,7 +155,7 @@ class EdgecreatorModeles2 extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Get nomFonction
+     * Get nomFonction.
      *
      * @return string
      */
@@ -165,13 +165,13 @@ class EdgecreatorModeles2 extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Set optionNom
+     * Set optionNom.
      *
-     * @param string $optionNom
+     * @param string|null $optionNom
      *
      * @return EdgecreatorModeles2
      */
-    public function setOptionNom($optionNom)
+    public function setOptionNom($optionNom = null)
     {
         $this->optionNom = $optionNom;
 
@@ -179,9 +179,9 @@ class EdgecreatorModeles2 extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Get optionNom
+     * Get optionNom.
      *
-     * @return string
+     * @return string|null
      */
     public function getOptionNom()
     {

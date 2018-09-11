@@ -3,8 +3,6 @@
 namespace Edgecreator\Models;
 
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Mapping\JoinColumn;
-use Doctrine\ORM\Mapping\ManyToOne;
 
 /**
  * TranchesEnCoursModelesImages
@@ -15,7 +13,7 @@ use Doctrine\ORM\Mapping\ManyToOne;
 class TranchesEnCoursModelesImages extends \Edgecreator\Models\BaseModel
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ID", type="integer", nullable=false)
      * @ORM\Id
@@ -24,7 +22,7 @@ class TranchesEnCoursModelesImages extends \Edgecreator\Models\BaseModel
     private $id;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="EstPhotoPrincipale", type="boolean", nullable=false)
      */
@@ -33,27 +31,29 @@ class TranchesEnCoursModelesImages extends \Edgecreator\Models\BaseModel
     /**
      * @var \Edgecreator\Models\ImagesTranches
      *
-     * @ORM\ManyToOne(targetEntity="Edgecreator\Models\ImagesTranches", fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity="Edgecreator\Models\ImagesTranches")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="ID_Image", referencedColumnName="ID")
      * })
      */
-    private $image;
+    private $idImage;
 
     /**
      * @var \Edgecreator\Models\TranchesEnCoursModeles
      *
-     * @ManyToOne(targetEntity="TranchesEnCoursModeles", inversedBy="photos")
-     * @JoinColumn(name="ID_Modele", referencedColumnName="ID")
+     * @ORM\ManyToOne(targetEntity="Edgecreator\Models\TranchesEnCoursModeles")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="ID_Modele", referencedColumnName="ID")
+     * })
      */
-    private $modele;
+    private $idModele;
 
 
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -61,9 +61,9 @@ class TranchesEnCoursModelesImages extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Set estphotoprincipale
+     * Set estphotoprincipale.
      *
-     * @param boolean $estphotoprincipale
+     * @param bool $estphotoprincipale
      *
      * @return TranchesEnCoursModelesImages
      */
@@ -75,9 +75,9 @@ class TranchesEnCoursModelesImages extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Get estphotoprincipale
+     * Get estphotoprincipale.
      *
-     * @return boolean
+     * @return bool
      */
     public function getEstphotoprincipale()
     {
@@ -85,50 +85,50 @@ class TranchesEnCoursModelesImages extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Set idImage
+     * Set idImage.
      *
-     * @param \Edgecreator\Models\ImagesTranches $image
+     * @param \Edgecreator\Models\ImagesTranches|null $idImage
      *
      * @return TranchesEnCoursModelesImages
      */
-    public function setImage(\Edgecreator\Models\ImagesTranches $image = null)
+    public function setIdImage(\Edgecreator\Models\ImagesTranches $idImage = null)
     {
-        $this->image = $image;
+        $this->idImage = $idImage;
 
         return $this;
     }
 
     /**
-     * Get idImage
+     * Get idImage.
      *
-     * @return \Edgecreator\Models\ImagesTranches
+     * @return \Edgecreator\Models\ImagesTranches|null
      */
-    public function getImage()
+    public function getIdImage()
     {
-        return $this->image;
+        return $this->idImage;
     }
 
     /**
-     * Set idModele
+     * Set idModele.
      *
-     * @param \Edgecreator\Models\TranchesEnCoursModeles $modele
+     * @param \Edgecreator\Models\TranchesEnCoursModeles|null $idModele
      *
      * @return TranchesEnCoursModelesImages
      */
-    public function setModele(\Edgecreator\Models\TranchesEnCoursModeles $modele = null)
+    public function setIdModele(\Edgecreator\Models\TranchesEnCoursModeles $idModele = null)
     {
-        $this->modele = $modele;
+        $this->idModele = $idModele;
 
         return $this;
     }
 
     /**
-     * Get idModele
+     * Get idModele.
      *
-     * @return \Edgecreator\Models\TranchesEnCoursModeles
+     * @return \Edgecreator\Models\TranchesEnCoursModeles|null
      */
-    public function getModele()
+    public function getIdModele()
     {
-        return $this->modele;
+        return $this->idModele;
     }
 }

@@ -3,8 +3,6 @@
 namespace Edgecreator\Models;
 
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Mapping\JoinColumn;
-use Doctrine\ORM\Mapping\ManyToOne;
 
 /**
  * TranchesEnCoursContributeurs
@@ -15,7 +13,7 @@ use Doctrine\ORM\Mapping\ManyToOne;
 class TranchesEnCoursContributeurs extends \Edgecreator\Models\BaseModel
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ID", type="integer", nullable=false)
      * @ORM\Id
@@ -24,33 +22,35 @@ class TranchesEnCoursContributeurs extends \Edgecreator\Models\BaseModel
     private $id;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ID_Utilisateur", type="integer", nullable=false)
      */
     private $idUtilisateur;
 
     /**
-     * @var TranchesEnCoursModeles
-     *
-     * @ManyToOne(targetEntity="TranchesEnCoursModeles", inversedBy="contributeurs")
-     * @JoinColumn(name="ID_Modele", referencedColumnName="ID")
-     */
-    private $modele;
-
-    /**
      * @var string
      *
-     * @ORM\Column(name="contribution", type="string", nullable=false)
+     * @ORM\Column(name="contribution", type="string", length=0, nullable=false)
      */
     private $contribution;
 
+    /**
+     * @var \Edgecreator\Models\TranchesEnCoursModeles
+     *
+     * @ORM\ManyToOne(targetEntity="Edgecreator\Models\TranchesEnCoursModeles")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="ID_Modele", referencedColumnName="ID")
+     * })
+     */
+    private $idModele;
+
 
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -58,9 +58,9 @@ class TranchesEnCoursContributeurs extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Set idUtilisateur
+     * Set idUtilisateur.
      *
-     * @param integer $idUtilisateur
+     * @param int $idUtilisateur
      *
      * @return TranchesEnCoursContributeurs
      */
@@ -72,9 +72,9 @@ class TranchesEnCoursContributeurs extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Get idUtilisateur
+     * Get idUtilisateur.
      *
-     * @return integer
+     * @return int
      */
     public function getIdUtilisateur()
     {
@@ -82,31 +82,7 @@ class TranchesEnCoursContributeurs extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Set modele
-     *
-     * @param TranchesEnCoursModeles $modele
-     *
-     * @return TranchesEnCoursContributeurs
-     */
-    public function setModele($modele = null)
-    {
-        $this->modele = $modele;
-
-        return $this;
-    }
-
-    /**
-     * Get modele
-     *
-     * @return TranchesEnCoursModeles
-     */
-    public function getModele()
-    {
-        return $this->modele;
-    }
-
-    /**
-     * Set contribution
+     * Set contribution.
      *
      * @param string $contribution
      *
@@ -120,12 +96,36 @@ class TranchesEnCoursContributeurs extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Get contribution
+     * Get contribution.
      *
      * @return string
      */
     public function getContribution()
     {
         return $this->contribution;
+    }
+
+    /**
+     * Set idModele.
+     *
+     * @param \Edgecreator\Models\TranchesEnCoursModeles|null $idModele
+     *
+     * @return TranchesEnCoursContributeurs
+     */
+    public function setIdModele(\Edgecreator\Models\TranchesEnCoursModeles $idModele = null)
+    {
+        $this->idModele = $idModele;
+
+        return $this;
+    }
+
+    /**
+     * Get idModele.
+     *
+     * @return \Edgecreator\Models\TranchesEnCoursModeles|null
+     */
+    public function getIdModele()
+    {
+        return $this->idModele;
     }
 }

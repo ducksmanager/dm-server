@@ -14,7 +14,7 @@ use Doctrine\ORM\Mapping\OneToMany;
 class TranchesEnCoursModeles extends \Edgecreator\Models\BaseModel
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ID", type="integer", nullable=false)
      * @ORM\Id
@@ -44,14 +44,14 @@ class TranchesEnCoursModeles extends \Edgecreator\Models\BaseModel
     private $numero;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="username", type="string", length=25, nullable=true)
      */
     private $username;
 
     /**
-     * @var string
+     * @var string|null
      * @deprecated
      *
      * @ORM\Column(name="NomPhotoPrincipale", type="string", length=60, nullable=true)
@@ -61,12 +61,12 @@ class TranchesEnCoursModeles extends \Edgecreator\Models\BaseModel
     /**
      * @var TranchesEnCoursModelesImages[]
      *
-     * @OneToMany(fetch="EAGER", targetEntity="TranchesEnCoursModelesImages", cascade={"persist", "remove"}, mappedBy="modele")
+     * @OneToMany(fetch="EAGER", targetEntity="TranchesEnCoursModelesImages", cascade={"persist", "remove"}, mappedBy="idModele")
      */
     private $photos = [];
 
     /**
-     * @var string
+     * @var string|null
      * @deprecated
      *
      * @ORM\Column(name="photographes", type="text", length=65535, nullable=true)
@@ -74,7 +74,7 @@ class TranchesEnCoursModeles extends \Edgecreator\Models\BaseModel
     private $photographes;
 
     /**
-     * @var string
+     * @var string|null
      * @deprecated
      *
      * @ORM\Column(name="createurs", type="text", length=65535, nullable=true)
@@ -84,30 +84,30 @@ class TranchesEnCoursModeles extends \Edgecreator\Models\BaseModel
     /**
      * @var TranchesEnCoursContributeurs[]
      *
-     * @OneToMany(fetch="EAGER", targetEntity="TranchesEnCoursContributeurs", cascade={"persist", "remove"}, mappedBy="modele")
+     * @OneToMany(fetch="EAGER", targetEntity="TranchesEnCoursContributeurs", cascade={"persist", "remove"}, mappedBy="idModele")
      */
     private $contributeurs = [];
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="Active", type="boolean", nullable=false)
      */
-    private $active = '1';
+    private $active;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="PretePourPublication", type="boolean", nullable=false)
      */
-    private $pretepourpublication = '0';
+    private $pretepourpublication;
 
 
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -115,7 +115,7 @@ class TranchesEnCoursModeles extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Set pays
+     * Set pays.
      *
      * @param string $pays
      *
@@ -129,7 +129,7 @@ class TranchesEnCoursModeles extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Get pays
+     * Get pays.
      *
      * @return string
      */
@@ -139,7 +139,7 @@ class TranchesEnCoursModeles extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Set magazine
+     * Set magazine.
      *
      * @param string $magazine
      *
@@ -153,7 +153,7 @@ class TranchesEnCoursModeles extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Get magazine
+     * Get magazine.
      *
      * @return string
      */
@@ -163,7 +163,7 @@ class TranchesEnCoursModeles extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Set numero
+     * Set numero.
      *
      * @param string $numero
      *
@@ -177,7 +177,7 @@ class TranchesEnCoursModeles extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Get numero
+     * Get numero.
      *
      * @return string
      */
@@ -187,13 +187,13 @@ class TranchesEnCoursModeles extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Set username
+     * Set username.
      *
-     * @param string $username
+     * @param string|null $username
      *
      * @return TranchesEnCoursModeles
      */
-    public function setUsername($username)
+    public function setUsername($username = null)
     {
         $this->username = $username;
 
@@ -201,9 +201,9 @@ class TranchesEnCoursModeles extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Get username
+     * Get username.
      *
-     * @return string
+     * @return string|null
      */
     public function getUsername()
     {
@@ -211,13 +211,13 @@ class TranchesEnCoursModeles extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Set nomphotoprincipale
+     * Set nomphotoprincipale.
      *
-     * @param string $nomphotoprincipale
+     * @param string|null $nomphotoprincipale
      *
      * @return TranchesEnCoursModeles
      */
-    public function setNomphotoprincipale($nomphotoprincipale)
+    public function setNomphotoprincipale($nomphotoprincipale = null)
     {
         $this->nomphotoprincipale = $nomphotoprincipale;
 
@@ -225,9 +225,9 @@ class TranchesEnCoursModeles extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Get nomphotoprincipale
+     * Get nomphotoprincipale.
      *
-     * @return string
+     * @return string|null
      */
     public function getNomphotoprincipale()
     {
@@ -259,13 +259,13 @@ class TranchesEnCoursModeles extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Set photographes
+     * Set photographes.
      *
-     * @param string $photographes
+     * @param string|null $photographes
      *
      * @return TranchesEnCoursModeles
      */
-    public function setPhotographes($photographes)
+    public function setPhotographes($photographes = null)
     {
         $this->photographes = $photographes;
 
@@ -273,13 +273,37 @@ class TranchesEnCoursModeles extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Get photographes
+     * Get photographes.
      *
-     * @return string
+     * @return string|null
      */
     public function getPhotographes()
     {
         return $this->photographes;
+    }
+
+    /**
+     * Set createurs.
+     *
+     * @param string|null $createurs
+     *
+     * @return TranchesEnCoursModeles
+     */
+    public function setCreateurs($createurs = null)
+    {
+        $this->createurs = $createurs;
+
+        return $this;
+    }
+
+    /**
+     * Get createurs.
+     *
+     * @return string|null
+     */
+    public function getCreateurs()
+    {
+        return $this->createurs;
     }
 
     /**
@@ -307,33 +331,9 @@ class TranchesEnCoursModeles extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Set createurs
+     * Set active.
      *
-     * @param string $createurs
-     *
-     * @return TranchesEnCoursModeles
-     */
-    public function setCreateurs($createurs)
-    {
-        $this->createurs = $createurs;
-
-        return $this;
-    }
-
-    /**
-     * Get createurs
-     *
-     * @return string
-     */
-    public function getCreateurs()
-    {
-        return $this->createurs;
-    }
-
-    /**
-     * Set active
-     *
-     * @param boolean $active
+     * @param bool $active
      *
      * @return TranchesEnCoursModeles
      */
@@ -345,9 +345,9 @@ class TranchesEnCoursModeles extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Get active
+     * Get active.
      *
-     * @return boolean
+     * @return bool
      */
     public function getActive()
     {
@@ -355,9 +355,9 @@ class TranchesEnCoursModeles extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Set pretepourpublication
+     * Set pretepourpublication.
      *
-     * @param boolean $pretepourpublication
+     * @param bool $pretepourpublication
      *
      * @return TranchesEnCoursModeles
      */
@@ -369,9 +369,9 @@ class TranchesEnCoursModeles extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Get pretepourpublication
+     * Get pretepourpublication.
      *
-     * @return boolean
+     * @return bool
      */
     public function getPretepourpublication()
     {

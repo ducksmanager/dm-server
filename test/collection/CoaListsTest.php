@@ -18,7 +18,7 @@ class CoaListsTest extends TestCommon
     public function testGetCountryList() {
         $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/countries/fr', self::$dmUser)->call();
 
-        $objectResponse = json_decode($response->getContent());
+        $objectResponse = json_decode($this->getResponseContent($response));
 
         $this->assertInternalType('object', $objectResponse);
         $this->assertEquals('France', $objectResponse->fr);
@@ -30,7 +30,7 @@ class CoaListsTest extends TestCommon
     public function testGetCountryListFromCountryCodes() {
         $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/countries/fr/fr,us', self::$dmUser)->call();
 
-        $objectResponse = json_decode($response->getContent());
+        $objectResponse = json_decode($this->getResponseContent($response));
 
         $this->assertInternalType('object', $objectResponse);
         $this->assertEquals('France', $objectResponse->fr);
@@ -41,7 +41,7 @@ class CoaListsTest extends TestCommon
     public function testGetCountryListFromCountryCodesOtherLocale() {
         $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/countries/es/fr,us', self::$dmUser)->call();
 
-        $objectResponse = json_decode($response->getContent());
+        $objectResponse = json_decode($this->getResponseContent($response));
 
         $this->assertInternalType('object', $objectResponse);
         $this->assertEquals('Francia', $objectResponse->fr);
@@ -52,7 +52,7 @@ class CoaListsTest extends TestCommon
     public function testGetPublicationListFromCountry() {
         $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/publications/fr', self::$dmUser)->call();
 
-        $objectResponse = json_decode($response->getContent());
+        $objectResponse = json_decode($this->getResponseContent($response));
 
         $this->assertInternalType('object', $objectResponse);
         $this->assertEquals('Dynastie', $objectResponse->{'fr/DDD'});
@@ -62,7 +62,7 @@ class CoaListsTest extends TestCommon
     public function testGetPublicationListFromPublicationCodes() {
         $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/publications/fr/DDD,us/CBL', self::$dmUser)->call();
 
-        $objectResponse = json_decode($response->getContent());
+        $objectResponse = json_decode($this->getResponseContent($response));
 
         $this->assertInternalType('object', $objectResponse);
         $this->assertEquals('Dynastie', $objectResponse->{'fr/DDD'});
@@ -78,7 +78,7 @@ class CoaListsTest extends TestCommon
     public function testGetIssueList() {
         $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issues/fr/DDD', self::$dmUser)->call();
 
-        $arrayResponse = json_decode($response->getContent());
+        $arrayResponse = json_decode($this->getResponseContent($response));
 
         $this->assertInternalType('array', $arrayResponse);
         $this->assertEquals('1', $arrayResponse[0]);
@@ -88,7 +88,7 @@ class CoaListsTest extends TestCommon
     public function testGetIssueListEmptyList() {
         $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issues/fr/DD', self::$dmUser)->call();
 
-        $arrayResponse = json_decode($response->getContent());
+        $arrayResponse = json_decode($this->getResponseContent($response));
 
         $this->assertInternalType('array', $arrayResponse);
         $this->assertCount(0, $arrayResponse);
@@ -103,7 +103,7 @@ class CoaListsTest extends TestCommon
     public function testGetIssueListByIssueCodes() {
         $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issuesbycodes/fr/DDD 1', self::$dmUser)->call();
 
-        $arrayResponse = json_decode($response->getContent());
+        $arrayResponse = json_decode($this->getResponseContent($response));
 
         $this->assertInternalType('object', $arrayResponse);
 
@@ -129,7 +129,7 @@ class CoaListsTest extends TestCommon
 
         $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issuesbycodes/fr/DDDDD 1', self::$dmUser)->call();
 
-        $arrayResponse = json_decode($response->getContent());
+        $arrayResponse = json_decode($this->getResponseContent($response));
         $this->assertEquals([], $arrayResponse);
     }
 }

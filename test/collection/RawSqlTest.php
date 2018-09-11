@@ -40,7 +40,7 @@ class RawSqlTest extends TestCommon
             'db'    => DmServer::CONFIG_DB_KEY_DM
         ])->call();
 
-        $objectResponse = json_decode($response->getContent(), true);
+        $objectResponse = json_decode($this->getResponseContent($response), true);
 
         $this->assertInternalType('array', $objectResponse);
         $this->assertCount(3, $objectResponse);
@@ -55,8 +55,10 @@ class RawSqlTest extends TestCommon
             'db'    => DmServer::CONFIG_DB_KEY_DM
         ])->call();
 
-        $this->assertEquals(Response::HTTP_INTERNAL_SERVER_ERROR, $response->getStatusCode());
-        $this->assertStringStartsWith('An exception occurred while executing', $response->getContent());
+        $this->assertUnsuccessfulResponse($response, function(Response $response) {
+            $this->assertEquals(Response::HTTP_INTERNAL_SERVER_ERROR, $response->getStatusCode());
+            $this->assertStringStartsWith('An exception occurred while executing', $response->getContent());
+        });
     }
 
     public function testRawSqlMultipleStatements() {
@@ -66,7 +68,9 @@ class RawSqlTest extends TestCommon
         ])
             ->call();
 
-        $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
-        $this->assertEquals($response->getContent(), 'Raw queries shouldn\'t contain the ";" symbol');
+        $this->assertUnsuccessfulResponse($response, function(Response $response) {
+            $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+            $this->assertEquals('Raw queries shouldn\'t contain the ";" symbol', $response->getContent());
+        });
     }
 }

@@ -7,13 +7,13 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * ImagesMyfonts
  *
- * @ORM\Table(name="images_myfonts", uniqueConstraints={@ORM\UniqueConstraint(name="images_myfonts_ID_uindex", columns={"ID"})})
+ * @ORM\Table(name="images_myfonts")
  * @ORM\Entity
  */
 class ImagesMyfonts extends \Edgecreator\Models\BaseModel
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ID", type="integer", nullable=false)
      * @ORM\Id
@@ -22,42 +22,42 @@ class ImagesMyfonts extends \Edgecreator\Models\BaseModel
     private $id;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="Font", type="string", length=150, nullable=true)
      */
     private $font;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="Color", type="string", length=10, nullable=true)
      */
     private $color;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="ColorBG", type="string", length=10, nullable=true)
      */
     private $colorbg;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="Width", type="string", length=7, nullable=true)
      */
     private $width;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="Texte", type="string", length=150, nullable=true)
      */
     private $texte;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="Precision_", type="string", length=5, nullable=true)
      */
@@ -66,9 +66,9 @@ class ImagesMyfonts extends \Edgecreator\Models\BaseModel
 
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -76,13 +76,13 @@ class ImagesMyfonts extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Set font
+     * Set font.
      *
-     * @param string $font
+     * @param string|null $font
      *
      * @return ImagesMyfonts
      */
-    public function setFont($font)
+    public function setFont($font = null)
     {
         $this->font = $font;
 
@@ -90,9 +90,9 @@ class ImagesMyfonts extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Get font
+     * Get font.
      *
-     * @return string
+     * @return string|null
      */
     public function getFont()
     {
@@ -100,13 +100,13 @@ class ImagesMyfonts extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Set color
+     * Set color.
      *
-     * @param string $color
+     * @param string|null $color
      *
      * @return ImagesMyfonts
      */
-    public function setColor($color)
+    public function setColor($color = null)
     {
         $this->color = $color;
 
@@ -114,9 +114,9 @@ class ImagesMyfonts extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Get color
+     * Get color.
      *
-     * @return string
+     * @return string|null
      */
     public function getColor()
     {
@@ -124,13 +124,13 @@ class ImagesMyfonts extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Set colorbg
+     * Set colorbg.
      *
-     * @param string $colorbg
+     * @param string|null $colorbg
      *
      * @return ImagesMyfonts
      */
-    public function setColorbg($colorbg)
+    public function setColorbg($colorbg = null)
     {
         $this->colorbg = $colorbg;
 
@@ -138,9 +138,9 @@ class ImagesMyfonts extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Get colorbg
+     * Get colorbg.
      *
-     * @return string
+     * @return string|null
      */
     public function getColorbg()
     {
@@ -148,13 +148,13 @@ class ImagesMyfonts extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Set width
+     * Set width.
      *
-     * @param string $width
+     * @param string|null $width
      *
      * @return ImagesMyfonts
      */
-    public function setWidth($width)
+    public function setWidth($width = null)
     {
         $this->width = $width;
 
@@ -162,9 +162,9 @@ class ImagesMyfonts extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Get width
+     * Get width.
      *
-     * @return string
+     * @return string|null
      */
     public function getWidth()
     {
@@ -172,13 +172,13 @@ class ImagesMyfonts extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Set texte
+     * Set texte.
      *
-     * @param string $texte
+     * @param string|null $texte
      *
      * @return ImagesMyfonts
      */
-    public function setTexte($texte)
+    public function setTexte($texte = null)
     {
         $this->texte = $texte;
 
@@ -186,9 +186,9 @@ class ImagesMyfonts extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Get texte
+     * Get texte.
      *
-     * @return string
+     * @return string|null
      */
     public function getTexte()
     {
@@ -196,13 +196,13 @@ class ImagesMyfonts extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Set precision
+     * Set precision.
      *
-     * @param string $precision
+     * @param string|null $precision
      *
      * @return ImagesMyfonts
      */
-    public function setPrecision($precision)
+    public function setPrecision($precision = null)
     {
         $this->precision = $precision;
 
@@ -210,9 +210,9 @@ class ImagesMyfonts extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Get precision
+     * Get precision.
      *
-     * @return string
+     * @return string|null
      */
     public function getPrecision()
     {

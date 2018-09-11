@@ -25,7 +25,7 @@ class StatusTest extends TestCommon
             ])
         );
 
-        $this->assertEquals('Pastec OK with 3 images indexed', $response->getContent());
+        $this->assertEquals('Pastec OK with 3 images indexed', $this->getResponseContent($response));
     }
 
     public function testGetCoverIdStatusInvalidHost() {
@@ -34,7 +34,9 @@ class StatusTest extends TestCommon
             json_encode([])
         );
 
-        $this->assertEquals('Invalid Pastec host : invalidpastechost', $response->getContent());
+        $this->assertUnsuccessfulResponse($response, function(Response $response) {
+            $this->assertEquals('Invalid Pastec host : invalidpastechost', $response->getContent());
+        });
     }
 
     public function testGetCoverIdStatusNoCoverData() {
@@ -46,7 +48,9 @@ class StatusTest extends TestCommon
             ])
         );
 
-        $this->assertEquals('Pastec has no images indexed', $response->getContent());
+        $this->assertUnsuccessfulResponse($response, function(Response $response) {
+            $this->assertEquals('Pastec has no images indexed', $response->getContent());
+        });
     }
 
     public function testGetCoverIdStatusInvalidCoverData() {
@@ -58,7 +62,9 @@ class StatusTest extends TestCommon
             ])
         );
 
-        $this->assertEquals('Invalid return type : INVALID_TYPE', $response->getContent());
+        $this->assertUnsuccessfulResponse($response, function(Response $response) {
+            $this->assertEquals('Invalid return type : INVALID_TYPE', $response->getContent());
+        });
     }
 
     public function testGetCoverIdStatusUnreachable() {
@@ -67,7 +73,9 @@ class StatusTest extends TestCommon
             json_encode(null)
         );
 
-        $this->assertEquals('Pastec is unreachable', $response->getContent());
+        $this->assertUnsuccessfulResponse($response, function(Response $response) {
+            $this->assertEquals('Pastec is unreachable', $response->getContent());
+        });
     }
 
     public function testGetDbStatus() {
@@ -80,7 +88,7 @@ class StatusTest extends TestCommon
 
         $response = $this->buildAuthenticatedService('/status/db', self::$dmUser, [], [], 'GET')->call();
 
-        $this->assertEquals('OK for all databases', $response->getContent());
+        $this->assertEquals('OK for all databases', $this->getResponseContent($response));
     }
 
     public function testGetDbStatusMissingCoaData() {
@@ -91,7 +99,9 @@ class StatusTest extends TestCommon
 
         $response = $this->buildAuthenticatedService('/status/db', self::$dmUser, [], [], 'GET')->call();
 
-        $this->assertContains('Error for db_coa', $response->getContent());
+        $this->assertUnsuccessfulResponse($response, function(Response $response) {
+            $this->assertContains('Error for db_coa', $response->getContent());
+        });
     }
 
     public function testGetDbStatusDBDown() {
@@ -99,7 +109,9 @@ class StatusTest extends TestCommon
 
         try {
             $response = $this->buildAuthenticatedService('/status/db', self::$dmUser, [], [], 'GET')->call();
-            $this->assertContains('Error for db_coa : JSON cannot be decoded', $response->getContent());
+            $this->assertUnsuccessfulResponse($response, function(Response $response) {
+                $this->assertContains('Error for db_coa : JSON cannot be decoded', $response->getContent());
+            });
         }
         finally {
             self::recreateSchema(DmServer::CONFIG_DB_KEY_COA);

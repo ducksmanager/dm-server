@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 class ImagesTranches extends \Edgecreator\Models\BaseModel
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ID", type="integer", nullable=false)
      * @ORM\Id
@@ -22,21 +22,21 @@ class ImagesTranches extends \Edgecreator\Models\BaseModel
     private $id;
 
     /**
-     * @var integer
+     * @var int|null
      *
      * @ORM\Column(name="ID_Utilisateur", type="integer", nullable=true)
      */
     private $idUtilisateur;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="Hash", type="string", length=40, nullable=true)
      */
     private $hash;
 
     /**
-     * @var \DateTime
+     * @var \DateTime|null
      *
      * @ORM\Column(name="DateHeure", type="datetime", nullable=true)
      */
@@ -52,9 +52,9 @@ class ImagesTranches extends \Edgecreator\Models\BaseModel
 
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -62,13 +62,13 @@ class ImagesTranches extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Set idUtilisateur
+     * Set idUtilisateur.
      *
-     * @param integer $idUtilisateur
+     * @param int|null $idUtilisateur
      *
      * @return ImagesTranches
      */
-    public function setIdUtilisateur($idUtilisateur)
+    public function setIdUtilisateur($idUtilisateur = null)
     {
         $this->idUtilisateur = $idUtilisateur;
 
@@ -76,9 +76,9 @@ class ImagesTranches extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Get idUtilisateur
+     * Get idUtilisateur.
      *
-     * @return integer
+     * @return int|null
      */
     public function getIdUtilisateur()
     {
@@ -86,13 +86,13 @@ class ImagesTranches extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Set hash
+     * Set hash.
      *
-     * @param string $hash
+     * @param string|null $hash
      *
      * @return ImagesTranches
      */
-    public function setHash($hash)
+    public function setHash($hash = null)
     {
         $this->hash = $hash;
 
@@ -100,9 +100,9 @@ class ImagesTranches extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Get hash
+     * Get hash.
      *
-     * @return string
+     * @return string|null
      */
     public function getHash()
     {
@@ -110,13 +110,13 @@ class ImagesTranches extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Set dateheure
+     * Set dateheure.
      *
-     * @param \DateTime $dateheure
+     * @param \DateTime|null $dateheure
      *
      * @return ImagesTranches
      */
-    public function setDateheure($dateheure)
+    public function setDateheure($dateheure = null)
     {
         $this->dateheure = $dateheure;
 
@@ -124,9 +124,9 @@ class ImagesTranches extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Get dateheure
+     * Get dateheure.
      *
-     * @return \DateTime
+     * @return \DateTime|null
      */
     public function getDateheure()
     {
@@ -134,7 +134,7 @@ class ImagesTranches extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Set nomfichier
+     * Set nomfichier.
      *
      * @param string $nomfichier
      *
@@ -148,7 +148,7 @@ class ImagesTranches extends \Edgecreator\Models\BaseModel
     }
 
     /**
-     * Get nomfichier
+     * Get nomfichier.
      *
      * @return string
      */

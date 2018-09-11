@@ -94,6 +94,7 @@ class InternalController extends AbstractController
             $model->setNumero($issueNumber);
             $model->setUsername($isEditor === '1' ? self::getSessionUser($app)['username'] : null);
             $model->setActive(true);
+            $model->setPretepourpublication(false);
 
             $ecEm->persist($model);
             $ecEm->flush();
@@ -394,7 +395,7 @@ class InternalController extends AbstractController
                 ->from(TranchesEnCoursModeles::class, 'modeles')
                 ->leftJoin('modeles.contributeurs', 'helperusers')
                 ->leftJoin('modeles.photos', 'photos')
-                ->leftJoin('photos.image', 'image')
+                ->leftJoin('photos.idImage', 'image')
                 ->andWhere('modeles.active = :active')
                 ->setParameter(':active', true)
                 ->andWhere('modeles.username = :username or helperusers.idUtilisateur = :usernameid')
@@ -636,7 +637,7 @@ class InternalController extends AbstractController
                     $photographer = new TranchesEnCoursContributeurs();
                     $photographer->setContribution('photographe');
                     $photographer->setIdUtilisateur($contributorsIds[$photographUsername]);
-                    $photographer->setModele($model);
+                    $photographer->setIdModele($model);
 
                     return $photographer;
                 }, array_values(array_unique($photographers))));
@@ -646,7 +647,7 @@ class InternalController extends AbstractController
                     $designer = new TranchesEnCoursContributeurs();
                     $designer->setContribution('createur');
                     $designer->setIdUtilisateur($contributorsIds[$designorUsername]);
-                    $designer->setModele($model);
+                    $designer->setIdModele($model);
 
                     return $designer;
                 }, array_values(array_unique($designers))));
@@ -654,7 +655,7 @@ class InternalController extends AbstractController
 
             $qbDeleteExistingContributors = $ecEm->createQueryBuilder();
             $qbDeleteExistingContributors->delete(TranchesEnCoursContributeurs::class, 'existingContributors')
-                ->where($qb->expr()->eq('existingContributors.modele', ':modelId'))
+                ->where($qb->expr()->eq('existingContributors.idModele', ':modelId'))
                 ->setParameter(':modelId', $modelId);
             $qbDeleteExistingContributors->getQuery()->execute();
 
@@ -697,7 +698,7 @@ class InternalController extends AbstractController
             $helperUsers = $model->getContributeurs();
 
             $photographer = new TranchesEnCoursContributeurs();
-            $photographer->setModele($model);
+            $photographer->setIdModele($model);
             $photographer->setContribution('photographe');
             $photographer->setIdUtilisateur(self::getSessionUser($app)['id']);
             $model->setContributeurs(array_merge($helperUsers->toArray(), [$photographer]));
@@ -713,8 +714,8 @@ class InternalController extends AbstractController
 
             $photoAndEdge = new TranchesEnCoursModelesImages();
             $photoAndEdge
-                ->setImage($mainPhoto)
-                ->setModele($model)
+                ->setIdImage($mainPhoto)
+                ->setIdModele($model)
                 ->setEstphotoprincipale(true);
             $ecEm->persist($photoAndEdge);
 
@@ -740,8 +741,8 @@ class InternalController extends AbstractController
 
             $qb->select('photo.id, photo.nomfichier')
                 ->from(TranchesEnCoursModelesImages::class, 'modelsPhotos')
-                ->innerJoin('modelsPhotos.modele', 'model')
-                ->innerJoin('modelsPhotos.image', 'photo')
+                ->innerJoin('modelsPhotos.idModele', 'model')
+                ->innerJoin('modelsPhotos.idImage', 'photo')
                 ->andWhere('model.id = :modelId')
                 ->setParameter(':modelId', $modelId)
                 ->andWhere('modelsPhotos.estphotoprincipale = 1');

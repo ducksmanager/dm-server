@@ -138,7 +138,7 @@ class UserTest extends TestCommon
         $today = $today->format('Y-m-d');
         $response = $this->buildAuthenticatedServiceWithTestUser("/user/sale/$otherUsername/$today", self::$dmUser, 'GET')->call();
 
-        $objectResponse = json_decode($response->getContent());
+        $objectResponse = json_decode($this->getResponseContent($response));
 
         $this->assertCount(1, $objectResponse);
         /** @var EmailsVentes $access */

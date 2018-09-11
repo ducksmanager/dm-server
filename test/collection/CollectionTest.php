@@ -62,7 +62,7 @@ class CollectionTest extends TestCommon
 
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
 
-        $responseObject = json_decode($response->getContent());
+        $responseObject = json_decode($this->getResponseContent($response));
         $this->assertNotNull($responseObject);
 
         $this->assertEquals('UPDATE', $responseObject[0]->action);
@@ -97,7 +97,7 @@ class CollectionTest extends TestCommon
         ])->call();
 
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
-        $responseObject = json_decode($response->getContent());
+        $responseObject = json_decode($this->getResponseContent($response));
         $this->assertNotNull($responseObject);
 
         $this->assertEquals('DELETE', $responseObject[0]->action);
@@ -121,7 +121,7 @@ class CollectionTest extends TestCommon
         ])->call();
 
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
-        $responseObject = json_decode($response->getContent());
+        $responseObject = json_decode($this->getResponseContent($response));
         $this->assertNotNull($responseObject);
 
         $this->assertEquals('UPDATE', $responseObject[0]->action);
@@ -157,7 +157,7 @@ class CollectionTest extends TestCommon
 
         $response = $this->buildAuthenticatedServiceWithTestUser('/collection/issues', self::$dmUser)->call();
 
-        $objectResponse = json_decode($response->getContent());
+        $objectResponse = json_decode($this->getResponseContent($response));
 
         $this->assertInternalType('object', $objectResponse);
 
@@ -232,7 +232,7 @@ class CollectionTest extends TestCommon
         self::setSessionUser($this->app, $user);
 
         $response = $this->buildAuthenticatedServiceWithTestUser('/collection/externalaccess', self::$dmUser, 'PUT')->call();
-        $objectResponse = json_decode($response->getContent());
+        $objectResponse = json_decode($this->getResponseContent($response));
 
         $this->assertObjectHasAttribute('key', $objectResponse);
         $this->assertRegExp('#[a-zA-Z]+#', $objectResponse->key);

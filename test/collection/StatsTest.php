@@ -16,7 +16,7 @@ class StatsTest extends TestCommon
     public function testGetWatchedAuthors() {
         $response = $this->buildAuthenticatedServiceWithTestUser('/collection/stats/watchedauthorsstorycount', self::$dmUser)->call();
 
-        $objectResponse = json_decode($response->getContent());
+        $objectResponse = json_decode($this->getResponseContent($response));
         $this->assertInternalType('object', $objectResponse);
         $this->assertCount(2, get_object_vars($objectResponse));
         $this->assertEquals('CB', array_keys(get_object_vars($objectResponse))[0]);
@@ -33,7 +33,7 @@ class StatsTest extends TestCommon
     public function testGetSuggestions() {
         $response = $this->buildAuthenticatedServiceWithTestUser('/collection/stats/suggestedissues', self::$dmUser)->call();
 
-        $objectResponse = json_decode($response->getContent());
+        $objectResponse = json_decode($this->getResponseContent($response));
         $this->assertInternalType('object', $objectResponse);
 
         $this->assertEquals(2, $objectResponse->minScore);
@@ -89,7 +89,7 @@ class StatsTest extends TestCommon
     public function testGetSuggestionsCountryFilter() {
         $response = $this->buildAuthenticatedServiceWithTestUser('/collection/stats/suggestedissues/fr', self::$dmUser)->call();
 
-        $objectResponse = json_decode($response->getContent());
+        $objectResponse = json_decode($this->getResponseContent($response));
         $this->assertInternalType('object', $objectResponse);
         $this->assertCount(2, get_object_vars($objectResponse->issues));
 
