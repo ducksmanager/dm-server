@@ -7,207 +7,200 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * InducksEntry
  *
- * @ORM\Table(name="inducks_entry", indexes={@ORM\Index(name="inducks_entry_pk_entrycode", columns={"entrycode"}), @ORM\Index(name="inducks_entry_fk_issuecode", columns={"issuecode"}), @ORM\Index(name="inducks_entry_fk_storyversioncode", columns={"storyversioncode"}), @ORM\Index(name="inducks_entry_fk_languagecode", columns={"languagecode"}), @ORM\Index(name="inducks_entry_fk_includedinentrycode", columns={"includedinentrycode"}), @ORM\Index(name="inducks_entry_fk_position", columns={"position"}), @ORM\Index(name="entryTitleFullText", columns={"title"})})
+ * @ORM\Table(name="inducks_entry", indexes={@ORM\Index(name="fk_inducks_entry0", columns={"issuecode"}), @ORM\Index(name="fk_inducks_entry1", columns={"storyversioncode"}), @ORM\Index(name="fk_inducks_entry2", columns={"languagecode"}), @ORM\Index(name="fk_inducks_entry3", columns={"includedinentrycode"}), @ORM\Index(name="fk_inducks_entry4", columns={"position"}), @ORM\Index(name="entryTitleFullText", columns={"title"})})
  * @ORM\Entity
  */
 class InducksEntry extends \Coa\Models\BaseModel
 {
     /**
-     * @var integer
-     *
-     * @ORM\Column(name="id", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
-    private $id;
-
-    /**
      * @var string
      *
-     * @ORM\Column(name="entrycode", type="string", length=22, nullable=true)
+     * @ORM\Column(name="entrycode", type="string", length=22, nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
      */
     private $entrycode;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="issuecode", type="string", length=17, nullable=true)
      */
     private $issuecode;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="storyversioncode", type="string", length=19, nullable=true)
      */
     private $storyversioncode;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="languagecode", type="string", length=7, nullable=true)
      */
     private $languagecode;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="includedinentrycode", type="string", length=19, nullable=true)
      */
     private $includedinentrycode;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="position", type="string", length=7, nullable=true)
+     * @ORM\Column(name="position", type="string", length=9, nullable=true)
      */
     private $position;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="printedcode", type="string", length=88, nullable=true)
      */
     private $printedcode;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="guessedcode", type="string", length=39, nullable=true)
      */
     private $guessedcode;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="title", type="string", length=235, nullable=true)
      */
     private $title;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="reallytitle", type="string", nullable=true)
+     * @ORM\Column(name="reallytitle", type="string", length=0, nullable=true)
      */
     private $reallytitle;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="printedhero", type="string", length=259, nullable=true)
+     * @ORM\Column(name="printedhero", type="string", length=96, nullable=true)
      */
     private $printedhero;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="changes", type="string", length=628, nullable=true)
      */
     private $changes;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="cut", type="string", length=100, nullable=true)
+     * @ORM\Column(name="cut", type="string", length=104, nullable=true)
      */
     private $cut;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="minorchanges", type="string", length=558, nullable=true)
      */
     private $minorchanges;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="missingpanels", type="string", length=2, nullable=true)
      */
     private $missingpanels;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="mirrored", type="string", nullable=true)
+     * @ORM\Column(name="mirrored", type="string", length=0, nullable=true)
      */
     private $mirrored;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="sideways", type="string", nullable=true)
+     * @ORM\Column(name="sideways", type="string", length=0, nullable=true)
      */
     private $sideways;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="startdate", type="string", length=10, nullable=true)
      */
     private $startdate;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="enddate", type="string", length=10, nullable=true)
      */
     private $enddate;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="identificationuncertain", type="string", nullable=true)
+     * @ORM\Column(name="identificationuncertain", type="string", length=0, nullable=true)
      */
     private $identificationuncertain;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="alsoreprint", type="string", length=99, nullable=true)
+     * @ORM\Column(name="alsoreprint", type="string", length=111, nullable=true)
      */
     private $alsoreprint;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="part", type="string", length=5, nullable=true)
      */
     private $part;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="entrycomment", type="string", length=1715, nullable=true)
      */
     private $entrycomment;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="error", type="string", nullable=true)
+     * @ORM\Column(name="error", type="string", length=0, nullable=true)
      */
     private $error;
 
-    /**
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
+
 
     /**
-     * @param int $id
+     * Set entrycode.
+     *
+     * @param string|null $entrycode
+     *
      * @return InducksEntry
      */
-    public function setId($id)
+    public function setEntrycode($entrycode = null)
     {
-        $this->id = $id;
+        $this->entrycode = $entrycode;
+
         return $this;
     }
 
     /**
+     * Get entrycode.
+     *
      * @return string
      */
     public function getEntrycode()
@@ -216,17 +209,23 @@ class InducksEntry extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param string $entrycode
+     * Set issuecode.
+     *
+     * @param string|null $issuecode
+     *
      * @return InducksEntry
      */
-    public function setEntrycode($entrycode)
+    public function setIssuecode($issuecode = null)
     {
-        $this->entrycode = $entrycode;
+        $this->issuecode = $issuecode;
+
         return $this;
     }
 
     /**
-     * @return string
+     * Get issuecode.
+     *
+     * @return string|null
      */
     public function getIssuecode()
     {
@@ -234,17 +233,23 @@ class InducksEntry extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param string $issuecode
+     * Set storyversioncode.
+     *
+     * @param string|null $storyversioncode
+     *
      * @return InducksEntry
      */
-    public function setIssuecode($issuecode)
+    public function setStoryversioncode($storyversioncode = null)
     {
-        $this->issuecode = $issuecode;
+        $this->storyversioncode = $storyversioncode;
+
         return $this;
     }
 
     /**
-     * @return string
+     * Get storyversioncode.
+     *
+     * @return string|null
      */
     public function getStoryversioncode()
     {
@@ -252,17 +257,23 @@ class InducksEntry extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param string $storyversioncode
+     * Set languagecode.
+     *
+     * @param string|null $languagecode
+     *
      * @return InducksEntry
      */
-    public function setStoryversioncode($storyversioncode)
+    public function setLanguagecode($languagecode = null)
     {
-        $this->storyversioncode = $storyversioncode;
+        $this->languagecode = $languagecode;
+
         return $this;
     }
 
     /**
-     * @return string
+     * Get languagecode.
+     *
+     * @return string|null
      */
     public function getLanguagecode()
     {
@@ -270,17 +281,23 @@ class InducksEntry extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param string $languagecode
+     * Set includedinentrycode.
+     *
+     * @param string|null $includedinentrycode
+     *
      * @return InducksEntry
      */
-    public function setLanguagecode($languagecode)
+    public function setIncludedinentrycode($includedinentrycode = null)
     {
-        $this->languagecode = $languagecode;
+        $this->includedinentrycode = $includedinentrycode;
+
         return $this;
     }
 
     /**
-     * @return string
+     * Get includedinentrycode.
+     *
+     * @return string|null
      */
     public function getIncludedinentrycode()
     {
@@ -288,17 +305,23 @@ class InducksEntry extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param string $includedinentrycode
+     * Set position.
+     *
+     * @param string|null $position
+     *
      * @return InducksEntry
      */
-    public function setIncludedinentrycode($includedinentrycode)
+    public function setPosition($position = null)
     {
-        $this->includedinentrycode = $includedinentrycode;
+        $this->position = $position;
+
         return $this;
     }
 
     /**
-     * @return string
+     * Get position.
+     *
+     * @return string|null
      */
     public function getPosition()
     {
@@ -306,17 +329,23 @@ class InducksEntry extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param string $position
+     * Set printedcode.
+     *
+     * @param string|null $printedcode
+     *
      * @return InducksEntry
      */
-    public function setPosition($position)
+    public function setPrintedcode($printedcode = null)
     {
-        $this->position = $position;
+        $this->printedcode = $printedcode;
+
         return $this;
     }
 
     /**
-     * @return string
+     * Get printedcode.
+     *
+     * @return string|null
      */
     public function getPrintedcode()
     {
@@ -324,17 +353,23 @@ class InducksEntry extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param string $printedcode
+     * Set guessedcode.
+     *
+     * @param string|null $guessedcode
+     *
      * @return InducksEntry
      */
-    public function setPrintedcode($printedcode)
+    public function setGuessedcode($guessedcode = null)
     {
-        $this->printedcode = $printedcode;
+        $this->guessedcode = $guessedcode;
+
         return $this;
     }
 
     /**
-     * @return string
+     * Get guessedcode.
+     *
+     * @return string|null
      */
     public function getGuessedcode()
     {
@@ -342,17 +377,23 @@ class InducksEntry extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param string $guessedcode
+     * Set title.
+     *
+     * @param string|null $title
+     *
      * @return InducksEntry
      */
-    public function setGuessedcode($guessedcode)
+    public function setTitle($title = null)
     {
-        $this->guessedcode = $guessedcode;
+        $this->title = $title;
+
         return $this;
     }
 
     /**
-     * @return string
+     * Get title.
+     *
+     * @return string|null
      */
     public function getTitle()
     {
@@ -360,17 +401,23 @@ class InducksEntry extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param string $title
+     * Set reallytitle.
+     *
+     * @param string|null $reallytitle
+     *
      * @return InducksEntry
      */
-    public function setTitle($title)
+    public function setReallytitle($reallytitle = null)
     {
-        $this->title = $title;
+        $this->reallytitle = $reallytitle;
+
         return $this;
     }
 
     /**
-     * @return string
+     * Get reallytitle.
+     *
+     * @return string|null
      */
     public function getReallytitle()
     {
@@ -378,17 +425,23 @@ class InducksEntry extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param string $reallytitle
+     * Set printedhero.
+     *
+     * @param string|null $printedhero
+     *
      * @return InducksEntry
      */
-    public function setReallytitle($reallytitle)
+    public function setPrintedhero($printedhero = null)
     {
-        $this->reallytitle = $reallytitle;
+        $this->printedhero = $printedhero;
+
         return $this;
     }
 
     /**
-     * @return string
+     * Get printedhero.
+     *
+     * @return string|null
      */
     public function getPrintedhero()
     {
@@ -396,17 +449,23 @@ class InducksEntry extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param string $printedhero
+     * Set changes.
+     *
+     * @param string|null $changes
+     *
      * @return InducksEntry
      */
-    public function setPrintedhero($printedhero)
+    public function setChanges($changes = null)
     {
-        $this->printedhero = $printedhero;
+        $this->changes = $changes;
+
         return $this;
     }
 
     /**
-     * @return string
+     * Get changes.
+     *
+     * @return string|null
      */
     public function getChanges()
     {
@@ -414,17 +473,23 @@ class InducksEntry extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param string $changes
+     * Set cut.
+     *
+     * @param string|null $cut
+     *
      * @return InducksEntry
      */
-    public function setChanges($changes)
+    public function setCut($cut = null)
     {
-        $this->changes = $changes;
+        $this->cut = $cut;
+
         return $this;
     }
 
     /**
-     * @return string
+     * Get cut.
+     *
+     * @return string|null
      */
     public function getCut()
     {
@@ -432,17 +497,23 @@ class InducksEntry extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param string $cut
+     * Set minorchanges.
+     *
+     * @param string|null $minorchanges
+     *
      * @return InducksEntry
      */
-    public function setCut($cut)
+    public function setMinorchanges($minorchanges = null)
     {
-        $this->cut = $cut;
+        $this->minorchanges = $minorchanges;
+
         return $this;
     }
 
     /**
-     * @return string
+     * Get minorchanges.
+     *
+     * @return string|null
      */
     public function getMinorchanges()
     {
@@ -450,17 +521,23 @@ class InducksEntry extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param string $minorchanges
+     * Set missingpanels.
+     *
+     * @param string|null $missingpanels
+     *
      * @return InducksEntry
      */
-    public function setMinorchanges($minorchanges)
+    public function setMissingpanels($missingpanels = null)
     {
-        $this->minorchanges = $minorchanges;
+        $this->missingpanels = $missingpanels;
+
         return $this;
     }
 
     /**
-     * @return string
+     * Get missingpanels.
+     *
+     * @return string|null
      */
     public function getMissingpanels()
     {
@@ -468,17 +545,23 @@ class InducksEntry extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param string $missingpanels
+     * Set mirrored.
+     *
+     * @param string|null $mirrored
+     *
      * @return InducksEntry
      */
-    public function setMissingpanels($missingpanels)
+    public function setMirrored($mirrored = null)
     {
-        $this->missingpanels = $missingpanels;
+        $this->mirrored = $mirrored;
+
         return $this;
     }
 
     /**
-     * @return string
+     * Get mirrored.
+     *
+     * @return string|null
      */
     public function getMirrored()
     {
@@ -486,17 +569,23 @@ class InducksEntry extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param string $mirrored
+     * Set sideways.
+     *
+     * @param string|null $sideways
+     *
      * @return InducksEntry
      */
-    public function setMirrored($mirrored)
+    public function setSideways($sideways = null)
     {
-        $this->mirrored = $mirrored;
+        $this->sideways = $sideways;
+
         return $this;
     }
 
     /**
-     * @return string
+     * Get sideways.
+     *
+     * @return string|null
      */
     public function getSideways()
     {
@@ -504,17 +593,23 @@ class InducksEntry extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param string $sideways
+     * Set startdate.
+     *
+     * @param string|null $startdate
+     *
      * @return InducksEntry
      */
-    public function setSideways($sideways)
+    public function setStartdate($startdate = null)
     {
-        $this->sideways = $sideways;
+        $this->startdate = $startdate;
+
         return $this;
     }
 
     /**
-     * @return string
+     * Get startdate.
+     *
+     * @return string|null
      */
     public function getStartdate()
     {
@@ -522,17 +617,23 @@ class InducksEntry extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param string $startdate
+     * Set enddate.
+     *
+     * @param string|null $enddate
+     *
      * @return InducksEntry
      */
-    public function setStartdate($startdate)
+    public function setEnddate($enddate = null)
     {
-        $this->startdate = $startdate;
+        $this->enddate = $enddate;
+
         return $this;
     }
 
     /**
-     * @return string
+     * Get enddate.
+     *
+     * @return string|null
      */
     public function getEnddate()
     {
@@ -540,17 +641,23 @@ class InducksEntry extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param string $enddate
+     * Set identificationuncertain.
+     *
+     * @param string|null $identificationuncertain
+     *
      * @return InducksEntry
      */
-    public function setEnddate($enddate)
+    public function setIdentificationuncertain($identificationuncertain = null)
     {
-        $this->enddate = $enddate;
+        $this->identificationuncertain = $identificationuncertain;
+
         return $this;
     }
 
     /**
-     * @return string
+     * Get identificationuncertain.
+     *
+     * @return string|null
      */
     public function getIdentificationuncertain()
     {
@@ -558,17 +665,23 @@ class InducksEntry extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param string $identificationuncertain
+     * Set alsoreprint.
+     *
+     * @param string|null $alsoreprint
+     *
      * @return InducksEntry
      */
-    public function setIdentificationuncertain($identificationuncertain)
+    public function setAlsoreprint($alsoreprint = null)
     {
-        $this->identificationuncertain = $identificationuncertain;
+        $this->alsoreprint = $alsoreprint;
+
         return $this;
     }
 
     /**
-     * @return string
+     * Get alsoreprint.
+     *
+     * @return string|null
      */
     public function getAlsoreprint()
     {
@@ -576,17 +689,23 @@ class InducksEntry extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param string $alsoreprint
+     * Set part.
+     *
+     * @param string|null $part
+     *
      * @return InducksEntry
      */
-    public function setAlsoreprint($alsoreprint)
+    public function setPart($part = null)
     {
-        $this->alsoreprint = $alsoreprint;
+        $this->part = $part;
+
         return $this;
     }
 
     /**
-     * @return string
+     * Get part.
+     *
+     * @return string|null
      */
     public function getPart()
     {
@@ -594,17 +713,23 @@ class InducksEntry extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param string $part
+     * Set entrycomment.
+     *
+     * @param string|null $entrycomment
+     *
      * @return InducksEntry
      */
-    public function setPart($part)
+    public function setEntrycomment($entrycomment = null)
     {
-        $this->part = $part;
+        $this->entrycomment = $entrycomment;
+
         return $this;
     }
 
     /**
-     * @return string
+     * Get entrycomment.
+     *
+     * @return string|null
      */
     public function getEntrycomment()
     {
@@ -612,31 +737,26 @@ class InducksEntry extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param string $entrycomment
+     * Set error.
+     *
+     * @param string|null $error
+     *
      * @return InducksEntry
      */
-    public function setEntrycomment($entrycomment)
+    public function setError($error = null)
     {
-        $this->entrycomment = $entrycomment;
+        $this->error = $error;
+
         return $this;
     }
 
     /**
-     * @return string
+     * Get error.
+     *
+     * @return string|null
      */
     public function getError()
     {
         return $this->error;
     }
-
-    /**
-     * @param string $error
-     * @return InducksEntry
-     */
-    public function setError($error)
-    {
-        $this->error = $error;
-        return $this;
-    }
 }
-

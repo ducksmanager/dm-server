@@ -510,12 +510,14 @@ class TestCommon extends WebTestCase {
             self::$testStoryversions['W WDC  31-05'] = new InducksStoryversion();
             $coaEntityManager->persist(
                 self::$testStoryversions['W WDC  31-05']
+                    ->setStoryversioncode('W WDC  31-05')
                     ->setStorycode('W WDC  31-05')
             );
 
             self::$testStoryversions['de/SPBL 136c'] = new InducksStoryversion();
             $coaEntityManager->persist(
-                self::$testStoryversions['W WDC  31-05']
+                self::$testStoryversions['de/SPBL 136c']
+                    ->setStoryversioncode('de/SPBL 136c')
                     ->setStorycode('W WDC  31-05')
             );
 

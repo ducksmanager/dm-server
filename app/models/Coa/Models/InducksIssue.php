@@ -22,161 +22,142 @@ class InducksIssue extends \Coa\Models\BaseModel
     private $issuecode;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="issuerangecode", type="string", length=14, nullable=true)
+     * @ORM\Column(name="issuerangecode", type="string", length=15, nullable=true)
      */
     private $issuerangecode;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="publicationcode", type="string", length=12, nullable=true)
      */
     private $publicationcode;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="issuenumber", type="string", length=12, nullable=true)
      */
     private $issuenumber;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="title", type="string", length=158, nullable=true)
      */
     private $title;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="size", type="string", length=61, nullable=true)
      */
     private $size;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="pages", type="string", length=82, nullable=true)
      */
     private $pages;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="price", type="string", length=99, nullable=true)
+     * @ORM\Column(name="price", type="string", length=160, nullable=true)
      */
     private $price;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="printrun", type="string", length=142, nullable=true)
      */
     private $printrun;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="attached", type="string", length=288, nullable=true)
      */
     private $attached;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="oldestdate", type="string", length=10, nullable=true)
      */
     private $oldestdate;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="fullyindexed", type="string", nullable=true)
+     * @ORM\Column(name="fullyindexed", type="string", length=0, nullable=true)
      */
     private $fullyindexed;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="issuecomment", type="string", length=1270, nullable=true)
      */
     private $issuecomment;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="error", type="string", nullable=true)
+     * @ORM\Column(name="error", type="string", length=0, nullable=true)
      */
     private $error;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="filledoldestdate", type="string", length=10, nullable=true)
      */
     private $filledoldestdate;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="locked", type="string", nullable=true)
+     * @ORM\Column(name="locked", type="string", length=0, nullable=true)
      */
     private $locked;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="inxforbidden", type="string", nullable=true)
+     * @ORM\Column(name="inxforbidden", type="string", length=0, nullable=true)
      */
     private $inxforbidden;
 
     /**
-     * @var integer
+     * @var int|null
      *
      * @ORM\Column(name="inputfilecode", type="integer", nullable=true)
      */
     private $inputfilecode;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="maintenanceteamcode", type="string", length=8, nullable=true)
      */
     private $maintenanceteamcode;
 
+
+
+
     /**
-     * @param string $publicationcode
+     * Set issuecode.
+     *
+     * @param string|null $issuecode
      *
      * @return InducksIssue
      */
-    public function setPublicationcode($publicationcode)
-    {
-        $this->publicationcode = $publicationcode;
-
-        return $this;
-    }
-
-    /**
-     * Get publicationcode
-     *
-     * @return string
-     */
-    public function getPublicationcode()
-    {
-        return $this->publicationcode;
-    }
-
-    /**
-     * Set issuecode
-     *
-     * @param string $issuecode
-     *
-     * @return InducksIssue
-     */
-    public function setIssuecode($issuecode)
+    public function setIssuecode($issuecode = null)
     {
         $this->issuecode = $issuecode;
 
@@ -184,7 +165,7 @@ class InducksIssue extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get issuecode
+     * Get issuecode.
      *
      * @return string
      */
@@ -194,13 +175,13 @@ class InducksIssue extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set issuerangecode
+     * Set issuerangecode.
      *
-     * @param string $issuerangecode
+     * @param string|null $issuerangecode
      *
      * @return InducksIssue
      */
-    public function setIssuerangecode($issuerangecode)
+    public function setIssuerangecode($issuerangecode = null)
     {
         $this->issuerangecode = $issuerangecode;
 
@@ -208,9 +189,9 @@ class InducksIssue extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get issuerangecode
+     * Get issuerangecode.
      *
-     * @return string
+     * @return string|null
      */
     public function getIssuerangecode()
     {
@@ -218,13 +199,37 @@ class InducksIssue extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set issuenumber
+     * Set publicationcode.
      *
-     * @param string $issuenumber
+     * @param string|null $publicationcode
      *
      * @return InducksIssue
      */
-    public function setIssuenumber($issuenumber)
+    public function setPublicationcode($publicationcode = null)
+    {
+        $this->publicationcode = $publicationcode;
+
+        return $this;
+    }
+
+    /**
+     * Get publicationcode.
+     *
+     * @return string|null
+     */
+    public function getPublicationcode()
+    {
+        return $this->publicationcode;
+    }
+
+    /**
+     * Set issuenumber.
+     *
+     * @param string|null $issuenumber
+     *
+     * @return InducksIssue
+     */
+    public function setIssuenumber($issuenumber = null)
     {
         $this->issuenumber = $issuenumber;
 
@@ -232,9 +237,9 @@ class InducksIssue extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get issuenumber
+     * Get issuenumber.
      *
-     * @return string
+     * @return string|null
      */
     public function getIssuenumber()
     {
@@ -242,13 +247,13 @@ class InducksIssue extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set title
+     * Set title.
      *
-     * @param string $title
+     * @param string|null $title
      *
      * @return InducksIssue
      */
-    public function setTitle($title)
+    public function setTitle($title = null)
     {
         $this->title = $title;
 
@@ -256,9 +261,9 @@ class InducksIssue extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get title
+     * Get title.
      *
-     * @return string
+     * @return string|null
      */
     public function getTitle()
     {
@@ -266,13 +271,13 @@ class InducksIssue extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set size
+     * Set size.
      *
-     * @param string $size
+     * @param string|null $size
      *
      * @return InducksIssue
      */
-    public function setSize($size)
+    public function setSize($size = null)
     {
         $this->size = $size;
 
@@ -280,9 +285,9 @@ class InducksIssue extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get size
+     * Get size.
      *
-     * @return string
+     * @return string|null
      */
     public function getSize()
     {
@@ -290,13 +295,13 @@ class InducksIssue extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set pages
+     * Set pages.
      *
-     * @param string $pages
+     * @param string|null $pages
      *
      * @return InducksIssue
      */
-    public function setPages($pages)
+    public function setPages($pages = null)
     {
         $this->pages = $pages;
 
@@ -304,9 +309,9 @@ class InducksIssue extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get pages
+     * Get pages.
      *
-     * @return string
+     * @return string|null
      */
     public function getPages()
     {
@@ -314,13 +319,13 @@ class InducksIssue extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set price
+     * Set price.
      *
-     * @param string $price
+     * @param string|null $price
      *
      * @return InducksIssue
      */
-    public function setPrice($price)
+    public function setPrice($price = null)
     {
         $this->price = $price;
 
@@ -328,9 +333,9 @@ class InducksIssue extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get price
+     * Get price.
      *
-     * @return string
+     * @return string|null
      */
     public function getPrice()
     {
@@ -338,13 +343,13 @@ class InducksIssue extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set printrun
+     * Set printrun.
      *
-     * @param string $printrun
+     * @param string|null $printrun
      *
      * @return InducksIssue
      */
-    public function setPrintrun($printrun)
+    public function setPrintrun($printrun = null)
     {
         $this->printrun = $printrun;
 
@@ -352,9 +357,9 @@ class InducksIssue extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get printrun
+     * Get printrun.
      *
-     * @return string
+     * @return string|null
      */
     public function getPrintrun()
     {
@@ -362,13 +367,13 @@ class InducksIssue extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set attached
+     * Set attached.
      *
-     * @param string $attached
+     * @param string|null $attached
      *
      * @return InducksIssue
      */
-    public function setAttached($attached)
+    public function setAttached($attached = null)
     {
         $this->attached = $attached;
 
@@ -376,9 +381,9 @@ class InducksIssue extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get attached
+     * Get attached.
      *
-     * @return string
+     * @return string|null
      */
     public function getAttached()
     {
@@ -386,13 +391,13 @@ class InducksIssue extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set oldestdate
+     * Set oldestdate.
      *
-     * @param string $oldestdate
+     * @param string|null $oldestdate
      *
      * @return InducksIssue
      */
-    public function setOldestdate($oldestdate)
+    public function setOldestdate($oldestdate = null)
     {
         $this->oldestdate = $oldestdate;
 
@@ -400,9 +405,9 @@ class InducksIssue extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get oldestdate
+     * Get oldestdate.
      *
-     * @return string
+     * @return string|null
      */
     public function getOldestdate()
     {
@@ -410,13 +415,13 @@ class InducksIssue extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set fullyindexed
+     * Set fullyindexed.
      *
-     * @param string $fullyindexed
+     * @param string|null $fullyindexed
      *
      * @return InducksIssue
      */
-    public function setFullyindexed($fullyindexed)
+    public function setFullyindexed($fullyindexed = null)
     {
         $this->fullyindexed = $fullyindexed;
 
@@ -424,9 +429,9 @@ class InducksIssue extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get fullyindexed
+     * Get fullyindexed.
      *
-     * @return string
+     * @return string|null
      */
     public function getFullyindexed()
     {
@@ -434,13 +439,13 @@ class InducksIssue extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set issuecomment
+     * Set issuecomment.
      *
-     * @param string $issuecomment
+     * @param string|null $issuecomment
      *
      * @return InducksIssue
      */
-    public function setIssuecomment($issuecomment)
+    public function setIssuecomment($issuecomment = null)
     {
         $this->issuecomment = $issuecomment;
 
@@ -448,9 +453,9 @@ class InducksIssue extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get issuecomment
+     * Get issuecomment.
      *
-     * @return string
+     * @return string|null
      */
     public function getIssuecomment()
     {
@@ -458,13 +463,13 @@ class InducksIssue extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set error
+     * Set error.
      *
-     * @param string $error
+     * @param string|null $error
      *
      * @return InducksIssue
      */
-    public function setError($error)
+    public function setError($error = null)
     {
         $this->error = $error;
 
@@ -472,9 +477,9 @@ class InducksIssue extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get error
+     * Get error.
      *
-     * @return string
+     * @return string|null
      */
     public function getError()
     {
@@ -482,13 +487,13 @@ class InducksIssue extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set filledoldestdate
+     * Set filledoldestdate.
      *
-     * @param string $filledoldestdate
+     * @param string|null $filledoldestdate
      *
      * @return InducksIssue
      */
-    public function setFilledoldestdate($filledoldestdate)
+    public function setFilledoldestdate($filledoldestdate = null)
     {
         $this->filledoldestdate = $filledoldestdate;
 
@@ -496,9 +501,9 @@ class InducksIssue extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get filledoldestdate
+     * Get filledoldestdate.
      *
-     * @return string
+     * @return string|null
      */
     public function getFilledoldestdate()
     {
@@ -506,13 +511,13 @@ class InducksIssue extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set locked
+     * Set locked.
      *
-     * @param string $locked
+     * @param string|null $locked
      *
      * @return InducksIssue
      */
-    public function setLocked($locked)
+    public function setLocked($locked = null)
     {
         $this->locked = $locked;
 
@@ -520,9 +525,9 @@ class InducksIssue extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get locked
+     * Get locked.
      *
-     * @return string
+     * @return string|null
      */
     public function getLocked()
     {
@@ -530,13 +535,13 @@ class InducksIssue extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set inxforbidden
+     * Set inxforbidden.
      *
-     * @param string $inxforbidden
+     * @param string|null $inxforbidden
      *
      * @return InducksIssue
      */
-    public function setInxforbidden($inxforbidden)
+    public function setInxforbidden($inxforbidden = null)
     {
         $this->inxforbidden = $inxforbidden;
 
@@ -544,9 +549,9 @@ class InducksIssue extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get inxforbidden
+     * Get inxforbidden.
      *
-     * @return string
+     * @return string|null
      */
     public function getInxforbidden()
     {
@@ -554,13 +559,13 @@ class InducksIssue extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set inputfilecode
+     * Set inputfilecode.
      *
-     * @param integer $inputfilecode
+     * @param int|null $inputfilecode
      *
      * @return InducksIssue
      */
-    public function setInputfilecode($inputfilecode)
+    public function setInputfilecode($inputfilecode = null)
     {
         $this->inputfilecode = $inputfilecode;
 
@@ -568,9 +573,9 @@ class InducksIssue extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get inputfilecode
+     * Get inputfilecode.
      *
-     * @return integer
+     * @return int|null
      */
     public function getInputfilecode()
     {
@@ -578,13 +583,13 @@ class InducksIssue extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set maintenanceteamcode
+     * Set maintenanceteamcode.
      *
-     * @param string $maintenanceteamcode
+     * @param string|null $maintenanceteamcode
      *
      * @return InducksIssue
      */
-    public function setMaintenanceteamcode($maintenanceteamcode)
+    public function setMaintenanceteamcode($maintenanceteamcode = null)
     {
         $this->maintenanceteamcode = $maintenanceteamcode;
 
@@ -592,9 +597,9 @@ class InducksIssue extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get maintenanceteamcode
+     * Get maintenanceteamcode.
      *
-     * @return string
+     * @return string|null
      */
     public function getMaintenanceteamcode()
     {

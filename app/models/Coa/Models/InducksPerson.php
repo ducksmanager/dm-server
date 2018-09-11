@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * InducksPerson
  *
- * @ORM\Table(name="inducks_person", indexes={@ORM\Index(name="fk_inducks_person0", columns={"nationalitycountrycode"}), @ORM\Index(name="fulltext_inducks_person", columns={"fullname", "birthname"})}), options={"collation":"utf8_bin"})
+ * @ORM\Table(name="inducks_person", indexes={@ORM\Index(name="fk_inducks_person0", columns={"nationalitycountrycode"}), @ORM\Index(name="fulltext_inducks_person", columns={"fullname", "birthname"})})
  * @ORM\Entity
  */
 class InducksPerson extends \Coa\Models\BaseModel
@@ -19,136 +19,143 @@ class InducksPerson extends \Coa\Models\BaseModel
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
      */
-    private $personcode = '';
+    private $personcode;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="nationalitycountrycode", type="string", length=2, nullable=true)
      */
     private $nationalitycountrycode;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="fullname", type="string", length=79, nullable=true)
      */
     private $fullname;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="official", type="string", nullable=true)
+     * @ORM\Column(name="official", type="string", length=0, nullable=true)
      */
     private $official;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="personcomment", type="string", length=221, nullable=true)
      */
     private $personcomment;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="unknownstudiomember", type="string", nullable=true)
+     * @ORM\Column(name="unknownstudiomember", type="string", length=0, nullable=true)
      */
     private $unknownstudiomember;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="isfake", type="string", nullable=true)
+     * @ORM\Column(name="isfake", type="string", length=0, nullable=true)
      */
     private $isfake;
 
     /**
-     * @var string
+     * @var int|null
+     *
+     * @ORM\Column(name="numberofindexedissues", type="integer", nullable=true)
+     */
+    private $numberofindexedissues;
+
+    /**
+     * @var string|null
      *
      * @ORM\Column(name="birthname", type="string", length=37, nullable=true)
      */
     private $birthname;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="borndate", type="string", length=10, nullable=true)
      */
     private $borndate;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="bornplace", type="string", length=30, nullable=true)
      */
     private $bornplace;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="deceaseddate", type="string", length=10, nullable=true)
      */
     private $deceaseddate;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="deceasedplace", type="string", length=31, nullable=true)
      */
     private $deceasedplace;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="education", type="string", length=189, nullable=true)
      */
     private $education;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="moviestext", type="string", length=879, nullable=true)
      */
     private $moviestext;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="comicstext", type="string", length=1232, nullable=true)
+     * @ORM\Column(name="comicstext", type="string", length=927, nullable=true)
      */
     private $comicstext;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="othertext", type="string", length=307, nullable=true)
      */
     private $othertext;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="photofilename", type="string", length=32, nullable=true)
      */
     private $photofilename;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="photocomment", type="string", length=68, nullable=true)
      */
     private $photocomment;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="photosource", type="string", length=67, nullable=true)
      */
     private $photosource;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="personrefs", type="string", length=180, nullable=true)
      */
@@ -157,7 +164,21 @@ class InducksPerson extends \Coa\Models\BaseModel
 
 
     /**
-     * Get personcode
+     * Set personcode.
+     *
+     * @param string|null $personcode
+     *
+     * @return InducksPerson
+     */
+    public function setPersoncode($personcode = null)
+    {
+        $this->personcode = $personcode;
+
+        return $this;
+    }
+
+    /**
+     * Get personcode.
      *
      * @return string
      */
@@ -167,25 +188,13 @@ class InducksPerson extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param string $personcode
+     * Set nationalitycountrycode.
+     *
+     * @param string|null $nationalitycountrycode
      *
      * @return InducksPerson
      */
-    public function setPersoncode($personcode)
-    {
-        $this->personcode = $personcode;
-
-        return $this;
-    }
-
-    /**
-     * Set nationalitycountrycode
-     *
-     * @param string $nationalitycountrycode
-     *
-     * @return InducksPerson
-     */
-    public function setNationalitycountrycode($nationalitycountrycode)
+    public function setNationalitycountrycode($nationalitycountrycode = null)
     {
         $this->nationalitycountrycode = $nationalitycountrycode;
 
@@ -193,9 +202,9 @@ class InducksPerson extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get nationalitycountrycode
+     * Get nationalitycountrycode.
      *
-     * @return string
+     * @return string|null
      */
     public function getNationalitycountrycode()
     {
@@ -203,13 +212,13 @@ class InducksPerson extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set fullname
+     * Set fullname.
      *
-     * @param string $fullname
+     * @param string|null $fullname
      *
      * @return InducksPerson
      */
-    public function setFullname($fullname)
+    public function setFullname($fullname = null)
     {
         $this->fullname = $fullname;
 
@@ -217,9 +226,9 @@ class InducksPerson extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get fullname
+     * Get fullname.
      *
-     * @return string
+     * @return string|null
      */
     public function getFullname()
     {
@@ -227,13 +236,13 @@ class InducksPerson extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set official
+     * Set official.
      *
-     * @param string $official
+     * @param string|null $official
      *
      * @return InducksPerson
      */
-    public function setOfficial($official)
+    public function setOfficial($official = null)
     {
         $this->official = $official;
 
@@ -241,9 +250,9 @@ class InducksPerson extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get official
+     * Get official.
      *
-     * @return string
+     * @return string|null
      */
     public function getOfficial()
     {
@@ -251,13 +260,13 @@ class InducksPerson extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set personcomment
+     * Set personcomment.
      *
-     * @param string $personcomment
+     * @param string|null $personcomment
      *
      * @return InducksPerson
      */
-    public function setPersoncomment($personcomment)
+    public function setPersoncomment($personcomment = null)
     {
         $this->personcomment = $personcomment;
 
@@ -265,9 +274,9 @@ class InducksPerson extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get personcomment
+     * Get personcomment.
      *
-     * @return string
+     * @return string|null
      */
     public function getPersoncomment()
     {
@@ -275,13 +284,13 @@ class InducksPerson extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set unknownstudiomember
+     * Set unknownstudiomember.
      *
-     * @param string $unknownstudiomember
+     * @param string|null $unknownstudiomember
      *
      * @return InducksPerson
      */
-    public function setUnknownstudiomember($unknownstudiomember)
+    public function setUnknownstudiomember($unknownstudiomember = null)
     {
         $this->unknownstudiomember = $unknownstudiomember;
 
@@ -289,9 +298,9 @@ class InducksPerson extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get unknownstudiomember
+     * Get unknownstudiomember.
      *
-     * @return string
+     * @return string|null
      */
     public function getUnknownstudiomember()
     {
@@ -299,13 +308,13 @@ class InducksPerson extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set isfake
+     * Set isfake.
      *
-     * @param string $isfake
+     * @param string|null $isfake
      *
      * @return InducksPerson
      */
-    public function setIsfake($isfake)
+    public function setIsfake($isfake = null)
     {
         $this->isfake = $isfake;
 
@@ -313,9 +322,9 @@ class InducksPerson extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get isfake
+     * Get isfake.
      *
-     * @return string
+     * @return string|null
      */
     public function getIsfake()
     {
@@ -323,13 +332,37 @@ class InducksPerson extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set birthname
+     * Set numberofindexedissues.
      *
-     * @param string $birthname
+     * @param int|null $numberofindexedissues
      *
      * @return InducksPerson
      */
-    public function setBirthname($birthname)
+    public function setNumberofindexedissues($numberofindexedissues = null)
+    {
+        $this->numberofindexedissues = $numberofindexedissues;
+
+        return $this;
+    }
+
+    /**
+     * Get numberofindexedissues.
+     *
+     * @return int|null
+     */
+    public function getNumberofindexedissues()
+    {
+        return $this->numberofindexedissues;
+    }
+
+    /**
+     * Set birthname.
+     *
+     * @param string|null $birthname
+     *
+     * @return InducksPerson
+     */
+    public function setBirthname($birthname = null)
     {
         $this->birthname = $birthname;
 
@@ -337,9 +370,9 @@ class InducksPerson extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get birthname
+     * Get birthname.
      *
-     * @return string
+     * @return string|null
      */
     public function getBirthname()
     {
@@ -347,13 +380,13 @@ class InducksPerson extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set borndate
+     * Set borndate.
      *
-     * @param string $borndate
+     * @param string|null $borndate
      *
      * @return InducksPerson
      */
-    public function setBorndate($borndate)
+    public function setBorndate($borndate = null)
     {
         $this->borndate = $borndate;
 
@@ -361,9 +394,9 @@ class InducksPerson extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get borndate
+     * Get borndate.
      *
-     * @return string
+     * @return string|null
      */
     public function getBorndate()
     {
@@ -371,13 +404,13 @@ class InducksPerson extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set bornplace
+     * Set bornplace.
      *
-     * @param string $bornplace
+     * @param string|null $bornplace
      *
      * @return InducksPerson
      */
-    public function setBornplace($bornplace)
+    public function setBornplace($bornplace = null)
     {
         $this->bornplace = $bornplace;
 
@@ -385,9 +418,9 @@ class InducksPerson extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get bornplace
+     * Get bornplace.
      *
-     * @return string
+     * @return string|null
      */
     public function getBornplace()
     {
@@ -395,13 +428,13 @@ class InducksPerson extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set deceaseddate
+     * Set deceaseddate.
      *
-     * @param string $deceaseddate
+     * @param string|null $deceaseddate
      *
      * @return InducksPerson
      */
-    public function setDeceaseddate($deceaseddate)
+    public function setDeceaseddate($deceaseddate = null)
     {
         $this->deceaseddate = $deceaseddate;
 
@@ -409,9 +442,9 @@ class InducksPerson extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get deceaseddate
+     * Get deceaseddate.
      *
-     * @return string
+     * @return string|null
      */
     public function getDeceaseddate()
     {
@@ -419,13 +452,13 @@ class InducksPerson extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set deceasedplace
+     * Set deceasedplace.
      *
-     * @param string $deceasedplace
+     * @param string|null $deceasedplace
      *
      * @return InducksPerson
      */
-    public function setDeceasedplace($deceasedplace)
+    public function setDeceasedplace($deceasedplace = null)
     {
         $this->deceasedplace = $deceasedplace;
 
@@ -433,9 +466,9 @@ class InducksPerson extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get deceasedplace
+     * Get deceasedplace.
      *
-     * @return string
+     * @return string|null
      */
     public function getDeceasedplace()
     {
@@ -443,13 +476,13 @@ class InducksPerson extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set education
+     * Set education.
      *
-     * @param string $education
+     * @param string|null $education
      *
      * @return InducksPerson
      */
-    public function setEducation($education)
+    public function setEducation($education = null)
     {
         $this->education = $education;
 
@@ -457,9 +490,9 @@ class InducksPerson extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get education
+     * Get education.
      *
-     * @return string
+     * @return string|null
      */
     public function getEducation()
     {
@@ -467,13 +500,13 @@ class InducksPerson extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set moviestext
+     * Set moviestext.
      *
-     * @param string $moviestext
+     * @param string|null $moviestext
      *
      * @return InducksPerson
      */
-    public function setMoviestext($moviestext)
+    public function setMoviestext($moviestext = null)
     {
         $this->moviestext = $moviestext;
 
@@ -481,9 +514,9 @@ class InducksPerson extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get moviestext
+     * Get moviestext.
      *
-     * @return string
+     * @return string|null
      */
     public function getMoviestext()
     {
@@ -491,13 +524,13 @@ class InducksPerson extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set comicstext
+     * Set comicstext.
      *
-     * @param string $comicstext
+     * @param string|null $comicstext
      *
      * @return InducksPerson
      */
-    public function setComicstext($comicstext)
+    public function setComicstext($comicstext = null)
     {
         $this->comicstext = $comicstext;
 
@@ -505,9 +538,9 @@ class InducksPerson extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get comicstext
+     * Get comicstext.
      *
-     * @return string
+     * @return string|null
      */
     public function getComicstext()
     {
@@ -515,13 +548,13 @@ class InducksPerson extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set othertext
+     * Set othertext.
      *
-     * @param string $othertext
+     * @param string|null $othertext
      *
      * @return InducksPerson
      */
-    public function setOthertext($othertext)
+    public function setOthertext($othertext = null)
     {
         $this->othertext = $othertext;
 
@@ -529,9 +562,9 @@ class InducksPerson extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get othertext
+     * Get othertext.
      *
-     * @return string
+     * @return string|null
      */
     public function getOthertext()
     {
@@ -539,13 +572,13 @@ class InducksPerson extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set photofilename
+     * Set photofilename.
      *
-     * @param string $photofilename
+     * @param string|null $photofilename
      *
      * @return InducksPerson
      */
-    public function setPhotofilename($photofilename)
+    public function setPhotofilename($photofilename = null)
     {
         $this->photofilename = $photofilename;
 
@@ -553,9 +586,9 @@ class InducksPerson extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get photofilename
+     * Get photofilename.
      *
-     * @return string
+     * @return string|null
      */
     public function getPhotofilename()
     {
@@ -563,13 +596,13 @@ class InducksPerson extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set photocomment
+     * Set photocomment.
      *
-     * @param string $photocomment
+     * @param string|null $photocomment
      *
      * @return InducksPerson
      */
-    public function setPhotocomment($photocomment)
+    public function setPhotocomment($photocomment = null)
     {
         $this->photocomment = $photocomment;
 
@@ -577,9 +610,9 @@ class InducksPerson extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get photocomment
+     * Get photocomment.
      *
-     * @return string
+     * @return string|null
      */
     public function getPhotocomment()
     {
@@ -587,13 +620,13 @@ class InducksPerson extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set photosource
+     * Set photosource.
      *
-     * @param string $photosource
+     * @param string|null $photosource
      *
      * @return InducksPerson
      */
-    public function setPhotosource($photosource)
+    public function setPhotosource($photosource = null)
     {
         $this->photosource = $photosource;
 
@@ -601,9 +634,9 @@ class InducksPerson extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get photosource
+     * Get photosource.
      *
-     * @return string
+     * @return string|null
      */
     public function getPhotosource()
     {
@@ -611,13 +644,13 @@ class InducksPerson extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set personrefs
+     * Set personrefs.
      *
-     * @param string $personrefs
+     * @param string|null $personrefs
      *
      * @return InducksPerson
      */
-    public function setPersonrefs($personrefs)
+    public function setPersonrefs($personrefs = null)
     {
         $this->personrefs = $personrefs;
 
@@ -625,9 +658,9 @@ class InducksPerson extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get personrefs
+     * Get personrefs.
      *
-     * @return string
+     * @return string|null
      */
     public function getPersonrefs()
     {

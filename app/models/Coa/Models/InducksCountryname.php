@@ -31,16 +31,16 @@ class InducksCountryname extends \Coa\Models\BaseModel
     private $languagecode;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="countryname", type="string", length=58, nullable=true)
+     * @ORM\Column(name="countryname", type="string", length=56, nullable=true)
      */
     private $countryname;
 
 
 
     /**
-     * Set countrycode
+     * Set countrycode.
      *
      * @param string $countrycode
      *
@@ -54,7 +54,7 @@ class InducksCountryname extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get countrycode
+     * Get countrycode.
      *
      * @return string
      */
@@ -64,7 +64,7 @@ class InducksCountryname extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set languagecode
+     * Set languagecode.
      *
      * @param string $languagecode
      *
@@ -78,7 +78,7 @@ class InducksCountryname extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get languagecode
+     * Get languagecode.
      *
      * @return string
      */
@@ -88,13 +88,13 @@ class InducksCountryname extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set countryname
+     * Set countryname.
      *
-     * @param string $countryname
+     * @param string|null $countryname
      *
      * @return InducksCountryname
      */
-    public function setCountryname($countryname)
+    public function setCountryname($countryname = null)
     {
         $this->countryname = $countryname;
 
@@ -102,9 +102,9 @@ class InducksCountryname extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get countryname
+     * Get countryname.
      *
-     * @return string
+     * @return string|null
      */
     public function getCountryname()
     {

@@ -7,172 +7,165 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * InducksStoryversion
  *
- * @ORM\Table(name="inducks_storyversion", indexes={@ORM\Index(name="inducks_entry_pk_storyversioncode", columns={"storyversioncode"}), @ORM\Index(name="inducks_entry_fk_storycode", columns={"storycode"}), @ORM\Index(name="appsummary", columns={"appsummary", "plotsummary", "writsummary", "artsummary", "inksummary", "creatorrefsummary", "keywordsummary"})})
+ * @ORM\Table(name="inducks_storyversion", indexes={@ORM\Index(name="fk_inducks_storyversion1", columns={"storycode"}), @ORM\Index(name="fulltext_inducks_storyversion", columns={"appsummary", "plotsummary", "writsummary", "artsummary", "inksummary", "creatorrefsummary", "keywordsummary"})})
  * @ORM\Entity
  */
 class InducksStoryversion extends \Coa\Models\BaseModel
 {
     /**
-     * @var integer
-     *
-     * @ORM\Column(name="id", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
-    private $id;
-
-    /**
      * @var string
      *
-     * @ORM\Column(name="storyversioncode", type="string", length=19, nullable=true)
+     * @ORM\Column(name="storyversioncode", type="string", length=19, nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
      */
     private $storyversioncode;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="storycode", type="string", length=19, nullable=true)
      */
     private $storycode;
 
     /**
-     * @var integer
+     * @var int|null
      *
      * @ORM\Column(name="entirepages", type="integer", nullable=true)
      */
     private $entirepages;
 
     /**
-     * @var integer
+     * @var int|null
      *
      * @ORM\Column(name="brokenpagenumerator", type="integer", nullable=true)
      */
     private $brokenpagenumerator;
 
     /**
-     * @var integer
+     * @var int|null
      *
      * @ORM\Column(name="brokenpagedenominator", type="integer", nullable=true)
      */
     private $brokenpagedenominator;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="brokenpageunspecified", type="string", nullable=true)
+     * @ORM\Column(name="brokenpageunspecified", type="string", length=0, nullable=true)
      */
     private $brokenpageunspecified;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="kind", type="string", length=1, nullable=true)
      */
     private $kind;
 
     /**
-     * @var integer
+     * @var int|null
      *
      * @ORM\Column(name="rowsperpage", type="integer", nullable=true)
      */
     private $rowsperpage;
 
     /**
-     * @var integer
+     * @var int|null
      *
      * @ORM\Column(name="columnsperpage", type="integer", nullable=true)
      */
     private $columnsperpage;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="appisxapp", type="string", nullable=true)
+     * @ORM\Column(name="appisxapp", type="string", length=0, nullable=true)
      */
     private $appisxapp;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="what", type="string", length=1, nullable=true)
      */
     private $what;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="appsummary", type="text", length=65535, nullable=true)
+     * @ORM\Column(name="appsummary", type="string", length=620, nullable=true)
      */
     private $appsummary;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="plotsummary", type="text", length=65535, nullable=true)
+     * @ORM\Column(name="plotsummary", type="string", length=271, nullable=true)
      */
     private $plotsummary;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="writsummary", type="text", length=65535, nullable=true)
+     * @ORM\Column(name="writsummary", type="string", length=271, nullable=true)
      */
     private $writsummary;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="artsummary", type="text", length=65535, nullable=true)
+     * @ORM\Column(name="artsummary", type="string", length=338, nullable=true)
      */
     private $artsummary;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="inksummary", type="text", length=65535, nullable=true)
+     * @ORM\Column(name="inksummary", type="string", length=338, nullable=true)
      */
     private $inksummary;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="creatorrefsummary", type="text", length=65535, nullable=true)
+     * @ORM\Column(name="creatorrefsummary", type="string", length=1671, nullable=true)
      */
     private $creatorrefsummary;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="keywordsummary", type="text", length=65535, nullable=true)
+     * @ORM\Column(name="keywordsummary", type="string", length=4204, nullable=true)
      */
     private $keywordsummary;
 
     /**
-     * @var integer
+     * @var int|null
      *
      * @ORM\Column(name="estimatedpanels", type="integer", nullable=true)
      */
     private $estimatedpanels;
 
-    /**
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
+
 
     /**
-     * @param int $id
+     * Set storyversioncode.
+     *
+     * @param string|null $storyversioncode
+     *
      * @return InducksStoryversion
      */
-    public function setId($id)
+    public function setStoryversioncode($storyversioncode = null)
     {
-        $this->id = $id;
+        $this->storyversioncode = $storyversioncode;
+
         return $this;
     }
 
     /**
+     * Get storyversioncode.
+     *
      * @return string
      */
     public function getStoryversioncode()
@@ -181,17 +174,23 @@ class InducksStoryversion extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param string $storyversioncode
+     * Set storycode.
+     *
+     * @param string|null $storycode
+     *
      * @return InducksStoryversion
      */
-    public function setStoryversioncode($storyversioncode)
+    public function setStorycode($storycode = null)
     {
-        $this->storyversioncode = $storyversioncode;
+        $this->storycode = $storycode;
+
         return $this;
     }
 
     /**
-     * @return string
+     * Get storycode.
+     *
+     * @return string|null
      */
     public function getStorycode()
     {
@@ -199,17 +198,23 @@ class InducksStoryversion extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param string $storycode
+     * Set entirepages.
+     *
+     * @param int|null $entirepages
+     *
      * @return InducksStoryversion
      */
-    public function setStorycode($storycode)
+    public function setEntirepages($entirepages = null)
     {
-        $this->storycode = $storycode;
+        $this->entirepages = $entirepages;
+
         return $this;
     }
 
     /**
-     * @return int
+     * Get entirepages.
+     *
+     * @return int|null
      */
     public function getEntirepages()
     {
@@ -217,17 +222,23 @@ class InducksStoryversion extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param int $entirepages
+     * Set brokenpagenumerator.
+     *
+     * @param int|null $brokenpagenumerator
+     *
      * @return InducksStoryversion
      */
-    public function setEntirepages($entirepages)
+    public function setBrokenpagenumerator($brokenpagenumerator = null)
     {
-        $this->entirepages = $entirepages;
+        $this->brokenpagenumerator = $brokenpagenumerator;
+
         return $this;
     }
 
     /**
-     * @return int
+     * Get brokenpagenumerator.
+     *
+     * @return int|null
      */
     public function getBrokenpagenumerator()
     {
@@ -235,17 +246,23 @@ class InducksStoryversion extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param int $brokenpagenumerator
+     * Set brokenpagedenominator.
+     *
+     * @param int|null $brokenpagedenominator
+     *
      * @return InducksStoryversion
      */
-    public function setBrokenpagenumerator($brokenpagenumerator)
+    public function setBrokenpagedenominator($brokenpagedenominator = null)
     {
-        $this->brokenpagenumerator = $brokenpagenumerator;
+        $this->brokenpagedenominator = $brokenpagedenominator;
+
         return $this;
     }
 
     /**
-     * @return int
+     * Get brokenpagedenominator.
+     *
+     * @return int|null
      */
     public function getBrokenpagedenominator()
     {
@@ -253,17 +270,23 @@ class InducksStoryversion extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param int $brokenpagedenominator
+     * Set brokenpageunspecified.
+     *
+     * @param string|null $brokenpageunspecified
+     *
      * @return InducksStoryversion
      */
-    public function setBrokenpagedenominator($brokenpagedenominator)
+    public function setBrokenpageunspecified($brokenpageunspecified = null)
     {
-        $this->brokenpagedenominator = $brokenpagedenominator;
+        $this->brokenpageunspecified = $brokenpageunspecified;
+
         return $this;
     }
 
     /**
-     * @return string
+     * Get brokenpageunspecified.
+     *
+     * @return string|null
      */
     public function getBrokenpageunspecified()
     {
@@ -271,17 +294,23 @@ class InducksStoryversion extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param string $brokenpageunspecified
+     * Set kind.
+     *
+     * @param string|null $kind
+     *
      * @return InducksStoryversion
      */
-    public function setBrokenpageunspecified($brokenpageunspecified)
+    public function setKind($kind = null)
     {
-        $this->brokenpageunspecified = $brokenpageunspecified;
+        $this->kind = $kind;
+
         return $this;
     }
 
     /**
-     * @return string
+     * Get kind.
+     *
+     * @return string|null
      */
     public function getKind()
     {
@@ -289,17 +318,23 @@ class InducksStoryversion extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param string $kind
+     * Set rowsperpage.
+     *
+     * @param int|null $rowsperpage
+     *
      * @return InducksStoryversion
      */
-    public function setKind($kind)
+    public function setRowsperpage($rowsperpage = null)
     {
-        $this->kind = $kind;
+        $this->rowsperpage = $rowsperpage;
+
         return $this;
     }
 
     /**
-     * @return int
+     * Get rowsperpage.
+     *
+     * @return int|null
      */
     public function getRowsperpage()
     {
@@ -307,17 +342,23 @@ class InducksStoryversion extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param int $rowsperpage
+     * Set columnsperpage.
+     *
+     * @param int|null $columnsperpage
+     *
      * @return InducksStoryversion
      */
-    public function setRowsperpage($rowsperpage)
+    public function setColumnsperpage($columnsperpage = null)
     {
-        $this->rowsperpage = $rowsperpage;
+        $this->columnsperpage = $columnsperpage;
+
         return $this;
     }
 
     /**
-     * @return int
+     * Get columnsperpage.
+     *
+     * @return int|null
      */
     public function getColumnsperpage()
     {
@@ -325,17 +366,23 @@ class InducksStoryversion extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param int $columnsperpage
+     * Set appisxapp.
+     *
+     * @param string|null $appisxapp
+     *
      * @return InducksStoryversion
      */
-    public function setColumnsperpage($columnsperpage)
+    public function setAppisxapp($appisxapp = null)
     {
-        $this->columnsperpage = $columnsperpage;
+        $this->appisxapp = $appisxapp;
+
         return $this;
     }
 
     /**
-     * @return string
+     * Get appisxapp.
+     *
+     * @return string|null
      */
     public function getAppisxapp()
     {
@@ -343,17 +390,23 @@ class InducksStoryversion extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param string $appisxapp
+     * Set what.
+     *
+     * @param string|null $what
+     *
      * @return InducksStoryversion
      */
-    public function setAppisxapp($appisxapp)
+    public function setWhat($what = null)
     {
-        $this->appisxapp = $appisxapp;
+        $this->what = $what;
+
         return $this;
     }
 
     /**
-     * @return string
+     * Get what.
+     *
+     * @return string|null
      */
     public function getWhat()
     {
@@ -361,17 +414,23 @@ class InducksStoryversion extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param string $what
+     * Set appsummary.
+     *
+     * @param string|null $appsummary
+     *
      * @return InducksStoryversion
      */
-    public function setWhat($what)
+    public function setAppsummary($appsummary = null)
     {
-        $this->what = $what;
+        $this->appsummary = $appsummary;
+
         return $this;
     }
 
     /**
-     * @return string
+     * Get appsummary.
+     *
+     * @return string|null
      */
     public function getAppsummary()
     {
@@ -379,17 +438,23 @@ class InducksStoryversion extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param string $appsummary
+     * Set plotsummary.
+     *
+     * @param string|null $plotsummary
+     *
      * @return InducksStoryversion
      */
-    public function setAppsummary($appsummary)
+    public function setPlotsummary($plotsummary = null)
     {
-        $this->appsummary = $appsummary;
+        $this->plotsummary = $plotsummary;
+
         return $this;
     }
 
     /**
-     * @return string
+     * Get plotsummary.
+     *
+     * @return string|null
      */
     public function getPlotsummary()
     {
@@ -397,17 +462,23 @@ class InducksStoryversion extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param string $plotsummary
+     * Set writsummary.
+     *
+     * @param string|null $writsummary
+     *
      * @return InducksStoryversion
      */
-    public function setPlotsummary($plotsummary)
+    public function setWritsummary($writsummary = null)
     {
-        $this->plotsummary = $plotsummary;
+        $this->writsummary = $writsummary;
+
         return $this;
     }
 
     /**
-     * @return string
+     * Get writsummary.
+     *
+     * @return string|null
      */
     public function getWritsummary()
     {
@@ -415,17 +486,23 @@ class InducksStoryversion extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param string $writsummary
+     * Set artsummary.
+     *
+     * @param string|null $artsummary
+     *
      * @return InducksStoryversion
      */
-    public function setWritsummary($writsummary)
+    public function setArtsummary($artsummary = null)
     {
-        $this->writsummary = $writsummary;
+        $this->artsummary = $artsummary;
+
         return $this;
     }
 
     /**
-     * @return string
+     * Get artsummary.
+     *
+     * @return string|null
      */
     public function getArtsummary()
     {
@@ -433,17 +510,23 @@ class InducksStoryversion extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param string $artsummary
+     * Set inksummary.
+     *
+     * @param string|null $inksummary
+     *
      * @return InducksStoryversion
      */
-    public function setArtsummary($artsummary)
+    public function setInksummary($inksummary = null)
     {
-        $this->artsummary = $artsummary;
+        $this->inksummary = $inksummary;
+
         return $this;
     }
 
     /**
-     * @return string
+     * Get inksummary.
+     *
+     * @return string|null
      */
     public function getInksummary()
     {
@@ -451,17 +534,23 @@ class InducksStoryversion extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param string $inksummary
+     * Set creatorrefsummary.
+     *
+     * @param string|null $creatorrefsummary
+     *
      * @return InducksStoryversion
      */
-    public function setInksummary($inksummary)
+    public function setCreatorrefsummary($creatorrefsummary = null)
     {
-        $this->inksummary = $inksummary;
+        $this->creatorrefsummary = $creatorrefsummary;
+
         return $this;
     }
 
     /**
-     * @return string
+     * Get creatorrefsummary.
+     *
+     * @return string|null
      */
     public function getCreatorrefsummary()
     {
@@ -469,17 +558,23 @@ class InducksStoryversion extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param string $creatorrefsummary
+     * Set keywordsummary.
+     *
+     * @param string|null $keywordsummary
+     *
      * @return InducksStoryversion
      */
-    public function setCreatorrefsummary($creatorrefsummary)
+    public function setKeywordsummary($keywordsummary = null)
     {
-        $this->creatorrefsummary = $creatorrefsummary;
+        $this->keywordsummary = $keywordsummary;
+
         return $this;
     }
 
     /**
-     * @return string
+     * Get keywordsummary.
+     *
+     * @return string|null
      */
     public function getKeywordsummary()
     {
@@ -487,31 +582,26 @@ class InducksStoryversion extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param string $keywordsummary
+     * Set estimatedpanels.
+     *
+     * @param int|null $estimatedpanels
+     *
      * @return InducksStoryversion
      */
-    public function setKeywordsummary($keywordsummary)
+    public function setEstimatedpanels($estimatedpanels = null)
     {
-        $this->keywordsummary = $keywordsummary;
+        $this->estimatedpanels = $estimatedpanels;
+
         return $this;
     }
 
     /**
-     * @return int
+     * Get estimatedpanels.
+     *
+     * @return int|null
      */
     public function getEstimatedpanels()
     {
         return $this->estimatedpanels;
     }
-
-    /**
-     * @param int $estimatedpanels
-     * @return InducksStoryversion
-     */
-    public function setEstimatedpanels($estimatedpanels)
-    {
-        $this->estimatedpanels = $estimatedpanels;
-        return $this;
-    }
 }
-

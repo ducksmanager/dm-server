@@ -19,115 +19,116 @@ class InducksStory extends \Coa\Models\BaseModel
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
      */
-    private $storycode = '';
+    private $storycode;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="originalstoryversioncode", type="string", length=19, nullable=true)
      */
     private $originalstoryversioncode;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="creationdate", type="string", length=21, nullable=true)
      */
     private $creationdate;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="firstpublicationdate", type="string", length=10, nullable=true)
      */
     private $firstpublicationdate;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="endpublicationdate", type="string", length=10, nullable=true)
      */
     private $endpublicationdate;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="title", type="string", length=210, nullable=true)
      */
     private $title;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="usedifferentcode", type="string", length=20, nullable=true)
      */
     private $usedifferentcode;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="storycomment", type="string", length=664, nullable=true)
      */
     private $storycomment;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="error", type="string", nullable=true)
+     * @ORM\Column(name="error", type="string", length=0, nullable=true)
      */
     private $error;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="repcountrysummary", type="string", length=88, nullable=true)
      */
     private $repcountrysummary;
 
     /**
-     * @var integer
+     * @var int|null
      *
      * @ORM\Column(name="storyparts", type="integer", nullable=true)
      */
     private $storyparts;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="locked", type="string", nullable=true)
+     * @ORM\Column(name="locked", type="string", length=0, nullable=true)
      */
     private $locked;
 
     /**
-     * @var integer
+     * @var int|null
      *
      * @ORM\Column(name="inputfilecode", type="integer", nullable=true)
      */
     private $inputfilecode;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="issuecodeofstoryitem", type="string", length=14, nullable=true)
      */
     private $issuecodeofstoryitem;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="maintenanceteamcode", type="string", length=8, nullable=true)
      */
     private $maintenanceteamcode;
 
 
+
     /**
-     * Set storycode
+     * Set storycode.
      *
-     * @param string $storycode
+     * @param string|null $storycode
      *
      * @return InducksStory
      */
-    public function setStorycode($storycode)
+    public function setStorycode($storycode = null)
     {
         $this->storycode = $storycode;
 
@@ -135,7 +136,7 @@ class InducksStory extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get storycode
+     * Get storycode.
      *
      * @return string
      */
@@ -145,13 +146,13 @@ class InducksStory extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set originalstoryversioncode
+     * Set originalstoryversioncode.
      *
-     * @param string $originalstoryversioncode
+     * @param string|null $originalstoryversioncode
      *
      * @return InducksStory
      */
-    public function setOriginalstoryversioncode($originalstoryversioncode)
+    public function setOriginalstoryversioncode($originalstoryversioncode = null)
     {
         $this->originalstoryversioncode = $originalstoryversioncode;
 
@@ -159,9 +160,9 @@ class InducksStory extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get originalstoryversioncode
+     * Get originalstoryversioncode.
      *
-     * @return string
+     * @return string|null
      */
     public function getOriginalstoryversioncode()
     {
@@ -169,13 +170,13 @@ class InducksStory extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set creationdate
+     * Set creationdate.
      *
-     * @param string $creationdate
+     * @param string|null $creationdate
      *
      * @return InducksStory
      */
-    public function setCreationdate($creationdate)
+    public function setCreationdate($creationdate = null)
     {
         $this->creationdate = $creationdate;
 
@@ -183,9 +184,9 @@ class InducksStory extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get creationdate
+     * Get creationdate.
      *
-     * @return string
+     * @return string|null
      */
     public function getCreationdate()
     {
@@ -193,13 +194,13 @@ class InducksStory extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set firstpublicationdate
+     * Set firstpublicationdate.
      *
-     * @param string $firstpublicationdate
+     * @param string|null $firstpublicationdate
      *
      * @return InducksStory
      */
-    public function setFirstpublicationdate($firstpublicationdate)
+    public function setFirstpublicationdate($firstpublicationdate = null)
     {
         $this->firstpublicationdate = $firstpublicationdate;
 
@@ -207,9 +208,9 @@ class InducksStory extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get firstpublicationdate
+     * Get firstpublicationdate.
      *
-     * @return string
+     * @return string|null
      */
     public function getFirstpublicationdate()
     {
@@ -217,13 +218,13 @@ class InducksStory extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set endpublicationdate
+     * Set endpublicationdate.
      *
-     * @param string $endpublicationdate
+     * @param string|null $endpublicationdate
      *
      * @return InducksStory
      */
-    public function setEndpublicationdate($endpublicationdate)
+    public function setEndpublicationdate($endpublicationdate = null)
     {
         $this->endpublicationdate = $endpublicationdate;
 
@@ -231,9 +232,9 @@ class InducksStory extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get endpublicationdate
+     * Get endpublicationdate.
      *
-     * @return string
+     * @return string|null
      */
     public function getEndpublicationdate()
     {
@@ -241,13 +242,13 @@ class InducksStory extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set title
+     * Set title.
      *
-     * @param string $title
+     * @param string|null $title
      *
      * @return InducksStory
      */
-    public function setTitle($title)
+    public function setTitle($title = null)
     {
         $this->title = $title;
 
@@ -255,9 +256,9 @@ class InducksStory extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get title
+     * Get title.
      *
-     * @return string
+     * @return string|null
      */
     public function getTitle()
     {
@@ -265,13 +266,13 @@ class InducksStory extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set usedifferentcode
+     * Set usedifferentcode.
      *
-     * @param string $usedifferentcode
+     * @param string|null $usedifferentcode
      *
      * @return InducksStory
      */
-    public function setUsedifferentcode($usedifferentcode)
+    public function setUsedifferentcode($usedifferentcode = null)
     {
         $this->usedifferentcode = $usedifferentcode;
 
@@ -279,9 +280,9 @@ class InducksStory extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get usedifferentcode
+     * Get usedifferentcode.
      *
-     * @return string
+     * @return string|null
      */
     public function getUsedifferentcode()
     {
@@ -289,13 +290,13 @@ class InducksStory extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set storycomment
+     * Set storycomment.
      *
-     * @param string $storycomment
+     * @param string|null $storycomment
      *
      * @return InducksStory
      */
-    public function setStorycomment($storycomment)
+    public function setStorycomment($storycomment = null)
     {
         $this->storycomment = $storycomment;
 
@@ -303,9 +304,9 @@ class InducksStory extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get storycomment
+     * Get storycomment.
      *
-     * @return string
+     * @return string|null
      */
     public function getStorycomment()
     {
@@ -313,13 +314,13 @@ class InducksStory extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set error
+     * Set error.
      *
-     * @param string $error
+     * @param string|null $error
      *
      * @return InducksStory
      */
-    public function setError($error)
+    public function setError($error = null)
     {
         $this->error = $error;
 
@@ -327,9 +328,9 @@ class InducksStory extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get error
+     * Get error.
      *
-     * @return string
+     * @return string|null
      */
     public function getError()
     {
@@ -337,13 +338,13 @@ class InducksStory extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set repcountrysummary
+     * Set repcountrysummary.
      *
-     * @param string $repcountrysummary
+     * @param string|null $repcountrysummary
      *
      * @return InducksStory
      */
-    public function setRepcountrysummary($repcountrysummary)
+    public function setRepcountrysummary($repcountrysummary = null)
     {
         $this->repcountrysummary = $repcountrysummary;
 
@@ -351,9 +352,9 @@ class InducksStory extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get repcountrysummary
+     * Get repcountrysummary.
      *
-     * @return string
+     * @return string|null
      */
     public function getRepcountrysummary()
     {
@@ -361,13 +362,13 @@ class InducksStory extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set storyparts
+     * Set storyparts.
      *
-     * @param integer $storyparts
+     * @param int|null $storyparts
      *
      * @return InducksStory
      */
-    public function setStoryparts($storyparts)
+    public function setStoryparts($storyparts = null)
     {
         $this->storyparts = $storyparts;
 
@@ -375,9 +376,9 @@ class InducksStory extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get storyparts
+     * Get storyparts.
      *
-     * @return integer
+     * @return int|null
      */
     public function getStoryparts()
     {
@@ -385,13 +386,13 @@ class InducksStory extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set locked
+     * Set locked.
      *
-     * @param string $locked
+     * @param string|null $locked
      *
      * @return InducksStory
      */
-    public function setLocked($locked)
+    public function setLocked($locked = null)
     {
         $this->locked = $locked;
 
@@ -399,9 +400,9 @@ class InducksStory extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get locked
+     * Get locked.
      *
-     * @return string
+     * @return string|null
      */
     public function getLocked()
     {
@@ -409,13 +410,13 @@ class InducksStory extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set inputfilecode
+     * Set inputfilecode.
      *
-     * @param integer $inputfilecode
+     * @param int|null $inputfilecode
      *
      * @return InducksStory
      */
-    public function setInputfilecode($inputfilecode)
+    public function setInputfilecode($inputfilecode = null)
     {
         $this->inputfilecode = $inputfilecode;
 
@@ -423,9 +424,9 @@ class InducksStory extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get inputfilecode
+     * Get inputfilecode.
      *
-     * @return integer
+     * @return int|null
      */
     public function getInputfilecode()
     {
@@ -433,13 +434,13 @@ class InducksStory extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set issuecodeofstoryitem
+     * Set issuecodeofstoryitem.
      *
-     * @param string $issuecodeofstoryitem
+     * @param string|null $issuecodeofstoryitem
      *
      * @return InducksStory
      */
-    public function setIssuecodeofstoryitem($issuecodeofstoryitem)
+    public function setIssuecodeofstoryitem($issuecodeofstoryitem = null)
     {
         $this->issuecodeofstoryitem = $issuecodeofstoryitem;
 
@@ -447,9 +448,9 @@ class InducksStory extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get issuecodeofstoryitem
+     * Get issuecodeofstoryitem.
      *
-     * @return string
+     * @return string|null
      */
     public function getIssuecodeofstoryitem()
     {
@@ -457,13 +458,13 @@ class InducksStory extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set maintenanceteamcode
+     * Set maintenanceteamcode.
      *
-     * @param string $maintenanceteamcode
+     * @param string|null $maintenanceteamcode
      *
      * @return InducksStory
      */
-    public function setMaintenanceteamcode($maintenanceteamcode)
+    public function setMaintenanceteamcode($maintenanceteamcode = null)
     {
         $this->maintenanceteamcode = $maintenanceteamcode;
 
@@ -471,9 +472,9 @@ class InducksStory extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get maintenanceteamcode
+     * Get maintenanceteamcode.
      *
-     * @return string
+     * @return string|null
      */
     public function getMaintenanceteamcode()
     {

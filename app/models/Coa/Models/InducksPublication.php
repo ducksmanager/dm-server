@@ -19,87 +19,87 @@ class InducksPublication extends \Coa\Models\BaseModel
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
      */
-    private $publicationcode = '';
+    private $publicationcode;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="countrycode", type="string", length=2, nullable=true)
      */
     private $countrycode;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="languagecode", type="string", length=7, nullable=true)
      */
     private $languagecode;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="title", type="string", length=131, nullable=true)
      */
     private $title;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="size", type="string", length=61, nullable=true)
      */
     private $size;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="publicationcomment", type="string", length=1425, nullable=true)
+     * @ORM\Column(name="publicationcomment", type="string", length=1354, nullable=true)
      */
     private $publicationcomment;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="circulation", type="string", length=4, nullable=true)
      */
     private $circulation;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="numbersarefake", type="string", nullable=true)
+     * @ORM\Column(name="numbersarefake", type="string", length=0, nullable=true)
      */
     private $numbersarefake;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="error", type="string", nullable=true)
+     * @ORM\Column(name="error", type="string", length=0, nullable=true)
      */
     private $error;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="locked", type="string", nullable=true)
+     * @ORM\Column(name="locked", type="string", length=0, nullable=true)
      */
     private $locked;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="inxforbidden", type="string", nullable=true)
+     * @ORM\Column(name="inxforbidden", type="string", length=0, nullable=true)
      */
     private $inxforbidden;
 
     /**
-     * @var integer
+     * @var int|null
      *
      * @ORM\Column(name="inputfilecode", type="integer", nullable=true)
      */
     private $inputfilecode;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="maintenanceteamcode", type="string", length=9, nullable=true)
      */
@@ -108,13 +108,13 @@ class InducksPublication extends \Coa\Models\BaseModel
 
 
     /**
-     * Set publicationcode
+     * Set publicationcode.
      *
-     * @param string $publicationcode
+     * @param string|null $publicationcode
      *
      * @return InducksPublication
      */
-    public function setPublicationCode($publicationcode)
+    public function setPublicationcode($publicationcode = null)
     {
         $this->publicationcode = $publicationcode;
 
@@ -122,7 +122,7 @@ class InducksPublication extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get publicationcode
+     * Get publicationcode.
      *
      * @return string
      */
@@ -132,13 +132,13 @@ class InducksPublication extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set countrycode
+     * Set countrycode.
      *
-     * @param string $countrycode
+     * @param string|null $countrycode
      *
      * @return InducksPublication
      */
-    public function setCountrycode($countrycode)
+    public function setCountrycode($countrycode = null)
     {
         $this->countrycode = $countrycode;
 
@@ -146,9 +146,9 @@ class InducksPublication extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get countrycode
+     * Get countrycode.
      *
-     * @return string
+     * @return string|null
      */
     public function getCountrycode()
     {
@@ -156,13 +156,13 @@ class InducksPublication extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set languagecode
+     * Set languagecode.
      *
-     * @param string $languagecode
+     * @param string|null $languagecode
      *
      * @return InducksPublication
      */
-    public function setLanguagecode($languagecode)
+    public function setLanguagecode($languagecode = null)
     {
         $this->languagecode = $languagecode;
 
@@ -170,9 +170,9 @@ class InducksPublication extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get languagecode
+     * Get languagecode.
      *
-     * @return string
+     * @return string|null
      */
     public function getLanguagecode()
     {
@@ -180,13 +180,13 @@ class InducksPublication extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set title
+     * Set title.
      *
-     * @param string $title
+     * @param string|null $title
      *
      * @return InducksPublication
      */
-    public function setTitle($title)
+    public function setTitle($title = null)
     {
         $this->title = $title;
 
@@ -194,9 +194,9 @@ class InducksPublication extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get title
+     * Get title.
      *
-     * @return string
+     * @return string|null
      */
     public function getTitle()
     {
@@ -204,13 +204,13 @@ class InducksPublication extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set size
+     * Set size.
      *
-     * @param string $size
+     * @param string|null $size
      *
      * @return InducksPublication
      */
-    public function setSize($size)
+    public function setSize($size = null)
     {
         $this->size = $size;
 
@@ -218,9 +218,9 @@ class InducksPublication extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get size
+     * Get size.
      *
-     * @return string
+     * @return string|null
      */
     public function getSize()
     {
@@ -228,13 +228,13 @@ class InducksPublication extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set publicationcomment
+     * Set publicationcomment.
      *
-     * @param string $publicationcomment
+     * @param string|null $publicationcomment
      *
      * @return InducksPublication
      */
-    public function setPublicationcomment($publicationcomment)
+    public function setPublicationcomment($publicationcomment = null)
     {
         $this->publicationcomment = $publicationcomment;
 
@@ -242,9 +242,9 @@ class InducksPublication extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get publicationcomment
+     * Get publicationcomment.
      *
-     * @return string
+     * @return string|null
      */
     public function getPublicationcomment()
     {
@@ -252,13 +252,13 @@ class InducksPublication extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set circulation
+     * Set circulation.
      *
-     * @param string $circulation
+     * @param string|null $circulation
      *
      * @return InducksPublication
      */
-    public function setCirculation($circulation)
+    public function setCirculation($circulation = null)
     {
         $this->circulation = $circulation;
 
@@ -266,9 +266,9 @@ class InducksPublication extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get circulation
+     * Get circulation.
      *
-     * @return string
+     * @return string|null
      */
     public function getCirculation()
     {
@@ -276,13 +276,13 @@ class InducksPublication extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set numbersarefake
+     * Set numbersarefake.
      *
-     * @param string $numbersarefake
+     * @param string|null $numbersarefake
      *
      * @return InducksPublication
      */
-    public function setNumbersarefake($numbersarefake)
+    public function setNumbersarefake($numbersarefake = null)
     {
         $this->numbersarefake = $numbersarefake;
 
@@ -290,9 +290,9 @@ class InducksPublication extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get numbersarefake
+     * Get numbersarefake.
      *
-     * @return string
+     * @return string|null
      */
     public function getNumbersarefake()
     {
@@ -300,13 +300,13 @@ class InducksPublication extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set error
+     * Set error.
      *
-     * @param string $error
+     * @param string|null $error
      *
      * @return InducksPublication
      */
-    public function setError($error)
+    public function setError($error = null)
     {
         $this->error = $error;
 
@@ -314,9 +314,9 @@ class InducksPublication extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get error
+     * Get error.
      *
-     * @return string
+     * @return string|null
      */
     public function getError()
     {
@@ -324,13 +324,13 @@ class InducksPublication extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set locked
+     * Set locked.
      *
-     * @param string $locked
+     * @param string|null $locked
      *
      * @return InducksPublication
      */
-    public function setLocked($locked)
+    public function setLocked($locked = null)
     {
         $this->locked = $locked;
 
@@ -338,9 +338,9 @@ class InducksPublication extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get locked
+     * Get locked.
      *
-     * @return string
+     * @return string|null
      */
     public function getLocked()
     {
@@ -348,13 +348,13 @@ class InducksPublication extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set inxforbidden
+     * Set inxforbidden.
      *
-     * @param string $inxforbidden
+     * @param string|null $inxforbidden
      *
      * @return InducksPublication
      */
-    public function setInxforbidden($inxforbidden)
+    public function setInxforbidden($inxforbidden = null)
     {
         $this->inxforbidden = $inxforbidden;
 
@@ -362,9 +362,9 @@ class InducksPublication extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get inxforbidden
+     * Get inxforbidden.
      *
-     * @return string
+     * @return string|null
      */
     public function getInxforbidden()
     {
@@ -372,13 +372,13 @@ class InducksPublication extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set inputfilecode
+     * Set inputfilecode.
      *
-     * @param integer $inputfilecode
+     * @param int|null $inputfilecode
      *
      * @return InducksPublication
      */
-    public function setInputfilecode($inputfilecode)
+    public function setInputfilecode($inputfilecode = null)
     {
         $this->inputfilecode = $inputfilecode;
 
@@ -386,9 +386,9 @@ class InducksPublication extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get inputfilecode
+     * Get inputfilecode.
      *
-     * @return integer
+     * @return int|null
      */
     public function getInputfilecode()
     {
@@ -396,13 +396,13 @@ class InducksPublication extends \Coa\Models\BaseModel
     }
 
     /**
-     * Set maintenanceteamcode
+     * Set maintenanceteamcode.
      *
-     * @param string $maintenanceteamcode
+     * @param string|null $maintenanceteamcode
      *
      * @return InducksPublication
      */
-    public function setMaintenanceteamcode($maintenanceteamcode)
+    public function setMaintenanceteamcode($maintenanceteamcode = null)
     {
         $this->maintenanceteamcode = $maintenanceteamcode;
 
@@ -410,9 +410,9 @@ class InducksPublication extends \Coa\Models\BaseModel
     }
 
     /**
-     * Get maintenanceteamcode
+     * Get maintenanceteamcode.
      *
-     * @return string
+     * @return string|null
      */
     public function getMaintenanceteamcode()
     {

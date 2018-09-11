@@ -7,13 +7,13 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * InducksEntryurl
  *
- * @ORM\Table(name="inducks_entryurl", indexes={@ORM\Index(name="inducks_entry_fk_entrycode", columns={"entrycode"}), @ORM\Index(name="inducks_entry_fk_sitecode", columns={"sitecode"}), @ORM\Index(name="inducks_entry_fk_url", columns={"url"})})
+ * @ORM\Table(name="inducks_entryurl", indexes={@ORM\Index(name="fk_inducks_entryurl0", columns={"entrycode"}), @ORM\Index(name="fk_inducks_entryurl1", columns={"sitecode"}), @ORM\Index(name="fk_inducks_entryurl2", columns={"url"})})
  * @ORM\Entity
  */
 class InducksEntryurl extends \Coa\Models\BaseModel
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
@@ -22,34 +22,38 @@ class InducksEntryurl extends \Coa\Models\BaseModel
     private $id;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="entrycode", type="string", length=21, nullable=true)
      */
     private $entrycode;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="sitecode", type="string", length=11, nullable=true)
      */
     private $sitecode;
 
     /**
-     * @var integer
+     * @var int|null
      *
      * @ORM\Column(name="pagenumber", type="integer", nullable=true)
      */
     private $pagenumber;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="url", type="string", length=87, nullable=true)
      */
     private $url;
 
+
+
     /**
+     * Get id.
+     *
      * @return int
      */
     public function getId()
@@ -58,17 +62,23 @@ class InducksEntryurl extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param int $id
+     * Set entrycode.
+     *
+     * @param string|null $entrycode
+     *
      * @return InducksEntryurl
      */
-    public function setId($id)
+    public function setEntrycode($entrycode = null)
     {
-        $this->id = $id;
+        $this->entrycode = $entrycode;
+
         return $this;
     }
 
     /**
-     * @return string
+     * Get entrycode.
+     *
+     * @return string|null
      */
     public function getEntrycode()
     {
@@ -76,17 +86,23 @@ class InducksEntryurl extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param string $entrycode
+     * Set sitecode.
+     *
+     * @param string|null $sitecode
+     *
      * @return InducksEntryurl
      */
-    public function setEntrycode($entrycode)
+    public function setSitecode($sitecode = null)
     {
-        $this->entrycode = $entrycode;
+        $this->sitecode = $sitecode;
+
         return $this;
     }
 
     /**
-     * @return string
+     * Get sitecode.
+     *
+     * @return string|null
      */
     public function getSitecode()
     {
@@ -94,17 +110,23 @@ class InducksEntryurl extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param string $sitecode
+     * Set pagenumber.
+     *
+     * @param int|null $pagenumber
+     *
      * @return InducksEntryurl
      */
-    public function setSitecode($sitecode)
+    public function setPagenumber($pagenumber = null)
     {
-        $this->sitecode = $sitecode;
+        $this->pagenumber = $pagenumber;
+
         return $this;
     }
 
     /**
-     * @return int
+     * Get pagenumber.
+     *
+     * @return int|null
      */
     public function getPagenumber()
     {
@@ -112,31 +134,26 @@ class InducksEntryurl extends \Coa\Models\BaseModel
     }
 
     /**
-     * @param int $pagenumber
+     * Set url.
+     *
+     * @param string|null $url
+     *
      * @return InducksEntryurl
      */
-    public function setPagenumber($pagenumber)
+    public function setUrl($url = null)
     {
-        $this->pagenumber = $pagenumber;
+        $this->url = $url;
+
         return $this;
     }
 
     /**
-     * @return string
+     * Get url.
+     *
+     * @return string|null
      */
     public function getUrl()
     {
         return $this->url;
     }
-
-    /**
-     * @param string $url
-     * @return InducksEntryurl
-     */
-    public function setUrl($url)
-    {
-        $this->url = $url;
-        return $this;
-    }
 }
-
