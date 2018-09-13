@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 class BibliothequeContributeurs extends \Dm\Models\BaseModel
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ID", type="integer", nullable=false)
      * @ORM\Id
@@ -22,14 +22,14 @@ class BibliothequeContributeurs extends \Dm\Models\BaseModel
     private $id;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="Nom", type="string", length=30, nullable=false)
+     * @ORM\Column(name="Nom", type="string", length=30, nullable=true)
      */
     private $nom;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="Texte", type="text", length=65535, nullable=true)
      */
@@ -38,9 +38,9 @@ class BibliothequeContributeurs extends \Dm\Models\BaseModel
 
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -48,13 +48,13 @@ class BibliothequeContributeurs extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set nom
+     * Set nom.
      *
-     * @param string $nom
+     * @param string|null $nom
      *
      * @return BibliothequeContributeurs
      */
-    public function setNom($nom)
+    public function setNom($nom = null)
     {
         $this->nom = $nom;
 
@@ -62,9 +62,9 @@ class BibliothequeContributeurs extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get nom
+     * Get nom.
      *
-     * @return string
+     * @return string|null
      */
     public function getNom()
     {
@@ -72,13 +72,13 @@ class BibliothequeContributeurs extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set texte
+     * Set texte.
      *
-     * @param string $texte
+     * @param string|null $texte
      *
      * @return BibliothequeContributeurs
      */
-    public function setTexte($texte)
+    public function setTexte($texte = null)
     {
         $this->texte = $texte;
 
@@ -86,9 +86,9 @@ class BibliothequeContributeurs extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get texte
+     * Get texte.
      *
-     * @return string
+     * @return string|null
      */
     public function getTexte()
     {

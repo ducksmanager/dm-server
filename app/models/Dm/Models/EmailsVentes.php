@@ -3,20 +3,17 @@
 namespace Dm\Models;
 
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
-use Doctrine\ORM\Mapping\PrePersist;
 
 /**
  * EmailsVentes
  *
  * @ORM\Table(name="emails_ventes", uniqueConstraints={@ORM\UniqueConstraint(name="emails_ventes__username_achat_username_vente_date_uindex", columns={"username_achat", "username_vente", "date"})})
  * @ORM\Entity
- * @HasLifecycleCallbacks
  */
 class EmailsVentes extends \Dm\Models\BaseModel
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ID", type="integer", nullable=false)
      * @ORM\Id
@@ -45,19 +42,12 @@ class EmailsVentes extends \Dm\Models\BaseModel
      */
     private $date;
 
-    /** @PrePersist */
-    public function setDateOnPrePersist()
-    {
-        if (is_null($this->date)) {
-            $this->date = new \DateTime('today');
-        }
-    }
 
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -65,7 +55,7 @@ class EmailsVentes extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set usernameAchat
+     * Set usernameAchat.
      *
      * @param string $usernameAchat
      *
@@ -79,7 +69,7 @@ class EmailsVentes extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get usernameAchat
+     * Get usernameAchat.
      *
      * @return string
      */
@@ -89,7 +79,7 @@ class EmailsVentes extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set usernameVente
+     * Set usernameVente.
      *
      * @param string $usernameVente
      *
@@ -103,7 +93,7 @@ class EmailsVentes extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get usernameVente
+     * Get usernameVente.
      *
      * @return string
      */
@@ -113,7 +103,7 @@ class EmailsVentes extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set date
+     * Set date.
      *
      * @param \DateTime $date
      *
@@ -127,7 +117,7 @@ class EmailsVentes extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get date
+     * Get date.
      *
      * @return \DateTime
      */

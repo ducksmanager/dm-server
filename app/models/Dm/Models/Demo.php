@@ -24,7 +24,7 @@ class Demo extends \Dm\Models\BaseModel
 
 
     /**
-     * Get datedernierinit
+     * Get datedernierinit.
      *
      * @return \DateTime
      */

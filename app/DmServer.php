@@ -180,7 +180,6 @@ class DmServer implements ControllerProviderInterface
         $connectionParams = self::getConnectionParams($config);
         $conn = DriverManager::getConnection($connectionParams, $metaDataConfig, $evm);
         $conn->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'string');
-        $conn->getDatabasePlatform()->registerDoctrineTypeMapping('timestamp', 'integer');
 
         if (array_key_exists('tables', $config)) {
             $conn->getConfiguration()->setFilterSchemaAssetsExpression('~^'.$config['tables'].'$~');

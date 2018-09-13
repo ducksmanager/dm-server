@@ -3,15 +3,12 @@
 namespace Dm\Models;
 
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
-use Doctrine\ORM\Mapping\PrePersist;
 
 /**
  * Numeros
  *
- * @ORM\Table(name="numeros", uniqueConstraints={@ORM\UniqueConstraint(name="Details_Numero", columns={"Pays", "Magazine", "Numero", "ID_Utilisateur"})}, indexes={@ORM\Index(name="Utilisateur", columns={"ID_Utilisateur"})})
+ * @ORM\Table(name="numeros", uniqueConstraints={@ORM\UniqueConstraint(name="Pays", columns={"Pays", "Magazine", "Numero", "ID_Utilisateur"})}, indexes={@ORM\Index(name="Pays_Magazine_Numero", columns={"Pays", "Magazine", "Numero"}), @ORM\Index(name="Pays_Magazine_Numero_DateAjout", columns={"DateAjout", "Pays", "Magazine", "Numero"}), @ORM\Index(name="Utilisateur", columns={"ID_Utilisateur"})})
  * @ORM\Entity
- * @HasLifecycleCallbacks
  */
 class Numeros extends \Dm\Models\BaseModel
 {
@@ -39,49 +36,40 @@ class Numeros extends \Dm\Models\BaseModel
     /**
      * @var string
      *
-     * @ORM\Column(name="Etat", type="string", nullable=false)
+     * @ORM\Column(name="Etat", type="string", length=0, nullable=false)
      */
     private $etat;
 
     /**
-     * @var integer
+     * @var int
      *
-     * @ORM\Column(name="ID_Acquisition", type="integer", nullable=false)
+     * @ORM\Column(name="ID_Acquisition", type="integer", nullable=false, options={"default"="-1"})
      */
-    private $idAcquisition = -1;
+    private $idAcquisition = '-1';
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="AV", type="boolean", nullable=false)
      */
-    private $av = false;
+    private $av;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ID_Utilisateur", type="integer", nullable=false)
      */
     private $idUtilisateur;
 
     /**
-     * @var \DateTime
+     * @var int
      *
-     * @ORM\Column(name="DateAjout", type="datetime", nullable=false)
+     * @ORM\Column(name="DateAjout", type="integer", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
      */
-    private $dateajout;
-
-    /** @PrePersist */
-    public function setDateOnPrePersist()
-    {
-        if (is_null($this->dateajout)) {
-            $this->dateajout = new \DateTime();
-        }
-    }
-
+    private $dateajout = 'CURRENT_TIMESTAMP';
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ID", type="integer", nullable=false)
      * @ORM\Id
@@ -92,7 +80,7 @@ class Numeros extends \Dm\Models\BaseModel
 
 
     /**
-     * Set pays
+     * Set pays.
      *
      * @param string $pays
      *
@@ -106,7 +94,7 @@ class Numeros extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get pays
+     * Get pays.
      *
      * @return string
      */
@@ -116,7 +104,7 @@ class Numeros extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set magazine
+     * Set magazine.
      *
      * @param string $magazine
      *
@@ -130,7 +118,7 @@ class Numeros extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get magazine
+     * Get magazine.
      *
      * @return string
      */
@@ -140,7 +128,7 @@ class Numeros extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set numero
+     * Set numero.
      *
      * @param string $numero
      *
@@ -154,7 +142,7 @@ class Numeros extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get numero
+     * Get numero.
      *
      * @return string
      */
@@ -164,7 +152,7 @@ class Numeros extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set etat
+     * Set etat.
      *
      * @param string $etat
      *
@@ -178,7 +166,7 @@ class Numeros extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get etat
+     * Get etat.
      *
      * @return string
      */
@@ -188,9 +176,9 @@ class Numeros extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set idAcquisition
+     * Set idAcquisition.
      *
-     * @param integer $idAcquisition
+     * @param int $idAcquisition
      *
      * @return Numeros
      */
@@ -202,9 +190,9 @@ class Numeros extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get idAcquisition
+     * Get idAcquisition.
      *
-     * @return integer
+     * @return int
      */
     public function getIdAcquisition()
     {
@@ -212,9 +200,9 @@ class Numeros extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set av
+     * Set av.
      *
-     * @param boolean $av
+     * @param bool $av
      *
      * @return Numeros
      */
@@ -226,9 +214,9 @@ class Numeros extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get av
+     * Get av.
      *
-     * @return boolean
+     * @return bool
      */
     public function getAv()
     {
@@ -236,9 +224,9 @@ class Numeros extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set idUtilisateur
+     * Set idUtilisateur.
      *
-     * @param integer $idUtilisateur
+     * @param int $idUtilisateur
      *
      * @return Numeros
      */
@@ -250,9 +238,9 @@ class Numeros extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get idUtilisateur
+     * Get idUtilisateur.
      *
-     * @return integer
+     * @return int
      */
     public function getIdUtilisateur()
     {
@@ -260,9 +248,9 @@ class Numeros extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set dateajout
+     * Set dateajout.
      *
-     * @param \DateTime $dateajout
+     * @param int $dateajout
      *
      * @return Numeros
      */
@@ -274,9 +262,9 @@ class Numeros extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get dateajout
+     * Get dateajout.
      *
-     * @return \DateTime
+     * @return int
      */
     public function getDateajout()
     {
@@ -284,9 +272,9 @@ class Numeros extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {

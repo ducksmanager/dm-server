@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * TranchesPretesContributeurs
  *
- * @ORM\Table(name="tranches_pretes_contributeurs", indexes={@ORM\Index(name="tranches_pretes_contributeurs_publicationcode_issuenumber_index", columns={"publicationcode", "issuenumber"}), @ORM\Index(name="tranches_pretes_contributeurs_contributeur_index", columns={"contributeur"})})
+ * @ORM\Table(name="tranches_pretes_contributeurs", indexes={@ORM\Index(name="tranches_pretes_contributeurs_contributeur_index", columns={"contributeur"}), @ORM\Index(name="tranches_pretes_contributeurs_publicationcode_issuenumber_index", columns={"publicationcode", "issuenumber"})})
  * @ORM\Entity
  */
 class TranchesPretesContributeurs extends \Dm\Models\BaseModel
@@ -31,7 +31,7 @@ class TranchesPretesContributeurs extends \Dm\Models\BaseModel
     private $issuenumber;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="contributeur", type="integer", nullable=false)
      * @ORM\Id
@@ -42,7 +42,7 @@ class TranchesPretesContributeurs extends \Dm\Models\BaseModel
     /**
      * @var string
      *
-     * @ORM\Column(name="contribution", type="string", nullable=false)
+     * @ORM\Column(name="contribution", type="string", length=0, nullable=false, options={"default"="createur"})
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
      */
@@ -51,7 +51,7 @@ class TranchesPretesContributeurs extends \Dm\Models\BaseModel
 
 
     /**
-     * Set publicationcode
+     * Set publicationcode.
      *
      * @param string $publicationcode
      *
@@ -65,7 +65,7 @@ class TranchesPretesContributeurs extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get publicationcode
+     * Get publicationcode.
      *
      * @return string
      */
@@ -75,7 +75,7 @@ class TranchesPretesContributeurs extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set issuenumber
+     * Set issuenumber.
      *
      * @param string $issuenumber
      *
@@ -89,7 +89,7 @@ class TranchesPretesContributeurs extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get issuenumber
+     * Get issuenumber.
      *
      * @return string
      */
@@ -99,9 +99,9 @@ class TranchesPretesContributeurs extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set contributeur
+     * Set contributeur.
      *
-     * @param integer $contributeur
+     * @param int $contributeur
      *
      * @return TranchesPretesContributeurs
      */
@@ -113,9 +113,9 @@ class TranchesPretesContributeurs extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get contributeur
+     * Get contributeur.
      *
-     * @return integer
+     * @return int
      */
     public function getContributeur()
     {
@@ -123,7 +123,7 @@ class TranchesPretesContributeurs extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set contribution
+     * Set contribution.
      *
      * @param string $contribution
      *
@@ -137,7 +137,7 @@ class TranchesPretesContributeurs extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get contribution
+     * Get contribution.
      *
      * @return string
      */

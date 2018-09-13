@@ -5,12 +5,12 @@ namespace Dm\Models;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * BibliothequeOrdreMagazines
+ * NumerosPopularite
  *
- * @ORM\Table(name="bibliotheque_ordre_magazines")
+ * @ORM\Table(name="numeros_popularite")
  * @ORM\Entity
  */
-class BibliothequeOrdreMagazines extends \Dm\Models\BaseModel
+class NumerosPopularite extends \Dm\Models\BaseModel
 {
     /**
      * @var string
@@ -31,22 +31,20 @@ class BibliothequeOrdreMagazines extends \Dm\Models\BaseModel
     private $magazine;
 
     /**
-     * @var int
+     * @var string
      *
-     * @ORM\Column(name="Ordre", type="integer", nullable=false)
+     * @ORM\Column(name="Numero", type="string", length=8, nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
      */
-    private $ordre;
+    private $numero;
 
     /**
      * @var int
      *
-     * @ORM\Column(name="ID_Utilisateur", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\Column(name="Popularite", type="integer", nullable=false)
      */
-    private $idUtilisateur;
+    private $popularite;
 
 
 
@@ -55,7 +53,7 @@ class BibliothequeOrdreMagazines extends \Dm\Models\BaseModel
      *
      * @param string $pays
      *
-     * @return BibliothequeOrdreMagazines
+     * @return NumerosPopularite
      */
     public function setPays($pays)
     {
@@ -79,7 +77,7 @@ class BibliothequeOrdreMagazines extends \Dm\Models\BaseModel
      *
      * @param string $magazine
      *
-     * @return BibliothequeOrdreMagazines
+     * @return NumerosPopularite
      */
     public function setMagazine($magazine)
     {
@@ -99,50 +97,50 @@ class BibliothequeOrdreMagazines extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set ordre.
+     * Set numero.
      *
-     * @param int $ordre
+     * @param string $numero
      *
-     * @return BibliothequeOrdreMagazines
+     * @return NumerosPopularite
      */
-    public function setOrdre($ordre)
+    public function setNumero($numero)
     {
-        $this->ordre = $ordre;
+        $this->numero = $numero;
 
         return $this;
     }
 
     /**
-     * Get ordre.
+     * Get numero.
      *
-     * @return int
+     * @return string
      */
-    public function getOrdre()
+    public function getNumero()
     {
-        return $this->ordre;
+        return $this->numero;
     }
 
     /**
-     * Set idUtilisateur.
+     * Set popularite.
      *
-     * @param int $idUtilisateur
+     * @param int $popularite
      *
-     * @return BibliothequeOrdreMagazines
+     * @return NumerosPopularite
      */
-    public function setIdUtilisateur($idUtilisateur)
+    public function setPopularite($popularite)
     {
-        $this->idUtilisateur = $idUtilisateur;
+        $this->popularite = $popularite;
 
         return $this;
     }
 
     /**
-     * Get idUtilisateur.
+     * Get popularite.
      *
      * @return int
      */
-    public function getIdUtilisateur()
+    public function getPopularite()
     {
-        return $this->idUtilisateur;
+        return $this->popularite;
     }
 }

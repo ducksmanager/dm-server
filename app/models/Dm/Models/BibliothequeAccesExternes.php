@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 class BibliothequeAccesExternes extends \Dm\Models\BaseModel
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ID_Utilisateur", type="integer", nullable=false)
      * @ORM\Id
@@ -33,9 +33,9 @@ class BibliothequeAccesExternes extends \Dm\Models\BaseModel
 
 
     /**
-     * Set idUtilisateur
+     * Set idUtilisateur.
      *
-     * @param integer $idUtilisateur
+     * @param int $idUtilisateur
      *
      * @return BibliothequeAccesExternes
      */
@@ -47,9 +47,9 @@ class BibliothequeAccesExternes extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get idUtilisateur
+     * Get idUtilisateur.
      *
-     * @return integer
+     * @return int
      */
     public function getIdUtilisateur()
     {
@@ -57,7 +57,7 @@ class BibliothequeAccesExternes extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set cle
+     * Set cle.
      *
      * @param string $cle
      *
@@ -71,7 +71,7 @@ class BibliothequeAccesExternes extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get cle
+     * Get cle.
      *
      * @return string
      */

@@ -7,13 +7,13 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * UsersPermissions
  *
- * @ORM\Table(name="users_permissions", uniqueConstraints={@ORM\UniqueConstraint(name="username_role", columns={"username", "role"})})
+ * @ORM\Table(name="users_permissions", uniqueConstraints={@ORM\UniqueConstraint(name="permission_username_role", columns={"username", "role"})})
  * @ORM\Entity
  */
 class UsersPermissions extends \Dm\Models\BaseModel
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ID", type="integer", nullable=false)
      * @ORM\Id
@@ -38,16 +38,16 @@ class UsersPermissions extends \Dm\Models\BaseModel
     /**
      * @var string
      *
-     * @ORM\Column(name="privilege", type="string", nullable=false)
+     * @ORM\Column(name="privilege", type="string", length=0, nullable=false)
      */
     private $privilege;
 
 
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -55,7 +55,7 @@ class UsersPermissions extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set username
+     * Set username.
      *
      * @param string $username
      *
@@ -69,7 +69,7 @@ class UsersPermissions extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get username
+     * Get username.
      *
      * @return string
      */
@@ -79,7 +79,7 @@ class UsersPermissions extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set role
+     * Set role.
      *
      * @param string $role
      *
@@ -93,7 +93,7 @@ class UsersPermissions extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get role
+     * Get role.
      *
      * @return string
      */
@@ -103,7 +103,7 @@ class UsersPermissions extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set privilege
+     * Set privilege.
      *
      * @param string $privilege
      *
@@ -117,7 +117,7 @@ class UsersPermissions extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get privilege
+     * Get privilege.
      *
      * @return string
      */

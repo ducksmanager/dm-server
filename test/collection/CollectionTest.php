@@ -41,7 +41,7 @@ class CollectionTest extends TestCommon
         $this->assertEquals(-2, $lastIssue->getIdAcquisition());
         $this->assertEquals(false, $lastIssue->getAv());
         $this->assertEquals(AbstractController::getSessionUser($this->app)['id'], $lastIssue->getIdUtilisateur());
-        $this->assertEquals(date('Y-m-d'), $lastIssue->getDateajout()->format('Y-m-d'));
+        $this->assertEquals(date('Y-m-d'), date('Y-m-d', $lastIssue->getDateajout()));
     }
 
     public function testUpdateCollectionCreateIssueWithOptions() {
@@ -82,7 +82,7 @@ class CollectionTest extends TestCommon
         $this->assertEquals(2, $updatedIssue->getIdAcquisition());
         $this->assertEquals(true, $updatedIssue->getAv());
         $this->assertEquals(AbstractController::getSessionUser($this->app)['id'], $updatedIssue->getIdUtilisateur());
-        $this->assertEquals(date('Y-m-d'), $updatedIssue->getDateajout()->format('Y-m-d'));
+        $this->assertEquals(date('Y-m-d'), date('Y-m-d', $updatedIssue->getDateajout()));
     }
 
     public function testDeleteFromCollection() {

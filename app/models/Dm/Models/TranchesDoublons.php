@@ -4,11 +4,10 @@ namespace Dm\Models;
 
 use Doctrine\ORM\Mapping as ORM;
 
-
 /**
  * TranchesDoublons
  *
- * @ORM\Table(name="tranches_doublons", indexes={@ORM\Index(name="fk_tranche_doublon_reference", columns={"TrancheReference"})})
+ * @ORM\Table(name="tranches_doublons")
  * @ORM\Entity
  */
 class TranchesDoublons extends \Dm\Models\BaseModel
@@ -41,6 +40,14 @@ class TranchesDoublons extends \Dm\Models\BaseModel
     private $numero;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="NumeroReference", type="string", length=8, nullable=false)
+     * @deprecated
+     */
+    private $numeroreference;
+
+    /**
      * @var \Dm\Models\TranchesPretes
      *
      * @ORM\ManyToOne(fetch="EAGER", targetEntity="Dm\Models\TranchesPretes")
@@ -52,17 +59,7 @@ class TranchesDoublons extends \Dm\Models\BaseModel
 
 
     /**
-     *
-     * @var string
-     * @deprecated
-     *
-     * @ORM\Column(name="NumeroReference", type="string", length=8, nullable=true)
-     */
-    private $numeroreference;
-
-
-    /**
-     * Set pays
+     * Set pays.
      *
      * @param string $pays
      *
@@ -76,7 +73,7 @@ class TranchesDoublons extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get pays
+     * Get pays.
      *
      * @return string
      */
@@ -86,7 +83,7 @@ class TranchesDoublons extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set magazine
+     * Set magazine.
      *
      * @param string $magazine
      *
@@ -100,7 +97,7 @@ class TranchesDoublons extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get magazine
+     * Get magazine.
      *
      * @return string
      */
@@ -110,7 +107,7 @@ class TranchesDoublons extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set numero
+     * Set numero.
      *
      * @param string $numero
      *
@@ -124,7 +121,7 @@ class TranchesDoublons extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get numero
+     * Get numero.
      *
      * @return string
      */
@@ -134,31 +131,7 @@ class TranchesDoublons extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set tranchereference
-     *
-     * @param \Dm\Models\TranchesPretes $tranchereference
-     *
-     * @return TranchesDoublons
-     */
-    public function setTranchereference(\Dm\Models\TranchesPretes $tranchereference = null)
-    {
-        $this->tranchereference = $tranchereference;
-
-        return $this;
-    }
-
-    /**
-     * Get tranchereference
-     *
-     * @return \Dm\Models\TranchesPretes
-     */
-    public function getTranchereference()
-    {
-        return $this->tranchereference;
-    }
-
-    /**
-     * Set numeroreference
+     * Set numeroreference.
      *
      * @param string $numeroreference
      *
@@ -172,12 +145,36 @@ class TranchesDoublons extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get numeroreference
+     * Get numeroreference.
      *
      * @return string
      */
     public function getNumeroreference()
     {
         return $this->numeroreference;
+    }
+
+    /**
+     * Set tranchereference.
+     *
+     * @param int|null $tranchereference
+     *
+     * @return TranchesDoublons
+     */
+    public function setTranchereference($tranchereference = null)
+    {
+        $this->tranchereference = $tranchereference;
+
+        return $this;
+    }
+
+    /**
+     * Get tranchereference.
+     *
+     * @return int|null
+     */
+    public function getTranchereference()
+    {
+        return $this->tranchereference;
     }
 }

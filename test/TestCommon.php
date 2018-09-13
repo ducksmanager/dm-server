@@ -247,6 +247,9 @@ class TestCommon extends WebTestCase {
                     ->setPassword(sha1($password))
                     ->setEmail('test@ducksmanager.net')
                     ->setDateinscription(\DateTime::createFromFormat('Y-m-d', '2000-01-01'))
+                    ->setAccepterpartage(true)
+                    ->setRecommandationslistemags(true)
+                    ->setAffichervideo(true)
             );
 
             foreach($roles as $role=>$privilege) {
@@ -291,6 +294,7 @@ class TestCommon extends WebTestCase {
                     ->setIdAcquisition('-2')
                     ->setAv(false)
                     ->setIdUtilisateur($user->getId())
+                    ->setDateajout(time())
             );
 
             $numero2 = new Numeros();
@@ -300,7 +304,9 @@ class TestCommon extends WebTestCase {
                     ->setMagazine('MP')
                     ->setNumero('300')
                     ->setEtat('bon')
+                    ->setAv(false)
                     ->setIdUtilisateur($user->getId())
+                    ->setDateajout(time())
             );
 
             $numero3 = new Numeros();
@@ -310,7 +316,9 @@ class TestCommon extends WebTestCase {
                     ->setMagazine('MP')
                     ->setNumero('301')
                     ->setEtat('mauvais')
+                    ->setAv(true)
                     ->setIdUtilisateur($user->getId())
+                    ->setDateajout(time())
             );
 
             $purchase1 = new Achats();
@@ -1069,6 +1077,7 @@ class TestCommon extends WebTestCase {
                     ->setPays('fr')
                     ->setMagazine('JM')
                     ->setNumero('3002')
+                    ->setNumeroreference($edge1->getIssuenumber())
                     ->setTranchereference($edge1)
             );
 
@@ -1085,6 +1094,7 @@ class TestCommon extends WebTestCase {
                     ->setPays('fr')
                     ->setMagazine('JM')
                     ->setNumero('4002')
+                    ->setNumeroreference($edge2->getIssuenumber())
                     ->setTranchereference($edge2)
             );
 

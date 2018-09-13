@@ -3,21 +3,17 @@
 namespace Dm\Models;
 
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
-use Doctrine\ORM\Mapping\OneToMany;
-use Doctrine\ORM\Mapping\PrePersist;
 
 /**
  * TranchesPretes
  *
- * @ORM\Table(name="tranches_pretes")
+ * @ORM\Table(name="tranches_pretes", uniqueConstraints={@ORM\UniqueConstraint(name="tranchespretes_unique", columns={"publicationcode", "issuenumber"})}, indexes={@ORM\Index(name="tranches_pretes_dateajout_index", columns={"dateajout"}), @ORM\Index(name="tranches_pretes_publicationcode_issuenumber_index", columns={"publicationcode", "issuenumber"})})
  * @ORM\Entity
- * @HasLifecycleCallbacks
  */
 class TranchesPretes extends \Dm\Models\BaseModel
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ID", type="integer", nullable=false)
      * @ORM\Id
@@ -40,31 +36,25 @@ class TranchesPretes extends \Dm\Models\BaseModel
     private $issuenumber = '';
 
     /**
-     * @var \DateTime
+     * @var int
      *
-     * @ORM\Column(name="dateajout", type="datetime", nullable=false)
+     * @ORM\Column(name="dateajout", type="integer", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
      */
-    private $dateajout;
-
-    /** @PrePersist */
-    public function setDateOnPrePersist()
-    {
-        if (is_null($this->dateajout)) {
-            $this->dateajout = new \DateTime();
-        }
-    }
+    private $dateajout = 'CURRENT_TIMESTAMP';
 
     /**
-     * @var TranchesDoublons[]
+     * @var int|null
      *
-     * @OneToMany(fetch="EAGER", targetEntity="TranchesDoublons", mappedBy="tranchereference")
+     * @ORM\Column(name="points", type="integer", nullable=true)
      */
-    private $doublons;
+    private $points;
+
+
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -72,7 +62,7 @@ class TranchesPretes extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set publicationcode
+     * Set publicationcode.
      *
      * @param string $publicationcode
      *
@@ -86,7 +76,7 @@ class TranchesPretes extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get publicationcode
+     * Get publicationcode.
      *
      * @return string
      */
@@ -96,7 +86,7 @@ class TranchesPretes extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set issuenumber
+     * Set issuenumber.
      *
      * @param string $issuenumber
      *
@@ -110,7 +100,7 @@ class TranchesPretes extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get issuenumber
+     * Get issuenumber.
      *
      * @return string
      */
@@ -120,9 +110,9 @@ class TranchesPretes extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set dateajout
+     * Set dateajout.
      *
-     * @param \DateTime $dateajout
+     * @param int $dateajout
      *
      * @return TranchesPretes
      */
@@ -134,9 +124,9 @@ class TranchesPretes extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get dateajout
+     * Get dateajout.
      *
-     * @return \DateTime
+     * @return int
      */
     public function getDateajout()
     {
@@ -144,21 +134,26 @@ class TranchesPretes extends \Dm\Models\BaseModel
     }
 
     /**
-     * @return TranchesDoublons[]
+     * Set points.
+     *
+     * @param int|null $points
+     *
+     * @return TranchesPretes
      */
-    public function getDoublons()
+    public function setPoints($points = null)
     {
-        return $this->doublons;
+        $this->points = $points;
+
+        return $this;
     }
 
     /**
-     * @param TranchesDoublons[] $doublons
-     * @return $this
+     * Get points.
+     *
+     * @return int|null
      */
-    public function setDoublons($doublons)
+    public function getPoints()
     {
-        $this->doublons = $doublons;
-
-        return $this;
+        return $this->points;
     }
 }

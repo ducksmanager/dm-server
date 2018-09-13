@@ -7,13 +7,13 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Achats
  *
- * @ORM\Table(name="achats")
+ * @ORM\Table(name="achats", uniqueConstraints={@ORM\UniqueConstraint(name="user_date_description_unique", columns={"ID_User", "Date", "Description"})})
  * @ORM\Entity
  */
 class Achats extends \Dm\Models\BaseModel
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ID_Acquisition", type="integer", nullable=false)
      * @ORM\Id
@@ -22,7 +22,7 @@ class Achats extends \Dm\Models\BaseModel
     private $idAcquisition;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ID_User", type="integer", nullable=false)
      */
@@ -31,35 +31,39 @@ class Achats extends \Dm\Models\BaseModel
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="Date", type="datetime", nullable=false)
+     * @ORM\Column(name="Date", type="date", nullable=false)
      */
     private $date;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="Style_couleur", type="string", length=9, nullable=true)
+     * @deprecated
      */
     private $styleCouleur;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="Style_soulignement", type="string", nullable=true)
+     * @ORM\Column(name="Style_soulignement", type="string", length=0, nullable=true)
+     * @deprecated
      */
     private $styleSoulignement;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="Style_entourage", type="string", nullable=true)
+     * @ORM\Column(name="Style_entourage", type="string", length=0, nullable=true)
+     * @deprecated
      */
     private $styleEntourage;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="Style_marquage", type="string", nullable=true)
+     * @ORM\Column(name="Style_marquage", type="string", length=0, nullable=true)
+     * @deprecated
      */
     private $styleMarquage;
 
@@ -73,23 +77,9 @@ class Achats extends \Dm\Models\BaseModel
 
 
     /**
-     * Set idAcquisition
+     * Get idAcquisition.
      *
-     * @param integer $idAcquisition
-     *
-     * @return Achats
-     */
-    public function setIdAcquisition($idAcquisition)
-    {
-        $this->idAcquisition = $idAcquisition;
-
-        return $this;
-    }
-
-    /**
-     * Get idAcquisition
-     *
-     * @return integer
+     * @return int
      */
     public function getIdAcquisition()
     {
@@ -97,9 +87,9 @@ class Achats extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set idUser
+     * Set idUser.
      *
-     * @param integer $idUser
+     * @param int $idUser
      *
      * @return Achats
      */
@@ -111,9 +101,9 @@ class Achats extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get idUser
+     * Get idUser.
      *
-     * @return integer
+     * @return int
      */
     public function getIdUser()
     {
@@ -121,7 +111,7 @@ class Achats extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set date
+     * Set date.
      *
      * @param \DateTime $date
      *
@@ -135,7 +125,7 @@ class Achats extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get date
+     * Get date.
      *
      * @return \DateTime
      */
@@ -145,13 +135,13 @@ class Achats extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set styleCouleur
+     * Set styleCouleur.
      *
-     * @param string $styleCouleur
+     * @param string|null $styleCouleur
      *
      * @return Achats
      */
-    public function setStyleCouleur($styleCouleur)
+    public function setStyleCouleur($styleCouleur = null)
     {
         $this->styleCouleur = $styleCouleur;
 
@@ -159,9 +149,9 @@ class Achats extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get styleCouleur
+     * Get styleCouleur.
      *
-     * @return string
+     * @return string|null
      */
     public function getStyleCouleur()
     {
@@ -169,13 +159,13 @@ class Achats extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set styleSoulignement
+     * Set styleSoulignement.
      *
-     * @param string $styleSoulignement
+     * @param string|null $styleSoulignement
      *
      * @return Achats
      */
-    public function setStyleSoulignement($styleSoulignement)
+    public function setStyleSoulignement($styleSoulignement = null)
     {
         $this->styleSoulignement = $styleSoulignement;
 
@@ -183,9 +173,9 @@ class Achats extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get styleSoulignement
+     * Get styleSoulignement.
      *
-     * @return string
+     * @return string|null
      */
     public function getStyleSoulignement()
     {
@@ -193,13 +183,13 @@ class Achats extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set styleEntourage
+     * Set styleEntourage.
      *
-     * @param string $styleEntourage
+     * @param string|null $styleEntourage
      *
      * @return Achats
      */
-    public function setStyleEntourage($styleEntourage)
+    public function setStyleEntourage($styleEntourage = null)
     {
         $this->styleEntourage = $styleEntourage;
 
@@ -207,9 +197,9 @@ class Achats extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get styleEntourage
+     * Get styleEntourage.
      *
-     * @return string
+     * @return string|null
      */
     public function getStyleEntourage()
     {
@@ -217,13 +207,13 @@ class Achats extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set styleMarquage
+     * Set styleMarquage.
      *
-     * @param string $styleMarquage
+     * @param string|null $styleMarquage
      *
      * @return Achats
      */
-    public function setStyleMarquage($styleMarquage)
+    public function setStyleMarquage($styleMarquage = null)
     {
         $this->styleMarquage = $styleMarquage;
 
@@ -231,9 +221,9 @@ class Achats extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get styleMarquage
+     * Get styleMarquage.
      *
-     * @return string
+     * @return string|null
      */
     public function getStyleMarquage()
     {
@@ -241,7 +231,7 @@ class Achats extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set description
+     * Set description.
      *
      * @param string $description
      *
@@ -255,7 +245,7 @@ class Achats extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get description
+     * Get description.
      *
      * @return string
      */

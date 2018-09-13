@@ -129,14 +129,22 @@ class UserTest extends TestCommon
         $user = self::createTestCollection();
         self::setSessionUser($this->app, $user);
 
-        $otherUsername = 'otheruser';
-        self::createTestCollection($otherUsername);
+        $otherUser = self::createTestCollection('otheruser');
 
-        $this->buildAuthenticatedServiceWithTestUser("/user/sale/$otherUsername", self::$dmUser, 'POST')->call();
+        $today = new \DateTime();
+        $today->setTime(0, 0, 0);
 
-        $today = new \DateTime('today');
-        $today = $today->format('Y-m-d');
-        $response = $this->buildAuthenticatedServiceWithTestUser("/user/sale/$otherUsername/$today", self::$dmUser, 'GET')->call();
+        $sale = new EmailsVentes();
+        $this->getEm()->persist(
+            $sale
+                ->setUsernameVente($user->getUsername())
+                ->setUsernameAchat($otherUser->getUsername())
+                ->setDate($today)
+        );
+        $this->getEm()->flush();
+
+        $todayStr = $today->format('Y-m-d');
+        $response = $this->buildAuthenticatedServiceWithTestUser("/user/sale/{$otherUser->getUsername()}/$todayStr", self::$dmUser, 'GET')->call();
 
         $objectResponse = json_decode($this->getResponseContent($response));
 
@@ -144,7 +152,7 @@ class UserTest extends TestCommon
         /** @var EmailsVentes $access */
         $access = unserialize($objectResponse[0]);
         $this->assertEquals($user->getUsername(), $access->getUsernameVente());
-        $this->assertEquals($otherUsername, $access->getUsernameAchat());
-        $this->assertEquals(new \DateTime('today'), $access->getDate());
+        $this->assertEquals($otherUser->getUsername(), $access->getUsernameAchat());
+        $this->assertEquals($today, $access->getDate());
     }
 }

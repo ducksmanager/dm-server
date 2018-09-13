@@ -29,7 +29,7 @@ class AuteursPseudos extends \Dm\Models\BaseModel
     private $nomauteurabrege;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ID_user", type="integer", nullable=false)
      * @ORM\Id
@@ -38,46 +38,50 @@ class AuteursPseudos extends \Dm\Models\BaseModel
     private $idUser;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="NbNonPossedesFrance", type="integer", nullable=false)
+     * @deprecated
      */
     private $nbnonpossedesfrance = '0';
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="NbNonPossedesEtranger", type="integer", nullable=false)
+     * @deprecated
      */
     private $nbnonpossedesetranger = '0';
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="NbPossedes", type="integer", nullable=false)
+     * @deprecated
      */
     private $nbpossedes;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="DateStat", type="datetime", nullable=false)
+     * @ORM\Column(name="DateStat", type="date", nullable=false, options={"default"="0000-00-00"})
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
+     * @deprecated
      */
     private $datestat = '0000-00-00';
 
     /**
-     * @var boolean
+     * @var bool
      *
-     * @ORM\Column(name="Notation", type="boolean", nullable=false)
+     * @ORM\Column(name="Notation", type="boolean", nullable=false, options={"default"="-1"})
      */
     private $notation = '-1';
 
 
 
     /**
-     * Set nomauteur
+     * Set nomauteur.
      *
      * @param string $nomauteur
      *
@@ -91,7 +95,7 @@ class AuteursPseudos extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get nomauteur
+     * Get nomauteur.
      *
      * @return string
      */
@@ -101,7 +105,7 @@ class AuteursPseudos extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set nomauteurabrege
+     * Set nomauteurabrege.
      *
      * @param string $nomauteurabrege
      *
@@ -115,7 +119,7 @@ class AuteursPseudos extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get nomauteurabrege
+     * Get nomauteurabrege.
      *
      * @return string
      */
@@ -125,9 +129,9 @@ class AuteursPseudos extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set idUser
+     * Set idUser.
      *
-     * @param integer $idUser
+     * @param int $idUser
      *
      * @return AuteursPseudos
      */
@@ -139,9 +143,9 @@ class AuteursPseudos extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get idUser
+     * Get idUser.
      *
-     * @return integer
+     * @return int
      */
     public function getIdUser()
     {
@@ -149,9 +153,9 @@ class AuteursPseudos extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set nbnonpossedesfrance
+     * Set nbnonpossedesfrance.
      *
-     * @param integer $nbnonpossedesfrance
+     * @param int $nbnonpossedesfrance
      *
      * @return AuteursPseudos
      */
@@ -163,9 +167,9 @@ class AuteursPseudos extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get nbnonpossedesfrance
+     * Get nbnonpossedesfrance.
      *
-     * @return integer
+     * @return int
      */
     public function getNbnonpossedesfrance()
     {
@@ -173,9 +177,9 @@ class AuteursPseudos extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set nbnonpossedesetranger
+     * Set nbnonpossedesetranger.
      *
-     * @param integer $nbnonpossedesetranger
+     * @param int $nbnonpossedesetranger
      *
      * @return AuteursPseudos
      */
@@ -187,9 +191,9 @@ class AuteursPseudos extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get nbnonpossedesetranger
+     * Get nbnonpossedesetranger.
      *
-     * @return integer
+     * @return int
      */
     public function getNbnonpossedesetranger()
     {
@@ -197,9 +201,9 @@ class AuteursPseudos extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set nbpossedes
+     * Set nbpossedes.
      *
-     * @param integer $nbpossedes
+     * @param int $nbpossedes
      *
      * @return AuteursPseudos
      */
@@ -211,9 +215,9 @@ class AuteursPseudos extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get nbpossedes
+     * Get nbpossedes.
      *
-     * @return integer
+     * @return int
      */
     public function getNbpossedes()
     {
@@ -221,7 +225,7 @@ class AuteursPseudos extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set datestat
+     * Set datestat.
      *
      * @param \DateTime $datestat
      *
@@ -235,7 +239,7 @@ class AuteursPseudos extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get datestat
+     * Get datestat.
      *
      * @return \DateTime
      */
@@ -245,9 +249,9 @@ class AuteursPseudos extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set notation
+     * Set notation.
      *
-     * @param boolean $notation
+     * @param bool $notation
      *
      * @return AuteursPseudos
      */
@@ -259,9 +263,9 @@ class AuteursPseudos extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get notation
+     * Get notation.
      *
-     * @return boolean
+     * @return bool
      */
     public function getNotation()
     {

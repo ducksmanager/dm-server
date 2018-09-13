@@ -191,6 +191,7 @@ class InternalController extends AbstractController
                 $newIssue->setAv($istosellNewIssues);
                 $newIssue->setIdAcquisition($purchaseidNewIssues);
                 $newIssue->setIdUtilisateur(self::getSessionUser($app)['id']);
+                $newIssue->setDateajout(time());
 
                 $dmEm->persist($newIssue);
             }

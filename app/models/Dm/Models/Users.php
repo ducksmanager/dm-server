@@ -3,20 +3,17 @@
 namespace Dm\Models;
 
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
-use Doctrine\ORM\Mapping\PrePersist;
 
 /**
  * Users
  *
  * @ORM\Table(name="users", uniqueConstraints={@ORM\UniqueConstraint(name="username", columns={"username"})})
  * @ORM\Entity
- * @HasLifecycleCallbacks
  */
 class Users extends \Dm\Models\BaseModel
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ID", type="integer", nullable=false)
      * @ORM\Id
@@ -39,7 +36,7 @@ class Users extends \Dm\Models\BaseModel
     private $password;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="AccepterPartage", type="boolean", nullable=false)
      */
@@ -48,9 +45,9 @@ class Users extends \Dm\Models\BaseModel
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="DateInscription", type="datetime", nullable=false)
+     * @ORM\Column(name="DateInscription", type="date", nullable=false, options={"default"="0000-00-00"})
      */
-    private $dateinscription;
+    private $dateinscription = '0000-00-00';
 
     /**
      * @var string
@@ -60,81 +57,76 @@ class Users extends \Dm\Models\BaseModel
     private $email;
 
     /**
-     * @var boolean
+     * @var bool
      *
-     * @ORM\Column(name="RecommandationsListeMags", type="boolean", nullable=false)
+     * @ORM\Column(name="RecommandationsListeMags", type="boolean", nullable=false, options={"default"="1"})
+     * @deprecated
      */
     private $recommandationslistemags = '1';
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="BetaUser", type="boolean", nullable=false)
      */
     private $betauser = '0';
 
     /**
-     * @var boolean
+     * @var bool
      *
-     * @ORM\Column(name="AfficherVideo", type="boolean", nullable=false)
+     * @ORM\Column(name="AfficherVideo", type="boolean", nullable=false, options={"default"="1"})
      */
     private $affichervideo = '1';
 
     /**
      * @var string
      *
-     * @ORM\Column(name="Bibliotheque_Texture1", type="string", length=20, nullable=false)
+     * @ORM\Column(name="Bibliotheque_Texture1", type="string", length=20, nullable=false, options={"default"="bois"})
      */
     private $bibliothequeTexture1 = 'bois';
 
     /**
      * @var string
      *
-     * @ORM\Column(name="Bibliotheque_Sous_Texture1", type="string", length=50, nullable=false)
+     * @ORM\Column(name="Bibliotheque_Sous_Texture1", type="string", length=50, nullable=false, options={"default"="HONDURAS MAHOGANY"})
      */
     private $bibliothequeSousTexture1 = 'HONDURAS MAHOGANY';
 
     /**
      * @var string
      *
-     * @ORM\Column(name="Bibliotheque_Texture2", type="string", length=20, nullable=false)
+     * @ORM\Column(name="Bibliotheque_Texture2", type="string", length=20, nullable=false, options={"default"="bois"})
      */
     private $bibliothequeTexture2 = 'bois';
 
     /**
      * @var string
      *
-     * @ORM\Column(name="Bibliotheque_Sous_Texture2", type="string", length=50, nullable=false)
+     * @ORM\Column(name="Bibliotheque_Sous_Texture2", type="string", length=50, nullable=false, options={"default"="KNOTTY PINE"})
      */
     private $bibliothequeSousTexture2 = 'KNOTTY PINE';
 
     /**
      * @var float
      *
-     * @ORM\Column(name="Bibliotheque_Grossissement", type="float", precision=10, scale=0, nullable=false)
+     * @ORM\Column(name="Bibliotheque_Grossissement", type="float", precision=10, scale=0, nullable=false, options={"default"="1.5"})
+     * @deprecated
      */
     private $bibliothequeGrossissement = '1.5';
 
     /**
-     * @var \DateTime
+     * @var int
      *
-     * @ORM\Column(name="DernierAcces", type="datetime", nullable=false)
+     * @ORM\Column(name="DernierAcces", type="integer", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
      */
-    private $dernieracces;
+    private $dernieracces = 'CURRENT_TIMESTAMP';
 
-    /** @PrePersist */
-    public function setDateOnPrePersist()
-    {
-        if (is_null($this->dernieracces)) {
-            $this->dernieracces = new \DateTime();
-        }
-    }
 
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -142,7 +134,7 @@ class Users extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set username
+     * Set username.
      *
      * @param string $username
      *
@@ -156,7 +148,7 @@ class Users extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get username
+     * Get username.
      *
      * @return string
      */
@@ -166,7 +158,7 @@ class Users extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set password
+     * Set password.
      *
      * @param string $password
      *
@@ -180,7 +172,7 @@ class Users extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get password
+     * Get password.
      *
      * @return string
      */
@@ -190,9 +182,9 @@ class Users extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set accepterpartage
+     * Set accepterpartage.
      *
-     * @param boolean $accepterpartage
+     * @param bool $accepterpartage
      *
      * @return Users
      */
@@ -204,9 +196,9 @@ class Users extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get accepterpartage
+     * Get accepterpartage.
      *
-     * @return boolean
+     * @return bool
      */
     public function getAccepterpartage()
     {
@@ -214,7 +206,7 @@ class Users extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set dateinscription
+     * Set dateinscription.
      *
      * @param \DateTime $dateinscription
      *
@@ -228,7 +220,7 @@ class Users extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get dateinscription
+     * Get dateinscription.
      *
      * @return \DateTime
      */
@@ -238,7 +230,7 @@ class Users extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set email
+     * Set email.
      *
      * @param string $email
      *
@@ -252,7 +244,7 @@ class Users extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get email
+     * Get email.
      *
      * @return string
      */
@@ -262,9 +254,9 @@ class Users extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set recommandationslistemags
+     * Set recommandationslistemags.
      *
-     * @param boolean $recommandationslistemags
+     * @param bool $recommandationslistemags
      *
      * @return Users
      */
@@ -276,9 +268,9 @@ class Users extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get recommandationslistemags
+     * Get recommandationslistemags.
      *
-     * @return boolean
+     * @return bool
      */
     public function getRecommandationslistemags()
     {
@@ -286,9 +278,9 @@ class Users extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set betauser
+     * Set betauser.
      *
-     * @param boolean $betauser
+     * @param bool $betauser
      *
      * @return Users
      */
@@ -300,9 +292,9 @@ class Users extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get betauser
+     * Get betauser.
      *
-     * @return boolean
+     * @return bool
      */
     public function getBetauser()
     {
@@ -310,9 +302,9 @@ class Users extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set affichervideo
+     * Set affichervideo.
      *
-     * @param boolean $affichervideo
+     * @param bool $affichervideo
      *
      * @return Users
      */
@@ -324,9 +316,9 @@ class Users extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get affichervideo
+     * Get affichervideo.
      *
-     * @return boolean
+     * @return bool
      */
     public function getAffichervideo()
     {
@@ -334,7 +326,7 @@ class Users extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set bibliothequeTexture1
+     * Set bibliothequeTexture1.
      *
      * @param string $bibliothequeTexture1
      *
@@ -348,7 +340,7 @@ class Users extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get bibliothequeTexture1
+     * Get bibliothequeTexture1.
      *
      * @return string
      */
@@ -358,7 +350,7 @@ class Users extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set bibliothequeSousTexture1
+     * Set bibliothequeSousTexture1.
      *
      * @param string $bibliothequeSousTexture1
      *
@@ -372,7 +364,7 @@ class Users extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get bibliothequeSousTexture1
+     * Get bibliothequeSousTexture1.
      *
      * @return string
      */
@@ -382,7 +374,7 @@ class Users extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set bibliothequeTexture2
+     * Set bibliothequeTexture2.
      *
      * @param string $bibliothequeTexture2
      *
@@ -396,7 +388,7 @@ class Users extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get bibliothequeTexture2
+     * Get bibliothequeTexture2.
      *
      * @return string
      */
@@ -406,7 +398,7 @@ class Users extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set bibliothequeSousTexture2
+     * Set bibliothequeSousTexture2.
      *
      * @param string $bibliothequeSousTexture2
      *
@@ -420,7 +412,7 @@ class Users extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get bibliothequeSousTexture2
+     * Get bibliothequeSousTexture2.
      *
      * @return string
      */
@@ -430,7 +422,7 @@ class Users extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set bibliothequeGrossissement
+     * Set bibliothequeGrossissement.
      *
      * @param float $bibliothequeGrossissement
      *
@@ -444,7 +436,7 @@ class Users extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get bibliothequeGrossissement
+     * Get bibliothequeGrossissement.
      *
      * @return float
      */
@@ -454,9 +446,9 @@ class Users extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set dernieracces
+     * Set dernieracces.
      *
-     * @param \DateTime $dernieracces
+     * @param int $dernieracces
      *
      * @return Users
      */
@@ -468,9 +460,9 @@ class Users extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get dernieracces
+     * Get dernieracces.
      *
-     * @return \DateTime
+     * @return int
      */
     public function getDernieracces()
     {

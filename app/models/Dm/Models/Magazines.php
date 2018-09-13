@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(name="magazines")
  * @ORM\Entity
+ * @deprecated
  */
 class Magazines extends \Dm\Models\BaseModel
 {
@@ -47,7 +48,7 @@ class Magazines extends \Dm\Models\BaseModel
     private $redirigedepuis;
 
     /**
-     * @var boolean
+     * @var bool|null
      *
      * @ORM\Column(name="NeParaitPlus", type="boolean", nullable=true)
      */
@@ -56,7 +57,7 @@ class Magazines extends \Dm\Models\BaseModel
 
 
     /**
-     * Set paysabrege
+     * Set paysabrege.
      *
      * @param string $paysabrege
      *
@@ -70,7 +71,7 @@ class Magazines extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get paysabrege
+     * Get paysabrege.
      *
      * @return string
      */
@@ -80,7 +81,7 @@ class Magazines extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set nomabrege
+     * Set nomabrege.
      *
      * @param string $nomabrege
      *
@@ -94,7 +95,7 @@ class Magazines extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get nomabrege
+     * Get nomabrege.
      *
      * @return string
      */
@@ -104,7 +105,7 @@ class Magazines extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set nomcomplet
+     * Set nomcomplet.
      *
      * @param string $nomcomplet
      *
@@ -118,7 +119,7 @@ class Magazines extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get nomcomplet
+     * Get nomcomplet.
      *
      * @return string
      */
@@ -128,7 +129,7 @@ class Magazines extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set redirigedepuis
+     * Set redirigedepuis.
      *
      * @param string $redirigedepuis
      *
@@ -142,7 +143,7 @@ class Magazines extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get redirigedepuis
+     * Get redirigedepuis.
      *
      * @return string
      */
@@ -152,13 +153,13 @@ class Magazines extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set neparaitplus
+     * Set neparaitplus.
      *
-     * @param boolean $neparaitplus
+     * @param bool|null $neparaitplus
      *
      * @return Magazines
      */
-    public function setNeparaitplus($neparaitplus)
+    public function setNeparaitplus($neparaitplus = null)
     {
         $this->neparaitplus = $neparaitplus;
 
@@ -166,9 +167,9 @@ class Magazines extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get neparaitplus
+     * Get neparaitplus.
      *
-     * @return boolean
+     * @return bool|null
      */
     public function getNeparaitplus()
     {

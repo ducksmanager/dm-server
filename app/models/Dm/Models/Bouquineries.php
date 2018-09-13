@@ -3,20 +3,17 @@
 namespace Dm\Models;
 
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
-use Doctrine\ORM\Mapping\PrePersist;
 
 /**
  * Bouquineries
  *
  * @ORM\Table(name="bouquineries")
  * @ORM\Entity
- * @HasLifecycleCallbacks
  */
 class Bouquineries extends \Dm\Models\BaseModel
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="ID", type="integer", nullable=false)
      * @ORM\Id
@@ -35,6 +32,7 @@ class Bouquineries extends \Dm\Models\BaseModel
      * @var string
      *
      * @ORM\Column(name="Adresse", type="text", length=65535, nullable=false)
+     * @deprecated
      */
     private $adresse;
 
@@ -46,7 +44,7 @@ class Bouquineries extends \Dm\Models\BaseModel
     private $adressecomplete;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="CodePostal", type="integer", nullable=false)
      */
@@ -62,7 +60,7 @@ class Bouquineries extends \Dm\Models\BaseModel
     /**
      * @var string
      *
-     * @ORM\Column(name="Pays", type="string", length=20, nullable=false)
+     * @ORM\Column(name="Pays", type="string", length=20, nullable=false, options={"default"="France"})
      */
     private $pays = 'France';
 
@@ -74,7 +72,7 @@ class Bouquineries extends \Dm\Models\BaseModel
     private $commentaire;
 
     /**
-     * @var integer
+     * @var int|null
      *
      * @ORM\Column(name="ID_Utilisateur", type="integer", nullable=true)
      */
@@ -95,33 +93,25 @@ class Bouquineries extends \Dm\Models\BaseModel
     private $coordy = '0';
 
     /**
-     * @var \DateTime
+     * @var int
      *
-     * @ORM\Column(name="DateAjout", type="datetime", nullable=false)
+     * @ORM\Column(name="DateAjout", type="integer", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
      */
-    private $dateajout;
-
-    /** @PrePersist */
-    public function setDateOnPrePersist()
-    {
-        if (is_null($this->dateajout)) {
-            $this->dateajout = new \DateTime();
-        }
-    }
+    private $dateajout = 'CURRENT_TIMESTAMP';
 
     /**
-     * @var boolean
+     * @var bool
      *
-     * @ORM\Column(name="Actif", type="boolean", nullable=false)
+     * @ORM\Column(name="Actif", type="boolean", nullable=false, options={"default"="1"})
      */
     private $actif = '1';
 
 
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -129,7 +119,7 @@ class Bouquineries extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set nom
+     * Set nom.
      *
      * @param string $nom
      *
@@ -143,7 +133,7 @@ class Bouquineries extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get nom
+     * Get nom.
      *
      * @return string
      */
@@ -153,7 +143,7 @@ class Bouquineries extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set adresse
+     * Set adresse.
      *
      * @param string $adresse
      *
@@ -167,7 +157,7 @@ class Bouquineries extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get adresse
+     * Get adresse.
      *
      * @return string
      */
@@ -177,7 +167,7 @@ class Bouquineries extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set adressecomplete
+     * Set adressecomplete.
      *
      * @param string $adressecomplete
      *
@@ -191,7 +181,7 @@ class Bouquineries extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get adressecomplete
+     * Get adressecomplete.
      *
      * @return string
      */
@@ -201,9 +191,9 @@ class Bouquineries extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set codepostal
+     * Set codepostal.
      *
-     * @param integer $codepostal
+     * @param int $codepostal
      *
      * @return Bouquineries
      */
@@ -215,9 +205,9 @@ class Bouquineries extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get codepostal
+     * Get codepostal.
      *
-     * @return integer
+     * @return int
      */
     public function getCodepostal()
     {
@@ -225,7 +215,7 @@ class Bouquineries extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set ville
+     * Set ville.
      *
      * @param string $ville
      *
@@ -239,7 +229,7 @@ class Bouquineries extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get ville
+     * Get ville.
      *
      * @return string
      */
@@ -249,7 +239,7 @@ class Bouquineries extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set pays
+     * Set pays.
      *
      * @param string $pays
      *
@@ -263,7 +253,7 @@ class Bouquineries extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get pays
+     * Get pays.
      *
      * @return string
      */
@@ -273,7 +263,7 @@ class Bouquineries extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set commentaire
+     * Set commentaire.
      *
      * @param string $commentaire
      *
@@ -287,7 +277,7 @@ class Bouquineries extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get commentaire
+     * Get commentaire.
      *
      * @return string
      */
@@ -297,13 +287,13 @@ class Bouquineries extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set idUtilisateur
+     * Set idUtilisateur.
      *
-     * @param integer $idUtilisateur
+     * @param int|null $idUtilisateur
      *
      * @return Bouquineries
      */
-    public function setIdUtilisateur($idUtilisateur)
+    public function setIdUtilisateur($idUtilisateur = null)
     {
         $this->idUtilisateur = $idUtilisateur;
 
@@ -311,9 +301,9 @@ class Bouquineries extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get idUtilisateur
+     * Get idUtilisateur.
      *
-     * @return integer
+     * @return int|null
      */
     public function getIdUtilisateur()
     {
@@ -321,7 +311,7 @@ class Bouquineries extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set coordx
+     * Set coordx.
      *
      * @param float $coordx
      *
@@ -335,7 +325,7 @@ class Bouquineries extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get coordx
+     * Get coordx.
      *
      * @return float
      */
@@ -345,7 +335,7 @@ class Bouquineries extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set coordy
+     * Set coordy.
      *
      * @param float $coordy
      *
@@ -359,7 +349,7 @@ class Bouquineries extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get coordy
+     * Get coordy.
      *
      * @return float
      */
@@ -369,7 +359,7 @@ class Bouquineries extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set dateajout
+     * Set dateajout.
      *
      * @param \DateTime $dateajout
      *
@@ -383,7 +373,7 @@ class Bouquineries extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get dateajout
+     * Get dateajout.
      *
      * @return \DateTime
      */
@@ -393,9 +383,9 @@ class Bouquineries extends \Dm\Models\BaseModel
     }
 
     /**
-     * Set actif
+     * Set actif.
      *
-     * @param boolean $actif
+     * @param bool $actif
      *
      * @return Bouquineries
      */
@@ -407,9 +397,9 @@ class Bouquineries extends \Dm\Models\BaseModel
     }
 
     /**
-     * Get actif
+     * Get actif.
      *
-     * @return boolean
+     * @return bool
      */
     public function getActif()
     {
