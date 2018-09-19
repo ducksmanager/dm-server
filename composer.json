@@ -4,11 +4,11 @@
     "description": "DucksManager server REST API endpoint",
     "type": "library",
     "keywords": ["ducksmanager", "whattheduck"],
-    "homepage": "http://ducksmanager.net",
+    "homepage": "https://ducksmanager.net",
     "authors": [
         {
             "name": "Bruno Perel",
-            "homepage": "http://github.com/bperel"
+            "homepage": "https://github.com/bperel"
         }
     ],
     "support": {
@@ -89,7 +89,7 @@
         }
     },
     "require": {
-        "php": "7.1.*",
+        "php": "7.2.*",
         "ext-curl": "*",
         "ext-exif": "*",
         "ext-json": "*",
