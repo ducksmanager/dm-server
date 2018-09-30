@@ -33,6 +33,7 @@ class InternalController extends AbstractController
             $query = $request->request->get('query');
             $db = $request->request->get('db');
             $log = $request->request->get('log');
+            $parameters = $request->request->get('parameters');
 
             $em = DmServer::getEntityManager($db);
             if (is_null($em)) {
@@ -45,7 +46,10 @@ class InternalController extends AbstractController
             if (!(isset($log) && $log === 0)) {
                 $app['monolog']->addInfo('Raw sql sent : '.$query);
             }
-            $results = $em->getConnection()->fetchAll($query);
+            if (!isset($parameters)) {
+                $parameters = [];
+            }
+            $results = $em->getConnection()->fetchAll($query, $parameters);
             return new JsonResponse($results);
         });
     }

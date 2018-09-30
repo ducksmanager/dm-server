@@ -49,6 +49,22 @@ class RawSqlTest extends TestCommon
         $this->assertEquals('DDD', $objectResponse[0]['Magazine']);
     }
 
+    public function testRawSqlWithParameters() {
+        $response = $this->buildAuthenticatedServiceWithTestUser('/rawsql', self::$rawSqlUser, 'POST', [
+            'query' => 'SELECT * FROM numeros WHERE Magazine=:Magazine',
+            'parameters' => ['Magazine' => 'DDD'],
+            'db'    => DmServer::CONFIG_DB_KEY_DM
+        ])->call();
+
+        $objectResponse = json_decode($this->getResponseContent($response), true);
+
+        $this->assertInternalType('array', $objectResponse);
+        $this->assertCount(1, $objectResponse);
+        $this->assertInternalType('array', $objectResponse[0]);
+        $this->assertEquals('fr', $objectResponse[0]['Pays']);
+        $this->assertEquals('DDD', $objectResponse[0]['Magazine']);
+    }
+
     public function testRawSqlInvalidSelect() {
         $response = $this->buildAuthenticatedServiceWithTestUser('/rawsql', self::$rawSqlUser, 'POST', [
             'query' => 'SELECT invalid FROM numeros',
