@@ -78,6 +78,18 @@ class StatusTest extends TestCommon
         });
     }
 
+    public function testGetImageSearchStatus() {
+        $response = $this->getCoverIdStatusForMockedResults(
+            '/status/pastecsearch',
+            json_encode([
+                'imageIds' => [1,2,3],
+                'type' => 'INDEX_IMAGE_IDS'
+            ])
+        );
+
+        $this->assertEquals('Pastec OK with 3 images indexed', $this->getResponseContent($response));
+    }
+
     public function testGetDbStatus() {
         $user = self::createTestCollection();
         self::setSessionUser($this->app, $user);

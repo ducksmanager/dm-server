@@ -7,6 +7,7 @@ use DmServer\DatabaseCheckHelper;
 use DmServer\DmServer;
 use DmServer\SimilarImagesHelper;
 use Silex\Application;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use DDesrosiers\SilexAnnotations\Annotations as SLX;
@@ -27,6 +28,8 @@ use Swagger\Annotations as SWG;
  */
 class AppController extends AbstractController
 {
+    public static $sampleCover = "https://outducks.org/au/bp/001/au_bp_001a_001.jpg";
+
     /**
      * @SLX\Route(
      *   @SLX\Request(method="GET", uri="swagger.json")
@@ -78,7 +81,6 @@ class AppController extends AbstractController
      */
     public function getPastecStatus(Application $app, $pastecHost) {
         return AbstractController::returnErrorOnException($app, null, function () use ($pastecHost) {
-            $errors = [];
             $log = [];
 
             try {
@@ -87,16 +89,59 @@ class AppController extends AbstractController
                     $log[] = "Pastec OK with $pastecIndexesImagesNumber images indexed";
                 }
                 else {
-                    $errors[] = 'Pastec has no images indexed';
+                    throw new \Exception('Pastec has no images indexed');
                 }
             }
             catch(\Exception $e) {
-                $errors[] = $e->getMessage();
+                $error = $e->getMessage();
             }
 
             $output = implode('<br />', $log);
-            if (count($errors) > 0) {
-                return new Response(implode('<br />', $errors), Response::HTTP_INTERNAL_SERVER_ERROR);
+            if (isset($error)) {
+                return new Response($error, Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+            return new Response($output);
+        });
+    }
+
+    /**
+     * @SLX\Route(
+     *   @SLX\Request(method="GET", uri="pastecsearch/{pastecHost}"),
+     *   @SWG\Parameter(
+     *     name="pastecHost",
+     *     in="path",
+     *     required=true
+     *   ),
+     *	 @SLX\Assert(variable="pastecHost", regex="^(?P<pastec_host_regex>[-_a-z0-9]+)$"),
+     *	 @SLX\Value(variable="pastecHost", default="pastec")
+     * )
+     * @codeCoverageIgnore
+     * @param Application $app
+     * @param string $pastecHost
+     * @return Response
+     * @throws \InvalidArgumentException
+     */
+    public function getPastecSearchStatus(Application $app, $pastecHost) {
+        return AbstractController::returnErrorOnException($app, null, function () use ($app, $pastecHost) {
+            $log = [];
+
+            try {
+                $outputObject = SimilarImagesHelper::getSimilarImages(new File(self::$sampleCover, false), $app['monolog'], $pastecHost);
+                $matchNumber = count($outputObject->getImageIds());
+                if ($matchNumber > 0) {
+                    $log[] = "Pastec search OK returned $matchNumber images";
+                }
+                else {
+                    throw new \Exception('Pastec search returned no image');
+                }
+            }
+            catch(\Exception $e) {
+                $error = $e->getMessage();
+            }
+
+            $output = implode('<br />', $log);
+            if (isset($error)) {
+                return new Response($error, Response::HTTP_INTERNAL_SERVER_ERROR);
             }
             return new Response($output);
         });
