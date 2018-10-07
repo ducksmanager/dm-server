@@ -83,6 +83,10 @@
                 "app",
                 "app/helpers"
             ],
+            "DmServer\\Emails\\": [
+                "app/helpers",
+                "app/helpers/emails"
+            ],
             "DmServer\\Test\\": [
                 "test"
             ]

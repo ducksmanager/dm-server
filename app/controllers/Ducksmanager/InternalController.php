@@ -11,14 +11,13 @@ use Dm\Models\Users;
 use DmServer\Controllers\AbstractInternalController;
 use DmServer\DmServer;
 
+use DmServer\Emails\UserSuggestedBookstoreEmail;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query;
-use RuntimeException;
 use Silex\Application;
 
-use Swift_Mailer;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -246,28 +245,17 @@ class InternalController extends AbstractInternalController
         return self::wrapInternalService($app, function(EntityManager $dmEm) use ($app, $request) {
             $userId = $request->request->get('userId');
             if (is_null($userId)) {
-                $userName = 'anonymous';
+                $user = new Users();
+                $user->setUsername('anonymous');
             }
             else {
-                $userName = $dmEm->getRepository(Users::class)->findOneBy([
+                $user = $dmEm->getRepository(Users::class)->findOneBy([
                     'id' => $userId
-                ])->getUsername();
+                ]);
             }
 
-            $message = new \Swift_Message();
-            $message
-                ->setSubject('Ajout de bouquinerie')
-                ->setFrom([$userName. '@' .DmServer::$settings['smtp_origin_email_domain_ducksmanager']])
-                ->setTo([DmServer::$settings['smtp_username']])
-                ->setBody('<a href="https://www.ducksmanager.net/backend/bouquineries.php">Validation</a>', 'text/html');
-
-            /** @var Swift_Mailer $mailer */
-            $mailer = $app['mailer'];
-            $failures = [];
-            // Pass a variable name to the send() method
-            if (!$mailer->send($message, $failures)) {
-                throw new RuntimeException("Can't send e-mail '$message': failed with ".print_r($failures, true));
-            }
+            $message = new UserSuggestedBookstoreEmail($app['mailer'], $user);
+            $message->send();
 
             return new Response(Response::HTTP_OK);
         });
