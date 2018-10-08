@@ -173,4 +173,31 @@ class AppController extends AbstractController
             'userId' => $request->request->get('userid')
          ]);
     }
+
+    /**
+     * @SLX\Route(
+     *   @SLX\Request(method="POST", uri="email/confirmation"),
+     *   @SWG\Parameter(
+     *     name="userid",
+     *     in="body",
+     *     required=false
+     *   ),
+     *   @SWG\Parameter(
+     *     name="details",
+     *     in="body",
+     *     required=false
+     *   )
+     * )
+     * @param Application $app
+     * @param Request $request
+     * @return Response
+     * @throws \Exception
+     */
+    public function sendConfirmationEmail(Application $app, Request $request) {
+        return self::callInternal($app, '/ducksmanager/email/confirmation', 'POST', [
+            'userId' => $request->request->get('userid'),
+            'type' => $request->request->get('type'),
+            'details' => $request->request->get('details')
+        ]);
+    }
 }

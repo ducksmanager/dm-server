@@ -147,7 +147,7 @@ class InternalController extends AbstractController
             $ecEm->persist($model);
             $ecEm->flush();
 
-            return new Response(Response::HTTP_OK);
+            return new Response();
         });
     }
 

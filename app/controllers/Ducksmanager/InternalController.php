@@ -11,6 +11,7 @@ use Dm\Models\Users;
 use DmServer\Controllers\AbstractInternalController;
 use DmServer\DmServer;
 
+use DmServer\Emails\EdgesPublishedEmail;
 use DmServer\Emails\UserSuggestedBookstoreEmail;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NonUniqueResultException;
@@ -234,7 +235,17 @@ class InternalController extends AbstractInternalController
 
     /**
      * @SLX\Route(
-     *     @SLX\Request(method="POST", uri="email/bookstore")
+     *     @SLX\Request(method="POST", uri="email/bookstore"),
+     *     @SWG\Parameter(
+     *       name="userid",
+     *       in="body",
+     *       required=false
+     *     ),
+     *     @SWG\Parameter(
+     *       name="details",
+     *       in="body",
+     *       required=false
+     *     )
      * )
      * @param Application $app
      * @param Request $request
@@ -257,7 +268,55 @@ class InternalController extends AbstractInternalController
             $message = new UserSuggestedBookstoreEmail($app['mailer'], $user);
             $message->send();
 
-            return new Response(Response::HTTP_OK);
+            return new Response();
+        });
+    }
+
+    /**
+     * @SLX\Route(
+     *     @SLX\Request(method="POST", uri="email/confirmation"),
+     *     @SWG\Parameter(
+     *       name="details",
+     *       in="body",
+     *       required=true
+     *     )
+     * )
+     * @param Application $app
+     * @param Request $request
+     * @return Response
+     * @throws \Exception
+     */
+    public function sendConfirmationEmail(Application $app, Request $request) {
+        return self::wrapInternalService($app, function(EntityManager $dmEm) use ($app, $request) {
+            $userId = $request->request->get('userId');
+            $emailType = $request->request->get('type');
+
+            /** @var Users $user */
+            $user = $dmEm->getRepository(Users::class)->findOneBy([
+                'id' => $userId
+            ]);
+
+            if (is_null($user)) {
+                return new Response(Response::HTTP_BAD_REQUEST, "User with ID $userId was not found");
+            }
+
+            $details = $request->request->get('details');
+
+            switch ($emailType) {
+                case 'edges_published':
+                    $newMedalLevel = $details['newMedalLevel'];
+                    $extraEdges = $details['extraEdges'];
+                    $extraPhotographerPoints = $details['extraPhotographerPoints'];
+
+                    $message = new EdgesPublishedEmail($app['mailer'], self::$translator, $user, $extraEdges, $extraPhotographerPoints, $newMedalLevel);
+                break;
+                default:
+                    return new Response(Response::HTTP_BAD_REQUEST, "Invalid email type : $emailType");
+
+            }
+            $message->send();
+
+            return new Response();
         });
     }
 }
