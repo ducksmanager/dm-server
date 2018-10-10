@@ -3,8 +3,8 @@ namespace DmServer\Emails;
 
 use Dm\Models\Users;
 use DmServer\DmServer;
-use Silex\Application\TranslationTrait;
 use Swift_Mailer;
+use Symfony\Component\Translation\Translator;
 
 class EdgesPublishedEmail extends EmailHelper {
 
@@ -13,7 +13,7 @@ class EdgesPublishedEmail extends EmailHelper {
     private $translator;
     private $newMedalLevel;
 
-    public function __construct(Swift_Mailer $mailer, TranslationTrait $translator, Users $user, int $extraEdges, int $extraPhotographerPoints, $newMedalLevel = null)
+    public function __construct(Swift_Mailer $mailer, Translator $translator, Users $user, int $extraEdges, int $extraPhotographerPoints, $newMedalLevel = null)
     {
         parent::__construct($mailer, $user);
         $this->translator = $translator;
@@ -45,21 +45,21 @@ class EdgesPublishedEmail extends EmailHelper {
 
     function getHtmlBody()
     {
-        $body = $this->translator->trans('EMAIL_HELLO', ['%userName%', $this->user->getUsername()]);
+        return implode('<br />', [
+            $this->translator->trans('EMAIL_HELLO', ['%userName%' => $this->user->getUsername()]),
 
-        $body.= $this->extraEdges > 1
-            ? $this->translator->trans('EMAIL_EDGES_PUBLISHED_INTRO', ['%edgeNumber%' => $this->extraEdges])
-            : $this->translator->trans('EMAIL_ONE_EDGE_PUBLISHED_INTRO');
+            $this->extraEdges > 1
+                ? $this->translator->trans('EMAIL_EDGES_PUBLISHED_INTRO', ['%edgeNumber%' => $this->extraEdges])
+                : $this->translator->trans('EMAIL_ONE_EDGE_PUBLISHED_INTRO'),
 
-        if (!is_null($this->newMedalLevel)) {
-            $body.= $this->translator->trans('EMAIL_EDGES_PUBLISHED_MEDAL', ['%medalLevel%' => $this->newMedalLevel]);
-        }
+            !is_null($this->newMedalLevel)
+                ? $this->translator->trans('EMAIL_EDGES_PUBLISHED_MEDAL', ['%medalLevel%' => $this->newMedalLevel])
+                : '',
 
-        $body.= $this->translator->trans('EMAIL_EDGES_PUBLISHED_POINTS', ['%extraPhotographerPoints%' => $this->extraPhotographerPoints]);
+            $this->translator->trans('EMAIL_EDGES_PUBLISHED_POINTS', ['%extraPhotographerPoints%' => $this->extraPhotographerPoints]),
 
-        $body.= $this->translator->trans('EMAIL_CONFIRMATION_SIGNATURE');
-
-        return $body;
+            $this->translator->trans('EMAIL_SIGNATURE')
+        ]);
     }
 
     public function __toString()

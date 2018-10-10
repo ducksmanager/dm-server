@@ -180,12 +180,17 @@ class AppController extends AbstractController
      *   @SWG\Parameter(
      *     name="userid",
      *     in="body",
-     *     required=false
+     *     required=true
+     *   ),
+     *   @SWG\Parameter(
+     *     name="type",
+     *     in="body",
+     *     required=true
      *   ),
      *   @SWG\Parameter(
      *     name="details",
      *     in="body",
-     *     required=false
+     *     required=true
      *   )
      * )
      * @param Application $app

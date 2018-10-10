@@ -1,12 +1,14 @@
 <?php
 namespace DmServer\Test;
 
+use Countable;
 use Dm\Models\Achats;
 use Dm\Models\Numeros;
 use Dm\Models\Users;
 use DmServer\DmServer;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Swift_Message;
 use Symfony\Component\HttpFoundation\Response;
 
 class DucksManagerTest extends TestCommon
@@ -109,6 +111,33 @@ class DucksManagerTest extends TestCommon
             'userid' => $demoUser->getId()
         ])->call();
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+
+        /** @var Swift_Message[]|Countable $messages */
+        $messages = $this->app['swiftmailer.spool']->getMessages();
+        $this->assertCount(1, $messages);
+        list($message) = $messages;
+        $this->assertContains('Validation', $message->getBody());
+    }
+
+    public function testSendBookcaseConfirmationEmail() {
+        self::createTestCollection('demo');
+
+        $demoUser = $this->getEm()->getRepository(Users::class)->findOneBy([
+            'username' => 'demo'
+        ]);
+
+        $response = $this->buildAuthenticatedService('/ducksmanager/email/confirmation', self::$dmUser, [], [
+            'userid' => $demoUser->getId(),
+            'type' => 'edges_published',
+            'details' => ['newMedalLevel' => 'intermediaire', 'extraEdges' => 2, 'extraPhotographerPoints' => 4]
+        ])->call();
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+
+        /** @var Swift_Message[]|Countable $messages */
+        $messages = $this->app['swiftmailer.spool']->getMessages();
+        $this->assertCount(1, $messages);
+        list($message) = $messages;
+        $this->assertEquals('Bonjour demo,<br />Les 2 tranches dont vous nous avez envoyé les photos sont maintenant visionnables dans votre bibliothèque DucksManager ainsi que dans les bibliothèques des autres utilisateurs possédant ces magazines.<br />Vous avez remporté la médaille "Photographe DucksManager intermediaire" grâce à vos contributions !<br /><b>Votre contribution vous a rapporté 4 points "Photographe"</b>, bravo à vous et merci pour votre contribution : nous sommes heureux de vous compter parmi la communauté active de DucksManager !<br />A bientôt sur le site !<br />L\'équipe DucksManager', $message->getBody());
     }
 
     public function testGetUser() {

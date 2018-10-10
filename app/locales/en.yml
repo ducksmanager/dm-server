@@ -1,5 +1,0 @@
-MOT_DE_PASSE_6_CHAR_ERREUR: 'Le mot de passe doit comporter au moins 6 caractères !'
-MOTS_DE_PASSE_DIFFERENTS: 'Les deux mots de passe ne correspondent pas !'
-UTILISATEUR_3_CHAR_ERREUR: 'Choisissez un nom d''utilisateur d''au moins 3 caractères.'
-UTILISATEUR_EXISTANT: 'Ce nom d''utilisateur est déjà utilisé !'
-UTILISATEUR_INVALIDE: 'Utilisateur invalide'

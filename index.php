@@ -1,5 +1,6 @@
 <?php
 use DmServer\Controllers\AbstractController;
+use DmServer\SpoolStub;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -53,7 +54,7 @@ else {
 }
 
 $app->register(new Silex\Provider\TranslationServiceProvider(), [
-    'locale_fallbacks' => ['en'],
+    'locale_fallbacks' => ['fr'],
 ]);
 
 $app->register(new Silex\Provider\SessionServiceProvider());
@@ -61,7 +62,9 @@ $app->register(new Silex\Provider\SessionServiceProvider());
 $app->register(new Silex\Provider\SwiftmailerServiceProvider());
 
 if ($forTest) {
-    $app['swiftmailer.transport'] = new Swift_NullTransport();
+    $app['swiftmailer.spool'] = function () {
+        return new SpoolStub();
+    };
 }
 else {
     $app['swiftmailer.transport'] = (new Swift_SmtpTransport(DmServer::$settings['smtp_host'], 25, 'tls'))
@@ -87,7 +90,7 @@ $app->extend(
     'translator', function(Translator $translator) {
         $translator->addLoader('yaml', new YamlFileLoader());
 
-        foreach(['en', 'fr'] as $l10n) {
+        foreach(['fr'] as $l10n) {
             $translator->addResource('yaml', __DIR__.'/app/locales/'.$l10n.'.yml', $l10n);
         }
 
