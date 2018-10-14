@@ -2,6 +2,7 @@
 use DmServer\Controllers\AbstractController;
 use DmServer\SpoolStub;
 use Silex\Application;
+use Silex\Provider\LocaleServiceProvider;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Translation\Loader\YamlFileLoader;
@@ -52,6 +53,9 @@ else {
         'monolog.level' => \Monolog\Logger::INFO,
     ]);
 }
+
+$app->register(new LocaleServiceProvider());
+$app['locale'] = 'fr';
 
 $app->register(new Silex\Provider\TranslationServiceProvider(), [
     'locale_fallbacks' => ['fr'],

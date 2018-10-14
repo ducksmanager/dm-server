@@ -53,19 +53,22 @@ class EdgesPublishedEmail extends EmailHelper {
                 : $this->translator->trans('EMAIL_ONE_EDGE_PUBLISHED_INTRO'),
 
             !is_null($this->newMedalLevel)
-                ? $this->translator->trans('EMAIL_EDGES_PUBLISHED_MEDAL', ['%medalLevel%' => $this->newMedalLevel])
+                ? ('<p style="text-align: center"><img width="100" src="'.DmServer::$settings['assets_medals_pictures_root']."Photographe_{$this->newMedalLevel}_{$this->translator->getLocale()}.png".'" /><br />'
+                    .$this->translator->trans('EMAIL_EDGES_PUBLISHED_MEDAL', [
+                        '%medalLevel%' => $this->translator->trans("MEDAL_{$this->newMedalLevel}")
+                    ]). '</p>')
                 : '',
 
             $this->translator->trans('EMAIL_EDGES_PUBLISHED_POINTS', ['%extraPhotographerPoints%' => $this->extraPhotographerPoints]),
 
-            $this->translator->trans('EMAIL_SIGNATURE')
+            $this->translator->trans('EMAIL_SIGNATURE'),
+
+            '<img width="400" src="'.DmServer::$settings['website_root'].'logo_petit.png" />'
         ]);
     }
 
     public function __toString()
     {
-        return "user {$this->user->getUsername()} suggested a bookcase";
+        return "user {$this->user->getUsername()}'s edge(s) got published";
     }
-
-
 }

@@ -129,7 +129,7 @@ class DucksManagerTest extends TestCommon
         $response = $this->buildAuthenticatedService('/ducksmanager/email/confirmation', self::$dmUser, [], [
             'userid' => $demoUser->getId(),
             'type' => 'edges_published',
-            'details' => ['newMedalLevel' => 'intermediaire', 'extraEdges' => 2, 'extraPhotographerPoints' => 4]
+            'details' => ['newMedalLevel' => 2, 'extraEdges' => 4, 'extraPhotographerPoints' => 4]
         ])->call();
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
 
@@ -137,7 +137,16 @@ class DucksManagerTest extends TestCommon
         $messages = $this->app['swiftmailer.spool']->getMessages();
         $this->assertCount(1, $messages);
         list($message) = $messages;
-        $this->assertEquals('Bonjour demo,<br />Les 2 tranches dont vous nous avez envoyé les photos sont maintenant visionnables dans votre bibliothèque DucksManager ainsi que dans les bibliothèques des autres utilisateurs possédant ces magazines.<br />Vous avez remporté la médaille "Photographe DucksManager intermediaire" grâce à vos contributions !<br /><b>Votre contribution vous a rapporté 4 points "Photographe"</b>, bravo à vous et merci pour votre contribution : nous sommes heureux de vous compter parmi la communauté active de DucksManager !<br />A bientôt sur le site !<br />L\'équipe DucksManager', $message->getBody());
+        $this->assertEquals(implode('<br />', [
+            'Bonjour demo,',
+            'Les 4 tranches dont vous nous avez envoyé les photos sont maintenant visionnables dans votre bibliothèque DucksManager ainsi que dans les bibliothèques des autres utilisateurs possédant ces magazines.',
+            '<p style="text-align: center"><img width="100" src="http://localhost:8000/images/medailles/Photographe_2_fr.png" />',
+            'Vous avez remporté la médaille "Photographe DucksManager Intermédiaire" grâce à vos contributions !</p>',
+            '<b>Votre contribution vous a rapporté 4 points "Photographe"</b>, bravo à vous et merci pour votre contribution : nous sommes heureux de vous compter parmi la communauté active de DucksManager !',
+            'A bientôt sur le site !',
+            'L\'équipe DucksManager',
+            '<img width="400" src="http://localhost:8000/logo_petit.png" />'
+            ]), $message->getBody());
     }
 
     public function testGetUser() {
