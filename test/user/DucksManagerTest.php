@@ -143,6 +143,8 @@ class DucksManagerTest extends TestCommon
             '<p style="text-align: center"><img width="100" src="http://localhost:8000/images/medailles/Photographe_2_fr.png" />',
             'Vous avez remporté la médaille "Photographe DucksManager Intermédiaire" grâce à vos contributions !</p>',
             '<b>Votre contribution vous a rapporté 4 points "Photographe"</b>, bravo à vous et merci pour votre contribution : nous sommes heureux de vous compter parmi la communauté active de DucksManager !',
+            '',
+            '',
             'A bientôt sur le site !',
             'L\'équipe DucksManager',
             '<img width="400" src="http://localhost:8000/logo_petit.png" />'

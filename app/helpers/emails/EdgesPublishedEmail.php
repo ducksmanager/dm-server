@@ -61,6 +61,8 @@ class EdgesPublishedEmail extends EmailHelper {
 
             $this->translator->trans('EMAIL_EDGES_PUBLISHED_POINTS', ['%extraPhotographerPoints%' => $this->extraPhotographerPoints]),
 
+            '<br />',
+
             $this->translator->trans('EMAIL_SIGNATURE'),
 
             '<img width="400" src="'.DmServer::$settings['website_root'].'logo_petit.png" />'
