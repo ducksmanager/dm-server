@@ -275,12 +275,22 @@ class InternalController extends AbstractInternalController
 
     /**
      * @SLX\Route(
-     *     @SLX\Request(method="POST", uri="email/confirmation"),
-     *     @SWG\Parameter(
-     *       name="details",
-     *       in="body",
-     *       required=true
-     *     )
+     *    @SLX\Request(method="POST", uri="email/confirmation"),
+     *    @SWG\Parameter(
+     *      name="userid",
+     *      in="body",
+     *      required=true
+     *    ),
+     *    @SWG\Parameter(
+     *      name="type",
+     *      in="body",
+     *      required=true
+     *    ),
+     *    @SWG\Parameter(
+     *      name="details",
+     *      in="body",
+     *      required=true
+     *    )
      * )
      * @param Application $app
      * @param Request $request
@@ -298,10 +308,13 @@ class InternalController extends AbstractInternalController
             ]);
 
             if (is_null($user)) {
-                return new Response(Response::HTTP_BAD_REQUEST, "User with ID $userId was not found");
+                return new Response("User with ID $userId was not found", Response::HTTP_BAD_REQUEST);
             }
 
             $details = $request->request->get('details');
+            if (!is_array($details)) {
+                $details = json_decode($details, true);
+            }
 
             switch ($emailType) {
                 case 'edges_published':
@@ -312,7 +325,7 @@ class InternalController extends AbstractInternalController
                     $message = new EdgesPublishedEmail($app['mailer'], self::$translator, $user, $extraEdges, $extraPhotographerPoints, $newMedalLevel);
                 break;
                 default:
-                    return new Response(Response::HTTP_BAD_REQUEST, "Invalid email type : $emailType");
+                    return new Response("Invalid email type : $emailType", Response::HTTP_BAD_REQUEST);
 
             }
             $message->send();

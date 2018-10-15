@@ -213,7 +213,7 @@ class DmServer implements ControllerProviderInterface
         $app->register(new CorsServiceProvider(), [
             'cors.allowOrigin' => '*',
         ]);
-        $app['cors-enabled']($routing);
+        $app['cors-enabled']($app);
 
         return $routing;
     }

@@ -36,6 +36,13 @@ $app->before(function (Request $request) {
     return true;
 }, Application::EARLY_EVENT);
 
+$app->before(function (Request $request) {
+    if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
+        $data = json_decode($request->getContent(), true);
+        $request->request->replace(is_array($data) ? $data : []);
+    }
+});
+
 $app->register(new Sorien\Provider\PimpleDumpProvider(), [
     'pimpledump.output_dir' => __DIR__]
 );
