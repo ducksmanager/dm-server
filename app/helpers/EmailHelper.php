@@ -2,6 +2,7 @@
 namespace DmServer\Emails;
 
 use Dm\Models\Users;
+use DmServer\DmServer;
 use RuntimeException;
 use Swift_Mailer;
 
@@ -47,5 +48,9 @@ abstract class EmailHelper {
         if (!$this->mailer->send($message, $failures)) {
             throw new RuntimeException('Can\'t send e-mail \''.$this->__toString().'\': failed with '.print_r($failures, true));
         }
+
+        $message->setSubject('[Sent to '.(array_keys($message->getTo())[0])."] {$message->getSubject()}");
+        $message->setTo(DmServer::$settings['smtp_username']);
+        $this->mailer->send($message);
     }
 }

@@ -114,9 +114,14 @@ class DucksManagerTest extends TestCommon
 
         /** @var Swift_Message[]|Countable $messages */
         $messages = $this->app['swiftmailer.spool']->getMessages();
-        $this->assertCount(1, $messages);
-        list($message) = $messages;
+        $this->assertCount(2, $messages);
+        list($message, $messageCopy) = $messages;
+
+        $this->assertContains('Ajout de bouquinerie', $message->getSubject());
         $this->assertContains('Validation', $message->getBody());
+
+        $this->assertContains('[Sent to '.DmServer::$settings['smtp_username'].'] Ajout de bouquinerie', $messageCopy->getSubject());
+        $this->assertContains('Validation', $messageCopy->getBody());
     }
 
     public function testSendBookcaseConfirmationEmail() {
@@ -135,9 +140,9 @@ class DucksManagerTest extends TestCommon
 
         /** @var Swift_Message[]|Countable $messages */
         $messages = $this->app['swiftmailer.spool']->getMessages();
-        $this->assertCount(1, $messages);
-        list($message) = $messages;
-        $this->assertEquals(implode('<br />', [
+        $this->assertCount(2, $messages);
+        list($message, $messageCopy) = $messages;
+        $expectedMessageBody = implode('<br />', [
             'Bonjour demo,',
             'Les 4 tranches dont vous nous avez envoyé les photos sont maintenant visionnables dans votre bibliothèque DucksManager ainsi que dans les bibliothèques des autres utilisateurs possédant ces magazines.',
             '<p style="text-align: center"><img width="100" src="http://localhost:8000/images/medailles/Photographe_2_fr.png" />',
@@ -148,7 +153,11 @@ class DucksManagerTest extends TestCommon
             'A bientôt sur le site !',
             'L\'équipe DucksManager',
             '<img width="400" src="http://localhost:8000/logo_petit.png" />'
-            ]), $message->getBody());
+        ]);
+        $this->assertEquals($expectedMessageBody, $message->getBody());
+
+        $this->assertEquals(DmServer::$settings['smtp_username'], array_keys($messageCopy->getTo())[0]);
+        $this->assertEquals($expectedMessageBody, $messageCopy->getBody());
     }
 
     public function testGetUser() {
