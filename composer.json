@@ -112,12 +112,12 @@
         "gedmo/doctrine-extensions": "2.4.*",
         "swiftmailer/swiftmailer": "6.1.*",
         "jdesrosiers/silex-cors-provider": "~1.0",
-        "radebatz/silex2swagger": "3.0.*"
+        "radebatz/silex2swagger": "3.0.*",
+        "roave/security-advisories": "dev-master"
     },
     "require-dev": {
         "phpunit/phpunit": "7.4.*",
-        "phpunit/php-code-coverage": "6.0.*",
-        "symfony/phpunit-bridge": "^4.1",
-        "roave/security-advisories": "dev-master"
+        "phpunit/php-code-coverage": "6.1.*",
+        "symfony/phpunit-bridge": "^4.1"
     }
 }
