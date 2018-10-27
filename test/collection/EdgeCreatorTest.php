@@ -705,31 +705,56 @@ class EdgeCreatorTest extends TestCommon
     }
 
     public function testSetMainPhoto() {
-        $photoName = 'myphoto.jpg';
-
         $model = $this->getV2Model('fr', 'PM', '502');
 
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/{$model->getId()}/photo/main", self::$edgecreatorUser, 'PUT', [
-            'photoname' => $photoName
-        ])->call();
+        $this->assertSetMainPhotoOK($model, 'myphoto.jpg', 1);
+    }
 
-        $objectResponse = json_decode($this->getResponseContent($response));
+    public function testSetMainPhotoOtherContributorExisted() {
+        $otherUser = self::createTestCollection('otheruser');
 
-        $this->assertEquals(['modelid' => $model->getId(), 'photoname' => $photoName], (array) $objectResponse->mainphoto);
+        $model = $this->getV2Model('fr', 'PM', '502');
+        $contributor = new TranchesEnCoursContributeurs();
+        $contributor->setIdModele($model);
+        $contributor->setIdUtilisateur($otherUser->getId());
+        $contributor->setContribution('photographe');
+        $this->getEm()->persist($contributor);
 
-        $newModel = $this->getV2Model('fr', 'PM', '502');
+        $this->getEm()->flush();
 
-        /** @var TranchesEnCoursModelesImages $mainPhoto */
-        $mainPhoto = $this->getEm()->getRepository(TranchesEnCoursModelesImages::class)->findOneBy([
-            'idModele' => $newModel
-        ]);
+        $this->assertSetMainPhotoOK($model, 'myphoto.jpg', 2);
+    }
 
-        /** @var TranchesEnCoursContributeurs $helperUsers */
-        $helperUsers = $this->getEm()->getRepository(TranchesEnCoursContributeurs::class)->findOneBy([
-            'idModele' => $newModel
-        ]);
-        $this->assertEquals($photoName, $mainPhoto->getIdImage()->getNomfichier());
-        $this->assertEquals(1, $helperUsers->getIdUtilisateur());
+    public function testSetMainPhotoSameContributorExisted() {
+        $model = $this->getV2Model('fr', 'PM', '502');
+        $contributor = new TranchesEnCoursContributeurs();
+        $contributor->setIdModele($model);
+        $contributor->setIdUtilisateur($this->userInSession->getId());
+        $contributor->setContribution('photographe');
+        $this->getEm()->persist($contributor);
+
+        $this->getEm()->flush();
+
+        $this->assertSetMainPhotoOK($model, 'myphoto.jpg', 1);
+    }
+
+    public function testSetMainPhotoPreviousExisted() {
+        $model = $this->getV2Model('fr', 'PM', '502');
+
+        $photos = new ImagesTranches();
+        $photos->setIdUtilisateur(1);
+        $photos->setNomfichier("1.jpg");
+        $this->getEm()->persist($photos);
+
+        $edgePhoto = new TranchesEnCoursModelesImages();
+        $edgePhoto->setIdModele($model);
+        $edgePhoto->setIdImage($photos);
+        $edgePhoto->setEstphotoprincipale(true);
+        $this->getEm()->persist($edgePhoto);
+
+        $this->getEm()->flush();
+
+        $this->assertSetMainPhotoOK($model, 'myphoto.jpg', 1);
     }
 
     public function testGetMainPhoto() {
@@ -887,5 +912,39 @@ class EdgeCreatorTest extends TestCommon
 
         $newModel = $this->getV2Model($model->getPays(), $model->getMagazine(), $model->getNumero());
         $this->assertEquals(true, $newModel->getPretepourpublication());
+    }
+
+    /**
+     * @param TranchesEnCoursModeles $model
+     * @param string $photoName
+     * @param int $expectedContributorNumber
+     */
+    private function assertSetMainPhotoOK($model, $photoName, $expectedContributorNumber) {
+        $countryCode = $model->getPays();
+        $publicationCode = $model->getMagazine();
+        $issueCode = $model->getNumero();
+
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/{$model->getId()}/photo/main", self::$edgecreatorUser, 'PUT', [
+            'photoname' => $photoName
+        ])->call();
+
+        $objectResponse = json_decode($this->getResponseContent($response));
+
+        $this->assertEquals(['modelid' => $model->getId(), 'photoname' => $photoName], (array)$objectResponse->mainphoto);
+
+        $newModel = $this->getV2Model($countryCode, $publicationCode, $issueCode);
+
+        /** @var Countable|TranchesEnCoursModelesImages[] $photos */
+        $photos = $this->getEm()->getRepository(TranchesEnCoursModelesImages::class)->findBy([
+            'idModele' => $newModel
+        ]);
+
+        /** @var Countable|TranchesEnCoursContributeurs $helperUsers */
+        $helperUsers = $this->getEm()->getRepository(TranchesEnCoursContributeurs::class)->findBy([
+            'idModele' => $newModel
+        ]);
+        $this->assertCount(1, $photos);
+        $this->assertEquals($photoName, $photos[0]->getIdImage()->getNomfichier());
+        $this->assertCount($expectedContributorNumber, $helperUsers);
     }
 }

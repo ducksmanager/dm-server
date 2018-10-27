@@ -694,15 +694,24 @@ class InternalController extends AbstractController
             /** @var TranchesEnCoursModeles $model */
             $model = $ecEm->getRepository(TranchesEnCoursModeles::class)->find($modelId);
 
-            /** @var Collection $helperUsers */
-            $helperUsers = $model->getContributeurs();
+            /** @var Collection|TranchesEnCoursContributeurs[] $helperUsers */
+            $helperUsers = $ecEm->getRepository(\Edgecreator\Models\TranchesEnCoursContributeurs::class)->findBy([
+                'idModele' => $modelId
+            ]);
 
-            $photographer = new TranchesEnCoursContributeurs();
-            $photographer->setIdModele($model);
-            $photographer->setContribution('photographe');
-            $photographer->setIdUtilisateur(self::getSessionUser($app)['id']);
-            $model->setContributeurs(array_merge($helperUsers->toArray(), [$photographer]));
-            $ecEm->persist($model);
+            $currentUserId = self::getSessionUser($app)['id'];
+            if (count(array_filter($helperUsers, function(TranchesEnCoursContributeurs $helperUser) use ($currentUserId) {
+                return $helperUser->getIdUtilisateur() === $currentUserId;
+            })) === 0) {
+                $photographer = new TranchesEnCoursContributeurs();
+                $photographer->setIdModele($model);
+                $photographer->setContribution('photographe');
+                $photographer->setIdUtilisateur($currentUserId);
+
+                $model->setContributeurs(array_merge($helperUsers, [$photographer]));
+                $ecEm->persist($model);
+                $ecEm->flush();
+            }
 
             $mainPhoto = new ImagesTranches();
             $mainPhoto
@@ -711,6 +720,14 @@ class InternalController extends AbstractController
                 ->setHash(null) // TODO
                 ->setNomfichier($photoName);
             $ecEm->persist($mainPhoto);
+
+
+            $qbDeletePreviousPhoto = $ecEm->getRepository(TranchesEnCoursModelesImages::class)->createQueryBuilder($modelId);
+            $qbDeletePreviousPhoto
+                ->delete(TranchesEnCoursModelesImages::class, 'models_photos')
+                ->where('models_photos.idModele = :modelid')
+                ->setParameter('modelid', $modelId);
+            $deletedSteps = $qbDeletePreviousPhoto->getQuery()->execute();
 
             $photoAndEdge = new TranchesEnCoursModelesImages();
             $photoAndEdge
