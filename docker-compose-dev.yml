@@ -15,7 +15,6 @@ services:
     volumes:
      - .:/var/www/html:z
      - ./nginx.conf:/etc/nginx/conf.d/default.conf
-     - ./php.xdebug.ini:/usr/local/etc/php/php.ini:z
     networks:
      - front-network
 
@@ -26,6 +25,7 @@ services:
       dockerfile: Dockerfile-dev
     volumes:
      - .:/var/www/html:z
+     - ./php.xdebug.ini:/usr/local/etc/php/php.ini:z
     environment:
       DM_SERVER_ADDRESS: "$DM_SERVER_HOST:$DM_SERVER_PORT"
     networks:
