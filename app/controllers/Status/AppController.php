@@ -129,7 +129,7 @@ class AppController extends AbstractController
                 $outputObject = SimilarImagesHelper::getSimilarImages(new File(self::$sampleCover, false), $app['monolog'], $pastecHost);
                 $matchNumber = count($outputObject->getImageIds());
                 if ($matchNumber > 0) {
-                    $log[] = "Pastec search OK returned $matchNumber images";
+                    $log[] = "Pastec search returned $matchNumber image(s)";
                 }
                 else {
                     throw new \Exception('Pastec search returned no image');

@@ -81,13 +81,10 @@ class StatusTest extends TestCommon
     public function testGetImageSearchStatus() {
         $response = $this->getCoverIdStatusForMockedResults(
             '/status/pastecsearch',
-            json_encode([
-                'imageIds' => [1,2,3],
-                'type' => 'INDEX_IMAGE_IDS'
-            ])
+            json_encode(CoverIdTest::$coverSearchResultsSimple)
         );
 
-        $this->assertEquals('Pastec OK with 3 images indexed', $this->getResponseContent($response));
+        $this->assertEquals('Pastec search returned 1 image(s)', $this->getResponseContent($response));
     }
 
     public function testGetDbStatus() {
