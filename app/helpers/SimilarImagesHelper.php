@@ -10,6 +10,9 @@ use Symfony\Component\HttpFoundation\File\File;
 
 class SimilarImagesHelper {
 
+    /** @var string $mockedResults */
+    public static $mockedResults;
+
     /**
      * @param string $pastecHost
      * @return string
@@ -27,9 +30,6 @@ class SimilarImagesHelper {
 
         return "http://$pastecHost:$PASTEC_PORT/index";
     }
-
-    /** @var string $mockedResults */
-    public static $mockedResults;
 
     /**
      * @param string $pastecHost
@@ -67,11 +67,12 @@ class SimilarImagesHelper {
     /**
      * @param File $file
      * @param Logger $monolog
+     * @param string $pastecHost
      * @return SimilarImagesOutput
      */
-    public static function getSimilarImages(File $file, Logger $monolog)
+    public static function getSimilarImages(File $file, Logger $monolog, $pastecHost = 'pastec')
     {
-        $pastecUrl = self::getPastecUrl();
+        $pastecUrl = self::getPastecUrl($pastecHost);
         if (!is_null(self::$mockedResults)) {
             $response = self::$mockedResults;
         }
