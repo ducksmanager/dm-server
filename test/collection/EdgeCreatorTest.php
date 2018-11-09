@@ -15,6 +15,7 @@ use Edgecreator\Models\TranchesEnCoursContributeurs;
 use Edgecreator\Models\TranchesEnCoursModeles;
 use Edgecreator\Models\TranchesEnCoursModelesImages;
 use Edgecreator\Models\TranchesEnCoursValeurs;
+use Swift_Message;
 use Symfony\Component\HttpFoundation\Response;
 
 class EdgeCreatorTest extends TestCommon
@@ -803,13 +804,20 @@ class EdgeCreatorTest extends TestCommon
     }
 
     public function testAddMultipleEdgePhoto() {
+        $photoFileName = 'photo2.jpg';
         $response = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/multiple_edge_photo', self::$edgecreatorUser, 'PUT', [
             'hash' => sha1('test2'),
-            'filename' => 'photo2.jpg'
+            'filename' => $photoFileName
         ])->call();
 
         $objectResponse = json_decode($this->getResponseContent($response));
         $this->assertEquals(['id' => 2 ], (array) $objectResponse->photo);
+
+        /** @var Swift_Message[]|Countable $messages */
+        $messages = $this->app['swiftmailer.spool']->getMessages();
+        $this->assertCount(1, $messages);
+        list($message) = $messages;
+        $this->assertContains("/tmp/uploaded_edges/$photoFileName", $message->getBody());
     }
 
     public function testAddMultipleEdgePhotoInvalidEmail() {

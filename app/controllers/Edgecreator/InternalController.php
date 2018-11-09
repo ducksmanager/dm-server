@@ -848,10 +848,9 @@ class InternalController extends AbstractController
                 ->setSubject('Nouvelle photo de tranche')
                 ->setFrom([$user['username']. '@' .DmServer::$settings['smtp_origin_email_domain_edgecreator']])
                 ->setTo([DmServer::$settings['smtp_username']])
-                ->setBody($fileName);
+                ->setBody(DmServer::$settings['image_upload_root'].$fileName);
 
             $failures = [];
-            // Pass a variable name to the send() method
             if (!$mailer->send($message, $failures)) {
                 throw new RuntimeException("Can't send e-mail '$message': failed with ".print_r($failures, true));
             }
