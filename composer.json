@@ -110,10 +110,11 @@
         "doctrine/dbal": "2.8.*",
         "doctrine/orm": "2.6.*",
         "doctrine/doctrine-bundle": "1.9.*",
-        "monolog/monolog": "1.23.*",
+        "monolog/monolog": "1.24.*",
         "gedmo/doctrine-extensions": "2.4.*",
         "swiftmailer/swiftmailer": "6.1.*",
-        "jdesrosiers/silex-cors-provider": "~1.0",
+        "jdesrosiers/silex-cors-provider": "1.6.*",
+        "ddesrosiers/silex-annotation-provider": "2.0.*",
         "radebatz/silex2swagger": "3.0.*",
         "roave/security-advisories": "dev-master"
     },
