@@ -387,6 +387,14 @@ class TestCommon extends WebTestCase {
                     ->setCountryname('USA')
             );
 
+            self::$testCountries['frLocale-fake'] = new InducksCountryname();
+            $coaEntityManager->persist(
+                self::$testCountries['frLocale-fake']
+                    ->setCountrycode('fake')
+                    ->setLanguagecode('fr')
+                    ->setCountryname('')
+            );
+
             self::$testCountries['esLocale-fr'] = new InducksCountryname();
             $coaEntityManager->persist(
                 self::$testCountries['esLocale-fr']

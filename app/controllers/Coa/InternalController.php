@@ -48,13 +48,20 @@ class InternalController extends AbstractController
             $qb
                 ->select('inducks_countryname.countrycode, inducks_countryname.countryname')
                 ->from(InducksCountryname::class, 'inducks_countryname')
-                ->where($qb->expr()->eq('inducks_countryname.languagecode', "'".$locale."'"));
+                ->where($qb->expr()->eq('inducks_countryname.languagecode', ':locale'));
+            $parameters = [':locale' => $locale];
 
-            if (!empty($countryCodes)) {
+            if (empty($countryCodes)) {
+                $qb->andWhere($qb->expr()->neq('inducks_countryname.countrycode', ':fakeCountry'));
+                $parameters[':fakeCountry'] = 'fake';
+            }
+            else {
                 $qb->andWhere($qb->expr()->in('inducks_countryname.countrycode', explode(',', $countryCodes)));
             }
 
-            $results = $qb->getQuery()->getResult();
+            $results = $qb->getQuery()
+                ->setParameters($parameters)
+                ->getResult();
             $countryNames = [];
             array_walk(
                 $results,
