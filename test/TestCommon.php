@@ -419,26 +419,26 @@ class TestCommon extends WebTestCase {
                     ->setCountryname('EE.UU.')
             );
 
-            self::$testPublications['fr/DDD'] = new InducksPublication();
-            $coaEntityManager->persist(
-                self::$testPublications['fr/DDD']
-                    ->setPublicationCode('fr/DDD')
-                    ->setCountrycode('fr')
-                    ->setTitle('Dynastie')
-            );
-
             self::$testPublications['fr/MP'] = new InducksPublication();
             $coaEntityManager->persist(
                 self::$testPublications['fr/MP']
-                    ->setPublicationCode('fr/MP')
+                    ->setPublicationcode('fr/MP')
                     ->setCountrycode('fr')
                     ->setTitle('Parade')
+            );
+
+            self::$testPublications['fr/DDD'] = new InducksPublication();
+            $coaEntityManager->persist(
+                self::$testPublications['fr/DDD']
+                    ->setPublicationcode('fr/DDD')
+                    ->setCountrycode('fr')
+                    ->setTitle('Dynastie')
             );
 
             self::$testPublications['us/CBL'] = new InducksPublication();
             $coaEntityManager->persist(
                 self::$testPublications['us/CBL']
-                    ->setPublicationCode('us/CBL')
+                    ->setPublicationcode('us/CBL')
                     ->setCountrycode('us')
                     ->setTitle('Carl Barks Library')
             );
