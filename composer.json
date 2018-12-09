@@ -110,6 +110,7 @@
         "doctrine/dbal": "2.8.*",
         "doctrine/orm": "2.6.*",
         "doctrine/doctrine-bundle": "1.9.*",
+        "guzzlehttp/guzzle": "6.3.*",
         "monolog/monolog": "1.24.*",
         "gedmo/doctrine-extensions": "2.4.*",
         "swiftmailer/swiftmailer": "6.1.*",

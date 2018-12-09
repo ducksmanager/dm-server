@@ -45,7 +45,7 @@ class Users extends \Dm\Models\BaseModel
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="DateInscription", type="date", nullable=false, options={"default"="0000-00-00"})
+     * @ORM\Column(name="DateInscription", type="datetime", nullable=false, options={"default"="0000-00-00"})
      */
     private $dateinscription = '0000-00-00';
 

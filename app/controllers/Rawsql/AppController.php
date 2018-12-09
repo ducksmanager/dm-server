@@ -57,7 +57,8 @@ class AppController extends AbstractController
             'query' => $request->request->get('query'),
             'db' => $request->request->get('db'),
             'log' => $request->request->get('log'),
-            'parameters' => $request->request->get('parameters')
+            'parameters' => $request->request->get('parameters'),
+            'redirect-to' => $request->request->get('redirect-to')
         ]);
     }
 }
