@@ -17,7 +17,7 @@ class StatsTest extends TestCommon
         $response = $this->buildAuthenticatedServiceWithTestUser('/collection/stats/watchedauthorsstorycount', self::$dmUser)->call();
 
         $objectResponse = json_decode($this->getResponseContent($response));
-        $this->assertInternalType('object', $objectResponse);
+        $this->assertIsObject($objectResponse);
         $this->assertCount(2, get_object_vars($objectResponse));
         $this->assertEquals('CB', array_keys(get_object_vars($objectResponse))[0]);
         $this->assertEquals('Carl Barks', $objectResponse->CB->fullname);
@@ -34,7 +34,7 @@ class StatsTest extends TestCommon
         $response = $this->buildAuthenticatedServiceWithTestUser('/collection/stats/suggestedissues', self::$dmUser)->call();
 
         $objectResponse = json_decode($this->getResponseContent($response));
-        $this->assertInternalType('object', $objectResponse);
+        $this->assertIsObject($objectResponse);
 
         $this->assertEquals(2, $objectResponse->minScore);
         $this->assertEquals(6, $objectResponse->maxScore); // fr/PM 315 : 1xDR + 1xCB = 1x4 + 1x2
@@ -90,7 +90,7 @@ class StatsTest extends TestCommon
         $response = $this->buildAuthenticatedServiceWithTestUser('/collection/stats/suggestedissues/fr', self::$dmUser)->call();
 
         $objectResponse = json_decode($this->getResponseContent($response));
-        $this->assertInternalType('object', $objectResponse);
+        $this->assertIsObject($objectResponse);
         $this->assertCount(2, get_object_vars($objectResponse->issues));
 
         $issue1 = $objectResponse->issues->{'fr/DDD 1'};

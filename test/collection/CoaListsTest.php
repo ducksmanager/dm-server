@@ -20,7 +20,7 @@ class CoaListsTest extends TestCommon
 
         $objectResponse = json_decode($this->getResponseContent($response));
 
-        $this->assertInternalType('object', $objectResponse);
+        $this->assertIsObject($objectResponse);
         $this->assertEquals('France', $objectResponse->fr);
         $this->assertEquals('Espagne', $objectResponse->es);
         $this->assertEquals('USA', $objectResponse->us);
@@ -32,7 +32,7 @@ class CoaListsTest extends TestCommon
 
         $objectResponse = json_decode($this->getResponseContent($response));
 
-        $this->assertInternalType('object', $objectResponse);
+        $this->assertIsObject($objectResponse);
         $this->assertEquals('France', $objectResponse->fr);
         $this->assertEquals('USA', $objectResponse->us);
         $this->assertCount(2, (array)$objectResponse);
@@ -43,7 +43,7 @@ class CoaListsTest extends TestCommon
 
         $objectResponse = json_decode($this->getResponseContent($response));
 
-        $this->assertInternalType('object', $objectResponse);
+        $this->assertIsObject($objectResponse);
         $this->assertEquals('Francia', $objectResponse->fr);
         $this->assertEquals('EE.UU.', $objectResponse->us);
         $this->assertCount(2, (array)$objectResponse);
@@ -54,7 +54,7 @@ class CoaListsTest extends TestCommon
 
         $objectResponse = json_decode($this->getResponseContent($response));
 
-        $this->assertInternalType('object', $objectResponse);
+        $this->assertIsObject($objectResponse);
         $this->assertEquals('Dynastie', $objectResponse->{'fr/DDD'});
         $this->assertEquals('Parade', $objectResponse->{'fr/MP'});
     }
@@ -64,7 +64,7 @@ class CoaListsTest extends TestCommon
 
         $objectResponse = json_decode($this->getResponseContent($response));
 
-        $this->assertInternalType('object', $objectResponse);
+        $this->assertIsObject($objectResponse);
         $this->assertEquals('Dynastie', $objectResponse->{'fr/DDD'});
         $this->assertEquals('Carl Barks Library', $objectResponse->{'us/CBL'});
     }
@@ -80,7 +80,7 @@ class CoaListsTest extends TestCommon
 
         $arrayResponse = json_decode($this->getResponseContent($response));
 
-        $this->assertInternalType('array', $arrayResponse);
+        $this->assertIsArray($arrayResponse);
         $this->assertEquals('1', $arrayResponse[0]);
         $this->assertEquals('2', $arrayResponse[1]);
     }
@@ -90,7 +90,7 @@ class CoaListsTest extends TestCommon
 
         $arrayResponse = json_decode($this->getResponseContent($response));
 
-        $this->assertInternalType('array', $arrayResponse);
+        $this->assertIsArray($arrayResponse);
         $this->assertCount(0, $arrayResponse);
     }
 
@@ -105,9 +105,9 @@ class CoaListsTest extends TestCommon
 
         $arrayResponse = json_decode($this->getResponseContent($response));
 
-        $this->assertInternalType('object', $arrayResponse);
+        $this->assertIsObject($arrayResponse);
 
-        $this->assertInternalType('object', $arrayResponse->{'fr/DDD 1'});
+        $this->assertIsObject($arrayResponse->{'fr/DDD 1'});
         $this->assertEquals('fr', $arrayResponse->{'fr/DDD 1'}->countrycode);
         $this->assertEquals('Dynastie', $arrayResponse->{'fr/DDD 1'}->publicationtitle);
         $this->assertEquals('1', $arrayResponse->{'fr/DDD 1'}->issuenumber);

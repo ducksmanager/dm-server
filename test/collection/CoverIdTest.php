@@ -69,7 +69,7 @@ class CoverIdTest extends TestCommon
 
         $objectResponse = json_decode($this->getResponseContent($response));
 
-        $this->assertInternalType('object', $objectResponse);
+        $this->assertIsObject($objectResponse);
         $this->assertCount(2, get_object_vars($objectResponse));
 
         $this->assertObjectHasAttribute('issuecode', $objectResponse->{self::$coverIds[0]});

@@ -34,6 +34,21 @@ services:
      - cover-id-network
     command: sh -c 'composer install --no-plugins --no-scripts && php app/config/generate-config.php docker-compose-dev.yml .env && php scripts/generate-swagger.php && php-fpm'
 
+  php-no-debug:
+    container_name: dm-server-php-no-debug
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+     - .:/var/www/html:z
+    environment:
+      DM_SERVER_ADDRESS: "$DM_SERVER_HOST:$DM_SERVER_PORT"
+    networks:
+     - front-network
+     - db-network
+     - cover-id-network
+    command: sh -c 'composer install --no-plugins --no-scripts && php app/config/generate-config.php docker-compose-dev.yml .env && php scripts/generate-swagger.php && php-fpm'
+
   db_coa:
     container_name: db_coa
     image: "mariadb:10.2"
