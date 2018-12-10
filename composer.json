@@ -107,7 +107,7 @@
         "symfony/serializer": "4.1.*",
         "symfony/yaml": "4.1.*",
         "symfony/translation": "4.1.*",
-        "doctrine/dbal": "2.8.*",
+        "doctrine/dbal": "2.9.*",
         "doctrine/orm": "2.6.*",
         "doctrine/doctrine-bundle": "1.9.*",
         "guzzlehttp/guzzle": "6.3.*",

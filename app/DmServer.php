@@ -182,7 +182,9 @@ class DmServer implements ControllerProviderInterface
         $conn->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'string');
 
         if (array_key_exists('tables', $config)) {
-            $conn->getConfiguration()->setFilterSchemaAssetsExpression('~^'.$config['tables'].'$~');
+            $conn->getConfiguration()->setSchemaAssetsFilter(function($assetName) use ($config) {
+               return preg_match("~^{$config['tables']}$~", $assetName);
+            });
         }
 
         $em = EntityManager::create($conn, $metaDataConfig);
