@@ -39,6 +39,10 @@ class InternalController extends AbstractController
 
             if (isset($redirectTo)) {
                 $results = QueryRedirect::executeRemoteQuery($query, $parameters, $redirectTo);
+
+                if (!(isset($log) && $log === 0)) {
+                    $app['monolog']->addInfo("Raw sql sent remotely: $query");
+                }
             }
             else {
                 $em = DmServer::getEntityManager($db);
@@ -49,10 +53,10 @@ class InternalController extends AbstractController
                     return new Response('Raw queries shouldn\'t contain the ";" symbol', Response::HTTP_BAD_REQUEST);
                 }
                 $results = $em->getConnection()->fetchAll($query, $parameters);
-            }
 
-            if (!(isset($log) && $log === 0)) {
-                $app['monolog']->addInfo('Raw sql sent : '.$query);
+                if (!(isset($log) && $log === 0)) {
+                    $app['monolog']->addInfo("Raw sql sent : $query");
+                }
             }
             return new JsonResponse($results);
         });

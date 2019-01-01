@@ -2,6 +2,7 @@
 /app/config/config.db.ini
 /app/config/roles.ini
 /app/config/settings.ini
+/app/config/settings.prod.ini
 /bin
 /build
 **/*.sqlite
