@@ -75,8 +75,8 @@ class RawSqlTest extends TestCommon
         QueryRedirect::$client = new Client(['handler' => $handler]);
 
         $response = $this->buildAuthenticatedServiceWithTestUser('/rawsql', self::$rawSqlUser, 'POST', [
-            'query' => 'SELECT username FROM users WHERE username=:Username',
-            'parameters' => ['Username' => 'demo'],
+            'query' => 'SELECT username FROM users WHERE username=?',
+            'parameters' => [['type' => 's', 'value' => 'demo']],
             'db'    => DmServer::CONFIG_DB_KEY_DM,
             'redirect-to' => 'dm'
         ])->call();

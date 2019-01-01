@@ -6,7 +6,7 @@ use RuntimeException;
 
 class QueryRedirect {
 
-    public static $client = null;
+    public static $client;
 
     /**
      * @param string $query
@@ -25,12 +25,12 @@ class QueryRedirect {
             ]);
         }
 
-        $output = self::$client->get('sql.php?', [
+        $output = self::$client->get('/remote/sql.php', ['query' => [
             'db' => DmServer::$settings['remote_query_db'],
-            'pass' => DmServer::$settings['remote_query_password'],
-            'req' => urlencode($query),
+            'mdp' => sha1(DmServer::$settings['remote_query_password']),
+            'req' => $query,
             'params' => json_encode($params)
-        ])->getBody()->getContents();
+        ]])->getBody()->getContents();
 
         $unserialized = unserialize($output);
         if (is_array($unserialized)) {
