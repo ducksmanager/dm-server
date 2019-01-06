@@ -41,7 +41,7 @@ class InternalController extends AbstractController
                 $results = QueryRedirect::executeRemoteQuery($query, $parameters, $redirectTo);
 
                 if (!(isset($log) && $log === 0)) {
-                    $app['monolog']->addInfo("Raw sql sent remotely: $query");
+                    $app['monolog']->addInfo("Raw sql sent remotely: $query with ".print_r($parameters, true));
                 }
             }
             else {
