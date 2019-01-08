@@ -52,7 +52,12 @@ class InternalController extends AbstractController
                 if (strpos($query, ';') !== false) { // In lack of something better
                     return new Response('Raw queries shouldn\'t contain the ";" symbol', Response::HTTP_BAD_REQUEST);
                 }
-                $results = $em->getConnection()->fetchAll($query, $parameters);
+                if (stripos(trim($query), 'SELECT') === 0) {
+                    $results = $em->getConnection()->fetchAll($query, $parameters);
+                }
+                else {
+                    $results = $em->getConnection()->executeQuery($query, $parameters);
+                }
 
                 if (!(isset($log) && $log === 0)) {
                     $app['monolog']->addInfo("Raw sql sent : $query");

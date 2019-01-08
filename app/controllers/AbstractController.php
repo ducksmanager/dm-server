@@ -81,7 +81,7 @@ abstract class AbstractController
             if (isset($app['monolog'])) {
                 $app['monolog']->addError($e->getMessage());
             }
-            return new Response($e->getMessage(), $e->getCode() === 0 ? Response::HTTP_INTERNAL_SERVER_ERROR : $e->getCode());
+            return new Response($e->getMessage(), $e->getCode() === 0 || !is_int($e->getCode()) ? Response::HTTP_INTERNAL_SERVER_ERROR : $e->getCode());
         }
     }
 }
