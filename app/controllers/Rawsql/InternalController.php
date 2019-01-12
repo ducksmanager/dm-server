@@ -4,7 +4,6 @@ namespace DmServer\Controllers\Rawsql;
 
 use DmServer\Controllers\AbstractController;
 use DmServer\DmServer;
-use DmServer\QueryRedirect;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,34 +33,24 @@ class InternalController extends AbstractController
             $query = $request->request->get('query');
             $db = $request->request->get('db');
             $log = $request->request->get('log');
-            $redirectTo = $request->request->get('redirect-to');
             $parameters = $request->request->get('parameters') ?: [];
 
-            if (isset($redirectTo)) {
-                $results = QueryRedirect::executeRemoteQuery($query, $parameters, $redirectTo);
-
-                if (!(isset($log) && $log === 0)) {
-                    $app['monolog']->addInfo("Raw sql sent remotely: $query with ".print_r($parameters, true));
-                }
+            $em = DmServer::getEntityManager($db);
+            if (is_null($em)) {
+                return new Response('Invalid parameter : db='.$db, Response::HTTP_BAD_REQUEST);
+            }
+            if (strpos($query, ';') !== false) { // In lack of something better
+                return new Response('Raw queries shouldn\'t contain the ";" symbol', Response::HTTP_BAD_REQUEST);
+            }
+            if (stripos(trim($query), 'SELECT') === 0) {
+                $results = $em->getConnection()->fetchAll($query, $parameters);
             }
             else {
-                $em = DmServer::getEntityManager($db);
-                if (is_null($em)) {
-                    return new Response('Invalid parameter : db='.$db, Response::HTTP_BAD_REQUEST);
-                }
-                if (strpos($query, ';') !== false) { // In lack of something better
-                    return new Response('Raw queries shouldn\'t contain the ";" symbol', Response::HTTP_BAD_REQUEST);
-                }
-                if (stripos(trim($query), 'SELECT') === 0) {
-                    $results = $em->getConnection()->fetchAll($query, $parameters);
-                }
-                else {
-                    $results = $em->getConnection()->executeQuery($query, $parameters);
-                }
+                $results = $em->getConnection()->executeQuery($query, $parameters);
+            }
 
-                if (!(isset($log) && $log === 0)) {
-                    $app['monolog']->addInfo("Raw sql sent : $query");
-                }
+            if (!(isset($log) && $log === 0)) {
+                $app['monolog']->addInfo("Raw sql sent: $query with ".print_r($parameters, true));
             }
             return new JsonResponse($results);
         });
