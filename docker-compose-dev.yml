@@ -8,7 +8,7 @@ services:
     depends_on:
      - db_coa
      - db_cover_id
-     - db_dm_copy
+     - db_dm
      - db_dm_stats
      - db_edgecreator
      - php
@@ -82,8 +82,8 @@ services:
     networks:
      - cover-id-network
 
-  db_dm_copy:
-    container_name: db_dm_copy
+  db_dm:
+    container_name: db_dm
     image: "mariadb:10.2"
     volumes:
      - $MYSQL_INIT_SCRIPT_DM:/docker-entrypoint-initdb.d/$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro

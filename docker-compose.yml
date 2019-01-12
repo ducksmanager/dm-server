@@ -15,7 +15,7 @@ services:
     depends_on:
      - db_coa
      - db_cover_id
-     - db_dm_copy
+     - db_dm
      - db_dm_stats
      - db_edgecreator
      - php
@@ -112,7 +112,7 @@ services:
     networks:
      - cover-id-network
 
-  db_dm_copy:
+  db_dm:
     container_name: mariadb-server-for-dm
     image: "mariadb:10.2"
     volumes:
@@ -145,13 +145,13 @@ services:
     depends_on:
     - db_coa
     - db_dm_stats
-    - db_dm_copy
+    - db_dm
     environment:
     - MYSQL_COA_HOST=db_coa
     - MYSQL_COA_DATABASE=coa
     - MYSQL_DM_STATS_HOST=db_dm_stats
     - MYSQL_DM_STATS_DATABASE=dm_stats
-    - MYSQL_DM_HOST=db_dm_copy
+    - MYSQL_DM_HOST=db_dm
     - MYSQL_DM_DATABASE=dm
     - MYSQL_PASSWORD=$MYSQL_ROOT_PASSWORD
     networks:
