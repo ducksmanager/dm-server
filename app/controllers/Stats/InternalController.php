@@ -99,7 +99,7 @@ class InternalController extends AbstractController
             $qbGetMostWantedSuggestions
                 ->select('most_suggested.publicationcode', 'most_suggested.issuenumber')
                 ->from(UtilisateursPublicationsSuggerees::class, 'most_suggested')
-                ->where($qbGetMostWantedSuggestions->expr()->in('most_suggested.idUser', ':userId'))
+                ->where($qbGetMostWantedSuggestions->expr()->eq('most_suggested.idUser', ':userId'))
                 ->setParameter(':userId', self::getSessionUser($app)['id'])
                 ->orderBy(new OrderBy('most_suggested.score', 'DESC'))
                 ->setMaxResults(20);
@@ -128,7 +128,7 @@ class InternalController extends AbstractController
                     $qbGetSuggestionDetails->expr()->eq('suggested.issuenumber', 'missing.issuenumber')
                 ))
 
-                ->where($qbGetSuggestionDetails->expr()->in('suggested.idUser', ':userId'))
+                ->where($qbGetSuggestionDetails->expr()->eq('suggested.idUser', ':userId'))
                 ->setParameter(':userId', self::getSessionUser($app)['id'])
 
                 ->andWhere($qbGetSuggestionDetails->expr()->in($qbGetSuggestionDetails->expr()->concat('suggested.publicationcode', 'suggested.issuenumber'), ':mostSuggestedIssues'))
