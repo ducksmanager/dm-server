@@ -83,6 +83,10 @@ class AppController extends AbstractController
             self::callInternal($app, '/stats/suggestedissues/' . $countrycode, 'GET')->getContent()
         );
 
+        if (count($suggestedStories) === 0) {
+            return new JsonResponse([]);
+        }
+
         // Get author names
         $storyAuthors = array_map(function ($story) {
             return $story['personcode'];
