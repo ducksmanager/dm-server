@@ -18,10 +18,22 @@ use Swagger\Annotations as SWG;
  *     in="header",
  *     required=true
  *   ),
+ *   @SWG\Parameter(
+ *     name="x-dm-user",
+ *     in="header",
+ *     required=true
+ *   ),
+ *   @SWG\Parameter(
+ *     name="x-dm-pass",
+ *     in="header",
+ *     required=true
+ *   ),
  *   @SWG\Response(response=200),
+ *   @SWG\Response(response=401, description="User not authorized"),
  *   @SWG\Response(response="default", description="Error")
  * ),
  * @SLX\Before("DmServer\RequestInterceptor::checkVersion")
+ * @SLX\Before("DmServer\RequestInterceptor::authenticateUser")
  */
 class AppController extends AbstractController
 {
@@ -33,7 +45,6 @@ class AppController extends AbstractController
      * @return JsonResponse
      */
     public function getWatchedAuthorStoryCount(Application $app) {
-        $app['monolog']->addInfo('hello');
         $authorsAndStoryMissingForUserCount = ModelHelper::getUnserializedArrayFromJson(
             self::callInternal($app, '/stats/authorsstorycount/usercollection/missing', 'GET')->getContent()
         );
