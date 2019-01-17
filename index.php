@@ -1,6 +1,7 @@
 <?php
 use DmServer\Controllers\AbstractController;
 use DmServer\SpoolStub;
+use DmServer\YamlConfigReader;
 use Silex\Application;
 use Silex\Provider\LocaleServiceProvider;
 use Symfony\Component\HttpFoundation\Request;
@@ -124,34 +125,17 @@ array_walk($roles, function($role, $user) use ($passwordEncoder, &$users) {
     $users[$user] = [$roleName, $passwordEncoder->encodePassword($rolePassword, '')];
 });
 
-$app->register(new Silex\Provider\SecurityServiceProvider(), [
-    'security.firewalls' => [
-        'rawsql' => [
-            'pattern' => '^/rawsql',
-            'http' => true,
-            'users' => ['rawsql' => $users['rawsql']]
-        ],
-        'admin' => [
-            'pattern' => '^/ducksmanager/resetDemo',
-            'http' => true,
-            'users' => ['admin' => $users['admin']]
-        ],
-        'collection' => [
-            'pattern' => '^/collection/',
-            'http' => true,
-            'users' => [
-                'ducksmanager' => $users['ducksmanager'],
-                'whattheduck' => $users['whattheduck']
-            ]
-        ],
-        'edgecreator' => [
-            'pattern' => '^/edgecreator/',
-            'http' => true,
-            'users' => [
-                'edgecreator' => $users['edgecreator']
-            ]
-        ]
-    ]
-]);
+$app->register(
+    new Silex\Provider\SecurityServiceProvider(),
+    YamlConfigReader::parse(__DIR__.'/app/config/security.yml', function(&$config) use ($users) {
+        foreach($config['security.firewalls'] as &$firewallRule) {
+            $rolesWithPasswords = [];
+            array_walk($firewallRule['users'], function($role) use ($users, &$rolesWithPasswords) {
+                $rolesWithPasswords[$role] = $users[$role];
+            });
+            $firewallRule['users'] = $rolesWithPasswords;
+        }
+    })
+);
 
 $app->run();

@@ -1,0 +1,22 @@
+security.firewalls:
+  rawsql:
+    pattern: ^/rawsql
+    http: true
+    users:
+      - rawsql
+  admin:
+    pattern: ^/ducksmanager/resetDemo
+    http: true
+    users:
+      - admin
+  collection:
+    pattern: ^/collection/
+    http: true
+    users:
+      - ducksmanager
+      - whattheduck
+  edgecreator:
+    pattern: ^/edgecreator/
+    http: true
+    users:
+      - edgecreator
