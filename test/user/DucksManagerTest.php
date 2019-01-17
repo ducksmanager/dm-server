@@ -5,6 +5,7 @@ use Countable;
 use Dm\Models\Achats;
 use Dm\Models\Numeros;
 use Dm\Models\Users;
+use Dm\Models\UsersPasswordTokens;
 use DmServer\DmServer;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
@@ -177,5 +178,45 @@ class DucksManagerTest extends TestCommon
         ], [], 'GET')->call();
         $objectResponse = json_decode($this->getResponseContent($response));
         $this->assertEquals('Affichage', $objectResponse->EdgeCreator);
+    }
+
+    public function testResetPassword() {
+        $user = self::createTestCollection();
+
+        $response = $this->buildAuthenticatedService('/ducksmanager/resetPassword', self::$dmUser, [], ['email' => $user->getEmail()])->call();
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+
+        /** @var Swift_Message[]|Countable $messages */
+        $messages = $this->app['swiftmailer.spool']->getMessages();
+        $this->assertCount(2, $messages);
+        list($message, $messageCopy) = $messages;
+
+        /** @var UsersPasswordTokens $generatedToken */
+        $generatedToken = $this->getEm()->getRepository(UsersPasswordTokens::class)->findOneBy([
+            'idUser' => $user->getId()
+        ]);
+
+        $this->assertNotNull($generatedToken);
+
+        $expectedMessageBody = implode('<br />', [
+            'Bonjour dm_test_user,',
+            'Un visiteur a indiqué avoir oublié le mot de passe associé à l\'adresse e-mail test@ducksmanager.net.',
+            'Si c\'est vous qui en êtes à l\'origine, cliquez sur le lien suivante pour indiquer un nouveau mot de passe pour votre compte DucksManager :',
+            '<a href="http://localhost:8000/?action=reset_password&token='.$generatedToken->getToken().'">Mettre à jour mon mot de passe</a>',
+            '<br />',
+            'A bientôt sur le site !',
+            'L\'équipe DucksManager',
+            '<img width="400" src="http://localhost:8000/logo_petit.png" />'
+        ]);
+        $this->assertEquals($expectedMessageBody, $message->getBody());
+    }
+
+    public function testResetPasswordMissingEmail() {
+        $response = $this->buildAuthenticatedService('/ducksmanager/resetPassword', self::$dmUser, [], ['email' => 'fakeemail@gmail.com'])->call();
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+
+        /** @var Swift_Message[]|Countable $messages */
+        $messages = $this->app['swiftmailer.spool']->getMessages();
+        $this->assertCount(0, $messages);
     }
 }

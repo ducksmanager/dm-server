@@ -96,6 +96,41 @@ class AppController extends AbstractController
 
     /**
      * @SLX\Route(
+     *   @SLX\Request(method="POST", uri="resetPassword"),
+     *   @SWG\Parameter(
+     *     name="email",
+     *     in="body",
+     *     required=true
+     *   )
+     * )
+     * @param Application $app
+     * @param Request $request
+     * @return Response
+     */
+    public function resetPassword(Application $app, Request $request) {
+        $email = $request->request->get('email');
+
+        $emailExistsResponse = self::callInternal($app, '/rawsql', 'POST', [
+            'query' => 'SELECT ID FROM users WHERE email=?',
+            'parameters' => [$email],
+            'db' => DmServer::CONFIG_DB_KEY_DM
+        ]);
+
+        if ($emailExistsResponse->getStatusCode() === Response::HTTP_OK) {
+            $emailData = json_decode($emailExistsResponse->getContent());
+            if (count($emailData) > 0) {
+                $app['monolog']->addError('A visitor requested to reset a password for a valid e-mail : ' . $email);
+                return self::callInternal($app, '/ducksmanager/email/resetpassword', 'POST', [
+                    'email' => $email
+                ]);
+            }
+            $app['monolog']->addError('A visitor requested to reset a password for an invalid e-mail : ' . $email);
+            return new Response('OK');
+        }
+        return $emailExistsResponse;
+    }
+    /**
+     * @SLX\Route(
      *   @SLX\Request(method="POST", uri="resetDemo")
      * )
      * @param Application $app

@@ -8,10 +8,12 @@ use Dm\Models\AuteursPseudos;
 use Dm\Models\Numeros;
 use Dm\Models\Users;
 
+use Dm\Models\UsersPasswordTokens;
 use DmServer\Controllers\AbstractInternalController;
 use DmServer\DmServer;
 
 use DmServer\Emails\EdgesPublishedEmail;
+use DmServer\Emails\ResetPasswordEmail;
 use DmServer\Emails\UserSuggestedBookstoreEmail;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NonUniqueResultException;
@@ -241,11 +243,6 @@ class InternalController extends AbstractInternalController
      *       name="userid",
      *       in="body",
      *       required=false
-     *     ),
-     *     @SWG\Parameter(
-     *       name="details",
-     *       in="body",
-     *       required=false
      *     )
      * )
      * @param Application $app
@@ -329,6 +326,43 @@ class InternalController extends AbstractInternalController
 
             }
             $message->send();
+
+            return new Response();
+        });
+    }
+
+    /**
+     * @SLX\Route(
+     *     @SLX\Request(method="POST", uri="email/resetpassword"),
+     *     @SWG\Parameter(
+     *       name="email",
+     *       in="body",
+     *       required=false
+     *     )
+     * )
+     * @param Application $app
+     * @param Request $request
+     * @return Response
+     * @throws \Exception
+     */
+    public function sendResetPasswordEmail(Application $app, Request $request) {
+        return self::wrapInternalService($app, function(EntityManager $dmEm) use ($app, $request) {
+            $email = $request->request->get('email');
+            if (!is_null($email)) {
+                /** @var Users $user */
+                $user = $dmEm->getRepository(Users::class)->findOneBy([
+                    'email' => $email
+                ]);
+                $token = bin2hex(random_bytes(8));
+                $passwordToken = new UsersPasswordTokens();
+                $passwordToken->setIdUser($user->getId());
+                $passwordToken->setToken($token);
+                $dmEm->persist($passwordToken);
+                $dmEm->flush();
+
+                $message = new ResetPasswordEmail($app['mailer'], self::$translator, $user, $token);
+                $message->send();
+            }
 
             return new Response();
         });

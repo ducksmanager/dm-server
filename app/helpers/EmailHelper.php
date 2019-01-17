@@ -25,12 +25,12 @@ abstract class EmailHelper {
         $this->user = $user;
     }
 
-    abstract function getFrom();
-    abstract function getTo();
-    abstract function getSubject();
-    abstract function getTextBody();
-    abstract function getHtmlBody();
-    abstract function __toString();
+    abstract protected function getFrom();
+    abstract protected function getTo();
+    abstract protected function getSubject();
+    abstract protected function getTextBody();
+    abstract protected function getHtmlBody();
+    abstract public function __toString();
 
     /**
      * @throws RuntimeException
@@ -49,7 +49,7 @@ abstract class EmailHelper {
             throw new RuntimeException('Can\'t send e-mail \''.$this->__toString().'\': failed with '.print_r($failures, true));
         }
 
-        $message->setSubject('[Sent to '.(array_keys($message->getTo())[0])."] {$message->getSubject()}");
+        $message->setSubject('[Sent to '. array_keys($message->getTo())[0] ."] {$message->getSubject()}");
         $message->setTo(DmServer::$settings['smtp_username']);
         $this->mailer->send($message);
     }
