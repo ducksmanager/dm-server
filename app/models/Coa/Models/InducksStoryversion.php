@@ -136,7 +136,7 @@ class InducksStoryversion extends \Coa\Models\BaseModel
     /**
      * @var string|null
      *
-     * @ORM\Column(name="keywordsummary", type="string", length=4204, nullable=true)
+     * @ORM\Column(name="keywordsummary", type="string", length=4191, nullable=true)
      */
     private $keywordsummary;
 

@@ -52,7 +52,7 @@ class InducksStory extends \Coa\Models\BaseModel
     /**
      * @var string|null
      *
-     * @ORM\Column(name="title", type="string", length=210, nullable=true)
+     * @ORM\Column(name="title", type="string", length=222, nullable=true)
      */
     private $title;
 
@@ -80,7 +80,7 @@ class InducksStory extends \Coa\Models\BaseModel
     /**
      * @var string|null
      *
-     * @ORM\Column(name="repcountrysummary", type="string", length=88, nullable=true)
+     * @ORM\Column(name="repcountrysummary", type="string", length=91, nullable=true)
      */
     private $repcountrysummary;
 
