@@ -19,7 +19,7 @@ class ResetPasswordEmail extends EmailHelper {
     }
 
     protected function getFrom() {
-        return [DmServer::$settings['smtp_username']];
+        return DmServer::$settings['smtp_username'];
     }
 
     protected function getFromName() {
@@ -27,7 +27,7 @@ class ResetPasswordEmail extends EmailHelper {
     }
 
     protected function getTo() {
-        return [$this->user->getEmail()];
+        return $this->user->getEmail();
     }
 
     protected function getToName() {

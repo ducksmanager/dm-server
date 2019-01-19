@@ -6,7 +6,7 @@ use DmServer\DmServer;
 class UserSuggestedBookstoreEmail extends EmailHelper {
 
     protected function getFrom() {
-        return [$this->user->getUsername(). '@' .DmServer::$settings['smtp_origin_email_domain_ducksmanager']];
+        return $this->user->getUsername(). '@' .DmServer::$settings['smtp_origin_email_domain_ducksmanager'];
     }
 
     protected function getFromName() {
@@ -14,7 +14,7 @@ class UserSuggestedBookstoreEmail extends EmailHelper {
     }
 
     protected function getTo() {
-        return [DmServer::$settings['smtp_username']];
+        return DmServer::$settings['smtp_username'];
     }
 
     protected function getToName() {
