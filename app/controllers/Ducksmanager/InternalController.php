@@ -333,7 +333,71 @@ class InternalController extends AbstractInternalController
 
     /**
      * @SLX\Route(
-     *     @SLX\Request(method="POST", uri="email/resetpassword"),
+     *     @SLX\Request(method="POST", uri="resetpassword/checktoken/{token}"),
+     *     @SWG\Parameter(
+     *       name="token",
+     *       in="path",
+     *       required=false
+     *     )
+     * )
+     * @param Application $app
+     * @param string $token
+     * @return Response
+     * @throws \Exception
+     */
+    public function checkPasswordToken(Application $app, $token) {
+        return self::wrapInternalService($app, function(EntityManager $dmEm) use ($token) {
+            $existingToken = $dmEm->getRepository(UsersPasswordTokens::class)->findOneBy([
+                'token' => $token
+            ]);
+            if (!is_null($existingToken)) {
+                return new JsonResponse(['token' => $token, 'userId' => $existingToken->getIdUser()]);
+            }
+            return new Response('', Response::HTTP_NO_CONTENT);
+        });
+    }
+
+    /**
+     * @SLX\Route(
+     *     @SLX\Request(method="POST", uri="resetpassword"),
+     *     @SWG\Parameter(
+     *       name="token",
+     *       in="body",
+     *       required=false
+     *     ),
+     *     @SWG\Parameter(
+     *       name="password",
+     *       in="body",
+     *       required=false
+     *     )
+     * )
+     * @param Application $app
+     * @param Request $request
+     * @return Response
+     */
+    public function resetPassword(Application $app, Request $request) {
+        return self::wrapInternalService($app, function(EntityManager $dmEm) use ($request) {
+            $token = $request->request->get('token');
+            $password = $request->request->get('password');
+
+            $existingToken = $dmEm->getRepository(UsersPasswordTokens::class)->findOneBy([
+                'token' => $token
+            ]);
+            $user = $dmEm->getRepository(Users::class)->findOneBy([
+                'id' => $existingToken->getIdUser()
+            ]);
+            $user->setPassword(sha1($password));
+            $dmEm->persist($user);
+            $dmEm->remove($existingToken);
+            $dmEm->flush();
+
+            return new JsonResponse(['userId' => $user->getId()]);
+        });
+    }
+
+    /**
+     * @SLX\Route(
+     *     @SLX\Request(method="POST", uri="resetpassword/init"),
      *     @SWG\Parameter(
      *       name="email",
      *       in="body",

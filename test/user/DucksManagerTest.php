@@ -180,10 +180,10 @@ class DucksManagerTest extends TestCommon
         $this->assertEquals('Affichage', $objectResponse->EdgeCreator);
     }
 
-    public function testResetPassword() {
+    public function testInitResetPassword() {
         $user = self::createTestCollection();
 
-        $response = $this->buildAuthenticatedService('/ducksmanager/resetPassword', self::$dmUser, [], ['email' => $user->getEmail()])->call();
+        $response = $this->buildAuthenticatedService('/ducksmanager/resetpassword/init', self::$dmUser, [], ['email' => $user->getEmail()])->call();
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
 
         /** @var Swift_Message[]|Countable $messages */
@@ -211,12 +211,56 @@ class DucksManagerTest extends TestCommon
         $this->assertEquals($expectedMessageBody, $message->getBody());
     }
 
-    public function testResetPasswordMissingEmail() {
-        $response = $this->buildAuthenticatedService('/ducksmanager/resetPassword', self::$dmUser, [], ['email' => 'fakeemail@gmail.com'])->call();
+    public function testInitResetPasswordMissingEmail() {
+        $response = $this->buildAuthenticatedService('/ducksmanager/resetpassword/init', self::$dmUser, [], ['email' => 'fakeemail@gmail.com'])->call();
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
 
         /** @var Swift_Message[]|Countable $messages */
         $messages = $this->app['swiftmailer.spool']->getMessages();
         $this->assertCount(0, $messages);
+    }
+
+    public function testCheckPasswordToken() {
+        $user = self::createTestCollection();
+
+        $this->buildAuthenticatedService('/ducksmanager/resetpassword/init', self::$dmUser, [], ['email' => $user->getEmail()])->call();
+
+        /** @var UsersPasswordTokens $generatedToken */
+        $generatedToken = $this->getEm()->getRepository(UsersPasswordTokens::class)->findOneBy([
+            'idUser' => $user->getId()
+        ]);
+
+        $response = $this->buildAuthenticatedService("/ducksmanager/resetpassword/checktoken/{$generatedToken->getToken()}", self::$dmUser, [])->call();
+
+        $objectResponse = json_decode($this->getResponseContent($response));
+        $this->assertEquals($generatedToken->getToken(), $objectResponse->token);
+    }
+
+    public function testResetPasswordToken() {
+        $user = self::createTestCollection();
+
+        $this->buildAuthenticatedService('/ducksmanager/resetpassword/init', self::$dmUser, [], ['email' => $user->getEmail()])->call();
+
+        /** @var UsersPasswordTokens $generatedToken */
+        $generatedToken = $this->getEm()->getRepository(UsersPasswordTokens::class)->findOneBy([
+            'idUser' => $user->getId()
+        ]);
+
+        $response = $this->buildAuthenticatedService("/ducksmanager/resetpassword", self::$dmUser, [], [
+            'token' => $generatedToken->getToken(),
+            'password' => 'newpassword',
+        ])->call();
+
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+
+        /** @var Users $updatedUser */
+        $updatedUser = $this->getEm()->getRepository(Users::class)->findOneBy([
+            'id' => $user->getId()
+        ]);
+        $this->assertEquals(sha1('newpassword'), $updatedUser->getPassword());
+
+        $this->assertNull($this->getEm()->getRepository(UsersPasswordTokens::class)->findOneBy([
+            'token' => $generatedToken->getToken()
+        ]));
     }
 }

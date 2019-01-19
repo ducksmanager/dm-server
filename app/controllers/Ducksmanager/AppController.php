@@ -6,6 +6,7 @@ use DmServer\Controllers\AbstractController;
 use DmServer\CsvHelper;
 use DmServer\DmServer;
 use Silex\Application;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use DDesrosiers\SilexAnnotations\Annotations as SLX;
@@ -96,7 +97,24 @@ class AppController extends AbstractController
 
     /**
      * @SLX\Route(
-     *   @SLX\Request(method="POST", uri="resetPassword"),
+     *   @SLX\Request(method="POST", uri="resetpassword/checktoken/{token}"),
+     *   @SWG\Parameter(
+     *     name="token",
+     *     in="path",
+     *     required=true
+     *   )
+     * )
+     * @param Application $app
+     * @param string $token
+     * @return Response
+     */
+    public function checkPasswordToken(Application $app, $token) {
+        return self::callInternal($app, "/ducksmanager/resetpassword/checktoken/$token", 'POST');
+    }
+
+    /**
+     * @SLX\Route(
+     *   @SLX\Request(method="POST", uri="resetpassword/init"),
      *   @SWG\Parameter(
      *     name="email",
      *     in="body",
@@ -107,7 +125,7 @@ class AppController extends AbstractController
      * @param Request $request
      * @return Response
      */
-    public function resetPassword(Application $app, Request $request) {
+    public function resetPasswordInit(Application $app, Request $request) {
         $email = $request->request->get('email');
 
         $emailExistsResponse = self::callInternal($app, '/rawsql', 'POST', [
@@ -120,7 +138,7 @@ class AppController extends AbstractController
             $emailData = json_decode($emailExistsResponse->getContent());
             if (count($emailData) > 0) {
                 $app['monolog']->addError('A visitor requested to reset a password for a valid e-mail : ' . $email);
-                return self::callInternal($app, '/ducksmanager/email/resetpassword', 'POST', [
+                return self::callInternal($app, '/ducksmanager/resetpassword/init', 'POST', [
                     'email' => $email
                 ]);
             }
@@ -128,6 +146,42 @@ class AppController extends AbstractController
             return new Response('OK');
         }
         return $emailExistsResponse;
+    }
+
+    /**
+     * @SLX\Route(
+     *   @SLX\Request(method="POST", uri="resetpassword"),
+     *   @SWG\Parameter(
+     *     name="token",
+     *     in="body",
+     *     required=true
+     *   ),
+     *   @SWG\Parameter(
+     *     name="password",
+     *     in="body",
+     *     required=true
+     *   )
+     * )
+     * @param Application $app
+     * @param Request $request
+     * @return JsonResponse|Response
+     */
+    public function resetPassword(Application $app, Request $request) {
+        $token = $request->request->get('token');
+        $password = $request->request->get('password');
+
+        $tokenExistsResponse = self::callInternal($app, "/ducksmanager/resetpassword/checktoken/$token", 'POST');
+
+        if ($tokenExistsResponse->getStatusCode() === Response::HTTP_OK) {
+            $tokenData = json_decode($tokenExistsResponse->getContent());
+            $userId = $tokenData->userId;
+
+            return self::callInternal($app, "/ducksmanager/resetpassword", 'POST', [
+                'token' => $token,
+                'password' => $password
+            ]);
+        }
+        return $tokenExistsResponse;
     }
     /**
      * @SLX\Route(
