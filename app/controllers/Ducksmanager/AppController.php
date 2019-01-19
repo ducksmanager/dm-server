@@ -137,12 +137,12 @@ class AppController extends AbstractController
         if ($emailExistsResponse->getStatusCode() === Response::HTTP_OK) {
             $emailData = json_decode($emailExistsResponse->getContent());
             if (count($emailData) > 0) {
-                $app['monolog']->addError('A visitor requested to reset a password for a valid e-mail : ' . $email);
+                $app['monolog']->addInfo('A visitor requested to reset a password for a valid e-mail : ' . $email);
                 return self::callInternal($app, '/ducksmanager/resetpassword/init', 'POST', [
                     'email' => $email
                 ]);
             }
-            $app['monolog']->addError('A visitor requested to reset a password for an invalid e-mail : ' . $email);
+            $app['monolog']->addInfo('A visitor requested to reset a password for an invalid e-mail : ' . $email);
             return new Response('OK');
         }
         return $emailExistsResponse;
