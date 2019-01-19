@@ -22,8 +22,16 @@ class ResetPasswordEmail extends EmailHelper {
         return [DmServer::$settings['smtp_username']];
     }
 
+    protected function getFromName() {
+        return DmServer::$settings['smtp_friendlyname'];
+    }
+
     protected function getTo() {
         return [$this->user->getEmail()];
+    }
+
+    protected function getToName() {
+        return $this->user->getUsername();
     }
 
     protected function getSubject() {
@@ -53,8 +61,7 @@ class ResetPasswordEmail extends EmailHelper {
         ]);
     }
 
-    public function __toString()
-    {
+    public function __toString() {
         return "user {$this->user->getUsername()}'s edge(s) got published";
     }
 }

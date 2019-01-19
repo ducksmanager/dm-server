@@ -12,35 +12,37 @@ class BookstoreApprovedEmail extends EmailHelper {
     private $translator;
     private $newMedalLevel;
 
-    public function __construct(Swift_Mailer $mailer, TranslationTrait $translator, Users $user, string $bookstoreName, $newMedalLevel = null)
-    {
+    public function __construct(Swift_Mailer $mailer, TranslationTrait $translator, Users $user, string $bookstoreName, $newMedalLevel = null) {
         parent::__construct($mailer, $user);
         $this->translator = $translator;
         $this->bookstoreName = $bookstoreName;
         $this->newMedalLevel = $newMedalLevel;
     }
 
-    function getFrom()
-    {
+    protected function getFrom() {
         return [DmServer::$settings['smtp_username']];
     }
 
-    function getTo()
-    {
+    protected function getFromName() {
+        return DmServer::$settings['smtp_friendlyname'];
+    }
+
+    protected function getTo() {
         return [$this->user->getEmail()];
     }
 
-    function getSubject()
-    {
+    protected function getToName() {
+        return $this->user->getUsername();
+    }
+
+    protected function getSubject() {
         return $this->translator->trans('EMAIL_BOOKSTORE_APPROVED_SUBJECT');
     }
 
-    function getTextBody()
-    {
+    protected function getTextBody() {
     }
 
-    function getHtmlBody()
-    {
+    protected function getHtmlBody() {
         $body = $this->translator->trans('EMAIL_HELLO', ['%userName%', $this->user->getUsername()]);
 
         $body.= $this->translator->trans('EMAIL_BOOKSTORE_APPROVED_INTRO');
@@ -56,10 +58,7 @@ class BookstoreApprovedEmail extends EmailHelper {
         return $body;
     }
 
-    public function __toString()
-    {
+    public function __toString() {
         return "user {$this->user->getUsername()} suggested a bookcase";
     }
-
-
 }

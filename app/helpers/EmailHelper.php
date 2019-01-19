@@ -26,7 +26,9 @@ abstract class EmailHelper {
     }
 
     abstract protected function getFrom();
+    abstract protected function getFromName();
     abstract protected function getTo();
+    abstract protected function getToName();
     abstract protected function getSubject();
     abstract protected function getTextBody();
     abstract protected function getHtmlBody();
@@ -39,8 +41,8 @@ abstract class EmailHelper {
         $message = new \Swift_Message();
         $message
             ->setSubject($this->getSubject())
-            ->setFrom($this->getFrom())
-            ->setTo($this->getTo())
+            ->setFrom($this->getFrom(), $this->getFromName())
+            ->setTo($this->getTo(), $this->getToName())
             ->setBody($this->getHtmlBody(), 'text/html')
             ->addPart($this->getTextBody(), 'text/plain');
 

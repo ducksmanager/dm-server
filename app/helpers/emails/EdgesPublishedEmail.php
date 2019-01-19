@@ -13,8 +13,7 @@ class EdgesPublishedEmail extends EmailHelper {
     private $translator;
     private $newMedalLevel;
 
-    public function __construct(Swift_Mailer $mailer, Translator $translator, Users $user, int $extraEdges, int $extraPhotographerPoints, $newMedalLevel = null)
-    {
+    public function __construct(Swift_Mailer $mailer, Translator $translator, Users $user, int $extraEdges, int $extraPhotographerPoints, $newMedalLevel = null) {
         parent::__construct($mailer, $user);
         $this->translator = $translator;
         $this->extraEdges = $extraEdges;
@@ -22,29 +21,32 @@ class EdgesPublishedEmail extends EmailHelper {
         $this->newMedalLevel = $newMedalLevel;
     }
 
-    function getFrom()
-    {
+    protected function getFrom() {
         return [DmServer::$settings['smtp_username']];
     }
 
-    function getTo()
-    {
+    protected function getFromName() {
+        return DmServer::$settings['smtp_friendlyname'];
+    }
+
+    protected function getTo() {
         return [$this->user->getEmail()];
     }
 
-    function getSubject()
-    {
+    protected function getToName() {
+        return $this->user->getUsername();
+    }
+
+    protected function getSubject() {
         return $this->extraEdges > 1
             ? $this->translator->trans('EMAIL_EDGES_PUBLISHED_SUBJECT')
             : $this->translator->trans('EMAIL_ONE_EDGE_PUBLISHED_SUBJECT');
     }
 
-    function getTextBody()
-    {
+    protected function getTextBody() {
     }
 
-    function getHtmlBody()
-    {
+    protected function getHtmlBody() {
         return implode('<br />', [
             $this->translator->trans('EMAIL_HELLO', ['%userName%' => $this->user->getUsername()]),
 
@@ -69,8 +71,7 @@ class EdgesPublishedEmail extends EmailHelper {
         ]);
     }
 
-    public function __toString()
-    {
+    public function __toString() {
         return "user {$this->user->getUsername()}'s edge(s) got published";
     }
 }
