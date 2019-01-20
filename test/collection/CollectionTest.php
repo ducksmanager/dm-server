@@ -274,17 +274,44 @@ class CollectionTest extends TestCommon
         $getResponse = $this->buildAuthenticatedServiceWithTestUser('/collection/bookcase/sort', self::$dmUser)->call();
         $objectResponse = json_decode($getResponse->getContent());
 
-        $this->assertCount(2, $objectResponse);
-        /** @var BibliothequeOrdreMagazines $order */
-        $order1 = unserialize($objectResponse[0]);
-        $this->assertEquals('fr', $order1->getPays());
-        $this->assertEquals('DDD', $order1->getMagazine());
-        $this->assertEquals(1, $order1->getOrdre());
+        $this->assertCount(3, $objectResponse);
+        /** @var BibliothequeOrdreMagazines $sort1 */
+        $sort1 = unserialize($objectResponse[0]);
+        $this->assertEquals('fr/DDD', $sort1->getPublicationcode());
+        $this->assertEquals(1, $sort1->getOrdre());
 
-        $order2 = unserialize($objectResponse[1]);
-        $this->assertEquals('fr', $order2->getPays());
-        $this->assertEquals('JM', $order2->getMagazine());
-        $this->assertEquals(2, $order2->getOrdre());
+        /** @var BibliothequeOrdreMagazines $sort2 */
+        $sort2 = unserialize($objectResponse[1]);
+        $this->assertEquals('fr/JM', $sort2->getPublicationcode());
+        $this->assertEquals(2, $sort2->getOrdre());
+
+        /** @var BibliothequeOrdreMagazines $sort3 */
+        $sort3 = unserialize($objectResponse[2]);
+        $this->assertEquals('fr/MP', $sort3->getPublicationcode());
+        $this->assertEquals(3, $sort3->getOrdre());
+    }
+
+    public function testSetBookcaseSorts()
+    {
+        $user = self::createTestCollection('dm_test_user');
+        self::setSessionUser($this->app, $user);
+
+        $newSorts = [
+            'fr/SPG', 'fr/DDD', 'se/KAP'
+        ];
+
+        $getResponse = $this->buildAuthenticatedServiceWithTestUser('/collection/bookcase/sort', self::$dmUser, 'POST', ['sorts' => $newSorts])->call();
+        $objectResponse = json_decode($getResponse->getContent());
+        $this->assertEquals(2, $objectResponse->max);
+
+        $updatedSorts = $this->getEm()->getRepository(BibliothequeOrdreMagazines::class)->findBy([
+            'idUtilisateur' => $user->getId()
+        ], ['ordre' => 'ASC']);
+
+        $this->assertCount(3, $updatedSorts);
+        $this->assertEquals('fr/SPG', $updatedSorts[0]->getPublicationcode());
+        $this->assertEquals('fr/DDD', $updatedSorts[1]->getPublicationcode());
+        $this->assertEquals('se/KAP', $updatedSorts[2]->getPublicationcode());
     }
 
     public function testGetLastPublicationPosition() {

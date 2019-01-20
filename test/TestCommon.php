@@ -333,8 +333,7 @@ class TestCommon extends WebTestCase {
                 $publicationSort1 = new BibliothequeOrdreMagazines();
                 $dmEntityManager->persist(
                     $publicationSort1
-                        ->setPays('fr')
-                        ->setMagazine('DDD')
+                        ->setPublicationcode('fr/DDD')
                         ->setIdUtilisateur($user->getId())
                         ->setOrdre(1)
                 );
@@ -342,8 +341,7 @@ class TestCommon extends WebTestCase {
                 $publicationSort2 = new BibliothequeOrdreMagazines();
                 $dmEntityManager->persist(
                     $publicationSort2
-                        ->setPays('fr')
-                        ->setMagazine('JM')
+                        ->setPublicationcode('fr/JM')
                         ->setIdUtilisateur($user->getId())
                         ->setOrdre(2)
                 );

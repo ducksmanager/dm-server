@@ -235,7 +235,27 @@ class AppController extends AbstractController
      * @return Response
      */
     public function getBookcaseSorting(Application $app) {
-        return self::callInternal($app, '/collection/bookcase/sort');
+        $maxSortResponse = $this->getLastPublicationPosition($app);
+
+        if ($maxSortResponse->isSuccessful()) {
+            $maxSort = json_decode($maxSortResponse->getContent())->max;
+        }
+        else {
+            $maxSort = -1;
+        }
+        return self::callInternal($app, "/collection/bookcase/sort/withMax/$maxSort");
+    }
+
+    /**
+     * @SLX\Route(
+     *   @SLX\Request(method="POST", uri="bookcase/sort")
+     * )
+     * @param Application $app
+     * @param Request $request
+     * @return Response
+     */
+    public function setBookcaseSorting(Application $app, Request $request) {
+        return self::callInternal($app, '/collection/bookcase/sort', 'POST', ['sorts' => $request->request->get('sorts')]);
     }
 
     /**
