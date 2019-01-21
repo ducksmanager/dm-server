@@ -209,7 +209,7 @@ class TestCommon extends WebTestCase {
     }
 
     protected function buildAuthenticatedService($path, $appUser, $userCredentials, $parameters = [], $method = 'POST') {
-        return $this->buildService($path, $userCredentials, $parameters, self::getSystemCredentials($appUser), $method, []);
+        return $this->buildService($path, $userCredentials, $parameters, self::getSystemCredentials($appUser), $method);
     }
 
     protected function buildAuthenticatedServiceWithTestUser($path, $appUser, $method = 'GET', $parameters = [], $files = []) {

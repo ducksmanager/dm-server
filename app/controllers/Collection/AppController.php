@@ -52,7 +52,7 @@ class AppController extends AbstractController
      */
     public function getIssues(Application $app)
     {
-        $issuesResponse = self::callInternal($app, '/collection/issues', 'GET');
+        $issuesResponse = self::callInternal($app, '/collection/issues');
 
         /** @var Numeros[] $issues */
         $issues = ModelHelper::getUnserializedArrayFromJson($issuesResponse->getContent());

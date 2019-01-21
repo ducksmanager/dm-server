@@ -130,7 +130,7 @@ class AppController extends AbstractController
      * @return Response
      */
     public function getV2MyModels(Application $app) {
-        return self::callInternal($app, '/edgecreator/v2/model', 'GET');
+        return self::callInternal($app, '/edgecreator/v2/model');
     }
 
     /**
@@ -148,7 +148,7 @@ class AppController extends AbstractController
      * @return Response
      */
     public function getModel(Application $app, $modelId) {
-        return self::callInternal($app, "/edgecreator/v2/model/$modelId", 'GET');
+        return self::callInternal($app, "/edgecreator/v2/model/$modelId");
     }
 
     /**
@@ -159,7 +159,7 @@ class AppController extends AbstractController
      * @return Response
      */
     public function getModelsEditedByOthers(Application $app) {
-        return self::callInternal($app, '/edgecreator/v2/model/editedbyother/all', 'GET');
+        return self::callInternal($app, '/edgecreator/v2/model/editedbyother/all');
     }
 
     /**
@@ -170,7 +170,7 @@ class AppController extends AbstractController
      * @return Response
      */
     public function getUnassignedModels(Application $app) {
-        return self::callInternal($app, '/edgecreator/v2/model/unassigned/all', 'GET');
+        return self::callInternal($app, '/edgecreator/v2/model/unassigned/all');
     }
 
     /**
@@ -195,7 +195,7 @@ class AppController extends AbstractController
      * @return Response
      */
     public function getV2Model(Application $app, $publicationcode, $issuenumber) {
-        return self::callInternal($app, "/edgecreator/v2/model/$publicationcode/$issuenumber", 'GET');
+        return self::callInternal($app, "/edgecreator/v2/model/$publicationcode/$issuenumber");
     }
 
     /**
@@ -280,7 +280,7 @@ class AppController extends AbstractController
         try {
             // Target model already exists
             $targetModelId = self::getResponseIdFromServiceResponse(
-                self::callInternal($app, "/edgecreator/v2/model/$publicationcode/$issuenumber", 'GET'),
+                self::callInternal($app, "/edgecreator/v2/model/$publicationcode/$issuenumber"),
                 'id'
             );
             try {
@@ -647,7 +647,7 @@ class AppController extends AbstractController
      * @return Response
      */
     public function getMultipleEdgePhotosFromToday(Application $app) {
-        return self::callInternal($app, '/edgecreator/multiple_edge_photo/today', 'GET');
+        return self::callInternal($app, '/edgecreator/multiple_edge_photo/today');
     }
 
     /**
@@ -664,7 +664,7 @@ class AppController extends AbstractController
      * @return Response
      */
     public function getMultipleEdgePhotoFromHash(Application $app, $hash) {
-        return self::callInternal($app, "/edgecreator/multiple_edge_photo/$hash", 'GET');
+        return self::callInternal($app, "/edgecreator/multiple_edge_photo/$hash");
     }
 
     /**
@@ -702,6 +702,6 @@ class AppController extends AbstractController
      * @throws \Exception
      */
     public function getElementImagesByNameSubstring(Application $app, $nameSubString) {
-        return self::callInternal($app, "/edgecreator/elements/images/$nameSubString", 'GET');
+        return self::callInternal($app, "/edgecreator/elements/images/$nameSubString");
     }
 }

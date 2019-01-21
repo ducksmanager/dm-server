@@ -14,24 +14,23 @@ class UserTest extends TestCommon
     }
 
     public function testCallServiceWithoutSystemCredentials() {
-        $response = $this->buildService('/collection/issues', [], [], [], 'POST')->call();
+        $response = $this->buildService('/collection/issues')->call();
         $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 
     public function testCallServiceWithoutClientVersion() {
-        $response = $this->buildService('/collection/issues', [], [], static::getSystemCredentialsNoVersion(self::$dmUser),
-            'POST')->call();
+        $response = $this->buildService('/collection/issues', [], [], static::getSystemCredentialsNoVersion(self::$dmUser))->call();
         $this->assertEquals(Response::HTTP_VERSION_NOT_SUPPORTED, $response->getStatusCode());
     }
 
     public function testCallServiceWithoutUserCredentials() {
-        $response = $this->buildAuthenticatedService('/collection/issues', self::$dmUser, [], [])->call();
+        $response = $this->buildAuthenticatedService('/collection/issues', self::$dmUser, [])->call();
         $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 
     public function testCallServiceWithWrongUserCredentials() {
         $response = $this->buildAuthenticatedService('/collection/issues', self::$dmUser, ['username' => 'dm_test',
-            'password' => 'invalid'], [])->call();
+            'password' => 'invalid'])->call();
         $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 
@@ -132,7 +131,7 @@ class UserTest extends TestCommon
         $otherUser = self::createTestCollection('otheruser');
 
         $today = new \DateTime();
-        $today->setTime(0, 0, 0);
+        $today->setTime(0, 0);
 
         $sale = new EmailsVentes();
         $this->getEm()->persist(
@@ -144,7 +143,7 @@ class UserTest extends TestCommon
         $this->getEm()->flush();
 
         $todayStr = $today->format('Y-m-d');
-        $response = $this->buildAuthenticatedServiceWithTestUser("/user/sale/{$otherUser->getUsername()}/$todayStr", self::$dmUser, 'GET')->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser("/user/sale/{$otherUser->getUsername()}/$todayStr", self::$dmUser)->call();
 
         $objectResponse = json_decode($this->getResponseContent($response));
 

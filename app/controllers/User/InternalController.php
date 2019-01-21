@@ -38,7 +38,7 @@ class InternalController extends AbstractInternalController
     public function sellToUser(Application $app, $otherUser) {
         return self::wrapInternalService($app, function (EntityManager $dmEm) use ($app, $otherUser) {
             $today = new \DateTime();
-            $today->setTime(0, 0, 0);
+            $today->setTime(0, 0);
 
             $saleEmail = new EmailsVentes();
             $saleEmail->setUsernameVente(self::getSessionUser($app)['username']);

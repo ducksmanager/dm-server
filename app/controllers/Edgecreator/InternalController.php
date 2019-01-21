@@ -717,7 +717,7 @@ class InternalController extends AbstractController
             $mainPhoto
                 ->setIdUtilisateur(self::getSessionUser($app)['id'])
                 ->setDateheure((new \DateTime())->setTime(0,0))
-                ->setHash(null) // TODO
+                ->setHash() // TODO
                 ->setNomfichier($photoName);
             $ecEm->persist($mainPhoto);
 

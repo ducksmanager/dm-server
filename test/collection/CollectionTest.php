@@ -150,7 +150,7 @@ class CollectionTest extends TestCommon
     }
 
     public function testFetchCollection() {
-        $user = self::createTestCollection('dm_test_user');
+        $user = self::createTestCollection();
         self::setSessionUser($this->app, $user);
 
         self::createCoaData();
@@ -183,7 +183,7 @@ class CollectionTest extends TestCommon
 
     public function testUpdatePurchase()
     {
-        $user = self::createTestCollection('dm_test_user');
+        $user = self::createTestCollection();
         self::setSessionUser($this->app, $user);
 
         /** @var Achats $purchaseToUpdate */
@@ -208,7 +208,7 @@ class CollectionTest extends TestCommon
 
     public function testUpdatePurchaseOfOtherUser()
     {
-        $user = self::createTestCollection('dm_test_user');
+        $user = self::createTestCollection();
         self::setSessionUser($this->app, $user);
 
         $response = $this->buildAuthenticatedServiceWithTestUser('/collection/purchases/3', self::$dmUser, 'POST', [
@@ -228,7 +228,7 @@ class CollectionTest extends TestCommon
 
     public function testCreateExternalAccess()
     {
-        $user = self::createTestCollection('dm_test_user');
+        $user = self::createTestCollection();
         self::setSessionUser($this->app, $user);
 
         $response = $this->buildAuthenticatedServiceWithTestUser('/collection/externalaccess', self::$dmUser, 'PUT')->call();
@@ -240,7 +240,7 @@ class CollectionTest extends TestCommon
 
     public function testGetExternalAccess()
     {
-        $user = self::createTestCollection('dm_test_user');
+        $user = self::createTestCollection();
         self::setSessionUser($this->app, $user);
 
         $creationResponse = $this->buildAuthenticatedServiceWithTestUser('/collection/externalaccess', self::$dmUser, 'PUT')->call();
@@ -257,7 +257,7 @@ class CollectionTest extends TestCommon
 
     public function testGetExternalAccessNotExisting()
     {
-        $user = self::createTestCollection('dm_test_user');
+        $user = self::createTestCollection();
         self::setSessionUser($this->app, $user);
 
         $getResponse = $this->buildAuthenticatedServiceWithTestUser('/collection/externalaccess/123', self::$dmUser)->call();
@@ -268,7 +268,7 @@ class CollectionTest extends TestCommon
 
     public function testGetBookcaseSorts()
     {
-        $user = self::createTestCollection('dm_test_user');
+        $user = self::createTestCollection();
         self::setSessionUser($this->app, $user);
 
         $getResponse = $this->buildAuthenticatedServiceWithTestUser('/collection/bookcase/sort', self::$dmUser)->call();
@@ -293,7 +293,7 @@ class CollectionTest extends TestCommon
 
     public function testSetBookcaseSorts()
     {
-        $user = self::createTestCollection('dm_test_user');
+        $user = self::createTestCollection();
         self::setSessionUser($this->app, $user);
 
         $newSorts = [
@@ -316,7 +316,7 @@ class CollectionTest extends TestCommon
     }
 
     public function testGetLastPublicationPosition() {
-        $user = self::createTestCollection('dm_test_user');
+        $user = self::createTestCollection();
         self::setSessionUser($this->app, $user);
 
         $getResponse = $this->buildAuthenticatedServiceWithTestUser('/collection/bookcase/sort/max', self::$dmUser)->call();

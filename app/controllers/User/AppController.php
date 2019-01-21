@@ -74,7 +74,7 @@ class AppController extends AbstractController
      * @return Response
      */
     public function getSaleToUserAtDate(Application $app, $otheruser, $date) {
-        return self::callInternal($app, "/user/sale/$otheruser/$date", 'GET');
+        return self::callInternal($app, "/user/sale/$otheruser/$date");
     }
 
     /**
@@ -86,6 +86,6 @@ class AppController extends AbstractController
      * @return Response
      */
     public function getUserPrivileges(Application $app) {
-        return self::callInternal($app, '/user/privileges', 'GET');
+        return self::callInternal($app, '/user/privileges');
     }
 }

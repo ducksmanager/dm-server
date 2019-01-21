@@ -47,7 +47,7 @@ class AppController extends AbstractController
     public function listCountriesForLocale(Application $app, $locale) {
         return new JsonResponse(
             ModelHelper::getUnserializedArrayFromJson(
-                self::callInternal($app, "/coa/countrynames/$locale", 'GET', [])->getContent()
+                self::callInternal($app, "/coa/countrynames/$locale")->getContent()
             )
         );
     }

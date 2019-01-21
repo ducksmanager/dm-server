@@ -46,12 +46,11 @@ class AppController extends AbstractController
      */
     public function getWatchedAuthorStoryCount(Application $app) {
         $authorsAndStoryMissingForUserCount = ModelHelper::getUnserializedArrayFromJson(
-            self::callInternal($app, '/stats/authorsstorycount/usercollection/missing', 'GET')->getContent()
+            self::callInternal($app, '/stats/authorsstorycount/usercollection/missing')->getContent()
         );
         $authorsAndStoryCount = ModelHelper::getUnserializedArrayFromJson(
             self::callInternal($app,
-                '/stats/authorsstorycount/' . implode(',', array_keys($authorsAndStoryMissingForUserCount)),
-                'GET')->getContent()
+                '/stats/authorsstorycount/' . implode(',', array_keys($authorsAndStoryMissingForUserCount)))->getContent()
         );
         $authorsFullNames = ModelHelper::getUnserializedArrayFromJson(
             self::callInternal($app, '/coa/authorsfullnames', 'GET',
@@ -91,7 +90,7 @@ class AppController extends AbstractController
      */
     public function getSuggestedIssues(Application $app, $countrycode) {
         $suggestedStories = ModelHelper::getUnserializedArrayFromJson(
-            self::callInternal($app, '/stats/suggestedissues/' . $countrycode, 'GET')->getContent()
+            self::callInternal($app, '/stats/suggestedissues/' . $countrycode)->getContent()
         );
 
         if (count($suggestedStories) === 0) {

@@ -9,7 +9,7 @@ class RawSqlTest extends TestCommon
     public function setUp()
     {
         parent::setUp();
-        self::createTestCollection('dm_test_user');
+        self::createTestCollection();
     }
 
     public function testRawSqlWithUserWithoutPermission() {
