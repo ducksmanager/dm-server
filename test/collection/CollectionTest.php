@@ -304,6 +304,7 @@ class CollectionTest extends TestCommon
         $objectResponse = json_decode($getResponse->getContent());
         $this->assertEquals(2, $objectResponse->max);
 
+        /** @var BibliothequeOrdreMagazines[] $updatedSorts */
         $updatedSorts = $this->getEm()->getRepository(BibliothequeOrdreMagazines::class)->findBy([
             'idUtilisateur' => $user->getId()
         ], ['ordre' => 'ASC']);
