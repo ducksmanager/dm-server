@@ -237,7 +237,7 @@ class AppController extends AbstractController
     public function getBookcaseSorting(Application $app) {
         $maxSortResponse = $this->getLastPublicationPosition($app);
 
-        if ($maxSortResponse->isSuccessful()) {
+        if ($maxSortResponse->isOk()) {
             $maxSort = json_decode($maxSortResponse->getContent())->max;
         }
         else {

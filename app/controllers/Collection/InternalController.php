@@ -13,6 +13,7 @@ use DmServer\MiscUtil;
 use DmServer\ModelHelper;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query;
+use Doctrine\ORM\Query\Expr\OrderBy;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -265,7 +266,9 @@ class InternalController extends AbstractController
                 ->andWhere('concat(issues.pays, \'/\', issues.magazine) not in (select sorts.publicationcode from '.BibliothequeOrdreMagazines::class.' sorts where sorts.idUtilisateur = :userId)')
                 ->setParameter(':userId', self::getSessionUser($app)['id'])
 
-                ->andWhere('issues.idUtilisateur =  :userId');
+                ->andWhere('issues.idUtilisateur =  :userId')
+
+                ->orderBy(new OrderBy('missing_publication_code', 'ASC'));
 
             $missingSorts = $qbMissingSorts->getQuery()->getArrayResult();
             foreach($missingSorts as $missingSort) {
@@ -282,7 +285,9 @@ class InternalController extends AbstractController
                 ['ordre' => 'ASC']
             );
 
-            return new JsonResponse(ModelHelper::getSerializedArray($sorts));
+            return new JsonResponse(array_map(function(BibliothequeOrdreMagazines $sort) {
+                return $sort->getPublicationcode();
+            }, $sorts));
         });
     }
 
