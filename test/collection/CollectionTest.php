@@ -274,21 +274,7 @@ class CollectionTest extends TestCommon
         $getResponse = $this->buildAuthenticatedServiceWithTestUser('/collection/bookcase/sort', self::$dmUser)->call();
         $objectResponse = json_decode($getResponse->getContent());
 
-        $this->assertCount(3, $objectResponse);
-        /** @var BibliothequeOrdreMagazines $sort1 */
-        $sort1 = unserialize($objectResponse[0]);
-        $this->assertEquals('fr/DDD', $sort1->getPublicationcode());
-        $this->assertEquals(1, $sort1->getOrdre());
-
-        /** @var BibliothequeOrdreMagazines $sort2 */
-        $sort2 = unserialize($objectResponse[1]);
-        $this->assertEquals('fr/JM', $sort2->getPublicationcode());
-        $this->assertEquals(2, $sort2->getOrdre());
-
-        /** @var BibliothequeOrdreMagazines $sort3 */
-        $sort3 = unserialize($objectResponse[2]);
-        $this->assertEquals('fr/MP', $sort3->getPublicationcode());
-        $this->assertEquals(3, $sort3->getOrdre());
+        $this->assertEquals(["fr/DDD", "fr/JM", "fr/MP"], $objectResponse);
     }
 
     public function testSetBookcaseSorts()
