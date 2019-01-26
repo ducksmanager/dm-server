@@ -41,7 +41,7 @@ class CollectionTest extends TestCommon
         $this->assertEquals(-2, $lastIssue->getIdAcquisition());
         $this->assertEquals(false, $lastIssue->getAv());
         $this->assertEquals(AbstractController::getSessionUser($this->app)['id'], $lastIssue->getIdUtilisateur());
-        $this->assertEquals(date('Y-m-d'), date('Y-m-d', $lastIssue->getDateajout()));
+        $this->assertEquals(date('Y-m-d'), $lastIssue->getDateajout()->format('Y-m-d'));
     }
 
     public function testUpdateCollectionCreateIssueWithOptions() {
@@ -82,7 +82,7 @@ class CollectionTest extends TestCommon
         $this->assertEquals(2, $updatedIssue->getIdAcquisition());
         $this->assertEquals(true, $updatedIssue->getAv());
         $this->assertEquals(AbstractController::getSessionUser($this->app)['id'], $updatedIssue->getIdUtilisateur());
-        $this->assertEquals(date('Y-m-d'), date('Y-m-d', $updatedIssue->getDateajout()));
+        $this->assertEquals(date('Y-m-d'), $updatedIssue->getDateajout()->format('Y-m-d'));
     }
 
     public function testDeleteFromCollection() {
@@ -394,7 +394,7 @@ class CollectionTest extends TestCommon
             'idUtilisateur' => $user->getId(),
             'magazine' => 'MAD'
         ]);
-        $this->assertIsInt($singleCreatedIssue->getDateajout());
+        $this->assertNotNull($singleCreatedIssue->getDateajout());
         $a=1;
     }
 

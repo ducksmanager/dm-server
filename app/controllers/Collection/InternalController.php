@@ -192,7 +192,7 @@ class InternalController extends AbstractController
                 $newIssue->setAv($istosellNewIssues);
                 $newIssue->setIdAcquisition($purchaseidNewIssues);
                 $newIssue->setIdUtilisateur(self::getSessionUser($app)['id']);
-                $newIssue->setDateajout(time());
+                $newIssue->setDateajout(new \DateTime());
 
                 $dmEm->persist($newIssue);
             }
@@ -421,7 +421,7 @@ class InternalController extends AbstractController
                     ->setMagazine($magazine)
                     ->setNumero($issue['issuenumber'])
                     ->setAv(false)
-                    ->setDateajout(time())
+                    ->setDateajout(new \DateTime())
                     ->setEtat($defaultCondition);
                 $dmEm->persist($newIssue);
             }

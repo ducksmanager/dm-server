@@ -294,7 +294,7 @@ class TestCommon extends WebTestCase {
                     ->setIdAcquisition('-2')
                     ->setAv(false)
                     ->setIdUtilisateur($user->getId())
-                    ->setDateajout(time())
+                    ->setDateajout(new \DateTime())
             );
 
             $numero2 = new Numeros();
@@ -306,7 +306,7 @@ class TestCommon extends WebTestCase {
                     ->setEtat('bon')
                     ->setAv(false)
                     ->setIdUtilisateur($user->getId())
-                    ->setDateajout(time())
+                    ->setDateajout(new \DateTime())
             );
 
             $numero3 = new Numeros();
@@ -318,7 +318,7 @@ class TestCommon extends WebTestCase {
                     ->setEtat('mauvais')
                     ->setAv(true)
                     ->setIdUtilisateur($user->getId())
-                    ->setDateajout(time())
+                    ->setDateajout(new \DateTime())
             );
 
             $purchase1 = new Achats();

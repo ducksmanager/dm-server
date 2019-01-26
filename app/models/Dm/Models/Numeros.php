@@ -62,9 +62,9 @@ class Numeros extends \Dm\Models\BaseModel
     private $idUtilisateur;
 
     /**
-     * @var int
+     * @var \DateTime
      *
-     * @ORM\Column(name="DateAjout", type="integer", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
+     * @ORM\Column(name="DateAjout", type="datetime", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
      */
     private $dateajout = 'CURRENT_TIMESTAMP';
 
@@ -250,7 +250,7 @@ class Numeros extends \Dm\Models\BaseModel
     /**
      * Set dateajout.
      *
-     * @param int $dateajout
+     * @param \DateTime $dateajout
      *
      * @return Numeros
      */
@@ -264,7 +264,7 @@ class Numeros extends \Dm\Models\BaseModel
     /**
      * Get dateajout.
      *
-     * @return int
+     * @return \DateTime
      */
     public function getDateajout()
     {
