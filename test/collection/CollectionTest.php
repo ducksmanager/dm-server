@@ -388,6 +388,14 @@ class CollectionTest extends TestCommon
         $objectResponse = json_decode($this->getResponseContent($response));
         $this->assertEquals(4, $objectResponse->importedIssuesCount);
         $this->assertEquals(0, $objectResponse->existingIssuesCount);
+
+        /** @var Numeros $singleCreatedIssue */
+        $singleCreatedIssue = $this->getEm()->getRepository(Numeros::class)->findOneBy([
+            'idUtilisateur' => $user->getId(),
+            'magazine' => 'MAD'
+        ]);
+        $this->assertIsInt($singleCreatedIssue->getDateajout());
+        $a=1;
     }
 
     public function testImportFromInducksWithExistingIssues() {

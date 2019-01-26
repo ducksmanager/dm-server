@@ -421,6 +421,7 @@ class InternalController extends AbstractController
                     ->setMagazine($magazine)
                     ->setNumero($issue['issuenumber'])
                     ->setAv(false)
+                    ->setDateajout(time())
                     ->setEtat($defaultCondition);
                 $dmEm->persist($newIssue);
             }
