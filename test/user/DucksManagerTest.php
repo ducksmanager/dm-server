@@ -116,7 +116,7 @@ class DucksManagerTest extends TestCommon
         /** @var Swift_Message[]|Countable $messages */
         $messages = $this->app['swiftmailer.spool']->getMessages();
         $this->assertCount(2, $messages);
-        list($message, $messageCopy) = $messages;
+        [$message, $messageCopy] = $messages;
 
         $this->assertContains('Ajout de bouquinerie', $message->getSubject());
         $this->assertContains('Validation', $message->getBody());
@@ -142,7 +142,7 @@ class DucksManagerTest extends TestCommon
         /** @var Swift_Message[]|Countable $messages */
         $messages = $this->app['swiftmailer.spool']->getMessages();
         $this->assertCount(2, $messages);
-        list($message, $messageCopy) = $messages;
+        [$message, $messageCopy] = $messages;
         $expectedMessageBody = implode('<br />', [
             'Bonjour demo,',
             'Les 4 tranches dont vous nous avez envoyé les photos sont maintenant visionnables dans votre bibliothèque DucksManager ainsi que dans les bibliothèques des autres utilisateurs possédant ces magazines.',
@@ -189,7 +189,7 @@ class DucksManagerTest extends TestCommon
         /** @var Swift_Message[]|Countable $messages */
         $messages = $this->app['swiftmailer.spool']->getMessages();
         $this->assertCount(2, $messages);
-        list($message, $messageCopy) = $messages;
+        [$message, $messageCopy] = $messages;
 
         /** @var UsersPasswordTokens $generatedToken */
         $generatedToken = $this->getEm()->getRepository(UsersPasswordTokens::class)->findOneBy([
@@ -246,7 +246,7 @@ class DucksManagerTest extends TestCommon
             'idUser' => $user->getId()
         ]);
 
-        $response = $this->buildAuthenticatedService("/ducksmanager/resetpassword", self::$dmUser, [], [
+        $response = $this->buildAuthenticatedService('/ducksmanager/resetpassword', self::$dmUser, [], [
             'token' => $generatedToken->getToken(),
             'password' => 'newpassword',
         ])->call();

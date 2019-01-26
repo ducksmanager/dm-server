@@ -121,7 +121,7 @@ $roles = DmServer::getAppRoles();
 
 $users = [];
 array_walk($roles, function($role, $user) use ($passwordEncoder, &$users) {
-    list($roleName, $rolePassword) = explode(':', $role);
+    [$roleName, $rolePassword] = explode(':', $role);
     $users[$user] = [$roleName, $passwordEncoder->encodePassword($rolePassword, '')];
 });
 

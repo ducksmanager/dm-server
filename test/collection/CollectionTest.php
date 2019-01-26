@@ -333,4 +333,79 @@ class CollectionTest extends TestCommon
         $getResponse = $this->buildAuthenticatedServiceWithTestUser('/collection/bookcase/sort/max', self::$dmUser)->call();
         $this->assertEquals(Response::HTTP_NO_CONTENT, $getResponse->getStatusCode());
     }
+
+    public function testImportFromInducksInit() {
+        $user = self::createTestCollection();
+        self::setSessionUser($this->app, $user);
+
+        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/inducks/import/init', self::$dmUser, 'POST', ['rawData' => implode("\n", [
+            'country^entrycode^collectiontype^comment',
+            'fr^AJM  58^^',
+            'fr^AJM  58^^',
+            'fr^D    28^^',
+            'fr^JM   56^^',
+            'us^MAD  15^^'
+        ])])->call();
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+
+        $objectResponse = json_decode($this->getResponseContent($response));
+        $this->assertCount(4, (array)$objectResponse->issues);
+        $this->assertEquals(0, $objectResponse->existingIssuesCount);
+    }
+
+    public function testImportFromInducksInitExistingIssues() {
+        $user = self::createTestCollection();
+        self::setSessionUser($this->app, $user);
+
+        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/inducks/import/init', self::$dmUser, 'POST', ['rawData' => implode("\n", [
+            'country^entrycode^collectiontype^comment',
+            'fr^AJM  58^^',
+            'fr^D    28^^',
+            'fr^DDD   1^^',
+            'fr^JM   56^^',
+            'us^MAD  15^^'
+        ])])->call();
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+
+        $objectResponse = json_decode($this->getResponseContent($response));
+        $this->assertCount(4, (array)$objectResponse->issues);
+        $this->assertEquals(1, $objectResponse->existingIssuesCount);
+    }
+
+    public function testImportFromInducks() {
+        $user = self::createTestCollection();
+        self::setSessionUser($this->app, $user);
+
+        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/inducks/import', self::$dmUser, 'POST', ['issues' => [
+            ['publicationcode' => 'fr/AJM', 'issuenumber' => '58'],
+            ['publicationcode' => 'fr/D', 'issuenumber' => '28'],
+            ['publicationcode' => 'fr/JM', 'issuenumber' => '56'],
+            ['publicationcode' => 'us/MAD', 'issuenumber' => '15']
+        ], 'defaultCondition' => 'mauvais'
+        ])->call();
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+
+        $objectResponse = json_decode($this->getResponseContent($response));
+        $this->assertEquals(4, $objectResponse->importedIssuesCount);
+        $this->assertEquals(0, $objectResponse->existingIssuesCount);
+    }
+
+    public function testImportFromInducksWithExistingIssues() {
+        $user = self::createTestCollection();
+        self::setSessionUser($this->app, $user);
+
+        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/inducks/import', self::$dmUser, 'POST', ['issues' => [
+            ['publicationcode' => 'fr/AJM', 'issuenumber' => '58'],
+            ['publicationcode' => 'fr/DDD', 'issuenumber' => '1'],
+            ['publicationcode' => 'fr/D', 'issuenumber' => '28'],
+            ['publicationcode' => 'fr/JM', 'issuenumber' => '56'],
+            ['publicationcode' => 'us/MAD', 'issuenumber' => '15']
+        ], 'defaultCondition' => 'mauvais'
+        ])->call();
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+
+        $objectResponse = json_decode($this->getResponseContent($response));
+        $this->assertEquals(4, $objectResponse->importedIssuesCount);
+        $this->assertEquals(1, $objectResponse->existingIssuesCount);
+    }
 }

@@ -816,7 +816,7 @@ class EdgeCreatorTest extends TestCommon
         /** @var Swift_Message[]|Countable $messages */
         $messages = $this->app['swiftmailer.spool']->getMessages();
         $this->assertCount(1, $messages);
-        list($message) = $messages;
+        [$message] = $messages;
         $this->assertContains("/tmp/uploaded_edges/$photoFileName", $message->getBody());
     }
 

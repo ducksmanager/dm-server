@@ -354,4 +354,104 @@ class InternalController extends AbstractController
             return new JsonResponse(['max' => (int)($maxSort[0]['max'])]);
         });
     }
+
+    /**
+     * @SLX\Route(
+     *   @SLX\Request(method="POST", uri="inducks/import/init")
+     * )
+     * @param Application $app
+     * @param Request $request
+     * @return Response
+     * @throws \Exception
+     */
+    public function importFromInducksInit(Application $app, Request $request) {
+        return self::wrapInternalService($app, function() use ($app, $request) {
+            $rawData = $request->request->get('rawData');
+
+            if (strpos($rawData, 'country^entrycode^collectiontype^comment') === false) {
+                return new Response('No headers', Response::HTTP_NO_CONTENT);
+            }
+
+            preg_match_all('#^((?!country)[^\n\^]+)\^([^\n\^]+)\^[^\n\^]*\^.*$#m', $rawData, $matches, PREG_SET_ORDER);
+            if (count($matches) === 0) {
+                return new Response('No content', Response::HTTP_NO_CONTENT);
+            }
+
+            $issues = array_map(function($match) {
+                $issueCode = implode('/', [$match[1], preg_replace('#[ ]+#', ' ', $match[2])]);
+                [$publicationCode, $issueNumber] = explode(' ', $issueCode);
+                return [
+                    'publicationcode' => $publicationCode,
+                    'issuenumber' => $issueNumber
+                ];
+            }, array_unique($matches, SORT_REGULAR));
+
+            $newIssues = self::getNonPossessedIssues($issues, self::getSessionUser($app)['id']);
+
+            return new JsonResponse([
+                'issues' => $newIssues,
+                'existingIssuesCount' => count($issues) - count($newIssues)
+            ]);
+        });
+    }
+
+    /**
+     * @SLX\Route(
+     *   @SLX\Request(method="POST", uri="inducks/import")
+     * )
+     * @param Application $app
+     * @param Request $request
+     * @return Response
+     * @throws \Exception
+     */
+    public function importFromInducks(Application $app, Request $request) {
+        return self::wrapInternalService($app, function() use ($app, $request) {
+            $issues = $request->request->get('issues');
+            $defaultCondition = $request->request->get('defaultCondition');
+
+            $newIssues = self::getNonPossessedIssues($issues, self::getSessionUser($app)['id']);
+            $dmEm = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM);
+
+            foreach($newIssues as $issue) {
+                [$country, $magazine] = explode('/', $issue['publicationcode']);
+                $newIssue = new Numeros();
+                $newIssue
+                    ->setIdUtilisateur(self::getSessionUser($app)['id'])
+                    ->setPays($country)
+                    ->setMagazine($magazine)
+                    ->setNumero($issue['issuenumber'])
+                    ->setAv(false)
+                    ->setEtat($defaultCondition);
+                $dmEm->persist($newIssue);
+            }
+            $dmEm->flush();
+
+            return new JsonResponse([
+                'importedIssuesCount' => count($newIssues),
+                'existingIssuesCount' => count($issues) - count($newIssues)
+            ]);
+        });
+    }
+
+    /**
+     * @param array $issues
+     * @param int   $userId
+     * @return array
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\Common\Annotations\AnnotationException
+     */
+    private function getNonPossessedIssues($issues, $userId) {
+        $dmEm = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_DM);
+        $currentIssues = $dmEm->getRepository(Numeros::class)->findBy(['idUtilisateur' => $userId]);
+
+        $currentIssuesByPublication = [];
+        foreach($currentIssues as $currentIssue) {
+            $currentIssuesByPublication[$currentIssue->getPays().'/'.$currentIssue->getMagazine()][] = $currentIssue->getNumero();
+        }
+
+        return array_values(array_filter($issues, function($issue) use ($currentIssuesByPublication) {
+            return (!(isset($currentIssuesByPublication[$issue['publicationcode']]) && in_array($issue['issuenumber'], $currentIssuesByPublication[$issue['publicationcode']], true)));
+        }));
+    }
 }

@@ -268,4 +268,51 @@ class AppController extends AbstractController
     public function getLastPublicationPosition(Application $app) {
         return self::callInternal($app, '/collection/bookcase/sort/max');
     }
+
+    /**
+     * @SLX\Route(
+     *   @SLX\Request(method="POST", uri="inducks/import/init"),
+     *   @SWG\Parameter(
+     *     name="rawData",
+     *     in="body",
+     *     required=true
+     *   )
+     * )
+     * @param Application $app
+     * @param Request $request
+     * @return Response
+     * @throws \Exception
+     */
+    public function importFromInducksInit(Application $app, Request $request) {
+        return self::callInternal($app, '/collection/inducks/import/init', 'POST', [
+            'rawData' => $request->request->get('rawData')
+        ]);
+    }
+
+    /**
+     * @SLX\Route(
+     *   @SLX\Request(method="POST", uri="inducks/import"),
+     *   @SWG\Parameter(
+     *     name="issues",
+     *     in="body",
+     *     required=true
+     *   ),
+     *   @SWG\Parameter(
+     *     name="defaultCondition",
+     *     in="body",
+     *     required=true
+     *   )
+     * )
+     * @param Application $app
+     * @param Request $request
+     * @return Response
+     * @throws \Exception
+     */
+    public function importFromInducks(Application $app, Request $request) {
+        return self::callInternal($app, '/collection/inducks/import', 'POST', [
+            'userId' => $request->request->get('userid'),
+            'issues' => $request->request->get('issues'),
+            'defaultCondition' => $request->request->get('defaultCondition'),
+        ]);
+    }
 }

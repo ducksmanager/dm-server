@@ -139,7 +139,7 @@ class DmServer implements ControllerProviderInterface
      * @throws \Doctrine\Common\Annotations\AnnotationException
      */
     public static function getEntityManager($dbName) {
-        if (!in_array($dbName, self::$configuredEntityManagerNames)) {
+        if (!in_array($dbName, self::$configuredEntityManagerNames, true)) {
             return null;
         }
         else {
