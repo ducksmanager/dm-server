@@ -334,7 +334,7 @@ class CollectionTest extends TestCommon
 
         $objectResponse = json_decode($this->getResponseContent($response));
         $this->assertCount(2, (array)$objectResponse->issues);
-        $this->assertEquals(0, $objectResponse->nonFoundIssuesCount);
+        $this->assertEquals([], $objectResponse->nonFoundIssues);
         $this->assertEquals(0, $objectResponse->existingIssuesCount);
     }
 
@@ -354,7 +354,7 @@ class CollectionTest extends TestCommon
 
         $objectResponse = json_decode($this->getResponseContent($response));
         $this->assertCount(2, $objectResponse->issues);
-        $this->assertEquals(1, $objectResponse->nonFoundIssuesCount);
+        $this->assertEquals(['us/MAD  15'], $objectResponse->nonFoundIssues);
         $this->assertEquals(1, $objectResponse->existingIssuesCount);
     }
 
@@ -375,7 +375,7 @@ class CollectionTest extends TestCommon
             (object) [ 'issuecode' => 'de/MM1951-00', 'publicationcode' => 'de/MM', 'issuenumber' => '1951-00'],
             (object) [ 'issuecode' => 'fr/CB PN  1',  'publicationcode' => 'fr/CB', 'issuenumber' => 'PN  1'],
         ], $objectResponse->issues);
-        $this->assertEquals(0, $objectResponse->nonFoundIssuesCount);
+        $this->assertEquals([], $objectResponse->nonFoundIssues);
         $this->assertEquals(0, $objectResponse->existingIssuesCount);
     }
 

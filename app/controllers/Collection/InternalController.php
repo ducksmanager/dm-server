@@ -377,6 +377,11 @@ class InternalController extends AbstractController
             if (count($matches) === 0) {
                 return new Response('No content', Response::HTTP_NO_CONTENT);
             }
+            $matches = array_map(
+                function($match) {
+                    return str_replace('^', '/', $match[1]);
+                }, array_unique($matches, SORT_REGULAR)
+            );
 
             $coaEm = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_COA);
             $coaIssuesQb = $coaEm->createQueryBuilder();
@@ -386,18 +391,19 @@ class InternalController extends AbstractController
                 ->from(InducksIssue::class, 'issues')
 
                 ->andWhere($coaIssuesQb->expr()->in('issues.issuecode',':issuesToImport'))
-                ->setParameter(':issuesToImport', array_map(function($match) {
-                        return str_replace('^', '/', $match[1]);
-                    }, array_unique($matches, SORT_REGULAR))
-                );
+                ->setParameter(':issuesToImport', $matches);
 
             $issues = $coaIssuesQb->getQuery()->getArrayResult();
+
+            $nonFoundIssues = array_values(array_diff($matches, array_map(function($issue) {
+                return $issue['issuecode'];
+            }, $issues)));
 
             $newIssues = self::getNonPossessedIssues($issues, self::getSessionUser($app)['id']);
 
             return new JsonResponse([
                 'issues' => $newIssues,
-                'nonFoundIssuesCount' => count($matches) - count($issues),
+                'nonFoundIssues' => $nonFoundIssues,
                 'existingIssuesCount' => count($issues) - count($newIssues)
             ]);
         });
