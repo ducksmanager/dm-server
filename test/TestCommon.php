@@ -481,6 +481,22 @@ class TestCommon extends WebTestCase {
                     ->setIssuecode('us/CBL 7')
             );
 
+            self::$testIssues['de/MM1951-00'] = new InducksIssue();
+            $coaEntityManager->persist(
+                self::$testIssues['de/MM1951-00']
+                    ->setPublicationcode('de/MM')
+                    ->setIssuenumber('1951-00')
+                    ->setIssuecode('de/MM1951-00')
+            );
+
+            self::$testIssues['fr/CB PN  1'] = new InducksIssue();
+            $coaEntityManager->persist(
+                self::$testIssues['fr/CB PN  1']
+                    ->setPublicationcode('fr/CB')
+                    ->setIssuenumber('PN  1')
+                    ->setIssuecode('fr/CB PN  1')
+            );
+
             self::$testStories['W WDC  31-05'] = new InducksStory();
             $coaEntityManager->persist(
                 self::$testStories['W WDC  31-05']

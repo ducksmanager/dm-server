@@ -2,6 +2,7 @@
 
 namespace DmServer\Controllers\Collection;
 
+use Coa\Models\InducksIssue;
 use Dm\Contracts\Results\UpdateCollectionResult;
 use Dm\Models\Achats;
 use Dm\Models\BibliothequeAccesExternes;
@@ -372,24 +373,31 @@ class InternalController extends AbstractController
                 return new Response('No headers', Response::HTTP_NO_CONTENT);
             }
 
-            preg_match_all('#^((?!country)[^\n\^]+)\^([^\n\^]+)\^[^\n\^]*\^.*$#m', $rawData, $matches, PREG_SET_ORDER);
+            preg_match_all('#^((?!country)[^\n\^]+\^[^\n\^]+)\^[^\n\^]*\^.*$#m', $rawData, $matches, PREG_SET_ORDER);
             if (count($matches) === 0) {
                 return new Response('No content', Response::HTTP_NO_CONTENT);
             }
 
-            $issues = array_map(function($match) {
-                $issueCode = implode('/', [$match[1], preg_replace('#[ ]+#', ' ', $match[2])]);
-                [$publicationCode, $issueNumber] = explode(' ', $issueCode);
-                return [
-                    'publicationcode' => $publicationCode,
-                    'issuenumber' => $issueNumber
-                ];
-            }, array_unique($matches, SORT_REGULAR));
+            $coaEm = DmServer::getEntityManager(DmServer::CONFIG_DB_KEY_COA);
+            $coaIssuesQb = $coaEm->createQueryBuilder();
+
+            $coaIssuesQb
+                ->select('issues.issuecode', 'issues.publicationcode', 'issues.issuenumber')
+                ->from(InducksIssue::class, 'issues')
+
+                ->andWhere($coaIssuesQb->expr()->in('issues.issuecode',':issuesToImport'))
+                ->setParameter(':issuesToImport', array_map(function($match) {
+                        return str_replace('^', '/', $match[1]);
+                    }, array_unique($matches, SORT_REGULAR))
+                );
+
+            $issues = $coaIssuesQb->getQuery()->getArrayResult();
 
             $newIssues = self::getNonPossessedIssues($issues, self::getSessionUser($app)['id']);
 
             return new JsonResponse([
                 'issues' => $newIssues,
+                'nonFoundIssuesCount' => count($matches) - count($issues),
                 'existingIssuesCount' => count($issues) - count($newIssues)
             ]);
         });

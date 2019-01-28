@@ -323,39 +323,60 @@ class CollectionTest extends TestCommon
     public function testImportFromInducksInit() {
         $user = self::createTestCollection();
         self::setSessionUser($this->app, $user);
+        self::createCoaData();
 
         $response = $this->buildAuthenticatedServiceWithTestUser('/collection/inducks/import/init', self::$dmUser, 'POST', ['rawData' => implode("\n", [
             'country^entrycode^collectiontype^comment',
-            'fr^AJM  58^^',
-            'fr^AJM  58^^',
-            'fr^D    28^^',
-            'fr^JM   56^^',
-            'us^MAD  15^^'
+            'fr^PM 315^^',
+            'us^CBL 7^^'
         ])])->call();
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
 
         $objectResponse = json_decode($this->getResponseContent($response));
-        $this->assertCount(4, (array)$objectResponse->issues);
+        $this->assertCount(2, (array)$objectResponse->issues);
+        $this->assertEquals(0, $objectResponse->nonFoundIssuesCount);
         $this->assertEquals(0, $objectResponse->existingIssuesCount);
     }
 
     public function testImportFromInducksInitExistingIssues() {
         $user = self::createTestCollection();
         self::setSessionUser($this->app, $user);
+        self::createCoaData();
 
         $response = $this->buildAuthenticatedServiceWithTestUser('/collection/inducks/import/init', self::$dmUser, 'POST', ['rawData' => implode("\n", [
             'country^entrycode^collectiontype^comment',
-            'fr^AJM  58^^',
-            'fr^D    28^^',
-            'fr^DDD   1^^',
-            'fr^JM   56^^',
-            'us^MAD  15^^'
+            'fr^PM 315^^',
+            'fr^DDD 1^^', // Already existing
+            'us^CBL 7^^',
+            'us^MAD  15^^' // Not referenced
         ])])->call();
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
 
         $objectResponse = json_decode($this->getResponseContent($response));
-        $this->assertCount(4, (array)$objectResponse->issues);
+        $this->assertCount(2, $objectResponse->issues);
+        $this->assertEquals(1, $objectResponse->nonFoundIssuesCount);
         $this->assertEquals(1, $objectResponse->existingIssuesCount);
+    }
+
+    public function testImportFromInducksInitStrangeIssueNumbers() {
+        $user = self::createTestCollection();
+        self::setSessionUser($this->app, $user);
+        self::createCoaData();
+
+        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/inducks/import/init', self::$dmUser, 'POST', ['rawData' => implode("\n", [
+            'country^entrycode^collectiontype^comment',
+            'de^MM1951-00^^',
+            'fr^CB PN  1^^'
+        ])])->call();
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+
+        $objectResponse = json_decode($this->getResponseContent($response));
+        $this->assertEquals([
+            (object) [ 'issuecode' => 'de/MM1951-00', 'publicationcode' => 'de/MM', 'issuenumber' => '1951-00'],
+            (object) [ 'issuecode' => 'fr/CB PN  1',  'publicationcode' => 'fr/CB', 'issuenumber' => 'PN  1'],
+        ], $objectResponse->issues);
+        $this->assertEquals(0, $objectResponse->nonFoundIssuesCount);
+        $this->assertEquals(0, $objectResponse->existingIssuesCount);
     }
 
     public function testImportFromInducks() {
@@ -381,7 +402,6 @@ class CollectionTest extends TestCommon
             'magazine' => 'MAD'
         ]);
         $this->assertNotNull($singleCreatedIssue->getDateajout());
-        $a=1;
     }
 
     public function testImportFromInducksWithExistingIssues() {
