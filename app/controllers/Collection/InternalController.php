@@ -250,50 +250,6 @@ class InternalController extends AbstractController
 
     /**
      * @SLX\Route(
-     *     @SLX\Request(method="GET", uri="bookcase/sort/withMax/{maxSort}")
-     * )
-     * @param Application $app
-     * @param $maxSort
-     * @return JsonResponse
-     */
-    public function getBookcaseSorting(Application $app, $maxSort) {
-        return self::wrapInternalService($app, function(EntityManager $dmEm) use ($app, $maxSort) {
-
-            $qbMissingSorts = $dmEm->createQueryBuilder();
-            $qbMissingSorts
-                ->select('distinct concat(issues.pays, \'/\', issues.magazine) AS missing_publication_code')
-                ->from(Numeros::class, 'issues')
-
-                ->andWhere('concat(issues.pays, \'/\', issues.magazine) not in (select sorts.publicationcode from '.BibliothequeOrdreMagazines::class.' sorts where sorts.idUtilisateur = :userId)')
-                ->setParameter(':userId', self::getSessionUser($app)['id'])
-
-                ->andWhere('issues.idUtilisateur =  :userId')
-
-                ->orderBy(new OrderBy('missing_publication_code', 'ASC'));
-
-            $missingSorts = $qbMissingSorts->getQuery()->getArrayResult();
-            foreach($missingSorts as $missingSort) {
-                $sort = new BibliothequeOrdreMagazines();
-                $sort->setPublicationcode($missingSort['missing_publication_code']);
-                $sort->setOrdre(++$maxSort);
-                $sort->setIdUtilisateur(self::getSessionUser($app)['id']);
-                $dmEm->persist($sort);
-            }
-            $dmEm->flush();
-
-            $sorts = $dmEm->getRepository(BibliothequeOrdreMagazines::class)->findBy(
-                ['idUtilisateur' => self::getSessionUser($app)['id']],
-                ['ordre' => 'ASC']
-            );
-
-            return new JsonResponse(array_map(function(BibliothequeOrdreMagazines $sort) {
-                return $sort->getPublicationcode();
-            }, $sorts));
-        });
-    }
-
-    /**
-     * @SLX\Route(
      *     @SLX\Request(method="POST", uri="bookcase/sort")
      * )
      * @param Application $app

@@ -244,6 +244,38 @@ class AppController extends AbstractController
 
     /**
      * @SLX\Route(
+     *   @SLX\Request(method="GET", uri="bookcase/{userId}/sort"),
+     * )
+     * @param Application $app
+     * @param string $userId
+     * @return Response
+     */
+    public function getBookcaseSorting(Application $app, $userId) {
+        $maxSortResponse = $this->getLastPublicationPosition($app, $userId);
+
+        if ($maxSortResponse->isOk()) {
+            $maxSort = json_decode($maxSortResponse->getContent())->max;
+        }
+        else {
+            $maxSort = -1;
+        }
+        return self::callInternal($app, "/ducksmanager/bookcase/$userId/sort/withMax/$maxSort");
+    }
+
+    /**
+     * @SLX\Route(
+     *   @SLX\Request(method="GET", uri="bookcase/{userId}/sort/max")
+     * )
+     * @param Application $app
+     * @param string $userId
+     * @return Response
+     */
+    public function getLastPublicationPosition(Application $app, $userId) {
+        return self::callInternal($app, "/ducksmanager/bookcase/$userId/sort/max");
+    }
+
+    /**
+     * @SLX\Route(
      *   @SLX\Request(method="POST", uri="email/bookstore"),
      *   @SWG\Parameter(
      *     name="userid",

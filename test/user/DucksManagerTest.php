@@ -263,4 +263,31 @@ class DucksManagerTest extends TestCommon
             'token' => $generatedToken->getToken()
         ]));
     }
+
+    public function testGetLastPublicationPosition() {
+        $user = self::createTestCollection();
+
+        $getResponse = $this->buildAuthenticatedServiceWithTestUser("/ducksmanager/bookcase/{$user->getId()}/sort/max", self::$dmUser)->call();
+        $objectResponse = json_decode($getResponse->getContent());
+
+        $this->assertIsInt($objectResponse->max);
+        $this->assertEquals(2, $objectResponse->max);
+    }
+
+    public function testGetLastPublicationPositionNoPublication() {
+        $user = self::createTestCollection('dm_test_user', [], false);
+
+        $getResponse = $this->buildAuthenticatedServiceWithTestUser("/ducksmanager/bookcase/{$user->getId()}/sort/max", self::$dmUser)->call();
+        $this->assertEquals(Response::HTTP_NO_CONTENT, $getResponse->getStatusCode());
+    }
+
+    public function testGetBookcaseSorts()
+    {
+        $user = self::createTestCollection();
+
+        $getResponse = $this->buildAuthenticatedServiceWithTestUser("/ducksmanager/bookcase/{$user->getId()}/sort", self::$dmUser)->call();
+        $objectResponse = json_decode($getResponse->getContent());
+
+        $this->assertEquals(["fr/DDD", "fr/JM", "fr/MP"], $objectResponse);
+    }
 }

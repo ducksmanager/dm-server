@@ -266,17 +266,6 @@ class CollectionTest extends TestCommon
         $this->assertCount(0, $objectResponse);
     }
 
-    public function testGetBookcaseSorts()
-    {
-        $user = self::createTestCollection();
-        self::setSessionUser($this->app, $user);
-
-        $getResponse = $this->buildAuthenticatedServiceWithTestUser('/collection/bookcase/sort', self::$dmUser)->call();
-        $objectResponse = json_decode($getResponse->getContent());
-
-        $this->assertEquals(["fr/DDD", "fr/JM", "fr/MP"], $objectResponse);
-    }
-
     public function testSetBookcaseSorts()
     {
         $user = self::createTestCollection();
@@ -299,25 +288,6 @@ class CollectionTest extends TestCommon
         $this->assertEquals('fr/SPG', $updatedSorts[0]->getPublicationcode());
         $this->assertEquals('fr/DDD', $updatedSorts[1]->getPublicationcode());
         $this->assertEquals('se/KAP', $updatedSorts[2]->getPublicationcode());
-    }
-
-    public function testGetLastPublicationPosition() {
-        $user = self::createTestCollection();
-        self::setSessionUser($this->app, $user);
-
-        $getResponse = $this->buildAuthenticatedServiceWithTestUser('/collection/bookcase/sort/max', self::$dmUser)->call();
-        $objectResponse = json_decode($getResponse->getContent());
-
-        $this->assertIsInt($objectResponse->max);
-        $this->assertEquals(2, $objectResponse->max);
-    }
-
-    public function testGetLastPublicationPositionNoPublication() {
-        $user = self::createTestCollection('dm_test_user', [], false);
-        self::setSessionUser($this->app, $user);
-
-        $getResponse = $this->buildAuthenticatedServiceWithTestUser('/collection/bookcase/sort/max', self::$dmUser)->call();
-        $this->assertEquals(Response::HTTP_NO_CONTENT, $getResponse->getStatusCode());
     }
 
     public function testImportFromInducksInit() {

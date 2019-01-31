@@ -229,25 +229,6 @@ class AppController extends AbstractController
 
     /**
      * @SLX\Route(
-     *   @SLX\Request(method="GET", uri="bookcase/sort")
-     * )
-     * @param Application $app
-     * @return Response
-     */
-    public function getBookcaseSorting(Application $app) {
-        $maxSortResponse = $this->getLastPublicationPosition($app);
-
-        if ($maxSortResponse->isOk()) {
-            $maxSort = json_decode($maxSortResponse->getContent())->max;
-        }
-        else {
-            $maxSort = -1;
-        }
-        return self::callInternal($app, "/collection/bookcase/sort/withMax/$maxSort");
-    }
-
-    /**
-     * @SLX\Route(
      *   @SLX\Request(method="POST", uri="bookcase/sort")
      * )
      * @param Application $app
@@ -256,17 +237,6 @@ class AppController extends AbstractController
      */
     public function setBookcaseSorting(Application $app, Request $request) {
         return self::callInternal($app, '/collection/bookcase/sort', 'POST', ['sorts' => $request->request->get('sorts')]);
-    }
-
-    /**
-     * @SLX\Route(
-     *   @SLX\Request(method="GET", uri="bookcase/sort/max")
-     * )
-     * @param Application $app
-     * @return Response
-     */
-    public function getLastPublicationPosition(Application $app) {
-        return self::callInternal($app, '/collection/bookcase/sort/max');
     }
 
     /**

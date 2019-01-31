@@ -5,6 +5,7 @@ namespace DmServer\Controllers\Ducksmanager;
 use Dm\Models\Achats;
 use Dm\Models\AuteursPseudos;
 
+use Dm\Models\BibliothequeOrdreMagazines;
 use Dm\Models\Numeros;
 use Dm\Models\Users;
 
@@ -19,6 +20,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query;
+use Doctrine\ORM\Query\Expr\OrderBy;
 use Silex\Application;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -233,6 +235,80 @@ class InternalController extends AbstractInternalController
             $dmEm->flush();
 
             return new Response('OK');
+        });
+    }
+
+    /**
+     * @SLX\Route(
+     *     @SLX\Request(method="GET", uri="bookcase/{userId}/sort/max")
+     * )
+     * @param Application $app
+     * @param string $userId
+     * @return JsonResponse
+     */
+    public function getLastPublicationPosition(Application $app, $userId) {
+        return self::wrapInternalService($app, function(EntityManager $dmEm) use ($userId) {
+
+            $qb = $dmEm->createQueryBuilder();
+            $qb
+                ->select('max(sorts.ordre) as max')
+                ->from(BibliothequeOrdreMagazines::class, 'sorts')
+
+                ->andWhere($qb->expr()->eq('sorts.idUtilisateur', ':userId'))
+                ->setParameter(':userId', $userId);
+
+            $maxSort = $qb->getQuery()->getResult(Query::HYDRATE_SCALAR);
+
+            if (count($maxSort) === 0 || is_null($maxSort[0]['max'])) {
+                return new Response('No publication found for the bookcase', Response::HTTP_NO_CONTENT);
+            }
+
+            return new JsonResponse(['max' => (int)($maxSort[0]['max'])]);
+        });
+    }
+
+    /**
+     * @SLX\Route(
+     *     @SLX\Request(method="GET", uri="bookcase/{userId}/sort/withMax/{maxSort}")
+     * )
+     * @param Application $app
+     * @param string $userId
+     * @param int $maxSort
+     * @return JsonResponse
+     */
+    public function getBookcaseSorting(Application $app, $userId, $maxSort) {
+        return self::wrapInternalService($app, function(EntityManager $dmEm) use ($userId, $maxSort) {
+
+            $qbMissingSorts = $dmEm->createQueryBuilder();
+            $qbMissingSorts
+                ->select('distinct concat(issues.pays, \'/\', issues.magazine) AS missing_publication_code')
+                ->from(Numeros::class, 'issues')
+
+                ->andWhere('concat(issues.pays, \'/\', issues.magazine) not in (select sorts.publicationcode from '.BibliothequeOrdreMagazines::class.' sorts where sorts.idUtilisateur = :userId)')
+                ->setParameter(':userId', $userId)
+
+                ->andWhere('issues.idUtilisateur =  :userId')
+
+                ->orderBy(new OrderBy('missing_publication_code', 'ASC'));
+
+            $missingSorts = $qbMissingSorts->getQuery()->getArrayResult();
+            foreach($missingSorts as $missingSort) {
+                $sort = new BibliothequeOrdreMagazines();
+                $sort->setPublicationcode($missingSort['missing_publication_code']);
+                $sort->setOrdre(++$maxSort);
+                $sort->setIdUtilisateur($userId);
+                $dmEm->persist($sort);
+            }
+            $dmEm->flush();
+
+            $sorts = $dmEm->getRepository(BibliothequeOrdreMagazines::class)->findBy(
+                ['idUtilisateur' => $userId],
+                ['ordre' => 'ASC']
+            );
+
+            return new JsonResponse(array_map(function(BibliothequeOrdreMagazines $sort) {
+                return $sort->getPublicationcode();
+            }, $sorts));
         });
     }
 
