@@ -11,7 +11,6 @@ class CoaListsTest extends TestCommon
     public function setUp()
     {
         parent::setUp();
-        self::createTestCollection();
         self::createCoaData();
     }
 
