@@ -10,9 +10,7 @@ class ModelHelper {
      * @return array
      */
     public static function getSerializedArray($array) {
-        return array_map(function($object) {
-            return serialize($object);
-        }, $array);
+        return array_map('serialize', $array);
     }
 
     /**
@@ -34,9 +32,7 @@ class ModelHelper {
      * @return array
      */
     public static function getUnserializedArray($array) {
-        return array_map(function($object) {
-            return unserialize($object);
-        }, $array);
+        return array_map('unserialize', $array);
     }
 
     /**
