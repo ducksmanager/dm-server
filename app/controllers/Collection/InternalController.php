@@ -5,16 +5,13 @@ namespace DmServer\Controllers\Collection;
 use Coa\Models\InducksIssue;
 use Dm\Contracts\Results\UpdateCollectionResult;
 use Dm\Models\Achats;
-use Dm\Models\BibliothequeAccesExternes;
 use Dm\Models\BibliothequeOrdreMagazines;
 use Dm\Models\Numeros;
 use DmServer\Controllers\AbstractController;
 use DmServer\DmServer;
-use DmServer\MiscUtil;
 use DmServer\ModelHelper;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query;
-use Doctrine\ORM\Query\Expr\OrderBy;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -205,46 +202,6 @@ class InternalController extends AbstractController
             $creationResult = new UpdateCollectionResult('CREATE', count($issueNumbersToCreate));
 
             return new JsonResponse(ModelHelper::getSimpleArray([$updateResult, $creationResult]));
-        });
-    }
-
-    /**
-     * @SLX\Route(
-     *     @SLX\Request(method="PUT", uri="externalaccess")
-     * )
-     * @param Application $app
-     * @return JsonResponse
-     */
-    public function addExternalAccess(Application $app) {
-        return self::wrapInternalService($app, function(EntityManager $dmEm) use ($app) {
-            $key = MiscUtil::getRandomString();
-
-            $externalAccess = new BibliothequeAccesExternes();
-            $externalAccess->setIdUtilisateur(self::getSessionUser($app)['id']);
-            $externalAccess->setCle($key);
-
-            $dmEm->persist($externalAccess);
-            $dmEm->flush();
-
-            return new JsonResponse(['key' => $key]);
-        });
-    }
-
-    /**
-     * @SLX\Route(
-     *     @SLX\Request(method="GET", uri="externalaccess/{key}")
-     * )
-     * @param Application $app
-     * @param string $key
-     * @return JsonResponse
-     */
-    public function getExternalAccess(Application $app, $key) {
-        return self::wrapInternalService($app, function(EntityManager $dmEm) use ($key) {
-            $access = $dmEm->getRepository(BibliothequeAccesExternes::class)->findBy(
-                ['cle' => $key]
-            );
-
-            return new JsonResponse(ModelHelper::getSerializedArray($access));
         });
     }
 

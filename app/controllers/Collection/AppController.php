@@ -201,34 +201,6 @@ class AppController extends AbstractController
 
     /**
      * @SLX\Route(
-     *   @SLX\Request(method="PUT", uri="externalaccess")
-     * )
-     * @param Application $app
-     * @return Response
-     */
-    public function addExternalAccess (Application $app) {
-        return self::callInternal($app, '/collection/externalaccess', 'PUT');
-    }
-
-    /**
-     * @SLX\Route(
-     *   @SLX\Request(method="GET", uri="externalaccess/{key}"),
-     *   @SWG\Parameter(
-     *     name="key",
-     *     in="path",
-     *     required=true
-     *   )
-     * )
-     * @param Application $app
-     * @param string $key
-     * @return Response
-     */
-    public function getExternalAccess(Application $app, $key) {
-        return self::callInternal($app, "/collection/externalaccess/$key");
-    }
-
-    /**
-     * @SLX\Route(
      *   @SLX\Request(method="POST", uri="bookcase/sort")
      * )
      * @param Application $app

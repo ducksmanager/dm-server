@@ -2,7 +2,6 @@
 namespace DmServer\Test;
 
 use Dm\Models\Achats;
-use Dm\Models\BibliothequeAccesExternes;
 use Dm\Models\BibliothequeOrdreMagazines;
 use Dm\Models\Numeros;
 
@@ -224,46 +223,6 @@ class CollectionTest extends TestCommon
         $response = $this->buildAuthenticatedServiceWithTestUser('/collection/purchases/3', self::$dmUser, 'OPTIONS')->call();
 
         $this->assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
-    }
-
-    public function testCreateExternalAccess()
-    {
-        $user = self::createTestCollection();
-        self::setSessionUser($this->app, $user);
-
-        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/externalaccess', self::$dmUser, 'PUT')->call();
-        $objectResponse = json_decode($this->getResponseContent($response));
-
-        $this->assertObjectHasAttribute('key', $objectResponse);
-        $this->assertRegExp('#[a-zA-Z]+#', $objectResponse->key);
-    }
-
-    public function testGetExternalAccess()
-    {
-        $user = self::createTestCollection();
-        self::setSessionUser($this->app, $user);
-
-        $creationResponse = $this->buildAuthenticatedServiceWithTestUser('/collection/externalaccess', self::$dmUser, 'PUT')->call();
-        $key = json_decode($creationResponse->getContent())->key;
-
-        $getResponse = $this->buildAuthenticatedServiceWithTestUser("/collection/externalaccess/$key", self::$dmUser)->call();
-        $objectResponse = json_decode($getResponse->getContent());
-
-        $this->assertCount(1, $objectResponse);
-        /** @var BibliothequeAccesExternes $access */
-        $access = unserialize($objectResponse[0]);
-        $this->assertEquals(1, $access->getIdUtilisateur());
-    }
-
-    public function testGetExternalAccessNotExisting()
-    {
-        $user = self::createTestCollection();
-        self::setSessionUser($this->app, $user);
-
-        $getResponse = $this->buildAuthenticatedServiceWithTestUser('/collection/externalaccess/123', self::$dmUser)->call();
-        $objectResponse = json_decode($getResponse->getContent());
-
-        $this->assertCount(0, $objectResponse);
     }
 
     public function testSetBookcaseSorts()
