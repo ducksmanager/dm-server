@@ -109,7 +109,7 @@
         "symfony/translation": "4.1.*",
         "doctrine/dbal": "2.9.*",
         "doctrine/orm": "2.6.*",
-        "doctrine/doctrine-bundle": "1.9.*",
+        "doctrine/doctrine-bundle": "1.10.*",
         "guzzlehttp/guzzle": "6.3.*",
         "monolog/monolog": "1.24.*",
         "gedmo/doctrine-extensions": "2.4.*",
