@@ -18,7 +18,7 @@ use DDesrosiers\SilexAnnotations\Annotations as SLX;
  */
 class InternalController extends AbstractController
 {
-    private static $OUTDUCKS_ROOT='https://inducks.org/hr.php?normalsize=1&image=https://outducks.org/';
+    public static $OUTDUCKS_ROOT='https://inducks.org/hr.php?normalsize=1&image=https://outducks.org/';
 
     protected static function wrapInternalService($app, $function) {
         return parent::returnErrorOnException($app, DmServer::CONFIG_DB_KEY_COVER_ID, $function);

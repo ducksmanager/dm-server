@@ -3,6 +3,7 @@
 namespace DmServer\Controllers\Status;
 
 use DmServer\Controllers\AbstractController;
+use DmServer\Controllers\Coverid\InternalController as CoverIdInternalController;
 use DmServer\DatabaseCheckHelper;
 use DmServer\DmServer;
 use DmServer\SimilarImagesHelper;
@@ -28,7 +29,7 @@ use Swagger\Annotations as SWG;
  */
 class AppController extends AbstractController
 {
-    public static $sampleCover = "https://outducks.org/au/bp/001/au_bp_001a_001.jpg";
+    public static $sampleCover = 'au/bp/001/au_bp_001a_001.jpg';
 
     /**
      * @SLX\Route(
@@ -126,7 +127,8 @@ class AppController extends AbstractController
             $log = [];
 
             try {
-                $outputObject = SimilarImagesHelper::getSimilarImages(new File(self::$sampleCover, false), $app['monolog'], $pastecHost);
+                $sampleCoverUrl = CoverIdInternalController::$OUTDUCKS_ROOT.self::$sampleCover;
+                $outputObject = SimilarImagesHelper::getSimilarImages(new File($sampleCoverUrl, false), $app['monolog'], $pastecHost);
                 $matchNumber = count($outputObject->getImageIds());
                 if ($matchNumber > 0) {
                     $log[] = "Pastec search returned $matchNumber image(s)";
