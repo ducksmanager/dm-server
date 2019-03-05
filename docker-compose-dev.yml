@@ -4,13 +4,8 @@ services:
     container_name: dm-server-web
     image: "nginx:1.15"
     ports:
-     - "10001:80"
+     - "10002:80"
     depends_on:
-     - db_coa
-     - db_cover_id
-     - db_dm
-     - db_dm_stats
-     - db_edgecreator
      - php
     restart: always
     volumes:
@@ -24,16 +19,20 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-dev
+    depends_on:
+      - db_coa
+      - db_cover_id
+      - db_dm
+      - db_dm_stats
+      - db_edgecreator
     volumes:
-     - .:/var/www/html:z
+     - .:/var/www/html
      - ./php.xdebug.ini:/usr/local/etc/php/php.ini:z
-    environment:
-      DM_SERVER_ADDRESS: "$DM_SERVER_HOST:$DM_SERVER_PORT"
     networks:
      - front-network
      - db-network
      - cover-id-network
-    command: sh -c 'composer install --no-plugins --no-scripts && php app/config/generate-config.php docker-compose-dev.yml .env && php scripts/generate-swagger.php && php-fpm'
+    command: sh -c 'composer install --no-plugins --no-scripts && php-fpm'
 
   php-no-debug:
     container_name: dm-server-php-no-debug
@@ -42,13 +41,11 @@ services:
       dockerfile: Dockerfile
     volumes:
      - .:/var/www/html:z
-    environment:
-      DM_SERVER_ADDRESS: "$DM_SERVER_HOST:$DM_SERVER_PORT"
     networks:
      - front-network
      - db-network
      - cover-id-network
-    command: sh -c 'composer install --no-plugins --no-scripts && php app/config/generate-config.php docker-compose-dev.yml .env && php scripts/generate-swagger.php && php-fpm'
+    command: sh -c 'composer install --no-plugins --no-scripts && php-fpm'
 
   db_coa:
     container_name: db_coa

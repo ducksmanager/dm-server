@@ -1,0 +1,5 @@
+swiftmailer:
+    host: '%env(SMTP_HOST)%'
+    username: '%env(SMTP_USERNAME)%'
+    password: '%env(SMTP_PASSWORD)%'
+    spool: { type: 'memory' }

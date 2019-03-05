@@ -11,8 +11,6 @@ chown www-data:www-data pimple.json && \
 \
 cp -r ${webdir}/vendor ${webdir_new} && \
 composer install --no-dev --prefer-dist -o && \
-echo "Generating swagger.json..." && \
-php scripts/generate-swagger.php && \
 echo "Done." && \
 \
 bash scripts/update-schemas.sh 0 && \
