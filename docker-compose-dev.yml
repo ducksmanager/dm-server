@@ -4,7 +4,7 @@ services:
     container_name: dm-server-web
     image: "nginx:1.15"
     ports:
-     - "10002:80"
+     - "10001:80"
     depends_on:
      - php
     restart: always
