@@ -119,20 +119,6 @@ services:
     networks:
      - db-network
 
-  swagger:
-    container_name: swagger
-    image: "swaggerapi/swagger-ui"
-    ports:
-     - "8081:8080"
-    depends_on:
-     - web
-     - php
-    environment:
-      API_URL: "http://$DM_SERVER_HOST:$DM_SERVER_PORT/status/swagger.json"
-      SWAGGER_JSON: "http://$DM_SERVER_HOST:$DM_SERVER_PORT/status/swagger.json"
-    networks:
-     - front-network
-
 networks:
   front-network:
     driver: bridge
