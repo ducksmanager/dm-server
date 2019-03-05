@@ -1,10 +1,7 @@
 <?php
 
-namespace App\Controller\Stats;
+namespace App\Controller;
 
-use App\Controller\AbstractController;
-use App\Controller\RequiresDmUserController;
-use App\Controller\RequiresDmVersionController;
 use App\Entity\DmStats\AuteursHistoires;
 use App\Entity\DmStats\UtilisateursHistoiresManquantes;
 use App\Entity\DmStats\UtilisateursPublicationsManquantes;
@@ -14,7 +11,7 @@ use Doctrine\ORM\Query\Expr\OrderBy;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
-class AppController extends AbstractController implements RequiresDmVersionController, RequiresDmUserController
+class StatsController extends AbstractController implements RequiresDmVersionController, RequiresDmUserController
 {
     /**
      * @Route(methods={"GET"}, path="/collection/stats/watchedauthorsstorycount")
@@ -26,7 +23,7 @@ class AppController extends AbstractController implements RequiresDmVersionContr
         $authorsAndStoryCount = $this->getStoriesCount(array_keys($authorsAndStoryMissingForUserCount));
 
         $authorsFullNames = json_decode(
-            $this->callService(\App\Controller\Coa\AppController::class, 'listAuthorsFromAuthorCodes', [
+            $this->callService(CoaController::class, 'listAuthorsFromAuthorCodes', [
                 'authors' => implode(',', array_keys($authorsAndStoryCount))
             ])->getContent()
         );
@@ -67,7 +64,7 @@ class AppController extends AbstractController implements RequiresDmVersionContr
         }, $suggestedStories);
 
         $authors = json_decode(
-            $this->callService(\App\Controller\Coa\AppController::class, 'listAuthorsFromAuthorCodes', [
+            $this->callService(CoaController::class, 'listAuthorsFromAuthorCodes', [
                 'authors' => implode(',', $storyAuthors)
             ])->getContent()
         );
@@ -80,7 +77,7 @@ class AppController extends AbstractController implements RequiresDmVersionContr
         }, $suggestedStories);
 
         $storyDetails = json_decode(
-            $this->callService(\App\Controller\Coa\AppController::class, 'listStoryDetailsFromStoryCodes', [
+            $this->callService(CoaController::class, 'listStoryDetailsFromStoryCodes', [
                 'storyCodes' => implode(',', $storyCodes)
             ])->getContent()
         );
@@ -98,7 +95,7 @@ class AppController extends AbstractController implements RequiresDmVersionContr
         }, $suggestedStories);
 
         $publicationTitles = json_decode(
-            $this->callService(\App\Controller\Coa\AppController::class, 'listPublicationsFromPublicationCodes', [
+            $this->callService(CoaController::class, 'listPublicationsFromPublicationCodes', [
                 'publicationCodes' => implode(',', $publicationCodes)
             ])->getContent()
         );

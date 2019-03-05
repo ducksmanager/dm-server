@@ -1,10 +1,7 @@
 <?php
 
-namespace App\Controller\Collection;
+namespace App\Controller;
 
-use App\Controller\AbstractController;
-use App\Controller\RequiresDmUserController;
-use App\Controller\RequiresDmVersionController;
 use App\Entity\Coa\InducksIssue;
 use App\Entity\Dm\Achats;
 use App\Entity\Dm\BibliothequeOrdreMagazines;
@@ -22,7 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class AppController extends AbstractController implements RequiresDmVersionController, RequiresDmUserController
+class CollectionController extends AbstractController implements RequiresDmVersionController, RequiresDmUserController
 {
     use collectionUpdateHelper;
 
@@ -52,7 +49,7 @@ class AppController extends AbstractController implements RequiresDmVersionContr
         }
 
         $countryNames = json_decode(
-            $this->callService(\App\Controller\Coa\AppController::class, 'listCountriesFromCodes', [
+            $this->callService(CoaController::class, 'listCountriesFromCodes', [
                 'locale' => 'fr', // FIXME
                 'countryCodes' => implode(',', array_unique(
                     array_map(function (Numeros $issue) {
@@ -63,7 +60,7 @@ class AppController extends AbstractController implements RequiresDmVersionContr
         );
 
         $publicationTitles = json_decode(
-            $this->callService(\App\Controller\Coa\AppController::class, 'listPublicationsFromPublicationCodes', [
+            $this->callService(CoaController::class, 'listPublicationsFromPublicationCodes', [
                 'publicationCodes' => implode(',', array_unique(
                     array_map(function (Numeros $issue) {
                         return PublicationHelper::getPublicationCode($issue);

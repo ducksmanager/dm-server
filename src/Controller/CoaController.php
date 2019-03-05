@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Controller\Coa;
+namespace App\Controller;
 
-use App\Controller\AbstractController;
 use App\Entity\Coa\InducksCountryname;
 use App\Entity\Coa\InducksIssue;
 use App\Entity\Coa\InducksPerson;
@@ -16,7 +15,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class AppController extends AbstractController
+class CoaController extends AbstractController
 {
     /**
      * @Route(methods={"GET"}, path="/coa/list/countries/{locale}/{countryCodes}", defaults={"countryCodes"=""})

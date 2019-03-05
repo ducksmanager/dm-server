@@ -1,10 +1,7 @@
 <?php
 
-namespace App\Controller\Edgecreator;
+namespace App\Controller;
 
-use App\Controller\AbstractController;
-use App\Controller\RequiresDmUserController;
-use App\Controller\RequiresDmVersionController;
 use App\Entity\Dm\Users;
 use App\Entity\EdgeCreator\EdgecreatorIntervalles;
 use App\Entity\EdgeCreator\EdgecreatorModeles2;
@@ -28,7 +25,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class AppController extends AbstractController implements RequiresDmVersionController, RequiresDmUserController
+class EdgecreatorController extends AbstractController implements RequiresDmVersionController, RequiresDmUserController
 {
     /**
      * @Route(
@@ -401,7 +398,7 @@ class AppController extends AbstractController implements RequiresDmVersionContr
         $designers = $request->request->get('designers');
         $photographers = $request->request->get('photographers');
         $contributorsUsernames = array_merge($designers ?? [], $photographers ?? []);
-        
+
         $qb = $dmEm->createQueryBuilder();
         $qb->select('users.id, users.username')
             ->from(Users::class, 'users')
@@ -710,7 +707,7 @@ class AppController extends AbstractController implements RequiresDmVersionContr
 
         return $interval->getId();
     }
-    
+
     private function deleteSteps(int $modelId) : int {
         $qbDeleteSteps = $this->getEm('edgecreator')->createQueryBuilder();
         $qbDeleteSteps

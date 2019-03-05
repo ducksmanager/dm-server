@@ -1,16 +1,14 @@
 <?php
 
-namespace App\Controller\Rawsql;
+namespace App\Controller;
 
-use App\Controller\AbstractController;
-use App\Controller\RequiresDmVersionController;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class AppController extends AbstractController implements RequiresDmVersionController
+class RawsqlController extends AbstractController implements RequiresDmVersionController
 {
     /**
      * @Route(methods={"POST"}, path="/rawsql")

@@ -1,7 +1,6 @@
 <?php
-namespace App\Controller\Status;
+namespace App\Controller;
 
-use App\Controller\AbstractController;
 use App\Helper\dbQueryHelper;
 use App\Helper\similarImagesHelper;
 use Psr\Log\LoggerInterface;
@@ -9,7 +8,7 @@ use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class AppController extends AbstractController
+class StatusController extends AbstractController
 {
     use dbQueryHelper;
 

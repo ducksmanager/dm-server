@@ -1,9 +1,7 @@
 <?php
 
-namespace App\Controller\Edges;
+namespace App\Controller;
 
-use App\Controller\AbstractController;
-use App\Controller\RequiresDmVersionController;
 use App\Entity\Dm\TranchesDoublons;
 use App\Entity\Dm\TranchesPretes;
 use App\Helper\JsonResponseFromObject;
@@ -11,7 +9,7 @@ use Doctrine\ORM\Query;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
-class AppController extends AbstractController implements RequiresDmVersionController
+class EdgesController extends AbstractController implements RequiresDmVersionController
 {
     /**
      * @Route(

@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Controller\Coverid;
+namespace App\Controller;
 
-use App\Controller\AbstractController;
 use App\Entity\Coverid\Covers;
 use App\Helper\SimilarImagesHelper;
 use Doctrine\ORM\EntityManager;
@@ -15,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 
-class AppController extends AbstractController
+class CoveridController extends AbstractController
 {
     public static $uploadFileName = 'wtd_jpg';
     public static $uploadDestination = ['/tmp', 'test.jpg'];
@@ -63,7 +62,7 @@ class AppController extends AbstractController
                 ])
             )
         );
-        
+
         $response = new Response(file_get_contents($localFilePath));
 
         $disposition = $response->headers->makeDisposition(
@@ -133,7 +132,7 @@ class AppController extends AbstractController
             )
         );
 
-        $issues = $this->callService(\App\Controller\Coa\AppController::class, 'listIssuesFromIssueCodes', compact('issueCodes'))->getContent();
+        $issues = $this->callService(CoaController::class, 'listIssuesFromIssueCodes', compact('issueCodes'))->getContent();
         $logger->info('Cover ID search: matched ' . count($coverInfos) . ' issues');
 
         return new JsonResponse([

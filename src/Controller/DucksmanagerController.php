@@ -1,14 +1,12 @@
 <?php
-namespace App\Controller\Ducksmanager;
+namespace App\Controller;
 
-use App\Controller\AbstractController;
 use App\Entity\Dm\Achats;
 use App\Entity\Dm\AuteursPseudos;
 use App\Entity\Dm\BibliothequeOrdreMagazines;
 use App\Entity\Dm\Numeros;
 use App\Entity\Dm\Users;
 use App\Entity\Dm\UsersPasswordTokens;
-use App\Entity\Dm\UsersPermissions;
 use App\Helper\collectionUpdateHelper;
 use App\Helper\CsvHelper;
 use App\Helper\Email\EdgesPublishedEmail;
@@ -29,7 +27,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class AppController extends AbstractController
+class DucksmanagerController extends AbstractController
 {
     use collectionUpdateHelper;
 
