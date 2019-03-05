@@ -16,8 +16,7 @@ class EdgesTest extends TestCommon
         $this->loadFixture('dm', new EdgesFixture());
     }
 
-    public function testGetEdges()
-    {
+    public function testGetEdges(): void {
         $publicationCode = 'fr/JM';
 
         $response = $this->buildAuthenticatedServiceWithTestUser(
@@ -31,8 +30,7 @@ class EdgesTest extends TestCommon
         $this->assertEquals('3001', $edge1->issuenumber);
     }
 
-    public function testGetReferenceEdges()
-    {
+    public function testGetReferenceEdges(): void {
         $publicationCode = 'fr/JM';
 
         $response = $this->buildAuthenticatedServiceWithTestUser(

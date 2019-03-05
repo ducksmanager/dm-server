@@ -14,13 +14,11 @@ class RequiresDmVersionSubscriber implements EventSubscriberInterface
     {
         $controller = $event->getController();
 
-        if (is_array($controller)) {
-            if ($controller[0] instanceof RequiresDmVersionController) {
-                if ($event->getRequest()->headers->has('x-dm-version')) {
-                    return null;
-                }
-                throw new HttpException(Response::HTTP_VERSION_NOT_SUPPORTED);
+        if (is_array($controller) && $controller[0] instanceof RequiresDmVersionController) {
+            if ($event->getRequest()->headers->has('x-dm-version')) {
+                return null;
             }
+            throw new HttpException(Response::HTTP_VERSION_NOT_SUPPORTED);
         }
     }
 

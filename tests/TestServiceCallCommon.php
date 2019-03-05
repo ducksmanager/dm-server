@@ -2,6 +2,7 @@
 namespace App\Tests;
 
 use Symfony\Bundle\FrameworkBundle\Client;
+use Symfony\Component\HttpFoundation\Response;
 
 class TestServiceCallCommon {
 
@@ -16,10 +17,7 @@ class TestServiceCallCommon {
     private $method;
     private $files = [];
 
-    /**
-     * @param Client $client
-     */
-    public function __construct($client)
+    public function __construct(Client $client)
     {
         $this->client = $client;
     }
@@ -32,114 +30,67 @@ class TestServiceCallCommon {
         return $this->path;
     }
 
-    /**
-     * @param mixed $path
-     */
-    public function setPath($path)
-    {
+    public function setPath(string $path): void {
         $this->path = $path;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getUserCredentials()
+    public function getUserCredentials() : array
     {
         return $this->userCredentials;
     }
 
-    /**
-     * @param mixed $userCredentials
-     */
-    public function setUserCredentials($userCredentials)
-    {
+    public function setUserCredentials(array $userCredentials): void {
         $this->userCredentials = $userCredentials;
     }
 
-    /**
-     * @return array
-     */
-    public function getParameters()
-    {
+    public function getParameters(): array {
         return $this->parameters;
     }
 
-    /**
-     * @param array $parameters
-     */
-    public function setParameters(array $parameters)
-    {
+    public function setParameters(array $parameters): void {
         $this->parameters = $parameters;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getSystemCredentials()
+    public function getSystemCredentials() : array
     {
         return $this->systemCredentials;
     }
 
-    /**
-     * @param mixed $systemCredentials
-     */
-    public function setSystemCredentials($systemCredentials)
-    {
+    public function setSystemCredentials(array $systemCredentials): void {
         $this->systemCredentials = $systemCredentials;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getClientVersion()
+    public function getClientVersion() : string
     {
         return $this->clientVersion;
     }
 
-    /**
-     * @param mixed $clientVersion
-     */
-    public function setClientVersion($clientVersion)
-    {
+    public function setClientVersion(string $clientVersion): void {
         $this->clientVersion = $clientVersion;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getMethod()
+    public function getMethod() : string
     {
         return $this->method;
     }
 
-    /**
-     * @param mixed $method
-     */
-    public function setMethod($method)
-    {
+    public function setMethod(string $method): void {
         $this->method = $method;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getFiles()
+    public function getFiles() : array
     {
         return $this->files;
     }
 
-    /**
-     * @param mixed $files
-     */
-    public function setFiles($files)
-    {
+    public function setFiles(array $files): void {
         $this->files = $files;
     }
 
     /**
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
-    public function call() {
+    public function call(): Response {
         $path = $this->path;
         if ($this->method === 'GET' && count($this->parameters) > 0) {
             $path .= '/' . implode('/', array_values($this->parameters));

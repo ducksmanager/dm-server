@@ -13,7 +13,7 @@ class JsonResponseFromObject extends JsonResponse
         parent::__construct(self::serializeToJson($object), \Symfony\Component\HttpFoundation\Response::HTTP_OK, [], true);
     }
 
-    private static function getNormalizer() {
+    private static function getNormalizer(): ObjectNormalizer {
         $normalizer = new ObjectNormalizer();
         $normalizer->setCircularReferenceHandler(function ($object) {
             if (get_class($object) === TranchesEnCoursModeles::class) {

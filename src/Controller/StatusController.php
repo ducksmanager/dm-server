@@ -29,7 +29,7 @@ class StatusController extends AbstractController
                 $log[] = "Pastec OK with $pastecIndexesImagesNumber images indexed";
             }
             else {
-                throw new \Exception('Pastec has no images indexed');
+                throw new \RuntimeException('Pastec has no images indexed');
             }
         }
         catch(\Exception $e) {
@@ -87,7 +87,7 @@ class StatusController extends AbstractController
                 $log[] = "Pastec search returned $matchNumber image(s)";
             }
             else {
-                throw new \Exception('Pastec search returned no image');
+                throw new \RuntimeException('Pastec search returned no image');
             }
         }
         catch(\Exception $e) {

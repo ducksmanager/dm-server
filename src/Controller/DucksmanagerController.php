@@ -166,7 +166,7 @@ class DucksmanagerController extends AbstractController
      * @throws ORMException
      * @throws \Doctrine\Common\Persistence\Mapping\MappingException
      */
-    public function resetDemo(Request $request) {
+    public function resetDemo() {
         $dmEm = $this->getEm('dm');
         $demoUser = $dmEm->getRepository(Users::class)->findOneBy([
             'username' => 'demo'
@@ -328,7 +328,7 @@ class DucksmanagerController extends AbstractController
                 $extraEdges = $details['extraEdges'];
                 $extraPhotographerPoints = $details['extraPhotographerPoints'];
 
-                $message = new EdgesPublishedEmail($mailer, $translator, $user, $extraEdges, $extraPhotographerPoints, $newMedalLevel);
+                $message = new EdgesPublishedEmail($mailer, $translator, $request->getLocale(), $user, $extraEdges, $extraPhotographerPoints, $newMedalLevel);
                 break;
             default:
                 return new Response("Invalid email type : $emailType", Response::HTTP_BAD_REQUEST);

@@ -11,12 +11,15 @@ class EdgesPublishedEmail extends EmailHelper {
 
     private $extraEdges;
     private $extraPhotographerPoints;
+    /** @var TranslatorInterface $translator */
     private $translator;
+  private $locale;
     private $newMedalLevel;
 
-    public function __construct(Swift_Mailer $mailer, TranslatorInterface $translator, Users $user, int $extraEdges, int $extraPhotographerPoints, $newMedalLevel = null) {
+    public function __construct(Swift_Mailer $mailer, TranslatorInterface $translator, string $locale, Users $user, int $extraEdges, int $extraPhotographerPoints, $newMedalLevel = null) {
         parent::__construct($mailer, $user);
         $this->translator = $translator;
+        $this->locale = $locale;
         $this->extraEdges = $extraEdges;
         $this->extraPhotographerPoints = $extraPhotographerPoints;
         $this->newMedalLevel = $newMedalLevel;
@@ -57,7 +60,7 @@ class EdgesPublishedEmail extends EmailHelper {
                 : $this->translator->trans('EMAIL_ONE_EDGE_PUBLISHED_INTRO'),
 
             !is_null($this->newMedalLevel)
-                ? ('<p style="text-align: center"><img width="100" src="'.$_ENV['ASSETS_MEDALS_PICTURES_ROOT']."Photographe_{$this->newMedalLevel}_{$this->translator->getLocale()}.png".'" /><br />'
+                ? ('<p style="text-align: center"><img width="100" src="'.$_ENV['ASSETS_MEDALS_PICTURES_ROOT']."Photographe_{$this->newMedalLevel}_{$this->locale}.png".'" /><br />'
                     .$this->translator->trans('EMAIL_EDGES_PUBLISHED_MEDAL', [
                         '%medalLevel%' => $this->translator->trans("MEDAL_{$this->newMedalLevel}")
                     ]). '</p>')
