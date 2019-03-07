@@ -18,3 +18,4 @@
 ###< symfony/phpunit-bridge ###
 
 *.sqlite
+tests/Fixtures/*_willberemoved.jpg
