@@ -1,12 +1,6 @@
 parameters:
     env(DATABASE_DRIVER): 'pdo_mysql'
     env(DATABASE_SERVER_VERSION): 'mariadb-10.2.16'
-    env(DATABASE_IN_MEMORY): false
-    env(DATABASE_DM_PATH): ~
-    env(DATABASE_COA_PATH): ~
-    env(DATABASE_DM_COVER_ID_PATH): ~
-    env(DATABASE_DM_STATS_PATH): ~
-    env(DATABASE_EDGECREATOR_PATH): ~
 
 doctrine:
     dbal:
@@ -20,7 +14,7 @@ doctrine:
                 password: '%env(DATABASE_DM_PASS)%'
                 driver: '%env(DATABASE_DRIVER)%'
                 server_version: '%env(DATABASE_SERVER_VERSION)%'
-                path: '%kernel.project_dir%/%env(DATABASE_DM_PATH)%'
+                memory: true
                 charset: utf8mb4
                 mapping_types:
                     enum: string
@@ -32,7 +26,7 @@ doctrine:
                 password: '%env(DATABASE_COA_PASS)%'
                 driver: '%env(DATABASE_DRIVER)%'
                 server_version: '%env(DATABASE_SERVER_VERSION)%'
-                path: '%kernel.project_dir%/%env(DATABASE_COA_PATH)%'
+                memory: true
                 charset: utf8mb4
                 schema_filter: (inducks_countryname|inducks_entry|inducks_entryurl|inducks_issue|inducks_person|inducks_publication|inducks_story|inducks_storyversion)
                 mapping_types:
@@ -45,7 +39,7 @@ doctrine:
                 password: '%env(DATABASE_DM_COVER_ID_PASS)%'
                 driver: '%env(DATABASE_DRIVER)%'
                 server_version: '%env(DATABASE_SERVER_VERSION)%'
-                path: '%kernel.project_dir%/%env(DATABASE_DM_COVER_ID_PATH)%'
+                memory: true
                 charset: utf8mb4
                 mapping_types:
                     enum: string
@@ -57,7 +51,7 @@ doctrine:
                 password: '%env(DATABASE_DM_STATS_PASS)%'
                 driver: '%env(DATABASE_DRIVER)%'
                 server_version: '%env(DATABASE_SERVER_VERSION)%'
-                path: '%kernel.project_dir%/%env(DATABASE_DM_STATS_PATH)%'
+                memory: true
                 charset: utf8mb4
                 mapping_types:
                     enum: string
@@ -69,7 +63,7 @@ doctrine:
                 password: '%env(DATABASE_EDGECREATOR_PASS)%'
                 driver: '%env(DATABASE_DRIVER)%'
                 server_version: '%env(DATABASE_SERVER_VERSION)%'
-                path: '%kernel.project_dir%/%env(DATABASE_EDGECREATOR_PATH)%'
+                memory: true
                 charset: utf8mb4
                 mapping_types:
                     enum: string

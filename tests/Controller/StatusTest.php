@@ -86,7 +86,7 @@ class StatusTest extends TestCommon
 
     public function testGetImageSearchStatus(): void {
         $this->spinUp('dm');
-        $this->spinUp('co');
+        $this->spinUp('coverid');
         $response = $this->getCoverIdStatusForMockedResults(
             '/status/pastecsearch',
             json_encode(CoverIdTest::$coverSearchResultsSimple)

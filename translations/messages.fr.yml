@@ -18,6 +18,7 @@ EMAIL_RESET_PASSWORD_BODY: >-
   Un visiteur a indiqué avoir oublié le mot de passe associé à l'adresse e-mail %email%.<br />Si c'est vous qui en êtes à l'origine, cliquez sur le lien suivant pour indiquer un nouveau mot de passe pour votre compte DucksManager :
 EMAIL_RESET_PASSWORD_LINK_TEXT: Mettre à jour mon mot de passe
 EMAIL_SIGNATURE: A bientôt sur le site !<br />L'équipe DucksManager
+ERROR_PURCHASE_UPDATE_NOT_ALLOWED: Vous ne pouvez pas modifier cet achat.
 MEDAL_1: Débutant
 MEDAL_2: Intermédiaire
 MEDAL_3: Expert
