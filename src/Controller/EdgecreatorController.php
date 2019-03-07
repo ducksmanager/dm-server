@@ -663,7 +663,7 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
 
     private function createStepV1(string $publicationCode, int $stepNumber, string $functionName, string $optionName): int
     {
-        $ecEm = $this->container->get('doctrine')->getManager('edgecreator');
+        $ecEm = $this->getEm('edgecreator');
 
         [$country, $publication] = explode('/', $publicationCode);
 
@@ -681,7 +681,7 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
     }
 
     private function createValueV1(string $optionId, string $optionValue) : int {
-        $ecEm = $this->container->get('doctrine')->getManager('edgecreator');
+        $ecEm = $this->getEm('edgecreator');
 
         $value = new EdgecreatorValeurs();
         $value->setIdOption($optionId);
@@ -694,7 +694,7 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
     }
 
     private function createIntervalV1(int $valueId, string $firstIssueNumber, string $lastIssueNumber) : int {
-        $ecEm = $this->container->get('doctrine')->getManager('edgecreator');
+        $ecEm = $this->getEm('edgecreator');
         $interval = new EdgecreatorIntervalles();
 
         $interval->setIdValeur($valueId);

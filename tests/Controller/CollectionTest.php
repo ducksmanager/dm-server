@@ -14,6 +14,14 @@ class CollectionTest extends TestCommon
         return ['dm', 'coa'];
     }
 
+    public function testGetUser(): void
+    {
+        $this->createUserCollection('dm_test_user');
+        $userResponse = $this->buildAuthenticatedServiceWithTestUser('/collection/user/get', self::$dmUser)->call();
+        $objectResponse = json_decode($userResponse->getContent());
+        $this->assertEquals('dm_test_user', $objectResponse->username);
+    }
+
     public function testAddIssue(): void
     {
         $this->createUserCollection('dm_test_user');
@@ -77,7 +85,7 @@ class CollectionTest extends TestCommon
         $this->assertEquals('DDD', $updatedIssue->getMagazine());
         $this->assertEquals('1', $updatedIssue->getNumero());
         $this->assertEquals('bon', $updatedIssue->getEtat());
-        $this->assertEquals(2, $updatedIssue->getIdAcquisition());
+        $this->assertEquals(-2, $updatedIssue->getIdAcquisition());
         $this->assertEquals(true, $updatedIssue->getAv());
         $this->assertEquals($this->getUser('dm_test_user')->getId(), $updatedIssue->getIdUtilisateur());
         $this->assertEquals(date('Y-m-d'), $updatedIssue->getDateajout()->format('Y-m-d'));

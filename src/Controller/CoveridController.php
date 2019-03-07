@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Coverid\Covers;
 use App\Helper\SimilarImagesHelper;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query\Expr\Func;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\File;
@@ -24,8 +23,7 @@ class CoveridController extends AbstractController
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function downloadCover(int $coverId) : Response {
-        /** @var EntityManager $coverEm */
-        $coverEm = $this->container->get('doctrine')->getManager('coverid');
+        $coverEm = $this->getEm('coverid');
         $qb = $coverEm->createQueryBuilder();
 
         $concatFunc = new Func('CONCAT', [
@@ -153,8 +151,7 @@ class CoveridController extends AbstractController
 
     private function getIssuesCodesFromCoverIds(array $coverIds): array
     {
-        /** @var EntityManager $coverEm */
-        $coverEm = $this->container->get('doctrine')->getManager('coverid');
+        $coverEm = $this->getEm('coverid');
 
         $qb = $coverEm->createQueryBuilder();
         $qb

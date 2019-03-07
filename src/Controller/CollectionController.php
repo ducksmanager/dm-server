@@ -6,14 +6,16 @@ use App\Entity\Coa\InducksIssue;
 use App\Entity\Dm\Achats;
 use App\Entity\Dm\BibliothequeOrdreMagazines;
 use App\Entity\Dm\Numeros;
+use App\Entity\Dm\Users;
 use App\Entity\Dm\UsersPermissions;
 use App\EntityTransform\FetchCollectionResult;
 use App\EntityTransform\NumeroSimple;
 use App\EntityTransform\UpdateCollectionResult;
 use App\Helper\collectionUpdateHelper;
+use App\Helper\JsonResponseFromObject;
 use App\Helper\PublicationHelper;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityManager;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,12 +26,23 @@ class CollectionController extends AbstractController implements RequiresDmVersi
     use collectionUpdateHelper;
 
     /**
+     * @Route(methods={"GET"}, path="/collection/user/get")
+     */
+    public function getDmUser() {
+        $existingUser = $this->getEm('dm')->getRepository(Users::class)->find($this->getCurrentUser()['id']);
+
+        if (is_null($existingUser)) {
+            return new Response('', Response::HTTP_UNAUTHORIZED);
+        }
+        return new JsonResponseFromObject($existingUser);
+    }
+
+    /**
      * @Route(methods={"GET"}, path="/collection/issues")
      */
     public function getIssues(): JsonResponse
     {
-        /** @var EntityManager $dmEm */
-        $dmEm = $this->container->get('doctrine')->getManager('dm');
+        $dmEm = $this->getEm('dm');
         $issues = $dmEm->getRepository(Numeros::class)->findBy(
             ['idUtilisateur' => $this->getCurrentUser()['id']],
             ['pays' => 'asc', 'magazine' => 'asc', 'numero' => 'asc']
@@ -85,14 +98,13 @@ class CollectionController extends AbstractController implements RequiresDmVersi
      * @throws \Doctrine\ORM\OptimisticLockException
      * @throws \Doctrine\ORM\Query\QueryException
      */
-    public function postIssues(Request $request): JsonResponse
+    public function postIssues(Request $request, LoggerInterface $logger): JsonResponse
     {
+        $dmEm = $this->getEm('dm');
         $country = $request->request->get('country');
         $publication = $request->request->get('publication');
         $issuenumbers = $request->request->get('issuenumbers');
         $condition = $request->request->get('condition');
-        $istosell = $request->request->get('istosell');
-        $purchaseid = $request->request->get('purchaseid');
 
         if ($condition === 'non_possede') {
             $nbRemoved = $this->deleteIssues($country, $publication, $issuenumbers);
@@ -101,8 +113,18 @@ class CollectionController extends AbstractController implements RequiresDmVersi
             );
         }
 
+        $istosell = $request->request->get('istosell');
+        $purchaseid = $request->request->get('purchaseid');
+
+        if (empty($dmEm->getRepository(Achats::class)->findOneBy([
+            'idAcquisition' => $purchaseid,
+            'idUser' => $this->getCurrentUser()['id']
+        ]))) {
+            $logger->warning("User {$this->getCurrentUser()['id']} tried to use purchase ID $purchaseid which is owned by another user");
+            $purchaseid = null;
+        }
         [$nbUpdated, $nbCreated] = $this->addOrChangeIssues(
-            $this->getEm('dm'),
+            $dmEm,
             $this->getCurrentUser()['id'],
             $country,
             $publication,
@@ -127,8 +149,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
      */
     public function postPurchase(Request $request, ?string $purchaseId): ?Response
     {
-        /** @var EntityManager $dmEm */
-        $dmEm = $this->container->get('doctrine')->getManager('dm');
+        $dmEm = $this->getEm('dm');
 
         $purchaseDate = $request->request->get('date');
         $purchaseDescription = $request->request->get('description');
@@ -164,8 +185,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
         $sorts = $request->request->get('sorts');
 
         if (is_array($sorts)) {
-            /** @var EntityManager $dmEm */
-            $dmEm = $this->container->get('doctrine')->getManager('dm');
+            $dmEm = $this->getEm('dm');
             $qbMissingSorts = $dmEm->createQueryBuilder();
             $qbMissingSorts
                 ->delete(BibliothequeOrdreMagazines::class, 'sorts')
@@ -208,8 +228,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
             }, array_unique($matches, SORT_REGULAR)
         );
 
-        /** @var EntityManager $coaEm */
-        $coaEm = $this->container->get('doctrine')->getManager('coa');
+        $coaEm = $this->getEm('coa');
         $coaIssuesQb = $coaEm->createQueryBuilder();
 
         $coaIssuesQb
@@ -246,8 +265,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
         $defaultCondition = $request->request->get('defaultCondition');
 
         $newIssues = $this->getNonPossessedIssues($issues, $this->getCurrentUser()['id']);
-        /** @var EntityManager $dmEm */
-        $dmEm = $this->container->get('doctrine')->getManager('dm');
+        $dmEm = $this->getEm('dm');
 
         foreach($newIssues as $issue) {
             [$country, $magazine] = explode('/', $issue['publicationcode']);
@@ -290,8 +308,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
 
     private function getNonPossessedIssues(array $issues, int $userId): array
     {
-        /** @var EntityManager $dmEm */
-        $dmEm = $this->container->get('doctrine')->getManager('dm');
+        $dmEm = $this->getEm('dm');
         $currentIssues = $dmEm->getRepository(Numeros::class)->findBy(['idUtilisateur' => $userId]);
 
         $currentIssuesByPublication = [];
@@ -306,8 +323,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
 
     private function deleteIssues(string $country, string $publication, array $issueNumbers): int
     {
-        /** @var EntityManager $dmEm */
-        $dmEm = $this->container->get('doctrine')->getManager('dm');
+        $dmEm = $this->getEm('dm');
         $qb = $dmEm->createQueryBuilder();
         $qb
             ->delete(Numeros::class, 'issues')

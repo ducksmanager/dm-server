@@ -15,7 +15,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class RequiresDmUserSubscriber implements EventSubscriberInterface
 {
     /**
-     * @var EntityManagerInterface
+     * @var EntityManagerInterface $dmEm
      */
     private $dmEm;
 

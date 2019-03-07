@@ -171,15 +171,6 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
         $this->assertEquals($expectedMessageBody, $messageCopy->getBody());
     }
 
-    public function testGetUser(): void
-    {
-        $this->createUserCollection('demo');
-        $sha1Password = sha1('password');
-        $userResponse = $this->buildAuthenticatedService("/ducksmanager/user/get/demo/$sha1Password", self::$dmUser, [], [], 'GET')->call();
-        $objectResponse = json_decode($userResponse->getContent());
-        $this->assertEquals('demo', $objectResponse->username);
-    }
-
     public function testInitResetPassword(): void
     {
         $this->createUserCollection('dm_test_user');
@@ -207,7 +198,7 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
         $expectedMessageBody = implode('<br />', [
             'Bonjour dm_test_user,',
             'Un visiteur a indiqué avoir oublié le mot de passe associé à l\'adresse e-mail test@ducksmanager.net.',
-            'Si c\'est vous qui en êtes à l\'origine, cliquez sur le lien suivante pour indiquer un nouveau mot de passe pour votre compte DucksManager :',
+            'Si c\'est vous qui en êtes à l\'origine, cliquez sur le lien suivant pour indiquer un nouveau mot de passe pour votre compte DucksManager :',
             '<a href="http://localhost:8000/?action=reset_password&token='.$generatedToken->getToken().'">Mettre à jour mon mot de passe</a>',
             '<br />',
             'A bientôt sur le site !',

@@ -92,9 +92,6 @@ class TestServiceCallCommon {
      */
     public function call(): Response {
         $path = $this->path;
-        if ($this->method === 'GET' && count($this->parameters) > 0) {
-            $path .= '/' . implode('/', array_values($this->parameters));
-        }
         $headers = $this->systemCredentials;
         if (count($this->userCredentials) > 0) {
             $headers = array_merge($headers, [

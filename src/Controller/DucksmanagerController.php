@@ -13,12 +13,9 @@ use App\Helper\Email\EdgesPublishedEmail;
 use App\Helper\Email\ResetPasswordEmail;
 use App\Helper\Email\UserSuggestedBookstoreEmail;
 use App\Helper\JsonResponseFromObject;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
-use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\OrderBy;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -34,15 +31,16 @@ class DucksmanagerController extends AbstractController
     /**
      * @Route(methods={"POST"}, path="/ducksmanager/user/new")
      */
-    public function createUser(Request $request): Response {
-        $check = $this->checkNewUser(
+    public function createUser(Request $request, TranslatorInterface $translator): Response {
+        $userCheckError = $this->checkNewUser(
+            $translator,
             $request->request->get('username'),
             $request->request->get('password'),
             $request->request->get('password2')
         );
 
-        if ($check !== true) {
-            return new Response($check, Response::HTTP_PRECONDITION_FAILED);
+        if (isset($userCheckError)) {
+            return new Response($userCheckError, Response::HTTP_PRECONDITION_FAILED);
         }
 
         try {
@@ -58,33 +56,6 @@ class DucksmanagerController extends AbstractController
         }
 
         return new Response('KO', Response::HTTP_INTERNAL_SERVER_ERROR);
-    }
-
-    /**
-     * @Route(methods={"GET"}, path="/ducksmanager/user/get/{username}/{password}")
-     */
-    public function getDmUser(string $username, string $password) {
-        $qb = $this->getEm('dm')->createQueryBuilder();
-        $qb
-            ->select('DISTINCT u')
-            ->from(Users::class, 'u')
-            ->andWhere($qb->expr()->eq('u.username', ':username'))
-            ->andWhere($qb->expr()->eq('u.password', ':password'));
-
-        $qb->setParameters([':username' => $username, 'password' => $password]);
-
-        try {
-            /** @var Users $existingUser */
-            $existingUser = $qb->getQuery()->getSingleResult(Query::HYDRATE_ARRAY);
-            if (!is_null($existingUser)) {
-                return new JsonResponse($existingUser, Response::HTTP_OK);
-            }
-
-            return new Response('', Response::HTTP_UNAUTHORIZED);
-        }
-        catch(NoResultException|NonUniqueResultException $e) {
-            return new Response('', Response::HTTP_UNAUTHORIZED);
-        }
     }
 
     /**
@@ -339,29 +310,28 @@ class DucksmanagerController extends AbstractController
         return new Response();
     }
 
-    private function checkNewUser(?string $username, string $password, string $password2)
+    private function checkNewUser(TranslatorInterface $translator, ?string $username, string $password, string $password2) : ?string
     {
         if (isset($username)) {
-            if (strlen($username) <3) {
-                return 'UTILISATEUR_3_CHAR_ERREUR';
+            if (!preg_match('#^[-_A-Za-z0-9]{3,15}$#', $username) === 0) {
+                return $translator->trans('UTILISATEUR_INVALIDE');
             }
             if (strlen($password) <6) {
-                return 'MOT_DE_PASSE_6_CHAR_ERREUR';
+                return $translator->trans('MOT_DE_PASSE_6_CHAR_ERREUR');
             }
             if ($password !== $password2) {
-                return 'MOTS_DE_PASSE_DIFFERENTS';
+                return $translator->trans('MOTS_DE_PASSE_DIFFERENTS');
             }
             if ($this->usernameExists($username)) {
-                return 'UTILISATEUR_EXISTANT';
+                return $translator->trans('UTILISATEUR_EXISTANT');
             }
         }
-        return true;
+        return null;
     }
 
     private function usernameExists(string $username): bool
     {
-        /** @var EntityManager $dmEm */
-        $dmEm = $this->container->get('doctrine')->getManager('dm');
+        $dmEm = $this->getEm('dm');
         $existingUser = $dmEm->getRepository(Users::class)->findBy([
             'username' => $username
         ]);
@@ -374,8 +344,7 @@ class DucksmanagerController extends AbstractController
      */
     private function createUserNoCheck(string $username, string $password, string $email): bool
     {
-        /** @var EntityManager $dmEm */
-        $dmEm = $this->container->get('doctrine')->getManager('dm');
+        $dmEm = $this->getEm('dm');
 
         $user = new Users();
         $user->setUsername($username);
