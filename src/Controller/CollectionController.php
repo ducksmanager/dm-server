@@ -20,6 +20,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CollectionController extends AbstractController implements RequiresDmVersionController, RequiresDmUserController
 {
@@ -116,10 +117,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
         $istosell = $request->request->get('istosell');
         $purchaseid = $request->request->get('purchaseid');
 
-        if (empty($dmEm->getRepository(Achats::class)->findOneBy([
-            'idAcquisition' => $purchaseid,
-            'idUser' => $this->getCurrentUser()['id']
-        ]))) {
+        if (!$this->getUserPurchase($purchaseid)) {
             $logger->warning("User {$this->getCurrentUser()['id']} tried to use purchase ID $purchaseid which is owned by another user");
             $purchaseid = null;
         }
@@ -147,7 +145,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
      * @throws \Doctrine\ORM\ORMException
      * @throws \Doctrine\ORM\OptimisticLockException
      */
-    public function postPurchase(Request $request, ?string $purchaseId): ?Response
+    public function postPurchase(Request $request, TranslatorInterface $translator, ?string $purchaseId): ?Response
     {
         $dmEm = $this->getEm('dm');
 
@@ -159,9 +157,9 @@ class CollectionController extends AbstractController implements RequiresDmVersi
             $purchase = new Achats();
         }
         else {
-            $purchase = $dmEm->getRepository(Achats::class)->findOneBy(['idAcquisition' => $purchaseId, 'idUser' => $idUser]);
+            $purchase = $this->getUserPurchase($purchaseId);
             if (is_null($purchase)) {
-                return new Response('You don\'t have the rights to update this purchase', Response::HTTP_UNAUTHORIZED);
+                return new Response($translator->trans('ERROR_PURCHASE_UPDATE_NOT_ALLOWED'), Response::HTTP_UNAUTHORIZED);
             }
         }
 
@@ -341,5 +339,14 @@ class CollectionController extends AbstractController implements RequiresDmVersi
             ->setParameter(':userId', $this->getCurrentUser()['id']);
 
         return $qb->getQuery()->getResult();
+    }
+
+    private function getUserPurchase(?int $purchaseId) : ?Achats {
+        return is_null($purchaseId)
+            ? null
+            : $this->getEm('dm')->getRepository(Achats::class)->findOneBy([
+                'idAcquisition' => $purchaseId,
+                'idUser' => $this->getCurrentUser()['id']
+            ]);
     }
 }
