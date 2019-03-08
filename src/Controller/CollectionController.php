@@ -27,7 +27,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
     use collectionUpdateHelper;
 
     /**
-     * @Route(methods={"GET"}, path="/collection/user/get")
+     * @Route(methods={"GET"}, path="/collection/user")
      */
     public function getDmUser() {
         $existingUser = $this->getEm('dm')->getRepository(Users::class)->find($this->getCurrentUser()['id']);

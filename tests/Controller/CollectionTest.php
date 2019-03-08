@@ -17,7 +17,7 @@ class CollectionTest extends TestCommon
     public function testGetUser(): void
     {
         $this->createUserCollection('dm_test_user');
-        $userResponse = $this->buildAuthenticatedServiceWithTestUser('/collection/user/get', self::$dmUser)->call();
+        $userResponse = $this->buildAuthenticatedServiceWithTestUser('/collection/user', self::$dmUser)->call();
         $objectResponse = json_decode($userResponse->getContent());
         $this->assertEquals('dm_test_user', $objectResponse->username);
     }
