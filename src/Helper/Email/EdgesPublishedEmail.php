@@ -72,7 +72,7 @@ class EdgesPublishedEmail extends EmailHelper {
 
             $this->translator->trans('EMAIL_SIGNATURE'),
 
-            '<img width="400" src="'.$_ENV['WEBSITE_ROOT'].'logo_petit.png" />'
+            '<img width="400" src="'.$_ENV['WEBSITE_ROOT'].'/logo_petit.png" />'
         ]);
     }
 

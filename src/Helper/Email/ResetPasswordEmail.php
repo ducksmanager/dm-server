@@ -50,7 +50,7 @@ class ResetPasswordEmail extends EmailHelper {
                 '%email%' => $this->user->getEmail()
             ]),
 
-            '<a href="'.$_ENV['WEBSITE_ROOT'].'?action=reset_password&token='.$this->token.'">'
+            '<a href="'.$_ENV['WEBSITE_ROOT'].'/?action=reset_password&token='.$this->token.'">'
                 .$this->translator->trans('EMAIL_RESET_PASSWORD_LINK_TEXT')
             .'</a>',
 
@@ -58,7 +58,7 @@ class ResetPasswordEmail extends EmailHelper {
 
             $this->translator->trans('EMAIL_SIGNATURE'),
 
-            '<img width="400" src="'.$_ENV['WEBSITE_ROOT'].'logo_petit.png" />'
+            '<img width="400" src="'.$_ENV['WEBSITE_ROOT'].'/logo_petit.png" />'
         ]);
     }
 

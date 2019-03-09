@@ -26,11 +26,11 @@ class UserSuggestedBookstoreEmail extends EmailHelper {
     }
 
     protected function getTextBody() : string {
-        return 'Validation : https://www.ducksmanager.net/backend/bouquineries.php';
+        return "Validation : {$_ENV['WEBSITE_ROOT']}/backend/bouquineries.php";
     }
 
     protected function getHtmlBody() : string {
-        return '<a href="https://www.ducksmanager.net/backend/bouquineries.php">Validation</a>';
+        return '<a href="'.$_ENV['WEBSITE_ROOT'].'/backend/bouquineries.php">Validation</a>';
     }
 
     public function __toString() : string {
