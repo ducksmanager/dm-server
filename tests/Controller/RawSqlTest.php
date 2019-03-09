@@ -74,6 +74,25 @@ class RawSqlTest extends TestCommon
         $this->assertEquals('DDD', $objectResponse[0]['Magazine']);
     }
 
+    public function testRawSqlWithEncodedParameters(): void
+    {
+        $response = $this->buildAuthenticatedServiceWithTestUser('/rawsql', self::$rawSqlUser, 'POST', [
+            'query' => 'INSERT INTO bouquineries(Nom, AdresseComplete, Commentaire, ID_Utilisateur, CoordX, CoordY, Actif)
+                        VALUES (:nom, :adresse_complete, :commentaire, :id_user, :coordX, :coordY, 0)',
+            'parameters' => json_encode([
+                ':nom' => 'test',
+                ':adresse_complete' => 'Test place, Paris',
+                ':commentaire' => 'cool',
+                ':id_user' => NULL,
+                ':coordX' => '50',
+                ':coordY' => '60',
+            ]),
+            'db'    => 'dm'
+        ])->call();
+
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+    }
+
     public function testRawSqlInvalidSelect(): void
     {
         $response = $this->buildAuthenticatedServiceWithTestUser('/rawsql', self::$rawSqlUser, 'POST', [

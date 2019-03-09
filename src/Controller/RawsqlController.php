@@ -20,6 +20,9 @@ class RawsqlController extends AbstractController implements RequiresDmVersionCo
         $db = preg_replace('#^db_#', '', $request->request->get('db'));
         $log = $request->request->get('log');
         $parameters = $request->request->get('parameters') ?: [];
+        if (is_string($parameters)) {
+            $parameters = json_decode($parameters, true);
+        }
 
         try {
             $em = $this->getEm($db);
@@ -30,15 +33,16 @@ class RawsqlController extends AbstractController implements RequiresDmVersionCo
         if (strpos($query, ';') !== false) { // In lack of something better
             return new Response('Raw queries shouldn\'t contain the ";" symbol', Response::HTTP_BAD_REQUEST);
         }
+
+        if (!(isset($log) && $log === 0)) {
+            $logger->info("Raw sql sent: $query with ".print_r($parameters, true));
+        }
+
         if (stripos(trim($query), 'SELECT') === 0) {
             $results = $em->getConnection()->fetchAll($query, $parameters);
         }
         else {
             $results = $em->getConnection()->executeQuery($query, $parameters);
-        }
-
-        if (!(isset($log) && $log === 0)) {
-            $logger->info("Raw sql sent: $query with ".print_r($parameters, true));
         }
         return new JsonResponse($results);
     }
