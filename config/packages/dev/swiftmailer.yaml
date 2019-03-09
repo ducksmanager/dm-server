@@ -1,1 +1,4 @@
 swiftmailer:
+  transport: smtp
+  host: mailcatcher
+  port: 1025

@@ -25,14 +25,24 @@ services:
       - db_dm
       - db_dm_stats
       - db_edgecreator
+      - mailcatcher
     volumes:
      - .:/var/www/html
      - ./php.xdebug.ini:/usr/local/etc/php/php.ini:z
     networks:
      - front-network
+     - mail-network
      - db-network
      - cover-id-network
     command: sh -c 'composer install --no-plugins --no-scripts && php-fpm'
+
+  mailcatcher:
+    container_name: mailcatcher
+    image: yappabe/mailcatcher
+    ports:
+      - 1080:1080
+    networks:
+      - mail-network
 
   db_coa:
     container_name: db_coa
@@ -108,6 +118,8 @@ services:
 
 networks:
   front-network:
+    driver: bridge
+  mail-network:
     driver: bridge
   db-network:
     driver: bridge
