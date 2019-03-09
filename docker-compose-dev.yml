@@ -34,19 +34,6 @@ services:
      - cover-id-network
     command: sh -c 'composer install --no-plugins --no-scripts && php-fpm'
 
-  php-no-debug:
-    container_name: dm-server-php-no-debug
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-     - .:/var/www/html:z
-    networks:
-     - front-network
-     - db-network
-     - cover-id-network
-    command: sh -c 'composer install --no-plugins --no-scripts && php-fpm'
-
   db_coa:
     container_name: db_coa
     image: "mariadb:10.2"
