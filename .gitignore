@@ -17,5 +17,6 @@
 .phpunit
 ###< symfony/phpunit-bridge ###
 
+build
 *.sqlite
 tests/Fixtures/*_willberemoved.jpg
