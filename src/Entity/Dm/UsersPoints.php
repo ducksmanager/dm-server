@@ -38,9 +38,9 @@ class UsersPoints
     /**
      * @var int|null
      *
-     * @ORM\Column(name="NbPoints", type="integer", nullable=true)
+     * @ORM\Column(name="NbPoints", type="integer", nullable=true, options={"default"="0"})
      */
-    private $nbpoints = '0';
+    private $nbpoints = 0;
 
     public function getId(): ?int
     {

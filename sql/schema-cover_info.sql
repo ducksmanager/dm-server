@@ -7,8 +7,7 @@ create table cover_imports
 	constraint uniquefieldset_cover_imports
 		unique (coverid, imported, import_error)
 )
-engine=MyISAM charset=utf8
-;
+	charset=utf8;
 
 create table covers
 (
@@ -20,6 +19,5 @@ create table covers
 	constraint uniquefieldset_covers
 		unique (issuecode, url)
 )
-engine=MyISAM charset=utf8
-;
+	engine=MyISAM charset=utf8;
 

@@ -82,14 +82,14 @@ class Bouquineries
      *
      * @ORM\Column(name="CoordX", type="float", precision=10, scale=0, nullable=false)
      */
-    private $coordx = '0';
+    private $coordx = 0;
 
     /**
      * @var float
      *
      * @ORM\Column(name="CoordY", type="float", precision=10, scale=0, nullable=false)
      */
-    private $coordy = '0';
+    private $coordy = 0;
 
     /**
      * @var \DateTime
@@ -101,9 +101,9 @@ class Bouquineries
     /**
      * @var bool
      *
-     * @ORM\Column(name="Actif", type="boolean", nullable=false, options={"default"="1"})
+     * @ORM\Column(name="Actif", type="boolean", nullable=false, options={"default"=0})
      */
-    private $actif = '1';
+    private $actif = false;
 
     public function getId(): ?int
     {

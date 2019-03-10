@@ -3,28 +3,18 @@ create table auteurs_histoires
 	personcode varchar(22) not null,
 	storycode varchar(19) not null,
 	primary key (personcode, storycode)
-)
-;
+);
 
 create index index_storycode
-	on auteurs_histoires (storycode)
-;
+	on auteurs_histoires (storycode);
 
-create table auteurs_pseudos_simple
+create table auteurs_pseudos
 (
-	ID int auto_increment
-		primary key,
 	ID_User int not null,
 	NomAuteurAbrege varchar(79) not null,
-	Notation tinyint(1) null,
-	constraint auteurs_pseudos_simple_ID_User_NomAuteurAbrege_uindex
-		unique (ID_User, NomAuteurAbrege)
-)
-;
-
-create index index_auteur_inducks
-	on auteurs_pseudos_simple (NomAuteurAbrege)
-;
+	Notation tinyint null,
+	primary key (ID_User, NomAuteurAbrege)
+);
 
 create table histoires_publications
 (
@@ -32,16 +22,13 @@ create table histoires_publications
 	publicationcode varchar(12) not null,
 	issuenumber varchar(12) not null,
 	primary key (publicationcode, issuenumber, storycode)
-)
-;
+);
 
 create index index_issue
-	on histoires_publications (publicationcode, issuenumber)
-;
+	on histoires_publications (publicationcode, issuenumber);
 
 create index index_story
-	on histoires_publications (storycode)
-;
+	on histoires_publications (storycode);
 
 create table numeros_simple
 (
@@ -49,18 +36,15 @@ create table numeros_simple
 	Publicationcode varchar(12) not null,
 	Numero varchar(12) not null,
 	primary key (ID_Utilisateur, Publicationcode, Numero),
-	constraint numeros_simple_auteurs_pseudos_simple_ID_User_fk
-		foreign key (ID_Utilisateur) references auteurs_pseudos_simple (ID_User)
-)
-;
+	constraint numeros_simple_auteurs_pseudos_ID_User_fk
+		foreign key (ID_Utilisateur) references auteurs_pseudos (ID_User)
+);
 
 create index ID_Utilisateur
-	on numeros_simple (ID_Utilisateur)
-;
+	on numeros_simple (ID_Utilisateur);
 
 create index issue
-	on numeros_simple (Publicationcode, Numero)
-;
+	on numeros_simple (Publicationcode, Numero);
 
 create table utilisateurs_histoires_manquantes
 (
@@ -68,8 +52,7 @@ create table utilisateurs_histoires_manquantes
 	personcode varchar(22) not null,
 	storycode varchar(19) not null,
 	primary key (ID_User, personcode, storycode)
-)
-;
+);
 
 create table utilisateurs_publications_manquantes
 (
@@ -80,16 +63,13 @@ create table utilisateurs_publications_manquantes
 	issuenumber varchar(12) not null,
 	Notation tinyint unsigned not null,
 	primary key (ID_User, personcode, storycode, publicationcode, issuenumber)
-)
-;
+);
 
 create index issue
-	on utilisateurs_publications_manquantes (ID_User, publicationcode, issuenumber)
-;
+	on utilisateurs_publications_manquantes (ID_User, publicationcode, issuenumber);
 
 create index user_stories
-	on utilisateurs_publications_manquantes (ID_User, personcode, storycode)
-;
+	on utilisateurs_publications_manquantes (ID_User, personcode, storycode);
 
 create table utilisateurs_publications_suggerees
 (
@@ -99,11 +79,9 @@ create table utilisateurs_publications_suggerees
 	Score int not null,
 	primary key (ID_User, publicationcode, issuenumber),
 	constraint utilisateurs_publications_suggerees_pseudos_fk
-		foreign key (ID_User) references auteurs_pseudos_simple (ID_User)
-)
-;
+		foreign key (ID_User) references auteurs_pseudos (ID_User)
+);
 
 create index user
-	on utilisateurs_publications_suggerees (ID_User)
-;
+	on utilisateurs_publications_suggerees (ID_User);
 

@@ -66,7 +66,7 @@ class Users
     /**
      * @var bool
      *
-     * @ORM\Column(name="BetaUser", type="boolean", nullable=false)
+     * @ORM\Column(name="BetaUser", type="boolean", nullable=false, options={"default"="0"})
      */
     private $betauser = '0';
 
@@ -104,13 +104,6 @@ class Users
      * @ORM\Column(name="Bibliotheque_Sous_Texture2", type="string", length=50, nullable=false, options={"default"="KNOTTY PINE"})
      */
     private $bibliothequeSousTexture2 = 'KNOTTY PINE';
-
-    /**
-     * @var float
-     *
-     * @ORM\Column(name="Bibliotheque_Grossissement", type="float", precision=10, scale=0, nullable=false, options={"default"="1.5"})
-     */
-    private $bibliothequeGrossissement = '1.5';
 
     /**
      * @var \DateTime
@@ -264,18 +257,6 @@ class Users
     public function setBibliothequeSousTexture2(string $bibliothequeSousTexture2): self
     {
         $this->bibliothequeSousTexture2 = $bibliothequeSousTexture2;
-
-        return $this;
-    }
-
-    public function getBibliothequeGrossissement(): ?float
-    {
-        return $this->bibliothequeGrossissement;
-    }
-
-    public function setBibliothequeGrossissement(float $bibliothequeGrossissement): self
-    {
-        $this->bibliothequeGrossissement = $bibliothequeGrossissement;
 
         return $this;
     }
