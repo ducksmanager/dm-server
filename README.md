@@ -41,11 +41,3 @@ Browse to the path of the source on the host, then run:
 ./scripts/deploy/deploy-app.sh web
 ```
 
-
-### Tasks
-
-#### Reset the demo user
-
-```bash
-docker-compose run web /bin/bash scripts/call-service.sh admin /ducksmanager/resetDemo
-```
