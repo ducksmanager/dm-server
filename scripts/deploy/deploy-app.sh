@@ -6,11 +6,12 @@ deploy() {
   && docker exec ${container_name} /bin/bash ${webdir}/scripts/deploy/backup-app.sh \
   && docker exec ${container_name} /bin/bash -c "rm -rf ${webdir}_new && mkdir -p ${webdir}_new" \
   \
-  && for f in .env .htaccess app assets scripts test favicon.ico index.php composer.json composer.lock docker-compose.yml; \
+  && for f in bin config scripts src .env .htaccess composer.json composer.lock docker-compose.yml favicon.ico; \
   do \
     docker cp ${f} ${container_name}:${webdir}_new; \
   done \
   \
+  && docker cp .env.prod.local ${container_name}:${webdir}_new/.env.local \
   && docker exec ${container_name} /bin/bash -c "echo `git rev-parse HEAD` > ${webdir}_new/deployment_commit_id.txt" \
   && docker exec -it ${container_name} /bin/bash ${webdir}_new/scripts/deploy/apply-app.sh
 }

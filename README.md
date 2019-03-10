@@ -23,14 +23,6 @@ docker-compose up --build -d && watch -n 1 'docker-compose ps'
 
 Creating the containers should take less than a minute. 
 
-#### Generate the DB config files
-
-Once the containers are started, run the following command to generate the DB config files from `docker-compose.yml` :
-```bash
-docker-compose run php php app/config/generate-config.php docker-compose.yml .env
-```
-(supposing that `web` is the name of the running Web container)
-
 
 ### Maintain
 

@@ -28,9 +28,3 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
-
-    # makes classes in src/AppBundle/DataFixtures available to be used as services
-    # and have a tag that allows actions to type-hint services
-    App\Tests\Fixtures\:
-        resource: '../tests/Fixtures'
-        tags: ['doctrine.fixture.orm']
