@@ -10,6 +10,7 @@ services:
   web:
     container_name: dm-server-web
     image: "nginx:1.15"
+    restart: always
     ports:
      - "8001:80"
     depends_on:
