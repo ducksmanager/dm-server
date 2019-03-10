@@ -1,7 +1,7 @@
 version: '2.4'
 services:
   web:
-    container_name: dm-server-web
+    container_name: dm-server-web-dev
     image: "nginx:1.15"
     ports:
      - "10001:80"
@@ -15,7 +15,7 @@ services:
      - front-network
 
   php:
-    container_name: dm-server-php
+    container_name: dm-server-php-dev
     build:
       context: .
       dockerfile: Dockerfile-dev
