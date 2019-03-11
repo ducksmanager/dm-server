@@ -107,14 +107,6 @@ class Users extends \Dm\Models\BaseModel
     private $bibliothequeSousTexture2 = 'KNOTTY PINE';
 
     /**
-     * @var float
-     *
-     * @ORM\Column(name="Bibliotheque_Grossissement", type="float", precision=10, scale=0, nullable=false, options={"default"="1.5"})
-     * @deprecated
-     */
-    private $bibliothequeGrossissement = '1.5';
-
-    /**
      * @var int
      *
      * @ORM\Column(name="DernierAcces", type="integer", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
