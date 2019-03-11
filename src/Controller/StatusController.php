@@ -2,7 +2,7 @@
 namespace App\Controller;
 
 use App\Helper\dbQueryHelper;
-use App\Helper\similarImagesHelper;
+use App\Helper\SimilarImagesHelper;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Response;
