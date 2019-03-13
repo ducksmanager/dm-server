@@ -13,11 +13,7 @@ class SimilarImagesOutput
     private $tags = [];
     private $type;
 
-    /**
-     * @param string $jsonEncodedResult
-     * @return SimilarImagesOutput
-     */
-    public static function createFromJsonEncodedResult($jsonEncodedResult) {
+    public static function createFromJsonEncodedResult(string $jsonEncodedResult) : ?SimilarImagesOutput {
         $resultArray = json_decode($jsonEncodedResult, true);
         if (is_null($resultArray)) {
             return null;

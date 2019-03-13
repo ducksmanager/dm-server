@@ -3,6 +3,7 @@ namespace App\Helper;
 
 use App\Entity\EdgeCreator\TranchesEnCoursModeles;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
@@ -10,7 +11,7 @@ use Symfony\Component\Serializer\Serializer;
 class JsonResponseFromObject extends JsonResponse
 {
     public function __construct($object) {
-        parent::__construct(self::serializeToJson($object), \Symfony\Component\HttpFoundation\Response::HTTP_OK, [], true);
+        parent::__construct(self::serializeToJson($object), Response::HTTP_OK, [], true);
     }
 
     private static function getNormalizer(): ObjectNormalizer {

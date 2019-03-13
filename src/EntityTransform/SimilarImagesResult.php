@@ -3,6 +3,8 @@
 namespace App\EntityTransform;
 
 
+use Psr\Log\LoggerInterface;
+
 class SimilarImagesResult
 {
     private $boundingRectHeight;
@@ -14,11 +16,7 @@ class SimilarImagesResult
     private $tags = [];
     private $type;
 
-    /**
-     * @param string $jsonEncodedResult
-     * @return SimilarImagesResult
-     */
-    public static function createFromJsonEncodedResult($jsonEncodedResult): SimilarImagesResult
+    public static function createFromJsonEncodedResult(LoggerInterface $logger, string $jsonEncodedResult): ?SimilarImagesResult
     {
         $resultArray = json_decode($jsonEncodedResult, true);
         if (is_null($resultArray)) {
@@ -30,14 +28,18 @@ class SimilarImagesResult
 
         if (array_key_exists('bounding_rects', $resultArray)) {
             $boundingRect = $resultArray['bounding_rects'];
+            if (count($resultArray['image_ids']) === 0) {
+                return null;
+            }
+
+            $outputObject->setImageIds(array_slice($resultArray['image_ids'], 0, 10, true));
+            $outputObject->setScores(array_slice($resultArray['scores'], 0, 10, true));
 
             $outputObject->setBoundingRectHeight($boundingRect['height']);
             $outputObject->setBoundingRectWidth($boundingRect['width']);
             $outputObject->setBoundingRectX($boundingRect['x']);
             $outputObject->setBoundingRectY($boundingRect['y']);
 
-            $outputObject->setImageIds(array_slice($resultArray['image_ids'], 0, 10, true));
-            $outputObject->setScores(array_slice($resultArray['scores'], 0, 10, true));
             $outputObject->setTags($resultArray['tags']);
         }
 

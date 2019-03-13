@@ -99,7 +99,10 @@ class CoveridController extends AbstractController
 
         $logger->info('Cover ID search: processing done');
 
-        if (is_null($engineResponse) || count($engineResponse->getImageIds()) === 0) {
+        if (is_null($engineResponse)) {
+            return new Response('Pastec returned NULL', Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+        if (count($engineResponse->getImageIds()) === 0) {
             return new JsonResponse(['type' => $engineResponse->getType()]);
         }
 

@@ -16,11 +16,9 @@ class SimilarImagesHelper {
   public static $sampleCover = 'https://outducks.org/au/bp/001/au_bp_001a_001.jpg';
 
   /**
-   * @param string $pastecHost
-   * @return string
    * @throws \InvalidArgumentException
    */
-  private static function getPastecUrl($pastecHost = null): string
+  private static function getPastecUrl(string $pastecHost = null): string
   {
       $PASTEC_HOSTS=explode(',', $_ENV['PASTEC_HOSTS']);
       if (is_null($pastecHost)) {
@@ -35,11 +33,9 @@ class SimilarImagesHelper {
   }
 
   /**
-   * @param string $pastecHost
-   * @return int
    * @throws \InvalidArgumentException|\RuntimeException
    */
-  public static function getIndexedImagesNumber($pastecHost): ?int
+  public static function getIndexedImagesNumber(string $pastecHost): ?int
   {
       $pastecUrl = self::getPastecUrl($pastecHost);
       if (!is_null(self::$mockedResults)) {
@@ -66,13 +62,7 @@ class SimilarImagesHelper {
       return count($resultArray['image_ids']);
   }
 
-  /**
-   * @param File $file
-   * @param LoggerInterface $logger
-   * @param string $pastecHost
-   * @return SimilarImagesResult
-   */
-  public static function getSimilarImages(File $file, LoggerInterface $logger, $pastecHost = 'pastec'): SimilarImagesResult
+  public static function getSimilarImages(File $file, LoggerInterface $logger, string $pastecHost = 'pastec'): ?SimilarImagesResult
   {
       $pastecUrl = self::getPastecUrl($pastecHost);
       if (!is_null(self::$mockedResults)) {
@@ -93,6 +83,6 @@ class SimilarImagesHelper {
           $logger->info($response);
           // @codeCoverageIgnoreEnd
       }
-      return SimilarImagesResult::createFromJsonEncodedResult($response);
+      return SimilarImagesResult::createFromJsonEncodedResult($logger, $response);
   }
 }
