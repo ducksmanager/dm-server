@@ -49,6 +49,13 @@ class TranchesPretes
      */
     private $points;
 
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="slug", type="string", length=30, nullable=true)
+     */
+    private $slug;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -98,6 +105,18 @@ class TranchesPretes
     public function setPoints(?int $points): self
     {
         $this->points = $points;
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(?string $slug): self
+    {
+        $this->slug = $slug;
 
         return $this;
     }
