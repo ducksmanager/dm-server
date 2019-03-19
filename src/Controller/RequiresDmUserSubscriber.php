@@ -4,8 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Dm\Users;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\NoResultException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
@@ -39,23 +37,17 @@ class RequiresDmUserSubscriber implements EventSubscriberInterface
             $password = $event->getRequest()->headers->get('x-dm-pass');
             if (isset($username, $password)) {
                 $this->logger->info("Authenticating $username...");
-                $qb = $this->dmEm->createQueryBuilder();
-                $qb
-                    ->select('DISTINCT u')
-                    ->from(Users::class, 'u')
-                    ->andWhere($qb->expr()->eq('u.username', ':username'))
-                    ->andWhere($qb->expr()->eq('u.password', ':password'));
+                $existingUser = $this->dmEm->getRepository(Users::class)->findOneBy([
+                    'username' => $username,
+                    'password' => $password
+                ]);
 
-                $qb->setParameters([':username' => $username, 'password' => $password]);
-
-                try {
-                    /** @var Users $existingUser */
-                    $existingUser = $qb->getQuery()->getSingleResult();
-                    $request->getSession()->set('user', ['username' => $existingUser->getUsername(), 'id' => $existingUser->getId()]);
-                    $this->logger->info("$username is logged in");
-                } catch (NoResultException|NonUniqueResultException $e) {
+                if (is_null($existingUser)) {
                     throw new UnauthorizedHttpException('Invalid credentials!');
                 }
+
+                $request->getSession()->set('user', ['username' => $existingUser->getUsername(), 'id' => $existingUser->getId()]);
+                $this->logger->info("$username is logged in");
             }
             else {
                 throw new UnauthorizedHttpException('Credentials are required!');
