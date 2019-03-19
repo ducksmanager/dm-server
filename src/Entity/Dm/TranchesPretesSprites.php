@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * TranchesPretesSprites
  *
- * @ORM\Table(name="tranches_pretes_sprites", uniqueConstraints={@ORM\UniqueConstraint(name="tranches_pretes_sprites_unique", columns={"ID_Tranche", "Sprite_name"})}, indexes={@ORM\Index(name="IDX_C5A7B720BAEB49DF", columns={"ID_Tranche"})})
+ * @ORM\Table(name="tranches_pretes_sprites", uniqueConstraints={@ORM\UniqueConstraint(name="tranches_pretes_sprites_unique", columns={"ID_Tranche", "Sprite_name"})}, indexes={@ORM\Index(name="tranches_pretes_sprites_name", columns={"Sprite_name"}), @ORM\Index(name="IDX_C5A7B720BAEB49DF", columns={"ID_Tranche"})})
  * @ORM\Entity
  */
 class TranchesPretesSprites
@@ -27,6 +27,13 @@ class TranchesPretesSprites
      * @ORM\Column(name="Sprite_name", type="string", length=25, nullable=false)
      */
     private $spriteName;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="Sprite_size", type="integer", nullable=false)
+     */
+    private $spriteSize;
 
     /**
      * @var \TranchesPretes
@@ -51,6 +58,18 @@ class TranchesPretesSprites
     public function setSpriteName(string $spriteName): self
     {
         $this->spriteName = $spriteName;
+
+        return $this;
+    }
+
+    public function getSpriteSize(): ?int
+    {
+        return $this->spriteSize;
+    }
+
+    public function setSpriteSize(int $spriteSize): self
+    {
+        $this->spriteSize = $spriteSize;
 
         return $this;
     }
