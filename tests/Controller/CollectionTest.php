@@ -27,9 +27,8 @@ class CollectionTest extends TestCommon
         $this->createUserCollection('dm_test_user');
 
         $response = $this->buildAuthenticatedServiceWithTestUser('/collection/issues', self::$dmUser, 'POST', [
-            'country' => 'fr',
-            'publication' => 'DDD',
-            'issuenumbers' => ['3'],
+            'publicationCode' => 'fr/DDD',
+            'issueNumbers' => ['3'],
             'condition' => 'bon'
         ])->call();
 
@@ -53,14 +52,12 @@ class CollectionTest extends TestCommon
     {
         $this->createUserCollection('dm_test_user');
 
-        $country = 'fr';
-        $publication = 'DDD';
-        $issueToUpdate = '1';
+        $publicationCode = 'fr/DDD';
+        $issuesToUpdate = ['1'];
 
         $response = $this->buildAuthenticatedServiceWithTestUser('/collection/issues', self::$dmUser, 'POST', [
-            'country' => $country,
-            'publication' => $publication,
-            'issuenumbers' => [$issueToUpdate],
+            'publicationCode' => $publicationCode,
+            'issueNumbers' => $issuesToUpdate,
             'condition' => 'bon',
             'istosell' => '1',
             'purchaseid' => '2'
@@ -77,9 +74,10 @@ class CollectionTest extends TestCommon
         $userIssues = $this->getUserIssues(self::$defaultTestDmUserName);
         $this->assertCount(3, $userIssues);
 
+        [$countryCode, $magazine] = explode('/', $publicationCode);
         /** @var Numeros $updatedIssue */
         $updatedIssue = $this->getEm('dm')->getRepository(Numeros::class)->findOneBy(
-            ['idUtilisateur' => $this->getUser('dm_test_user')->getId(), 'pays' => $country, 'magazine' => $publication, 'numero' => $issueToUpdate]
+            ['idUtilisateur' => $this->getUser('dm_test_user')->getId(), 'pays' => $countryCode, 'magazine' => $magazine, 'numero' => $issuesToUpdate[0]]
         );
         $this->assertEquals('fr', $updatedIssue->getPays());
         $this->assertEquals('DDD', $updatedIssue->getMagazine());
@@ -96,9 +94,8 @@ class CollectionTest extends TestCommon
         $this->createUserCollection('dm_test_user');
 
         $response = $this->buildAuthenticatedServiceWithTestUser('/collection/issues', self::$dmUser, 'POST', [
-            'country' => 'fr',
-            'publication' => 'DDD',
-            'issuenumbers' => ['1'],
+            'publicationCode' => 'fr/DDD',
+            'issueNumbers' => ['1'],
             'condition' => 'non_possede',
         ])->call();
 
@@ -114,15 +111,13 @@ class CollectionTest extends TestCommon
     {
         $this->createUserCollection('dm_test_user');
 
-        $country = 'fr';
-        $publication = 'DDD';
+        $publicationCode = 'fr/DDD';
         $issueToUpdate = '1';
         $issueToCreate = '3';
 
         $response = $this->buildAuthenticatedServiceWithTestUser('/collection/issues', self::$dmUser, 'POST', [
-            'country' => $country,
-            'publication' => $publication,
-            'issuenumbers' => [$issueToUpdate, $issueToCreate],
+            'publicationCode' => $publicationCode,
+            'issueNumbers' => [$issueToUpdate, $issueToCreate],
             'condition' => 'bon',
         ])->call();
 
@@ -133,9 +128,10 @@ class CollectionTest extends TestCommon
         $this->assertEquals('UPDATE', $responseObject[0]->action);
         $this->assertEquals(1, $responseObject[0]->numberOfIssues);
 
+        [$country, $magazine] = explode('/', $publicationCode);
         /** @var Numeros $updatedIssue */
         $updatedIssue = $this->getEm('dm')->getRepository(Numeros::class)->findOneBy(
-            ['idUtilisateur' => $this->getUser('dm_test_user')->getId(), 'pays' => $country, 'magazine' => $publication, 'numero' => $issueToUpdate]
+            ['idUtilisateur' => $this->getUser('dm_test_user')->getId(), 'pays' => $country, 'magazine' => $magazine, 'numero' => $issueToUpdate]
         );
         $this->assertNotNull($updatedIssue);
         $this->assertEquals('bon', $updatedIssue->getEtat());

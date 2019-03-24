@@ -102,13 +102,12 @@ class CollectionController extends AbstractController implements RequiresDmVersi
     public function postIssues(Request $request, LoggerInterface $logger): JsonResponse
     {
         $dmEm = $this->getEm('dm');
-        $country = $request->request->get('country');
-        $publication = $request->request->get('publication');
-        $issuenumbers = $request->request->get('issuenumbers');
+        $publication = $request->request->get('publicationCode');
+        $issueNumbers = $request->request->get('issueNumbers');
         $condition = $request->request->get('condition');
 
         if ($condition === 'non_possede') {
-            $nbRemoved = $this->deleteIssues($country, $publication, $issuenumbers);
+            $nbRemoved = $this->deleteIssues($publication, $issueNumbers);
             return new JsonResponse(
                 self::getSimpleArray([new UpdateCollectionResult('DELETE', $nbRemoved)])
             );
@@ -124,9 +123,8 @@ class CollectionController extends AbstractController implements RequiresDmVersi
         [$nbUpdated, $nbCreated] = $this->addOrChangeIssues(
             $dmEm,
             $this->getCurrentUser()['id'],
-            $country,
             $publication,
-            $issuenumbers,
+            $issueNumbers,
             $condition,
             $istosell,
             $purchaseid
@@ -319,21 +317,18 @@ class CollectionController extends AbstractController implements RequiresDmVersi
         }));
     }
 
-    private function deleteIssues(string $country, string $publication, array $issueNumbers): int
+    private function deleteIssues(string $publicationCode, array $issueNumbers): int
     {
         $dmEm = $this->getEm('dm');
         $qb = $dmEm->createQueryBuilder();
         $qb
             ->delete(Numeros::class, 'issues')
 
-            ->andWhere($qb->expr()->eq('issues.pays', ':country'))
-            ->setParameter(':country', $country)
+            ->andWhere($qb->expr()->eq($qb->expr()->concat('issues.pays',  '"/"', 'issues.magazine'), ':publicationCode'))
+            ->setParameter(':publicationCode', $publicationCode)
 
-            ->andWhere($qb->expr()->eq('issues.magazine', ':publication'))
-            ->setParameter(':publication', $publication)
-
-            ->andWhere($qb->expr()->in('issues.numero', ':issuenumbers'))
-            ->setParameter(':issuenumbers', $issueNumbers)
+            ->andWhere($qb->expr()->in('issues.numero', ':issueNumbers'))
+            ->setParameter(':issueNumbers', $issueNumbers)
 
             ->andWhere($qb->expr()->in('issues.idUtilisateur', ':userId'))
             ->setParameter(':userId', $this->getCurrentUser()['id']);
