@@ -19,7 +19,7 @@ class CsvHelper
                     $outputData[$row-1] = [];
                     foreach (array_keys($data) as $c) {
                         switch($headers[$c]) {
-                            case 'issuenumbers':
+                            case 'issueNumbers':
                                 $outputData[$row - 1][$headers[$c]] = explode(',', $data[$c]);
                                 break;
                             default:

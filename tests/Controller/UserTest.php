@@ -27,9 +27,8 @@ class UserTest extends TestCommon
             'username' => self::$defaultTestDmUserName,
             'password' => sha1(self::$testDmUsers[self::$defaultTestDmUserName])
         ],  [
-            'country' => 'fr',
-            'publication' => 'DDD',
-            'issuenumbers' => ['3'],
+            'publicationCode' => 'fr/DDD',
+            'issueNumbers' => ['3'],
             'condition' => 'bon'
         ], self::getSystemCredentialsNoVersion(self::$dmUser))
             ->call();

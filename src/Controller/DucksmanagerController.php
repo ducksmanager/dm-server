@@ -161,9 +161,8 @@ class DucksmanagerController extends AbstractController
                 $this->addOrChangeIssues(
                     $dmEm,
                     $demoUser->getId(),
-                    $publicationData['country'],
-                    $publicationData['publication'],
-                    $publicationData['issuenumbers'],
+                    $publicationData['publicationCode'],
+                    $publicationData['issueNumbers'],
                     $publicationData['condition'],
                     null,
                     null

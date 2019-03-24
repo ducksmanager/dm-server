@@ -11,7 +11,7 @@ trait collectionUpdateHelper {
      * @throws \Doctrine\ORM\OptimisticLockException
      * @throws \Doctrine\ORM\Query\QueryException
      */
-    private function addOrChangeIssues(EntityManager $em, int $userId, string $country, string $publication, array $issuenumbers, ?string $condition, ?bool $istosell, ?int $purchaseid): array
+    private function addOrChangeIssues(EntityManager $em, int $userId, string $publicationCode, array $issueNumbers, ?string $condition, ?bool $istosell, ?int $purchaseid): array
     {
         $conditionNewIssues = is_null($condition) ? 'possede' : $condition;
         $istosellNewIssues = is_null($istosell) ? false : $istosell;
@@ -22,14 +22,11 @@ trait collectionUpdateHelper {
             ->select('issues')
             ->from(Numeros::class, 'issues')
 
-            ->andWhere($qb->expr()->eq('issues.pays', ':country'))
-            ->setParameter(':country', $country)
+            ->andWhere($qb->expr()->eq($qb->expr()->concat('issues.pays',  '"/"', 'issues.magazine'), ':publicationCode'))
+            ->setParameter(':publicationCode', $publicationCode)
 
-            ->andWhere($qb->expr()->eq('issues.magazine', ':publication'))
-            ->setParameter(':publication', $publication)
-
-            ->andWhere($qb->expr()->in('issues.numero', ':issuenumbers'))
-            ->setParameter(':issuenumbers', $issuenumbers)
+            ->andWhere($qb->expr()->in('issues.numero', ':issueNumbers'))
+            ->setParameter(':issueNumbers', $issueNumbers)
 
             ->andWhere($qb->expr()->eq('issues.idUtilisateur', ':userId'))
             ->setParameter(':userId', $userId)
@@ -52,11 +49,13 @@ trait collectionUpdateHelper {
             $em->persist($existingIssue);
         }
 
-        $issueNumbersToCreate = array_diff($issuenumbers, array_keys($existingIssues));
+        [$countryCode, $magazine] = explode('/', $publicationCode);
+
+        $issueNumbersToCreate = array_diff($issueNumbers, array_keys($existingIssues));
         foreach($issueNumbersToCreate as $issueNumberToCreate) {
             $newIssue = new Numeros();
-            $newIssue->setPays($country);
-            $newIssue->setMagazine($publication);
+            $newIssue->setPays($countryCode);
+            $newIssue->setMagazine($magazine);
             $newIssue->setNumero($issueNumberToCreate);
             $newIssue->setEtat($conditionNewIssues);
             $newIssue->setAv($istosellNewIssues);
