@@ -17,7 +17,7 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
-            pattern: ^/(?!status)(?!edgesprites).+
+            pattern: ^/(?!coa)(?!edgesprites)(?!status).+
             http_basic: ~
 
     access_control:
