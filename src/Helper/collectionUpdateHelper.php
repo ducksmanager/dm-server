@@ -11,11 +11,11 @@ trait collectionUpdateHelper {
      * @throws \Doctrine\ORM\OptimisticLockException
      * @throws \Doctrine\ORM\Query\QueryException
      */
-    private function addOrChangeIssues(EntityManager $em, int $userId, string $publicationCode, array $issueNumbers, ?string $condition, ?bool $istosell, ?int $purchaseid): array
+    private function addOrChangeIssues(EntityManager $em, int $userId, string $publicationCode, array $issueNumbers, ?string $condition, ?bool $istosell, ?int $purchaseId): array
     {
         $conditionNewIssues = is_null($condition) ? 'possede' : $condition;
         $istosellNewIssues = is_null($istosell) ? false : $istosell;
-        $purchaseidNewIssues = is_null($purchaseid) ? -2 : $purchaseid; // TODO allow NULL
+        $purchaseIdNewIssues = is_null($purchaseId) ? -2 : $purchaseId; // TODO allow NULL
 
         $qb = $em->createQueryBuilder();
         $qb
@@ -43,8 +43,8 @@ trait collectionUpdateHelper {
             if (!is_null($istosell)) {
                 $existingIssue->setAv($istosell);
             }
-            if (!is_null($purchaseid)) {
-                $existingIssue->setIdAcquisition($purchaseid);
+            if (!is_null($purchaseId)) {
+                $existingIssue->setIdAcquisition($purchaseId);
             }
             $em->persist($existingIssue);
         }
@@ -59,7 +59,7 @@ trait collectionUpdateHelper {
             $newIssue->setNumero($issueNumberToCreate);
             $newIssue->setEtat($conditionNewIssues);
             $newIssue->setAv($istosellNewIssues);
-            $newIssue->setIdAcquisition($purchaseidNewIssues);
+            $newIssue->setIdAcquisition($purchaseIdNewIssues);
             $newIssue->setIdUtilisateur($userId);
             $newIssue->setDateajout(new \DateTime());
 

@@ -60,7 +60,7 @@ class CollectionTest extends TestCommon
             'issueNumbers' => $issuesToUpdate,
             'condition' => 'bon',
             'istosell' => '1',
-            'purchaseid' => '2'
+            'purchaseId' => '2'
         ])->call();
 
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
