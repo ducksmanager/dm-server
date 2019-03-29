@@ -93,6 +93,21 @@ class CollectionController extends AbstractController implements RequiresDmVersi
     }
 
     /**
+     * @Route(methods={"GET"}, path="/collection/purchases")
+     */
+    public function getPurchases(): JsonResponse
+    {
+        $dmEm = $this->getEm('dm');
+        $qb = $dmEm->createQueryBuilder();
+        $qb->select('purchases.idAcquisition AS id, purchases.description, concat(purchases.date, \'\') AS date')
+            ->from(Achats::class, 'purchases')
+            ->where($qb->expr()->eq('purchases.idUser', $this->getCurrentUser()['id']))
+            ->orderBy('purchases.date', 'ASC');
+
+        return new JsonResponse($qb->getQuery()->getArrayResult());
+    }
+
+    /**
      * @Route(methods={"POST"}, path="/collection/issues")
      * @throws \Doctrine\Common\Persistence\Mapping\MappingException
      * @throws \Doctrine\ORM\ORMException
@@ -114,11 +129,11 @@ class CollectionController extends AbstractController implements RequiresDmVersi
         }
 
         $istosell = $request->request->get('istosell');
-        $purchaseid = $request->request->get('purchaseid');
+        $purchaseId = $request->request->get('purchaseId');
 
-        if (!$this->getUserPurchase($purchaseid)) {
-            $logger->warning("User {$this->getCurrentUser()['id']} tried to use purchase ID $purchaseid which is owned by another user");
-            $purchaseid = null;
+        if (!$this->getUserPurchase($purchaseId)) {
+            $logger->warning("User {$this->getCurrentUser()['id']} tried to use purchase ID $purchaseId which is owned by another user");
+            $purchaseId = null;
         }
         [$nbUpdated, $nbCreated] = $this->addOrChangeIssues(
             $dmEm,
@@ -127,7 +142,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
             $issueNumbers,
             $condition,
             $istosell,
-            $purchaseid
+            $purchaseId
         );
         return new JsonResponse(self::getSimpleArray([
             new UpdateCollectionResult('UPDATE', $nbUpdated),
@@ -147,11 +162,20 @@ class CollectionController extends AbstractController implements RequiresDmVersi
     {
         $dmEm = $this->getEm('dm');
 
-        $purchaseDate = $request->request->get('date');
+        $purchaseDateStr = $request->request->get('date');
+        $purchaseDate = \DateTime::createFromFormat('Y-m-d H:i:s', $purchaseDateStr.' 00:00:00');
         $purchaseDescription = $request->request->get('description');
         $idUser = $this->getCurrentUser()['id'];
 
         if ($purchaseId === 'NEW') {
+            $duplicatePurchase = $dmEm->getRepository(Achats::class)->findOneBy([
+                'idUser' => $this->getCurrentUser()['id'],
+                'date' => $purchaseDate,
+                'description' => $purchaseDescription
+            ]);
+            if (!is_null($duplicatePurchase)) {
+                return new Response($translator->trans('ERROR_PURCHASE_ALREADY_EXISTS'), Response::HTTP_CONFLICT);
+            }
             $purchase = new Achats();
         }
         else {
@@ -162,7 +186,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
         }
 
         $purchase->setIdUser($idUser);
-        $purchase->setDate(\DateTime::createFromFormat('Y-m-d H:i:s', $purchaseDate.' 00:00:00'));
+        $purchase->setDate($purchaseDate);
         $purchase->setDescription($purchaseDescription);
 
         $dmEm->persist($purchase);
