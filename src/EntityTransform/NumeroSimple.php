@@ -5,49 +5,45 @@ namespace App\EntityTransform;
 
 class NumeroSimple
 {
-    private $numero;
-    private $etat;
+    private $issueNumber;
+    private $condition;
+    private $purchaseId;
 
-    /**
-     * @param $numero
-     * @param $etat
-     */
-    public function __construct($numero, $etat)
+    public function __construct(string $issueNumber, string $condition, ?int $purchaseId)
     {
-        $this->numero = $numero;
-        $this->etat = $etat;
+        $this->issueNumber = $issueNumber;
+        $this->condition = $condition;
+        $this->purchaseId = $purchaseId;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getNumero()
+    public function getIssueNumber() : string
     {
-        return $this->numero;
+        return $this->issueNumber;
     }
 
-    /**
-     * @param mixed $numero
-     */
-    public function setNumero($numero): void
+    public function setIssueNumber(string $issueNumber): void
     {
-        $this->numero = $numero;
+        $this->issueNumber = $issueNumber;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getEtat()
+    public function getCondition() : string
     {
-        return $this->etat;
+        return $this->condition;
     }
 
-    /**
-     * @param mixed $etat
-     */
-    public function setEtat($etat): void
+    public function setCondition(string $condition): void
     {
-        $this->etat = $etat;
+        $this->condition = $condition;
+    }
+
+    public function getPurchaseId() : ?int
+    {
+        return $this->purchaseId;
+    }
+
+    public function setPurchaseId(int $purchaseId): void
+    {
+        $this->purchaseId = $purchaseId;
     }
 
     public function toArray(): array
