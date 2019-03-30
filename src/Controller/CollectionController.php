@@ -59,7 +59,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
                 $result->getNumeros()->set($publicationCode, new ArrayCollection());
             }
 
-            $result->getNumeros()->get($publicationCode)->add(new NumeroSimple($numero, $etat));
+            $result->getNumeros()->get($publicationCode)->add(new NumeroSimple($numero, $etat, $issue->getIdAcquisition()));
         }
 
         $countryNames = json_decode(
