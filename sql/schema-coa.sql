@@ -1,3198 +1,1100 @@
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_appearance`
---
-
-DROP TABLE IF EXISTS `inducks_appearance`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_appearance` (
-  `storyversioncode` varchar(19) COLLATE utf8_unicode_ci NOT NULL,
-  `charactercode` varchar(62) COLLATE utf8_unicode_ci NOT NULL,
-  `number` int(7) DEFAULT NULL,
-  `appearancecomment` varchar(209) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`storyversioncode`,`charactercode`),
-  KEY `fk_inducks_appearance0` (`charactercode`),
-  KEY `fk_inducks_appearance1` (`appearancecomment`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_characteralias`
---
-
-DROP TABLE IF EXISTS `inducks_characteralias`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_characteralias` (
-  `charactercode` varchar(31) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `charactername` varchar(58) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`charactername`),
-  KEY `fk_inducks_characteralias0` (`charactercode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_characterdetail`
---
-
-DROP TABLE IF EXISTS `inducks_characterdetail`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_characterdetail` (
-  `charactername` varchar(7) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `charactercode` varchar(6) COLLATE utf8_unicode_ci NOT NULL,
-  `number` int(7) DEFAULT NULL,
-  PRIMARY KEY (`charactercode`),
-  KEY `fk_inducks_characterdetail0` (`charactername`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_charactername`
---
-
-DROP TABLE IF EXISTS `inducks_charactername`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_charactername` (
-  `charactercode` varchar(38) COLLATE utf8_unicode_ci NOT NULL,
-  `languagecode` varchar(7) COLLATE utf8_unicode_ci NOT NULL,
-  `charactername` varchar(83) COLLATE utf8_unicode_ci NOT NULL,
-  `preferred` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  `characternamecomment` varchar(99) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`charactercode`,`languagecode`,`charactername`),
-  KEY `fk_inducks_charactername0` (`languagecode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_characterreference`
---
-
-DROP TABLE IF EXISTS `inducks_characterreference`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_characterreference` (
-  `fromcharactercode` varchar(21) COLLATE utf8_unicode_ci NOT NULL,
-  `tocharactercode` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
-  `isgroupofcharacters` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`fromcharactercode`,`tocharactercode`),
-  KEY `fk_inducks_characterreference0` (`tocharactercode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_character`
---
-
-DROP TABLE IF EXISTS `inducks_character`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_character` (
-  `charactercode` varchar(69) COLLATE utf8_unicode_ci NOT NULL,
-  `charactername` varchar(69) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `official` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  `onetime` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  `heroonly` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  `charactercomment` varchar(671) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`charactercode`),
-  FULLTEXT KEY `fulltext_inducks_character` (`charactername`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_characterurl`
---
-
-DROP TABLE IF EXISTS `inducks_characterurl`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_characterurl` (
-  `charactercode` varchar(1) COLLATE utf8_unicode_ci NOT NULL,
-  `sitecode` varchar(1) COLLATE utf8_unicode_ci NOT NULL,
-  `url` varchar(1) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`charactercode`,`sitecode`),
-  KEY `fk_inducks_characterurl0` (`sitecode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_countryname`
---
-
-DROP TABLE IF EXISTS `inducks_countryname`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_countryname` (
-  `countrycode` varchar(2) COLLATE utf8_unicode_ci NOT NULL,
-  `languagecode` varchar(5) COLLATE utf8_unicode_ci NOT NULL,
-  `countryname` varchar(56) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`countrycode`,`languagecode`),
-  KEY `fk_inducks_countryname0` (`languagecode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_country`
---
-
-DROP TABLE IF EXISTS `inducks_country`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_country` (
-  `countrycode` varchar(2) COLLATE utf8_unicode_ci NOT NULL,
-  `countryname` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `defaultlanguage` varchar(7) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`countrycode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_currencyname`
---
-
-DROP TABLE IF EXISTS `inducks_currencyname`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_currencyname` (
-  `currencycode` varchar(3) COLLATE utf8_unicode_ci NOT NULL,
-  `languagecode` varchar(2) COLLATE utf8_unicode_ci NOT NULL,
-  `shortcurrencyname` varchar(18) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `longcurrencyname` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`currencycode`,`languagecode`),
-  KEY `fk_inducks_currencyname0` (`languagecode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_currency`
---
-
-DROP TABLE IF EXISTS `inducks_currency`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_currency` (
-  `currencycode` varchar(3) COLLATE utf8_unicode_ci NOT NULL,
-  `currencyname` varchar(18) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`currencycode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_entrycharactername`
---
-
-DROP TABLE IF EXISTS `inducks_entrycharactername`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_entrycharactername` (
-  `entrycode` varchar(22) COLLATE utf8_unicode_ci NOT NULL,
-  `charactercode` varchar(55) COLLATE utf8_unicode_ci NOT NULL,
-  `charactername` varchar(88) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`entrycode`,`charactercode`),
-  KEY `fk_inducks_entrycharactername0` (`charactercode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_entryjob`
---
-
-DROP TABLE IF EXISTS `inducks_entryjob`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_entryjob` (
-  `entrycode` varchar(19) COLLATE utf8_unicode_ci NOT NULL,
-  `personcode` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-  `transletcol` varchar(1) COLLATE utf8_unicode_ci NOT NULL,
-  `entryjobcomment` varchar(51) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`entrycode`,`personcode`,`transletcol`),
-  KEY `fk_inducks_entryjob0` (`personcode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_entry_nofulltext`
---
-
-DROP TABLE IF EXISTS `inducks_entry_nofulltext`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_entry_nofulltext` (
-  `entrycode` varchar(22) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `issuecode` varchar(17) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `storyversioncode` varchar(19) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `languagecode` varchar(7) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `includedinentrycode` varchar(19) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `position` varchar(7) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `printedcode` varchar(88) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `guessedcode` varchar(39) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `title` varchar(235) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `reallytitle` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  `printedhero` varchar(96) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `changes` varchar(628) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `cut` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `minorchanges` varchar(558) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `missingpanels` varchar(23) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `mirrored` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  `sideways` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  `startdate` varchar(10) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `enddate` varchar(10) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `identificationuncertain` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  `alsoreprint` varchar(66) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `part` varchar(5) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `entrycomment` varchar(3476) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `error` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  KEY `pk0` (`entrycode`),
-  KEY `fk0` (`issuecode`),
-  KEY `fk1` (`storyversioncode`),
-  KEY `fk2` (`languagecode`),
-  KEY `fk3` (`includedinentrycode`),
-  KEY `fk4` (`position`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_entry`
---
-
-DROP TABLE IF EXISTS `inducks_entry`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_entry` (
-  `entrycode` varchar(22) COLLATE utf8_unicode_ci NOT NULL,
-  `issuecode` varchar(17) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `storyversioncode` varchar(19) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `languagecode` varchar(7) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `includedinentrycode` varchar(19) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `position` varchar(9) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `printedcode` varchar(88) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `guessedcode` varchar(39) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `title` varchar(235) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `reallytitle` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  `printedhero` varchar(96) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `changes` varchar(628) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `cut` varchar(104) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `minorchanges` varchar(558) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `missingpanels` varchar(2) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `mirrored` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  `sideways` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  `startdate` varchar(10) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `enddate` varchar(10) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `identificationuncertain` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  `alsoreprint` varchar(111) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `part` varchar(5) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `entrycomment` varchar(1715) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `error` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`entrycode`),
-  KEY `fk_inducks_entry0` (`issuecode`),
-  KEY `fk_inducks_entry1` (`storyversioncode`),
-  KEY `fk_inducks_entry2` (`languagecode`),
-  KEY `fk_inducks_entry3` (`includedinentrycode`),
-  KEY `fk_inducks_entry4` (`position`),
-  FULLTEXT KEY `entryTitleFullText` (`title`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_entryurl`
---
-
-DROP TABLE IF EXISTS `inducks_entryurl`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_entryurl` (
-  `entrycode` varchar(21) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `sitecode` varchar(11) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `pagenumber` int(7) DEFAULT NULL,
-  `url` varchar(87) COLLATE utf8_unicode_ci DEFAULT NULL,
-  KEY `fk_inducks_entryurl0` (`entrycode`),
-  KEY `fk_inducks_entryurl1` (`sitecode`),
-  KEY `fk_inducks_entryurl2` (`url`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_equiv`
---
-
-DROP TABLE IF EXISTS `inducks_equiv`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_equiv` (
-  `issuecode` varchar(15) COLLATE utf8_unicode_ci NOT NULL,
-  `equivid` int(7) NOT NULL,
-  `equivcomment` varchar(3) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`issuecode`,`equivid`),
-  KEY `fk_inducks_equiv0` (`equivid`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_herocharacter`
---
-
-DROP TABLE IF EXISTS `inducks_herocharacter`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_herocharacter` (
-  `storycode` varchar(18) COLLATE utf8_unicode_ci NOT NULL,
-  `charactercode` varchar(54) COLLATE utf8_unicode_ci NOT NULL,
-  `number` int(7) DEFAULT NULL,
-  PRIMARY KEY (`storycode`,`charactercode`),
-  KEY `fk_inducks_herocharacter0` (`charactercode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_inputfile`
---
-
-DROP TABLE IF EXISTS `inducks_inputfile`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_inputfile` (
-  `inputfilecode` int(7) NOT NULL,
-  `path` varchar(11) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `filename` varchar(22) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `layout` varchar(10) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `locked` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  `maintenanceteamcode` varchar(8) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `countrycode` varchar(2) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `languagecode` varchar(7) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `producercode` varchar(15) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`inputfilecode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_issuecollecting`
---
-
-DROP TABLE IF EXISTS `inducks_issuecollecting`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_issuecollecting` (
-  `collectingissuecode` varchar(17) COLLATE utf8_unicode_ci NOT NULL,
-  `collectedissuecode` varchar(15) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`collectingissuecode`,`collectedissuecode`),
-  KEY `fk_inducks_issuecollecting0` (`collectedissuecode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_issuedate`
---
-
-DROP TABLE IF EXISTS `inducks_issuedate`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_issuedate` (
-  `issuecode` varchar(17) COLLATE utf8_unicode_ci NOT NULL,
-  `date` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
-  `kindofdate` varchar(76) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`issuecode`,`date`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_issuejob`
---
-
-DROP TABLE IF EXISTS `inducks_issuejob`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_issuejob` (
-  `issuecode` varchar(17) COLLATE utf8_unicode_ci NOT NULL,
-  `personcode` varchar(48) COLLATE utf8_unicode_ci NOT NULL,
-  `inxtransletcol` varchar(1) COLLATE utf8_unicode_ci NOT NULL,
-  `issuejobcomment` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`issuecode`,`personcode`,`inxtransletcol`),
-  KEY `fk_inducks_issuejob0` (`personcode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_issueprice`
---
-
-DROP TABLE IF EXISTS `inducks_issueprice`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_issueprice` (
-  `issuecode` varchar(17) COLLATE utf8_unicode_ci NOT NULL,
-  `amount` varchar(43) COLLATE utf8_unicode_ci NOT NULL,
-  `currency` varchar(14) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `comment` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `sequencenumber` int(7) DEFAULT NULL,
-  PRIMARY KEY (`issuecode`,`amount`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_issuerange`
---
-
-DROP TABLE IF EXISTS `inducks_issuerange`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_issuerange` (
-  `issuerangecode` varchar(15) COLLATE utf8_unicode_ci NOT NULL,
-  `publicationcode` varchar(9) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `title` varchar(229) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `circulation` varchar(25) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `issuerangecomment` varchar(468) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `numbersarefake` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  `error` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`issuerangecode`),
-  KEY `fk_inducks_issuerange0` (`publicationcode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_issue`
---
-
-DROP TABLE IF EXISTS `inducks_issue`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_issue` (
-  `issuecode` varchar(17) COLLATE utf8_unicode_ci NOT NULL,
-  `issuerangecode` varchar(15) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `publicationcode` varchar(12) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `issuenumber` varchar(12) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `title` varchar(158) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `size` varchar(61) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `pages` varchar(82) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `price` varchar(160) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `printrun` varchar(142) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `attached` varchar(288) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `oldestdate` varchar(10) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `fullyindexed` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  `issuecomment` varchar(1270) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `error` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  `filledoldestdate` varchar(10) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `locked` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  `inxforbidden` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  `inputfilecode` int(7) DEFAULT NULL,
-  `maintenanceteamcode` varchar(8) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`issuecode`),
-  KEY `fk_inducks_issue0` (`issuerangecode`),
-  KEY `fk_inducks_issue1` (`publicationcode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_issueurl`
---
-
-DROP TABLE IF EXISTS `inducks_issueurl`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_issueurl` (
-  `issuecode` varchar(14) COLLATE utf8_unicode_ci NOT NULL,
-  `sitecode` varchar(12) COLLATE utf8_unicode_ci NOT NULL,
-  `url` varchar(12) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`issuecode`,`sitecode`),
-  KEY `fk_inducks_issueurl0` (`sitecode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_languagename`
---
-
-DROP TABLE IF EXISTS `inducks_languagename`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_languagename` (
-  `desclanguagecode` varchar(5) COLLATE utf8_unicode_ci NOT NULL,
-  `languagecode` varchar(7) COLLATE utf8_unicode_ci NOT NULL,
-  `languagename` varchar(57) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`desclanguagecode`,`languagecode`),
-  KEY `fk_inducks_languagename0` (`languagecode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_language`
---
-
-DROP TABLE IF EXISTS `inducks_language`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_language` (
-  `languagecode` varchar(7) COLLATE utf8_unicode_ci NOT NULL,
-  `defaultlanguagecode` varchar(5) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `languagename` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`languagecode`),
-  KEY `fk_inducks_language0` (`defaultlanguagecode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_logdata`
---
-
-DROP TABLE IF EXISTS `inducks_logdata`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_logdata` (
-  `logid` varchar(4) COLLATE utf8_unicode_ci NOT NULL,
-  `category` int(7) DEFAULT NULL,
-  `logtext` varchar(108) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`logid`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_logocharacter`
---
-
-DROP TABLE IF EXISTS `inducks_logocharacter`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_logocharacter` (
-  `entrycode` varchar(22) COLLATE utf8_unicode_ci NOT NULL,
-  `charactercode` varchar(54) COLLATE utf8_unicode_ci NOT NULL,
-  `reallyintitle` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  `number` int(7) DEFAULT NULL,
-  `logocharactercomment` varchar(28) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`entrycode`,`charactercode`),
-  KEY `fk_inducks_logocharacter0` (`charactercode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_log`
---
-
-DROP TABLE IF EXISTS `inducks_log`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_log` (
-  `number` int(7) NOT NULL,
-  `logkey` varchar(41) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `storycode` varchar(39) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `logid` varchar(4) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `logtype` varchar(1) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `par1` varchar(1847) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `par2` varchar(1846) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `par3` varchar(285) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `marked` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  `inputfilecode` int(7) DEFAULT NULL,
-  `maintenanceteamcode` varchar(8) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`number`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_moviecharacter`
---
-
-DROP TABLE IF EXISTS `inducks_moviecharacter`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_moviecharacter` (
-  `moviecode` varchar(13) COLLATE utf8_unicode_ci NOT NULL,
-  `charactercode` varchar(36) COLLATE utf8_unicode_ci NOT NULL,
-  `istitlecharacter` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`moviecode`,`charactercode`),
-  KEY `fk_inducks_moviecharacter0` (`charactercode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_moviejob`
---
-
-DROP TABLE IF EXISTS `inducks_moviejob`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_moviejob` (
-  `moviecode` varchar(13) COLLATE utf8_unicode_ci NOT NULL,
-  `personcode` varchar(39) COLLATE utf8_unicode_ci NOT NULL,
-  `role` varchar(15) COLLATE utf8_unicode_ci NOT NULL,
-  `moviejobcomment` varchar(82) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `indirect` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`moviecode`,`personcode`,`role`),
-  KEY `fk_inducks_moviejob0` (`personcode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_moviereference`
---
-
-DROP TABLE IF EXISTS `inducks_moviereference`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_moviereference` (
-  `storycode` varchar(17) COLLATE utf8_unicode_ci NOT NULL,
-  `moviecode` varchar(14) COLLATE utf8_unicode_ci NOT NULL,
-  `referencereasonid` int(7) DEFAULT NULL,
-  `frommovietostory` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`storycode`,`moviecode`),
-  KEY `fk_inducks_moviereference0` (`moviecode`),
-  KEY `fk_inducks_moviereference1` (`referencereasonid`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_movie`
---
-
-DROP TABLE IF EXISTS `inducks_movie`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_movie` (
-  `moviecode` varchar(14) COLLATE utf8_unicode_ci NOT NULL,
-  `title` varchar(62) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `moviecomment` varchar(570) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `appsummary` varchar(523) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `moviejobsummary` varchar(1291) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `locked` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  `inputfilecode` int(7) DEFAULT NULL,
-  `maintenanceteamcode` varchar(7) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `aka` varchar(81) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `creationdate` varchar(10) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `moviedescription` varchar(836) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `distributor` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `genre` varchar(3) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `orderer` varchar(178) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `publicationdate` varchar(10) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `source` varchar(91) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `tim` varchar(6) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`moviecode`),
-  FULLTEXT KEY `fulltext_inducks_movie` (`appsummary`,`moviejobsummary`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_personalias`
---
-
-DROP TABLE IF EXISTS `inducks_personalias`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_personalias` (
-  `personcode` varchar(31) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `surname` varchar(48) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `givenname` varchar(31) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `official` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  KEY `fk_inducks_personalias0` (`personcode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_person`
---
-
-DROP TABLE IF EXISTS `inducks_person`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_person` (
-  `personcode` varchar(79) COLLATE utf8_unicode_ci NOT NULL,
-  `nationalitycountrycode` varchar(2) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `fullname` varchar(79) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `official` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  `personcomment` varchar(221) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `unknownstudiomember` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  `isfake` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  `numberofindexedissues` int(7) DEFAULT NULL,
-  `birthname` varchar(37) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `borndate` varchar(10) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `bornplace` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `deceaseddate` varchar(10) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `deceasedplace` varchar(31) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `education` varchar(189) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `moviestext` varchar(879) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `comicstext` varchar(927) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `othertext` varchar(307) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `photofilename` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `photocomment` varchar(68) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `photosource` varchar(67) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `personrefs` varchar(180) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`personcode`),
-  KEY `fk_inducks_person0` (`nationalitycountrycode`),
-  FULLTEXT KEY `fulltext_inducks_person` (`fullname`,`birthname`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_personurl`
---
-
-DROP TABLE IF EXISTS `inducks_personurl`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_personurl` (
-  `personcode` varchar(24) COLLATE utf8_unicode_ci NOT NULL,
-  `sitecode` varchar(15) COLLATE utf8_unicode_ci NOT NULL,
-  `url` varchar(31) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`personcode`,`sitecode`),
-  KEY `fk_inducks_personurl0` (`sitecode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_publicationcategory`
---
-
-DROP TABLE IF EXISTS `inducks_publicationcategory`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_publicationcategory` (
-  `publicationcode` varchar(12) COLLATE utf8_unicode_ci NOT NULL,
-  `category` varchar(61) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`publicationcode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_publicationname`
---
-
-DROP TABLE IF EXISTS `inducks_publicationname`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_publicationname` (
-  `publicationcode` varchar(9) COLLATE utf8_unicode_ci NOT NULL,
-  `publicationname` varchar(62) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`publicationcode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_publication`
---
-
-DROP TABLE IF EXISTS `inducks_publication`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_publication` (
-  `publicationcode` varchar(12) COLLATE utf8_unicode_ci NOT NULL,
-  `countrycode` varchar(2) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `languagecode` varchar(7) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `title` varchar(131) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `size` varchar(61) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `publicationcomment` varchar(1354) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `circulation` varchar(4) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `numbersarefake` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  `error` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  `locked` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  `inxforbidden` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  `inputfilecode` int(7) DEFAULT NULL,
-  `maintenanceteamcode` varchar(9) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`publicationcode`),
-  KEY `fk_inducks_publication0` (`countrycode`),
-  KEY `fk_inducks_publication1` (`languagecode`),
-  FULLTEXT KEY `fulltext_inducks_publication` (`title`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_publicationurl`
---
-
-DROP TABLE IF EXISTS `inducks_publicationurl`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_publicationurl` (
-  `publicationcode` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
-  `sitecode` varchar(16) COLLATE utf8_unicode_ci NOT NULL,
-  `url` varchar(236) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`publicationcode`,`sitecode`),
-  KEY `fk_inducks_publicationurl0` (`sitecode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_publisher`
---
-
-DROP TABLE IF EXISTS `inducks_publisher`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_publisher` (
-  `publisherid` varchar(84) COLLATE utf8_unicode_ci NOT NULL,
-  `publishername` varchar(84) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`publisherid`),
-  FULLTEXT KEY `fulltext_inducks_publisher` (`publishername`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_publishingjob`
---
-
-DROP TABLE IF EXISTS `inducks_publishingjob`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_publishingjob` (
-  `publisherid` varchar(84) COLLATE utf8_unicode_ci NOT NULL,
-  `issuecode` varchar(17) COLLATE utf8_unicode_ci NOT NULL,
-  `publishingjobcomment` varchar(53) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`publisherid`,`issuecode`),
-  KEY `fk_inducks_publishingjob0` (`issuecode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_referencereasonname`
---
-
-DROP TABLE IF EXISTS `inducks_referencereasonname`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_referencereasonname` (
-  `referencereasonid` int(7) NOT NULL,
-  `languagecode` varchar(2) COLLATE utf8_unicode_ci NOT NULL,
-  `referencereasontranslation` varchar(28) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`referencereasonid`,`languagecode`),
-  KEY `fk_inducks_referencereasonname0` (`languagecode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_referencereason`
---
-
-DROP TABLE IF EXISTS `inducks_referencereason`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_referencereason` (
-  `referencereasonid` int(7) NOT NULL,
-  `referencereasontext` varchar(96) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`referencereasonid`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_site`
---
-
-DROP TABLE IF EXISTS `inducks_site`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_site` (
-  `sitecode` varchar(16) COLLATE utf8_unicode_ci NOT NULL,
-  `urlbase` varchar(51) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `images` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  `sitename` varchar(85) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `sitelogo` varchar(107) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `properties` varchar(1) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`sitecode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_statcharactercharacter`
---
-
-DROP TABLE IF EXISTS `inducks_statcharactercharacter`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_statcharactercharacter` (
-  `charactercode` varchar(45) COLLATE utf8_unicode_ci NOT NULL,
-  `cocharactercode` varchar(45) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `total` int(7) NOT NULL,
-  `yearrange` varchar(142) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`charactercode`,`total`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_statcharactercountry`
---
-
-DROP TABLE IF EXISTS `inducks_statcharactercountry`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_statcharactercountry` (
-  `charactercode` varchar(45) COLLATE utf8_unicode_ci NOT NULL,
-  `countrycode` varchar(2) COLLATE utf8_unicode_ci NOT NULL,
-  `total` int(7) DEFAULT NULL,
-  PRIMARY KEY (`charactercode`,`countrycode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_statcharacterstory`
---
-
-DROP TABLE IF EXISTS `inducks_statcharacterstory`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_statcharacterstory` (
-  `charactercode` varchar(45) COLLATE utf8_unicode_ci NOT NULL,
-  `productionletter` varchar(1) COLLATE utf8_unicode_ci NOT NULL,
-  `total` int(7) DEFAULT NULL,
-  `yearrange` varchar(105) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`charactercode`,`productionletter`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_statpersoncharacter`
---
-
-DROP TABLE IF EXISTS `inducks_statpersoncharacter`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_statpersoncharacter` (
-  `personcode` varchar(31) COLLATE utf8_unicode_ci NOT NULL,
-  `charactercode` varchar(45) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `total` int(7) NOT NULL,
-  `yearrange` varchar(111) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`personcode`,`total`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_statpersoncountry`
---
-
-DROP TABLE IF EXISTS `inducks_statpersoncountry`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_statpersoncountry` (
-  `personcode` varchar(31) COLLATE utf8_unicode_ci NOT NULL,
-  `countrycode` varchar(2) COLLATE utf8_unicode_ci NOT NULL,
-  `total` int(7) DEFAULT NULL,
-  PRIMARY KEY (`personcode`,`countrycode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_statpersonperson`
---
-
-DROP TABLE IF EXISTS `inducks_statpersonperson`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_statpersonperson` (
-  `personcode` varchar(31) COLLATE utf8_unicode_ci NOT NULL,
-  `copersoncode` varchar(31) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `total` int(7) NOT NULL,
-  `yearrange` varchar(59) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`personcode`,`total`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_statpersonstory`
---
-
-DROP TABLE IF EXISTS `inducks_statpersonstory`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_statpersonstory` (
-  `personcode` varchar(31) COLLATE utf8_unicode_ci NOT NULL,
-  `productionletter` varchar(1) COLLATE utf8_unicode_ci NOT NULL,
-  `total` int(7) DEFAULT NULL,
-  `yearrange` varchar(62) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`personcode`,`productionletter`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_storycodes`
---
-
-DROP TABLE IF EXISTS `inducks_storycodes`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_storycodes` (
-  `storycode` varchar(19) COLLATE utf8_unicode_ci NOT NULL,
-  `alternativecode` varchar(72) COLLATE utf8_unicode_ci NOT NULL,
-  `unpackedcode` varchar(82) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `codecomment` varchar(43) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`storycode`,`alternativecode`),
-  KEY `fk_inducks_storycodes0` (`alternativecode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_storydescription`
---
-
-DROP TABLE IF EXISTS `inducks_storydescription`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_storydescription` (
-  `storyversioncode` varchar(19) COLLATE utf8_unicode_ci NOT NULL,
-  `languagecode` varchar(7) COLLATE utf8_unicode_ci NOT NULL,
-  `desctext` varchar(2814) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`storyversioncode`,`languagecode`),
-  KEY `fk_inducks_storydescription0` (`languagecode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_storyheader`
---
-
-DROP TABLE IF EXISTS `inducks_storyheader`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_storyheader` (
-  `storyheadercode` varchar(12) COLLATE utf8_unicode_ci NOT NULL,
-  `level` varchar(1) COLLATE utf8_unicode_ci NOT NULL,
-  `title` varchar(195) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `storyheadercomment` varchar(544) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `countrycode` varchar(2) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`storyheadercode`,`level`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_storyjob`
---
-
-DROP TABLE IF EXISTS `inducks_storyjob`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_storyjob` (
-  `storyversioncode` varchar(19) COLLATE utf8_unicode_ci NOT NULL,
-  `personcode` varchar(79) COLLATE utf8_unicode_ci NOT NULL,
-  `plotwritartink` varchar(1) COLLATE utf8_unicode_ci NOT NULL,
-  `storyjobcomment` varchar(141) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `indirect` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`storyversioncode`,`personcode`,`plotwritartink`),
-  KEY `fk_inducks_storyjob0` (`personcode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_storyreference`
---
-
-DROP TABLE IF EXISTS `inducks_storyreference`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_storyreference` (
-  `fromstorycode` varchar(18) COLLATE utf8_unicode_ci NOT NULL,
-  `tostorycode` varchar(17) COLLATE utf8_unicode_ci NOT NULL,
-  `referencereasonid` int(7) DEFAULT NULL,
-  PRIMARY KEY (`fromstorycode`,`tostorycode`),
-  KEY `fk_inducks_storyreference0` (`tostorycode`),
-  KEY `fk_inducks_storyreference1` (`referencereasonid`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_story`
---
-
-DROP TABLE IF EXISTS `inducks_story`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_story` (
-  `storycode` varchar(19) COLLATE utf8_unicode_ci NOT NULL,
-  `originalstoryversioncode` varchar(19) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `creationdate` varchar(21) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `firstpublicationdate` varchar(10) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `endpublicationdate` varchar(10) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `title` varchar(210) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `usedifferentcode` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `storycomment` varchar(664) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `error` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  `repcountrysummary` varchar(88) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `storyparts` int(7) DEFAULT NULL,
-  `locked` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  `inputfilecode` int(7) DEFAULT NULL,
-  `issuecodeofstoryitem` varchar(14) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `maintenanceteamcode` varchar(8) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`storycode`),
-  KEY `fk_inducks_story0` (`originalstoryversioncode`),
-  KEY `fk_inducks_story1` (`firstpublicationdate`),
-  FULLTEXT KEY `fulltext_inducks_story` (`title`,`repcountrysummary`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_storysubseries`
---
-
-DROP TABLE IF EXISTS `inducks_storysubseries`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_storysubseries` (
-  `storycode` varchar(18) COLLATE utf8_unicode_ci NOT NULL,
-  `subseriescode` varchar(144) COLLATE utf8_unicode_ci NOT NULL,
-  `storysubseriescomment` varchar(23) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`storycode`,`subseriescode`),
-  KEY `fk_inducks_storysubseries0` (`subseriescode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_storyurl`
---
-
-DROP TABLE IF EXISTS `inducks_storyurl`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_storyurl` (
-  `storycode` varchar(13) COLLATE utf8_unicode_ci NOT NULL,
-  `sitecode` varchar(15) COLLATE utf8_unicode_ci NOT NULL,
-  `url` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`storycode`,`sitecode`),
-  KEY `fk_inducks_storyurl0` (`sitecode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_storyversion_nofulltext`
---
-
-DROP TABLE IF EXISTS `inducks_storyversion_nofulltext`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_storyversion_nofulltext` (
-  `storyversioncode` varchar(19) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `storycode` varchar(19) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `entirepages` int(7) DEFAULT NULL,
-  `brokenpagenumerator` int(7) DEFAULT NULL,
-  `brokenpagedenominator` int(7) DEFAULT NULL,
-  `brokenpageunspecified` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  `kind` varchar(1) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `rowsperpage` int(7) DEFAULT NULL,
-  `columnsperpage` int(7) DEFAULT NULL,
-  `appisxapp` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  `what` varchar(1) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `appsummary` text COLLATE utf8_unicode_ci DEFAULT NULL,
-  `plotsummary` text COLLATE utf8_unicode_ci DEFAULT NULL,
-  `writsummary` text COLLATE utf8_unicode_ci DEFAULT NULL,
-  `artsummary` text COLLATE utf8_unicode_ci DEFAULT NULL,
-  `inksummary` text COLLATE utf8_unicode_ci DEFAULT NULL,
-  `creatorrefsummary` text COLLATE utf8_unicode_ci DEFAULT NULL,
-  `keywordsummary` text COLLATE utf8_unicode_ci DEFAULT NULL,
-  `estimatedpanels` int(7) DEFAULT NULL,
-  KEY `pk0` (`storyversioncode`),
-  KEY `fk1` (`storycode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_storyversion`
---
-
-DROP TABLE IF EXISTS `inducks_storyversion`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_storyversion` (
-  `storyversioncode` varchar(19) COLLATE utf8_unicode_ci NOT NULL,
-  `storycode` varchar(19) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `entirepages` int(7) DEFAULT NULL,
-  `brokenpagenumerator` int(7) DEFAULT NULL,
-  `brokenpagedenominator` int(7) DEFAULT NULL,
-  `brokenpageunspecified` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  `kind` varchar(1) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `rowsperpage` int(7) DEFAULT NULL,
-  `columnsperpage` int(7) DEFAULT NULL,
-  `appisxapp` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  `what` varchar(1) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `appsummary` varchar(620) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `plotsummary` varchar(271) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `writsummary` varchar(271) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `artsummary` varchar(338) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `inksummary` varchar(338) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `creatorrefsummary` varchar(1671) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `keywordsummary` varchar(4204) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `estimatedpanels` int(7) DEFAULT NULL,
-  PRIMARY KEY (`storyversioncode`),
-  KEY `fk_inducks_storyversion1` (`storycode`),
-  FULLTEXT KEY `fulltext_inducks_storyversion` (`appsummary`,`plotsummary`,`writsummary`,`artsummary`,`inksummary`,`creatorrefsummary`,`keywordsummary`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_studio`
---
-
-DROP TABLE IF EXISTS `inducks_studio`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_studio` (
-  `studiocode` varchar(23) COLLATE utf8_unicode_ci NOT NULL,
-  `countrycode` varchar(2) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `studioname` varchar(24) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `city` varchar(12) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `description` varchar(415) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `othertext` varchar(94) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `photofilename` varchar(18) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `photocomment` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `photosource` varchar(42) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `studiorefs` varchar(204) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`studiocode`),
-  KEY `fk_inducks_studio0` (`countrycode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_studiowork`
---
-
-DROP TABLE IF EXISTS `inducks_studiowork`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_studiowork` (
-  `studiocode` varchar(23) COLLATE utf8_unicode_ci NOT NULL,
-  `personcode` varchar(24) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`studiocode`,`personcode`),
-  KEY `fk_inducks_studiowork0` (`personcode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_subseriesname`
---
-
-DROP TABLE IF EXISTS `inducks_subseriesname`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_subseriesname` (
-  `subseriescode` varchar(42) COLLATE utf8_unicode_ci NOT NULL,
-  `languagecode` varchar(7) COLLATE utf8_unicode_ci NOT NULL,
-  `subseriesname` varchar(137) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `preferred` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  `subseriesnamecomment` varchar(54) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`subseriescode`,`languagecode`),
-  KEY `fk_inducks_subseriesname0` (`languagecode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_subseries`
---
-
-DROP TABLE IF EXISTS `inducks_subseries`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_subseries` (
-  `subseriescode` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-  `subseriesname` varchar(54) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `official` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  `subseriescomment` varchar(285) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `subseriescategory` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`subseriescode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_substory`
---
-
-DROP TABLE IF EXISTS `inducks_substory`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_substory` (
-  `storycode` varchar(12) COLLATE utf8_unicode_ci NOT NULL,
-  `originalstoryversioncode` varchar(12) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `superstorycode` varchar(13) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `part` varchar(3) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `firstpublicationdate` varchar(10) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `title` varchar(76) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `substorycomment` varchar(349) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `error` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  `locked` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-  `inputfilecode` int(7) DEFAULT NULL,
-  `maintenanceteamcode` varchar(8) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`storycode`),
-  KEY `fk_inducks_substory0` (`firstpublicationdate`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_teammember`
---
-
-DROP TABLE IF EXISTS `inducks_teammember`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_teammember` (
-  `teamcode` varchar(13) COLLATE utf8_unicode_ci NOT NULL,
-  `personcode` varchar(3) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`teamcode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_team`
---
-
-DROP TABLE IF EXISTS `inducks_team`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_team` (
-  `teamcode` varchar(13) COLLATE utf8_unicode_ci NOT NULL,
-  `teamdescriptionname` varchar(33) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`teamcode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_ucrelation`
---
-
-DROP TABLE IF EXISTS `inducks_ucrelation`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_ucrelation` (
-  `universecode` varchar(28) COLLATE utf8_unicode_ci NOT NULL,
-  `charactercode` varchar(45) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`universecode`,`charactercode`),
-  KEY `fk_inducks_ucrelation0` (`charactercode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_universename`
---
-
-DROP TABLE IF EXISTS `inducks_universename`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_universename` (
-  `universecode` varchar(28) COLLATE utf8_unicode_ci NOT NULL,
-  `languagecode` varchar(5) COLLATE utf8_unicode_ci NOT NULL,
-  `universename` varchar(76) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`universecode`,`languagecode`),
-  KEY `fk_inducks_universename0` (`languagecode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `inducks_universe`
---
-
-DROP TABLE IF EXISTS `inducks_universe`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `inducks_universe` (
-  `universecode` varchar(28) COLLATE utf8_unicode_ci NOT NULL,
-  `universecomment` varchar(1) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`universecode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
--- MySQL dump 10.16  Distrib 10.2.16-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: coa
--- ------------------------------------------------------
--- Server version	10.2.16-MariaDB-1:10.2.16+maria~bionic
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `numeros_cpt`
---
-
-DROP TABLE IF EXISTS `numeros_cpt`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `numeros_cpt` (
-  `Pays` varchar(6) COLLATE utf8_unicode_ci NOT NULL,
-  `Magazine` varchar(8) COLLATE utf8_unicode_ci NOT NULL,
-  `publicationcode` varchar(15) COLLATE utf8_unicode_ci NOT NULL,
-  `Numero` varchar(8) COLLATE utf8_unicode_ci NOT NULL,
-  `Cpt` int(11) DEFAULT NULL,
-  PRIMARY KEY (`publicationcode`,`Numero`),
-  KEY `numeros_cpt_Pays_Magazine_uindex` (`publicationcode`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed
+create table inducks_appearance
+(
+  storyversioncode varchar(19) not null,
+  charactercode varchar(62) not null,
+  number int(7) null,
+  appearancecomment varchar(209) null,
+  primary key (storyversioncode, charactercode)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_appearance0
+  on inducks_appearance (charactercode);
+
+create index fk_inducks_appearance1
+  on inducks_appearance (appearancecomment);
+
+create table inducks_character
+(
+  charactercode varchar(69) not null
+    primary key,
+  charactername varchar(69) null,
+  official enum('Y', 'N') null,
+  onetime enum('Y', 'N') null,
+  heroonly enum('Y', 'N') null,
+  charactercomment varchar(671) null
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create fulltext index fulltext_inducks_character
+  on inducks_character (charactername);
+
+create table inducks_characteralias
+(
+  charactercode varchar(31) null,
+  charactername varchar(58) not null
+    primary key
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_characteralias0
+  on inducks_characteralias (charactercode);
+
+create table inducks_characterdetail
+(
+  charactername varchar(7) null,
+  charactercode varchar(6) not null
+    primary key,
+  number int(7) null
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_characterdetail0
+  on inducks_characterdetail (charactername);
+
+create table inducks_charactername
+(
+  charactercode varchar(38) not null,
+  languagecode varchar(7) not null,
+  charactername varchar(83) not null,
+  preferred enum('Y', 'N') null,
+  characternamecomment varchar(99) null,
+  primary key (charactercode, languagecode, charactername)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_charactername0
+  on inducks_charactername (languagecode);
+
+create table inducks_characterreference
+(
+  fromcharactercode varchar(21) not null,
+  tocharactercode varchar(20) not null,
+  isgroupofcharacters enum('Y', 'N') null,
+  primary key (fromcharactercode, tocharactercode)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_characterreference0
+  on inducks_characterreference (tocharactercode);
+
+create table inducks_characterurl
+(
+  charactercode varchar(1) not null,
+  sitecode varchar(1) not null,
+  url varchar(1) null,
+  primary key (charactercode, sitecode)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_characterurl0
+  on inducks_characterurl (sitecode);
+
+create table inducks_country
+(
+  countrycode varchar(2) not null
+    primary key,
+  countryname varchar(20) null,
+  defaultlanguage varchar(7) null
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create table inducks_countryname
+(
+  countrycode varchar(2) not null,
+  languagecode varchar(5) not null,
+  countryname varchar(56) null,
+  primary key (countrycode, languagecode)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_countryname0
+  on inducks_countryname (languagecode);
+
+create table inducks_currency
+(
+  currencycode varchar(3) not null
+    primary key,
+  currencyname varchar(18) null
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create table inducks_currencyname
+(
+  currencycode varchar(3) not null,
+  languagecode varchar(2) not null,
+  shortcurrencyname varchar(18) null,
+  longcurrencyname varchar(20) null,
+  primary key (currencycode, languagecode)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_currencyname0
+  on inducks_currencyname (languagecode);
+
+create table inducks_entry
+(
+  entrycode varchar(22) not null
+    primary key,
+  issuecode varchar(17) null,
+  storyversioncode varchar(19) null,
+  languagecode varchar(7) null,
+  includedinentrycode varchar(19) null,
+  position varchar(9) null,
+  printedcode varchar(88) null,
+  guessedcode varchar(39) null,
+  title varchar(235) null,
+  reallytitle enum('Y', 'N') null,
+  printedhero varchar(96) null,
+  changes varchar(628) null,
+  cut varchar(104) null,
+  minorchanges varchar(558) null,
+  missingpanels varchar(2) null,
+  mirrored enum('Y', 'N') null,
+  sideways enum('Y', 'N') null,
+  startdate varchar(10) null,
+  enddate varchar(10) null,
+  identificationuncertain enum('Y', 'N') null,
+  alsoreprint varchar(111) null,
+  part varchar(5) null,
+  entrycomment varchar(1715) null,
+  error enum('Y', 'N') null
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create fulltext index entryTitleFullText
+  on inducks_entry (title);
+
+create index fk_inducks_entry0
+  on inducks_entry (issuecode);
+
+create index fk_inducks_entry1
+  on inducks_entry (storyversioncode);
+
+create index fk_inducks_entry2
+  on inducks_entry (languagecode);
+
+create index fk_inducks_entry3
+  on inducks_entry (includedinentrycode);
+
+create index fk_inducks_entry4
+  on inducks_entry (position);
+
+create table inducks_entry_nofulltext
+(
+  entrycode varchar(22) null,
+  issuecode varchar(17) null,
+  storyversioncode varchar(19) null,
+  languagecode varchar(7) null,
+  includedinentrycode varchar(19) null,
+  position varchar(7) null,
+  printedcode varchar(88) null,
+  guessedcode varchar(39) null,
+  title varchar(235) null,
+  reallytitle enum('Y', 'N') null,
+  printedhero varchar(96) null,
+  changes varchar(628) null,
+  cut varchar(100) null,
+  minorchanges varchar(558) null,
+  missingpanels varchar(23) null,
+  mirrored enum('Y', 'N') null,
+  sideways enum('Y', 'N') null,
+  startdate varchar(10) null,
+  enddate varchar(10) null,
+  identificationuncertain enum('Y', 'N') null,
+  alsoreprint varchar(66) null,
+  part varchar(5) null,
+  entrycomment varchar(3476) null,
+  error enum('Y', 'N') null
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk0
+  on inducks_entry_nofulltext (issuecode);
+
+create index fk1
+  on inducks_entry_nofulltext (storyversioncode);
+
+create index fk2
+  on inducks_entry_nofulltext (languagecode);
+
+create index fk3
+  on inducks_entry_nofulltext (includedinentrycode);
+
+create index fk4
+  on inducks_entry_nofulltext (position);
+
+create index pk0
+  on inducks_entry_nofulltext (entrycode);
+
+create table inducks_entrycharactername
+(
+  entrycode varchar(22) not null,
+  charactercode varchar(55) not null,
+  charactername varchar(88) null,
+  primary key (entrycode, charactercode)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_entrycharactername0
+  on inducks_entrycharactername (charactercode);
+
+create table inducks_entryjob
+(
+  entrycode varchar(19) not null,
+  personcode varchar(50) not null,
+  transletcol varchar(1) not null,
+  entryjobcomment varchar(51) null,
+  primary key (entrycode, personcode, transletcol)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_entryjob0
+  on inducks_entryjob (personcode);
+
+create table inducks_entryurl
+(
+  entrycode varchar(21) null,
+  sitecode varchar(11) null,
+  pagenumber int(7) null,
+  url varchar(87) null,
+  id int auto_increment
+    primary key
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_entryurl0
+  on inducks_entryurl (entrycode);
+
+create index fk_inducks_entryurl1
+  on inducks_entryurl (sitecode);
+
+create index fk_inducks_entryurl2
+  on inducks_entryurl (url);
+
+create table inducks_equiv
+(
+  issuecode varchar(15) not null,
+  equivid int(7) not null,
+  equivcomment varchar(3) null,
+  primary key (issuecode, equivid)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_equiv0
+  on inducks_equiv (equivid);
+
+create table inducks_herocharacter
+(
+  storycode varchar(18) not null,
+  charactercode varchar(54) not null,
+  number int(7) null,
+  primary key (storycode, charactercode)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_herocharacter0
+  on inducks_herocharacter (charactercode);
+
+create table inducks_inputfile
+(
+  inputfilecode int(7) not null
+    primary key,
+  path varchar(11) null,
+  filename varchar(22) null,
+  layout varchar(10) null,
+  locked enum('Y', 'N') null,
+  maintenanceteamcode varchar(8) null,
+  countrycode varchar(2) null,
+  languagecode varchar(7) null,
+  producercode varchar(15) null
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create table inducks_issue
+(
+  issuecode varchar(17) not null
+    primary key,
+  issuerangecode varchar(15) null,
+  publicationcode varchar(12) null,
+  issuenumber varchar(12) null,
+  title varchar(158) null,
+  size varchar(61) null,
+  pages varchar(82) null,
+  price varchar(160) null,
+  printrun varchar(142) null,
+  attached varchar(288) null,
+  oldestdate varchar(10) null,
+  fullyindexed enum('Y', 'N') null,
+  issuecomment varchar(1270) null,
+  error enum('Y', 'N') null,
+  filledoldestdate varchar(10) null,
+  locked enum('Y', 'N') null,
+  inxforbidden enum('Y', 'N') null,
+  inputfilecode int(7) null,
+  maintenanceteamcode varchar(8) null
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_issue0
+  on inducks_issue (issuerangecode);
+
+create index fk_inducks_issue1
+  on inducks_issue (publicationcode);
+
+create table inducks_issuecollecting
+(
+  collectingissuecode varchar(17) not null,
+  collectedissuecode varchar(15) not null,
+  primary key (collectingissuecode, collectedissuecode)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_issuecollecting0
+  on inducks_issuecollecting (collectedissuecode);
+
+create table inducks_issuedate
+(
+  issuecode varchar(17) not null,
+  date varchar(10) not null,
+  kindofdate varchar(76) null,
+  primary key (issuecode, date)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create table inducks_issuejob
+(
+  issuecode varchar(17) not null,
+  personcode varchar(48) not null,
+  inxtransletcol varchar(1) not null,
+  issuejobcomment varchar(32) null,
+  primary key (issuecode, personcode, inxtransletcol)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_issuejob0
+  on inducks_issuejob (personcode);
+
+create table inducks_issueprice
+(
+  issuecode varchar(17) not null,
+  amount varchar(86) not null,
+  currency varchar(14) null,
+  comment varchar(64) null,
+  sequencenumber int(7) null,
+  primary key (issuecode, amount)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create table inducks_issuerange
+(
+  issuerangecode varchar(15) not null
+    primary key,
+  publicationcode varchar(9) null,
+  title varchar(229) null,
+  circulation varchar(25) null,
+  issuerangecomment varchar(468) null,
+  numbersarefake enum('Y', 'N') null,
+  error enum('Y', 'N') null
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_issuerange0
+  on inducks_issuerange (publicationcode);
+
+create table inducks_issueurl
+(
+  issuecode varchar(14) not null,
+  sitecode varchar(12) not null,
+  url varchar(12) null,
+  primary key (issuecode, sitecode)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_issueurl0
+  on inducks_issueurl (sitecode);
+
+create table inducks_language
+(
+  languagecode varchar(7) not null
+    primary key,
+  defaultlanguagecode varchar(5) null,
+  languagename varchar(20) null
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_language0
+  on inducks_language (defaultlanguagecode);
+
+create table inducks_languagename
+(
+  desclanguagecode varchar(5) not null,
+  languagecode varchar(7) not null,
+  languagename varchar(57) null,
+  primary key (desclanguagecode, languagecode)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_languagename0
+  on inducks_languagename (languagecode);
+
+create table inducks_log
+(
+  number int(7) not null
+    primary key,
+  logkey varchar(57) null,
+  storycode varchar(39) null,
+  logid varchar(4) null,
+  logtype varchar(1) null,
+  par1 varchar(1847) null,
+  par2 varchar(1846) null,
+  par3 varchar(285) null,
+  marked enum('Y', 'N') null,
+  inputfilecode int(7) null,
+  maintenanceteamcode varchar(8) null
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create table inducks_logdata
+(
+  logid varchar(4) not null
+    primary key,
+  category int(7) null,
+  logtext varchar(108) null
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create table inducks_logocharacter
+(
+  entrycode varchar(22) not null,
+  charactercode varchar(54) not null,
+  reallyintitle enum('Y', 'N') null,
+  number int(7) null,
+  logocharactercomment varchar(28) null,
+  primary key (entrycode, charactercode)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_logocharacter0
+  on inducks_logocharacter (charactercode);
+
+create table inducks_movie
+(
+  moviecode varchar(14) not null
+    primary key,
+  title varchar(62) null,
+  moviecomment varchar(570) null,
+  appsummary varchar(523) null,
+  moviejobsummary varchar(1291) null,
+  locked enum('Y', 'N') null,
+  inputfilecode int(7) null,
+  maintenanceteamcode varchar(7) null,
+  aka varchar(81) null,
+  creationdate varchar(10) null,
+  moviedescription varchar(836) null,
+  distributor varchar(50) null,
+  genre varchar(3) null,
+  orderer varchar(178) null,
+  publicationdate varchar(10) null,
+  source varchar(91) null,
+  tim varchar(6) null
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create fulltext index fulltext_inducks_movie
+  on inducks_movie (appsummary, moviejobsummary);
+
+create table inducks_moviecharacter
+(
+  moviecode varchar(13) not null,
+  charactercode varchar(36) not null,
+  istitlecharacter enum('Y', 'N') null,
+  primary key (moviecode, charactercode)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_moviecharacter0
+  on inducks_moviecharacter (charactercode);
+
+create table inducks_moviejob
+(
+  moviecode varchar(13) not null,
+  personcode varchar(39) not null,
+  role varchar(15) not null,
+  moviejobcomment varchar(82) null,
+  indirect enum('Y', 'N') null,
+  primary key (moviecode, personcode, role)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_moviejob0
+  on inducks_moviejob (personcode);
+
+create table inducks_moviereference
+(
+  storycode varchar(17) not null,
+  moviecode varchar(14) not null,
+  referencereasonid int(7) null,
+  frommovietostory enum('Y', 'N') null,
+  primary key (storycode, moviecode)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_moviereference0
+  on inducks_moviereference (moviecode);
+
+create index fk_inducks_moviereference1
+  on inducks_moviereference (referencereasonid);
+
+create table inducks_person
+(
+  personcode varchar(79) not null
+    primary key,
+  nationalitycountrycode varchar(2) null,
+  fullname varchar(79) null,
+  official enum('Y', 'N') null,
+  personcomment varchar(221) null,
+  unknownstudiomember enum('Y', 'N') null,
+  isfake enum('Y', 'N') null,
+  numberofindexedissues int(7) null,
+  birthname varchar(37) null,
+  borndate varchar(10) null,
+  bornplace varchar(30) null,
+  deceaseddate varchar(10) null,
+  deceasedplace varchar(31) null,
+  education varchar(189) null,
+  moviestext varchar(879) null,
+  comicstext varchar(927) null,
+  othertext varchar(307) null,
+  photofilename varchar(32) null,
+  photocomment varchar(68) null,
+  photosource varchar(67) null,
+  personrefs varchar(180) null
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_person0
+  on inducks_person (nationalitycountrycode);
+
+create fulltext index fulltext_inducks_person
+  on inducks_person (fullname, birthname);
+
+create table inducks_personalias
+(
+  personcode varchar(31) null,
+  surname varchar(48) null,
+  givenname varchar(31) null,
+  official enum('Y', 'N') null
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_personalias0
+  on inducks_personalias (personcode);
+
+create table inducks_personurl
+(
+  personcode varchar(24) not null,
+  sitecode varchar(15) not null,
+  url varchar(31) null,
+  primary key (personcode, sitecode)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_personurl0
+  on inducks_personurl (sitecode);
+
+create table inducks_publication
+(
+  publicationcode varchar(12) not null
+    primary key,
+  countrycode varchar(2) null,
+  languagecode varchar(7) null,
+  title varchar(131) null,
+  size varchar(61) null,
+  publicationcomment varchar(1354) null,
+  circulation varchar(4) null,
+  numbersarefake enum('Y', 'N') null,
+  error enum('Y', 'N') null,
+  locked enum('Y', 'N') null,
+  inxforbidden enum('Y', 'N') null,
+  inputfilecode int(7) null,
+  maintenanceteamcode varchar(9) null
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_publication0
+  on inducks_publication (countrycode);
+
+create index fk_inducks_publication1
+  on inducks_publication (languagecode);
+
+create fulltext index fulltext_inducks_publication
+  on inducks_publication (title);
+
+create table inducks_publicationcategory
+(
+  publicationcode varchar(12) not null
+    primary key,
+  category varchar(61) null
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create table inducks_publicationname
+(
+  publicationcode varchar(9) not null
+    primary key,
+  publicationname varchar(62) null
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create table inducks_publicationurl
+(
+  publicationcode varchar(10) not null,
+  sitecode varchar(16) not null,
+  url varchar(236) null,
+  primary key (publicationcode, sitecode)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_publicationurl0
+  on inducks_publicationurl (sitecode);
+
+create table inducks_publisher
+(
+  publisherid varchar(84) not null
+    primary key,
+  publishername varchar(84) null
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create fulltext index fulltext_inducks_publisher
+  on inducks_publisher (publishername);
+
+create table inducks_publishingjob
+(
+  publisherid varchar(84) not null,
+  issuecode varchar(17) not null,
+  publishingjobcomment varchar(67) null,
+  primary key (publisherid, issuecode)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_publishingjob0
+  on inducks_publishingjob (issuecode);
+
+create table inducks_referencereason
+(
+  referencereasonid int(7) not null
+    primary key,
+  referencereasontext varchar(96) null
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create table inducks_referencereasonname
+(
+  referencereasonid int(7) not null,
+  languagecode varchar(2) not null,
+  referencereasontranslation varchar(28) null,
+  primary key (referencereasonid, languagecode)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_referencereasonname0
+  on inducks_referencereasonname (languagecode);
+
+create table inducks_site
+(
+  sitecode varchar(16) not null
+    primary key,
+  urlbase varchar(51) null,
+  images enum('Y', 'N') null,
+  sitename varchar(85) null,
+  sitelogo varchar(107) null,
+  properties varchar(1) null
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create table inducks_statcharactercharacter
+(
+  charactercode varchar(45) not null,
+  cocharactercode varchar(45) null,
+  total int(7) not null,
+  yearrange varchar(142) null,
+  primary key (charactercode, total)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create table inducks_statcharactercountry
+(
+  charactercode varchar(45) not null,
+  countrycode varchar(2) not null,
+  total int(7) null,
+  primary key (charactercode, countrycode)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create table inducks_statcharacterstory
+(
+  charactercode varchar(45) not null,
+  productionletter varchar(1) not null,
+  total int(7) null,
+  yearrange varchar(105) null,
+  primary key (charactercode, productionletter)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create table inducks_statpersoncharacter
+(
+  personcode varchar(31) not null,
+  charactercode varchar(45) null,
+  total int(7) not null,
+  yearrange varchar(111) null,
+  primary key (personcode, total)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create table inducks_statpersoncountry
+(
+  personcode varchar(31) not null,
+  countrycode varchar(2) not null,
+  total int(7) null,
+  primary key (personcode, countrycode)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create table inducks_statpersonperson
+(
+  personcode varchar(31) not null,
+  copersoncode varchar(31) null,
+  total int(7) not null,
+  yearrange varchar(59) null,
+  primary key (personcode, total)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create table inducks_statpersonstory
+(
+  personcode varchar(31) not null,
+  productionletter varchar(1) not null,
+  total int(7) null,
+  yearrange varchar(62) null,
+  primary key (personcode, productionletter)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create table inducks_story
+(
+  storycode varchar(19) not null
+    primary key,
+  originalstoryversioncode varchar(19) null,
+  creationdate varchar(21) null,
+  firstpublicationdate varchar(10) null,
+  endpublicationdate varchar(10) null,
+  title varchar(222) null,
+  usedifferentcode varchar(20) null,
+  storycomment varchar(664) null,
+  error enum('Y', 'N') null,
+  repcountrysummary varchar(91) null,
+  storyparts int(7) null,
+  locked enum('Y', 'N') null,
+  inputfilecode int(7) null,
+  issuecodeofstoryitem varchar(14) null,
+  maintenanceteamcode varchar(8) null
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_story0
+  on inducks_story (originalstoryversioncode);
+
+create index fk_inducks_story1
+  on inducks_story (firstpublicationdate);
+
+create fulltext index fulltext_inducks_story
+  on inducks_story (title, repcountrysummary);
+
+create table inducks_storycodes
+(
+  storycode varchar(19) not null,
+  alternativecode varchar(72) not null,
+  unpackedcode varchar(82) null,
+  codecomment varchar(43) null,
+  primary key (storycode, alternativecode)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_storycodes0
+  on inducks_storycodes (alternativecode);
+
+create table inducks_storydescription
+(
+  storyversioncode varchar(19) not null,
+  languagecode varchar(7) not null,
+  desctext varchar(2814) null,
+  primary key (storyversioncode, languagecode)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_storydescription0
+  on inducks_storydescription (languagecode);
+
+create table inducks_storyheader
+(
+  storyheadercode varchar(12) not null,
+  level varchar(1) not null,
+  title varchar(195) null,
+  storyheadercomment varchar(544) null,
+  countrycode varchar(2) null,
+  primary key (storyheadercode, level)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create table inducks_storyjob
+(
+  storyversioncode varchar(19) not null,
+  personcode varchar(79) not null,
+  plotwritartink varchar(1) not null,
+  storyjobcomment varchar(141) null,
+  indirect enum('Y', 'N') null,
+  primary key (storyversioncode, personcode, plotwritartink)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_storyjob0
+  on inducks_storyjob (personcode);
+
+create table inducks_storyreference
+(
+  fromstorycode varchar(18) not null,
+  tostorycode varchar(17) not null,
+  referencereasonid int(7) null,
+  primary key (fromstorycode, tostorycode)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_storyreference0
+  on inducks_storyreference (tostorycode);
+
+create index fk_inducks_storyreference1
+  on inducks_storyreference (referencereasonid);
+
+create table inducks_storysubseries
+(
+  storycode varchar(18) not null,
+  subseriescode varchar(144) not null,
+  storysubseriescomment varchar(23) null,
+  primary key (storycode, subseriescode)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_storysubseries0
+  on inducks_storysubseries (subseriescode);
+
+create table inducks_storyurl
+(
+  storycode varchar(13) not null,
+  sitecode varchar(15) not null,
+  url varchar(40) null,
+  primary key (storycode, sitecode)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_storyurl0
+  on inducks_storyurl (sitecode);
+
+create table inducks_storyversion
+(
+  storyversioncode varchar(19) not null
+    primary key,
+  storycode varchar(19) null,
+  entirepages int(7) null,
+  brokenpagenumerator int(7) null,
+  brokenpagedenominator int(7) null,
+  brokenpageunspecified enum('Y', 'N') null,
+  kind varchar(1) null,
+  rowsperpage int(7) null,
+  columnsperpage int(7) null,
+  appisxapp enum('Y', 'N') null,
+  what varchar(1) null,
+  appsummary varchar(620) null,
+  plotsummary varchar(271) null,
+  writsummary varchar(271) null,
+  artsummary varchar(338) null,
+  inksummary varchar(338) null,
+  creatorrefsummary varchar(1671) null,
+  keywordsummary varchar(4219) null,
+  estimatedpanels int(7) null
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_storyversion1
+  on inducks_storyversion (storycode);
+
+create fulltext index fulltext_inducks_storyversion
+  on inducks_storyversion (appsummary, plotsummary, writsummary, artsummary, inksummary, creatorrefsummary, keywordsummary);
+
+create table inducks_storyversion_nofulltext
+(
+  storyversioncode varchar(19) null,
+  storycode varchar(19) null,
+  entirepages int(7) null,
+  brokenpagenumerator int(7) null,
+  brokenpagedenominator int(7) null,
+  brokenpageunspecified enum('Y', 'N') null,
+  kind varchar(1) null,
+  rowsperpage int(7) null,
+  columnsperpage int(7) null,
+  appisxapp enum('Y', 'N') null,
+  what varchar(1) null,
+  appsummary text null,
+  plotsummary text null,
+  writsummary text null,
+  artsummary text null,
+  inksummary text null,
+  creatorrefsummary text null,
+  keywordsummary text null,
+  estimatedpanels int(7) null
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk1
+  on inducks_storyversion_nofulltext (storycode);
+
+create index pk0
+  on inducks_storyversion_nofulltext (storyversioncode);
+
+create table inducks_studio
+(
+  studiocode varchar(23) not null
+    primary key,
+  countrycode varchar(2) null,
+  studioname varchar(24) null,
+  city varchar(12) null,
+  description varchar(415) null,
+  othertext varchar(94) null,
+  photofilename varchar(18) null,
+  photocomment varchar(40) null,
+  photosource varchar(42) null,
+  studiorefs varchar(204) null
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_studio0
+  on inducks_studio (countrycode);
+
+create table inducks_studiowork
+(
+  studiocode varchar(23) not null,
+  personcode varchar(24) not null,
+  primary key (studiocode, personcode)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_studiowork0
+  on inducks_studiowork (personcode);
+
+create table inducks_subseries
+(
+  subseriescode varchar(50) not null
+    primary key,
+  subseriesname varchar(54) null,
+  official enum('Y', 'N') null,
+  subseriescomment varchar(285) null,
+  subseriescategory varchar(46) null
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create table inducks_subseriesname
+(
+  subseriescode varchar(44) not null,
+  languagecode varchar(7) not null,
+  subseriesname varchar(137) null,
+  preferred enum('Y', 'N') null,
+  subseriesnamecomment varchar(54) null,
+  primary key (subseriescode, languagecode)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_subseriesname0
+  on inducks_subseriesname (languagecode);
+
+create table inducks_substory
+(
+  storycode varchar(12) not null
+    primary key,
+  originalstoryversioncode varchar(12) null,
+  superstorycode varchar(13) null,
+  part varchar(3) null,
+  firstpublicationdate varchar(10) null,
+  title varchar(76) null,
+  substorycomment varchar(349) null,
+  error enum('Y', 'N') null,
+  locked enum('Y', 'N') null,
+  inputfilecode int(7) null,
+  maintenanceteamcode varchar(8) null
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_substory0
+  on inducks_substory (firstpublicationdate);
+
+create table inducks_team
+(
+  teamcode varchar(13) not null
+    primary key,
+  teamdescriptionname varchar(33) null
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create table inducks_teammember
+(
+  teamcode varchar(13) not null
+    primary key,
+  personcode varchar(3) null
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create table inducks_ucrelation
+(
+  universecode varchar(28) not null,
+  charactercode varchar(45) not null,
+  primary key (universecode, charactercode)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_ucrelation0
+  on inducks_ucrelation (charactercode);
+
+create table inducks_universe
+(
+  universecode varchar(28) not null
+    primary key,
+  universecomment varchar(1) null
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create table inducks_universename
+(
+  universecode varchar(28) not null,
+  languagecode varchar(5) not null,
+  universename varchar(76) null,
+  primary key (universecode, languagecode)
+)
+  engine=MyISAM collate=utf8_unicode_ci;
+
+create index fk_inducks_universename0
+  on inducks_universename (languagecode);
+
+create table numeros_cpt
+(
+  Pays varchar(6) not null,
+  Magazine varchar(8) not null,
+  publicationcode varchar(15) not null,
+  Numero varchar(8) not null,
+  Cpt int null,
+  primary key (publicationcode, Numero)
+)
+  collate=utf8_unicode_ci;
+
+create index numeros_cpt_Pays_Magazine_uindex
+  on numeros_cpt (publicationcode);
+

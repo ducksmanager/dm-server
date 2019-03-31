@@ -14,114 +14,81 @@
     "support": {
         "issues": "https://github.com/bperel/dm-server/issues"
     },
-    "autoload": {
-        "psr-4": {
-            "Coa\\Contracts\\": [
-                "app/models/Coa/Contracts"
-            ],
-            "Coa\\Models\\": [
-                "app/models/Coa/Models"
-            ],
-            "Coverid\\Models\\": [
-                "app/models/Coverid/Models"
-            ],
-            "Coverid\\Contracts\\": [
-                "app/models/Coverid/Contracts"
-            ],
-            "Dm\\Contracts\\": [
-                "app/models/Dm/Contracts"
-            ],
-            "Dm\\Models\\": [
-                "app/models/Dm/Models"
-            ],
-            "Stats\\Contracts\\": [
-                "app/models/Stats/Contracts"
-            ],
-            "Stats\\Models\\": [
-                "app/models/Stats/Models"
-            ],
-            "Edgecreator\\Models\\": [
-                "app/models/Edgecreator/Models"
-            ],
-            "Generic\\Contracts\\Results\\": [
-                "app/models"
-            ],
-            "DmServer\\Controllers\\": [
-                "app/controllers"
-            ],
-            "DmServer\\Controllers\\Coa\\": [
-                "app/controllers/Coa"
-            ],
-            "DmServer\\Controllers\\Collection\\": [
-                "app/controllers/Collection"
-            ],
-            "DmServer\\Controllers\\Coverid\\": [
-                "app/controllers/Coverid"
-            ],
-            "DmServer\\Controllers\\Ducksmanager\\": [
-                "app/controllers/Ducksmanager"
-            ],
-            "DmServer\\Controllers\\Edgecreator\\": [
-                "app/controllers/Edgecreator"
-            ],
-            "DmServer\\Controllers\\Edges\\": [
-                "app/controllers/Edges"
-            ],
-            "DmServer\\Controllers\\Rawsql\\": [
-                "app/controllers/Rawsql"
-            ],
-            "DmServer\\Controllers\\Stats\\": [
-                "app/controllers/Stats"
-            ],
-            "DmServer\\Controllers\\Status\\": [
-                "app/controllers/Status"
-            ],
-            "DmServer\\Controllers\\User\\": [
-                "app/controllers/User"
-            ],
-            "DmServer\\": [
-                "app",
-                "app/helpers"
-            ],
-            "DmServer\\Emails\\": [
-                "app/helpers",
-                "app/helpers/emails"
-            ],
-            "DmServer\\Test\\": [
-                "test",
-                "test/collection",
-                "test/user"
-            ]
-        }
-    },
     "require": {
-        "php": "7.2.*",
+        "php": "^7.2.0",
+        "ext-ctype": "*",
         "ext-curl": "*",
         "ext-exif": "*",
+        "ext-iconv": "*",
         "ext-json": "*",
-        "silex/silex": "2.3.*",
-        "sorien/silex-pimple-dumper": "2.0.*",
-        "symfony/browser-kit": "4.1.*",
-        "symfony/config": "4.1.*",
-        "symfony/security": "4.1.*",
-        "symfony/serializer": "4.1.*",
-        "symfony/yaml": "4.1.*",
-        "symfony/translation": "4.1.*",
-        "doctrine/dbal": "2.9.*",
-        "doctrine/orm": "2.6.*",
-        "doctrine/doctrine-bundle": "1.10.*",
-        "guzzlehttp/guzzle": "6.3.*",
-        "monolog/monolog": "1.24.*",
-        "gedmo/doctrine-extensions": "2.4.*",
-        "swiftmailer/swiftmailer": "6.1.*",
-        "jdesrosiers/silex-cors-provider": "1.6.*",
-        "ddesrosiers/silex-annotation-provider": "2.0.*",
-        "radebatz/silex2swagger": "3.0.*",
-        "roave/security-advisories": "dev-master"
+        "api-platform/api-pack": "^1.2",
+        "doctrine/doctrine-fixtures-bundle": "^3.1",
+        "sensio/framework-extra-bundle": "^5.2",
+        "symfony/console": "4.2.*",
+        "symfony/dotenv": "4.2.*",
+        "symfony/flex": "^1.2",
+        "symfony/framework-bundle": "4.2.*",
+        "symfony/maker-bundle": "^1.11",
+        "symfony/monolog-bundle": "^3.3",
+        "symfony/orm-pack": "^1.0",
+        "symfony/profiler-pack": "^1.0",
+        "symfony/security-bundle": "4.2.*",
+        "symfony/serializer": "4.2.*",
+        "symfony/swiftmailer-bundle": "^3.2",
+        "symfony/translation": "4.2.*",
+        "symfony/twig-bundle": "4.2.*",
+        "symfony/web-server-bundle": "4.2.*",
+        "symfony/yaml": "4.2.*"
+    },
+    "config": {
+        "preferred-install": {
+            "*": "dist"
+        },
+        "sort-packages": true
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "App\\Tests\\": "tests/"
+        }
+    },
+    "replace": {
+        "paragonie/random_compat": "2.*",
+        "symfony/polyfill-ctype": "*",
+        "symfony/polyfill-iconv": "*",
+        "symfony/polyfill-php71": "*",
+        "symfony/polyfill-php70": "*",
+        "symfony/polyfill-php56": "*"
+    },
+    "scripts": {
+        "auto-scripts": {
+            "cache:clear": "symfony-cmd",
+            "assets:install %PUBLIC_DIR%": "symfony-cmd"
+        },
+        "post-install-cmd": [
+            "@auto-scripts"
+        ],
+        "post-update-cmd": [
+            "@auto-scripts"
+        ]
+    },
+    "conflict": {
+        "symfony/symfony": "*"
+    },
+    "extra": {
+        "symfony": {
+            "allow-contrib": false,
+            "require": "4.2.*"
+        }
     },
     "require-dev": {
-        "phpunit/phpunit": "7.5.*",
-        "phpunit/php-code-coverage": "6.1.*",
-        "symfony/phpunit-bridge": "^4.1"
-    }
+        "roave/security-advisories": "dev-master",
+        "symfony/browser-kit": "4.2.*",
+        "symfony/css-selector": "4.2.*",
+        "symfony/phpunit-bridge": "4.2.*"
+	}
 }

@@ -10,8 +10,9 @@ services:
   web:
     container_name: dm-server-web
     image: "nginx:1.15"
+    restart: always
     ports:
-     - "8001:80"
+     - "8002:80"
     depends_on:
      - db_coa
      - db_cover_id
@@ -34,8 +35,6 @@ services:
     volumes:
      - ./ssmtp.conf:/etc/ssmtp/ssmtp.conf
      - ./current:/var/www:z
-    environment:
-      DM_SERVER_ADDRESS: "$DM_SERVER_HOST:$DM_SERVER_PORT"
     networks:
      - front-network
      - db-network
@@ -169,20 +168,6 @@ services:
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
     networks:
      - db-network
-    << : *gelf-logging
-  swagger:
-    container_name: swagger
-    image: "swaggerapi/swagger-ui"
-    ports:
-     - "8081:8080"
-    depends_on:
-     - web
-     - php
-    environment:
-      API_URL: "http://$DM_SERVER_HOST:$DM_SERVER_PORT/status/swagger.json"
-      SWAGGER_JSON: "http://$DM_SERVER_HOST:$DM_SERVER_PORT/status/swagger.json"
-    networks:
-     - front-network
     << : *gelf-logging
 
 networks:

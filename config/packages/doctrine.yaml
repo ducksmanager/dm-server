@@ -1,0 +1,119 @@
+parameters:
+    env(DATABASE_DRIVER): 'pdo_mysql'
+    env(DATABASE_SERVER_VERSION): 'mariadb-10.2.16'
+
+doctrine:
+    dbal:
+        default_connection: dm
+        connections:
+            dm:
+                dbname: '%env(DATABASE_DM_DB)%'
+                host: '%env(DATABASE_DM_HOST)%'
+                port: '%env(DATABASE_DM_PORT)%'
+                user: '%env(DATABASE_DM_USER)%'
+                password: '%env(DATABASE_DM_PASS)%'
+                driver: '%env(DATABASE_DRIVER)%'
+                server_version: '%env(DATABASE_SERVER_VERSION)%'
+                memory: true
+                charset: utf8mb4
+                mapping_types:
+                    enum: string
+            coa:
+                dbname: '%env(DATABASE_COA_DB)%'
+                host: '%env(DATABASE_COA_HOST)%'
+                port: '%env(DATABASE_COA_PORT)%'
+                user: '%env(DATABASE_COA_USER)%'
+                password: '%env(DATABASE_COA_PASS)%'
+                driver: '%env(DATABASE_DRIVER)%'
+                server_version: '%env(DATABASE_SERVER_VERSION)%'
+                memory: true
+                charset: utf8mb4
+                schema_filter: (inducks_countryname|inducks_entry|inducks_entryurl|inducks_issue|inducks_person|inducks_publication|inducks_story|inducks_storyversion)
+                mapping_types:
+                    enum: string
+            coverid:
+                dbname: '%env(DATABASE_DM_COVER_ID_DB)%'
+                host: '%env(DATABASE_DM_COVER_ID_HOST)%'
+                port: '%env(DATABASE_DM_COVER_ID_PORT)%'
+                user: '%env(DATABASE_DM_COVER_ID_USER)%'
+                password: '%env(DATABASE_DM_COVER_ID_PASS)%'
+                driver: '%env(DATABASE_DRIVER)%'
+                server_version: '%env(DATABASE_SERVER_VERSION)%'
+                memory: true
+                charset: utf8mb4
+                mapping_types:
+                    enum: string
+            dm_stats:
+                dbname: '%env(DATABASE_DM_STATS_DB)%'
+                host: '%env(DATABASE_DM_STATS_HOST)%'
+                port: '%env(DATABASE_DM_STATS_PORT)%'
+                user: '%env(DATABASE_DM_STATS_USER)%'
+                password: '%env(DATABASE_DM_STATS_PASS)%'
+                driver: '%env(DATABASE_DRIVER)%'
+                server_version: '%env(DATABASE_SERVER_VERSION)%'
+                memory: true
+                charset: utf8mb4
+                mapping_types:
+                    enum: string
+            edgecreator:
+                dbname: '%env(DATABASE_EDGECREATOR_DB)%'
+                host: '%env(DATABASE_EDGECREATOR_HOST)%'
+                port: '%env(DATABASE_EDGECREATOR_PORT)%'
+                user: '%env(DATABASE_EDGECREATOR_USER)%'
+                password: '%env(DATABASE_EDGECREATOR_PASS)%'
+                driver: '%env(DATABASE_DRIVER)%'
+                server_version: '%env(DATABASE_SERVER_VERSION)%'
+                memory: true
+                charset: utf8mb4
+                mapping_types:
+                    enum: string
+    orm:
+        auto_generate_proxy_classes: true
+        default_entity_manager: 'dm'
+        entity_managers:
+            dm:
+                connection: dm
+                mappings:
+                    App:
+                        is_bundle: false
+                        type: annotation
+                        dir: '%kernel.project_dir%/src/Entity/Dm'
+                        prefix: 'App\Entity\Dm'
+                        alias: Dm
+            coa:
+                connection: coa
+                mappings:
+                    App:
+                        is_bundle: false
+                        type: annotation
+                        dir: '%kernel.project_dir%/src/Entity/Coa'
+                        prefix: 'App\Entity\Coa'
+                        alias: Coa
+            coverid:
+                connection: coverid
+                mappings:
+                    App:
+                        is_bundle: false
+                        type: annotation
+                        dir: '%kernel.project_dir%/src/Entity/Coverid'
+                        prefix: 'App\Entity\Coverid'
+                        alias: Coverid
+            dm_stats:
+                connection: dm_stats
+                mappings:
+                    App:
+                        is_bundle: false
+                        type: annotation
+                        dir: '%kernel.project_dir%/src/Entity/DmStats'
+                        prefix: 'App\Entity\DmStats'
+                        alias: DmStats
+
+            edgecreator:
+                connection: edgecreator
+                mappings:
+                    App:
+                        is_bundle: false
+                        type: annotation
+                        dir: '%kernel.project_dir%/src/Entity/EdgeCreator'
+                        prefix: 'App\Entity\EdgeCreator'
+                        alias: EdgeCreator

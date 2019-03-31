@@ -1,13 +1,15 @@
 FROM php:7.2-fpm
 MAINTAINER Bruno Perel
 
-RUN apt-get update && apt-get install -y git wget unzip mariadb-client nano
+RUN apt-get update && apt-get install -y git wget unzip mariadb-client nano ssmtp telnet
 
-RUN yes '' | pecl install channel://pecl.php.net/apcu_bc-1.0.4
-RUN echo 'extension=apcu.so' > /usr/local/etc/php/conf.d/apcu.ini
+RUN echo 'sendmail_path = /usr/bin/env catchmail -f admin@ducksmanager.net' > /usr/local/etc/php/conf.d/mail.ini
 
-RUN docker-php-ext-install -j$(nproc) pdo pdo_mysql exif opcache
+RUN pecl install apcu
+RUN echo "extension=apcu.so" > /usr/local/etc/php/conf.d/apcu.ini
+
+RUN docker-php-ext-install -j$(nproc) pdo_mysql exif opcache
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-RUN pecl install xdebug-2.6.1 && docker-php-ext-enable xdebug
+RUN pecl install xdebug-2.7.0 && docker-php-ext-enable xdebug

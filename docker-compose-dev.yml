@@ -1,16 +1,11 @@
 version: '2.4'
 services:
   web:
-    container_name: dm-server-web
+    container_name: dm-server-web-dev
     image: "nginx:1.15"
     ports:
-     - "10001:80"
+     - "10002:80"
     depends_on:
-     - db_coa
-     - db_cover_id
-     - db_dm
-     - db_dm_stats
-     - db_edgecreator
      - php
     restart: always
     volumes:
@@ -20,35 +15,34 @@ services:
      - front-network
 
   php:
-    container_name: dm-server-php
+    container_name: dm-server-php-dev
     build:
       context: .
       dockerfile: Dockerfile-dev
+    depends_on:
+      - db_coa
+      - db_cover_id
+      - db_dm
+      - db_dm_stats
+      - db_edgecreator
+      - mailcatcher
     volumes:
-     - .:/var/www/html:z
+     - .:/var/www/html
      - ./php.xdebug.ini:/usr/local/etc/php/php.ini:z
-    environment:
-      DM_SERVER_ADDRESS: "$DM_SERVER_HOST:$DM_SERVER_PORT"
     networks:
      - front-network
+     - mail-network
      - db-network
      - cover-id-network
-    command: sh -c 'composer install --no-plugins --no-scripts && php app/config/generate-config.php docker-compose-dev.yml .env && php scripts/generate-swagger.php && php-fpm'
+    command: sh -c 'composer install --no-plugins --no-scripts && php-fpm'
 
-  php-no-debug:
-    container_name: dm-server-php-no-debug
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-     - .:/var/www/html:z
-    environment:
-      DM_SERVER_ADDRESS: "$DM_SERVER_HOST:$DM_SERVER_PORT"
+  mailcatcher:
+    container_name: mailcatcher
+    image: yappabe/mailcatcher
+    ports:
+      - 1080:1080
     networks:
-     - front-network
-     - db-network
-     - cover-id-network
-    command: sh -c 'composer install --no-plugins --no-scripts && php app/config/generate-config.php docker-compose-dev.yml .env && php scripts/generate-swagger.php && php-fpm'
+      - mail-network
 
   db_coa:
     container_name: db_coa
@@ -71,7 +65,7 @@ services:
     volumes:
      - $MYSQL_INIT_SCRIPT_COVER_INFO:/docker-entrypoint-initdb.d/$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
     ports:
-     - "64001:3306"
+     - "64009:3306"
     environment:
       MYSQL_DATABASE: cover_info
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
@@ -82,6 +76,8 @@ services:
     image: "bperel/pastec-ubuntu-1704-timestamps"
     networks:
      - cover-id-network
+    volumes:
+     - $PASTEC_INIT_INDEX:/pastec-index-last.dat:ro
 
   db_dm:
     container_name: db_dm
@@ -122,22 +118,10 @@ services:
     networks:
      - db-network
 
-  swagger:
-    container_name: swagger
-    image: "swaggerapi/swagger-ui"
-    ports:
-     - "8081:8080"
-    depends_on:
-     - web
-     - php
-    environment:
-      API_URL: "http://$DM_SERVER_HOST:$DM_SERVER_PORT/status/swagger.json"
-      SWAGGER_JSON: "http://$DM_SERVER_HOST:$DM_SERVER_PORT/status/swagger.json"
-    networks:
-     - front-network
-
 networks:
   front-network:
+    driver: bridge
+  mail-network:
     driver: bridge
   db-network:
     driver: bridge
