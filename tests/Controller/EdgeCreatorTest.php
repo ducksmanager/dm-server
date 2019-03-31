@@ -1,6 +1,8 @@
 <?php
 namespace App\Tests;
 
+use App\Entity\Dm\TranchesPretes;
+use App\Entity\Dm\TranchesPretesContributeurs;
 use App\Entity\EdgeCreator\EdgecreatorIntervalles;
 use App\Entity\EdgeCreator\EdgecreatorModeles2;
 use App\Entity\EdgeCreator\EdgecreatorValeurs;
@@ -891,6 +893,34 @@ class EdgeCreatorTest extends TestCommon
                 return $element->Option_valeur;
             }, $objectResponse)
         );
+    }
+
+    public function testPublishEdge() {
+        EdgeCreatorFixture::createModelEcV2($this->getEm('edgecreator'), self::$edgecreatorUser, 'fr/PM', '1', [1 => ['functionName' => 'Image', 'options' => ['Source' => 'MP.Tete.1.png']]]);
+        $model = $this->getEm('edgecreator')->getRepository(TranchesEnCoursModeles::class)->findOneBy(['pays' => 'fr', 'magazine' => 'PM', 'numero'=> '1']);
+        $model->setPretepourpublication(true);
+        $contributeur1 = new TranchesEnCoursContributeurs();
+        $contributeur2 = new TranchesEnCoursContributeurs();
+        $model->setContributeurs([
+            $contributeur1
+                ->setIdUtilisateur(1)
+                ->setContribution('createur')
+                ->setIdModele($model),
+            $contributeur2
+                ->setIdUtilisateur(2)
+                ->setContribution('photographe')
+                ->setIdModele($model)
+        ]);
+        $this->getEm('edgecreator')->persist($model);
+        $this->getEm('edgecreator')->flush();
+
+        $response = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/publish/fr/PM/1', self::$edgecreatorUser, 'PUT')->call();
+        $objectResponse = json_decode($this->getResponseContent($response));
+
+        $publishedEdge = $this->getEm('dm')->getRepository(TranchesPretes::class)->findOneBy(['publicationcode' => 'fr/PM', 'issuenumber' => '1']);
+        $publishedEdgeContributors = $this->getEm('dm')->getRepository(TranchesPretesContributeurs::class)->findBy(['publicationcode' => 'fr/PM', 'issuenumber' => '1']);
+        $this->assertNotNull($publishedEdge);
+        $this->assertCount(2, $publishedEdgeContributors);
     }
 
     /**

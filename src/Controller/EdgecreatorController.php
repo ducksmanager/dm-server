@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Dm\TranchesPretes;
+use App\Entity\Dm\TranchesPretesContributeurs;
 use App\Entity\Dm\Users;
 use App\Entity\EdgeCreator\EdgecreatorIntervalles;
 use App\Entity\EdgeCreator\EdgecreatorModeles2;
@@ -659,6 +661,57 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
             return true;
         });
         return new JsonResponseFromObject(array_values($matches));
+    }
+
+    /**
+     * @Route(
+     *     methods={"PUT"},
+     *     path="/edgecreator/publish/{publicationCode}/{issueNumber}",
+     *     requirements={"publicationCode"="^(?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+)$"})
+     * @throws \Doctrine\ORM\ORMException
+     */
+    public function publishEdge(string $publicationCode, string $issueNumber) : Response {
+        $dmEm = $this->getEm('dm');
+        $ecEm = $this->getEm('edgecreator');
+
+        [$country, $magazine] = explode('/', $publicationCode);
+        /** @var TranchesEnCoursModeles $edgeModelToPublish */
+        $edgeModelToPublish = $ecEm->getRepository(TranchesEnCoursModeles::class)->findOneBy([
+            'pays' => $country,
+            'magazine' => $magazine,
+            'numero' => $issueNumber,
+            'pretepourpublication' => 1
+        ]);
+
+        if (!is_null($edgeModelToPublish)) {
+            $edgeToPublish = new TranchesPretes();
+            $dmEm->persist($edgeToPublish
+                ->setPublicationcode($publicationCode)
+                ->setIssuenumber($issueNumber)
+                ->setDateajout(new \DateTime('now'))
+            );
+
+            foreach($edgeModelToPublish->getContributeurs() as $modelContributor) {
+                $contributor = new TranchesPretesContributeurs();
+                $dmEm->persist($contributor
+                    ->setPublicationcode($publicationCode)
+                    ->setIssuenumber($issueNumber)
+                    ->setContributeur($modelContributor->getIdUtilisateur())
+                    ->setContribution($modelContributor->getContribution()));
+            }
+
+            $dmEm->flush();
+
+            return new JsonResponse([
+                'publicationCode' => $publicationCode,
+                'issueNumber' => $issueNumber,
+                'url' => "{$_ENV['EDGES_ROOT']}/$country/gen/$magazine.$issueNumber.png",
+                'contributors' => array_map(function(TranchesEnCoursContributeurs $contributor) {
+                    return $contributor->getIdUtilisateur();
+                }, $edgeModelToPublish->getContributeurs()->toArray())
+            ]);
+        }
+        return new Response("$publicationCode $issueNumber is not a non-published edge", Response::HTTP_BAD_REQUEST);
     }
 
     private function createStepV1(string $publicationCode, int $stepNumber, string $functionName, string $optionName): int
