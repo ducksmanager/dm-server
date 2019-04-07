@@ -22,6 +22,53 @@ class CollectionTest extends TestCommon
         $this->assertEquals('dm_test_user', $objectResponse->username);
     }
 
+    public function testGetIssues(): void
+    {
+        $this->createUserCollection('dm_test_user');
+        $userResponse = $this->buildAuthenticatedServiceWithTestUser('/collection/issues', self::$dmUser)->call();
+        $objectResponse = json_decode($userResponse->getContent());
+        $this->assertEquals([
+            (object) [
+                'id' => 1,
+                'country' => 'fr',
+                'magazine' => 'DDD',
+                'issueNumber' => '1',
+                'condition' => 'indefini',
+                'purchaseId' => 1,
+            ],
+            (object) [
+                'id' => 2,
+                'country' => 'fr',
+                'magazine' => 'MP',
+                'issueNumber' => '300',
+                'condition' => 'bon',
+                'purchaseId' => -1,
+            ],
+            (object) [
+                'id' => 3,
+                'country' => 'fr',
+                'magazine' => 'MP',
+                'issueNumber' => '301',
+                'condition' => 'mauvais',
+                'purchaseId' => -1,
+            ],
+        ], $objectResponse);
+    }
+
+    public function testGetPurchases(): void
+    {
+        $this->createUserCollection('dm_test_user');
+        $userResponse = $this->buildAuthenticatedServiceWithTestUser('/collection/purchases', self::$dmUser)->call();
+        $objectResponse = json_decode($userResponse->getContent());
+        $this->assertEquals([
+            (object) [
+                'id' => 1,
+                'description' => 'Purchase',
+                'date' => '2010-01-01',
+            ],
+        ], $objectResponse);
+    }
+
     public function testAddIssue(): void
     {
         $this->createUserCollection('dm_test_user');
