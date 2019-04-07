@@ -83,6 +83,6 @@ class SimilarImagesHelper {
           $logger->info($response);
           // @codeCoverageIgnoreEnd
       }
-      return SimilarImagesResult::createFromJsonEncodedResult($logger, $response);
+      return SimilarImagesResult::createFromJsonEncodedResult($response);
   }
 }
