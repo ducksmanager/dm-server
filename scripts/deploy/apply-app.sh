@@ -5,6 +5,8 @@ webdir_new=${webdir}_new
 
 cd ${webdir_new}
 
+mkdir var && chmod a+w -R var
+
 chmod -R +x scripts && \
 APP_ENV=prod composer install --no-dev --optimize-autoloader && \
 \
