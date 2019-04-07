@@ -664,30 +664,22 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
     }
 
     /**
-     * @Route(
-     *     methods={"PUT"},
-     *     path="/edgecreator/publish/{publicationCode}/{issueNumber}",
-     *     requirements={"publicationCode"="^(?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+)$"})
+     * @Route(methods={"PUT"}, path="/edgecreator/publish/{modelId}")
      * @throws \Doctrine\ORM\ORMException
      */
-    public function publishEdge(string $publicationCode, string $issueNumber) : Response {
+    public function publishEdge(string $modelId) : Response {
         $dmEm = $this->getEm('dm');
         $ecEm = $this->getEm('edgecreator');
 
-        [$country, $magazine] = explode('/', $publicationCode);
         /** @var TranchesEnCoursModeles $edgeModelToPublish */
-        $edgeModelToPublish = $ecEm->getRepository(TranchesEnCoursModeles::class)->findOneBy([
-            'pays' => $country,
-            'magazine' => $magazine,
-            'numero' => $issueNumber,
-            'pretepourpublication' => 1
-        ]);
+        $edgeModelToPublish = $ecEm->getRepository(TranchesEnCoursModeles::class)->find($modelId);
 
         if (!is_null($edgeModelToPublish)) {
             $edgeToPublish = new TranchesPretes();
+            $publicationCode = implode('/', [$edgeModelToPublish->getPays(), $edgeModelToPublish->getMagazine()]);
             $dmEm->persist($edgeToPublish
                 ->setPublicationcode($publicationCode)
-                ->setIssuenumber($issueNumber)
+                ->setIssuenumber($edgeModelToPublish->getNumero())
                 ->setDateajout(new \DateTime('now'))
             );
 
@@ -695,7 +687,7 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
                 $contributor = new TranchesPretesContributeurs();
                 $dmEm->persist($contributor
                     ->setPublicationcode($publicationCode)
-                    ->setIssuenumber($issueNumber)
+                    ->setIssuenumber($edgeModelToPublish->getNumero())
                     ->setContributeur($modelContributor->getIdUtilisateur())
                     ->setContribution($modelContributor->getContribution()));
             }
@@ -704,14 +696,14 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
 
             return new JsonResponse([
                 'publicationCode' => $publicationCode,
-                'issueNumber' => $issueNumber,
-                'url' => "{$_ENV['EDGES_ROOT']}/$country/gen/$magazine.$issueNumber.png",
+                'issueNumber' => $edgeModelToPublish->getNumero(),
+                'url' => "{$_ENV['EDGES_ROOT']}/{$edgeModelToPublish->getPays()}/gen/{$edgeModelToPublish->getMagazine()}.{$edgeModelToPublish->getNumero()}.png",
                 'contributors' => array_map(function(TranchesEnCoursContributeurs $contributor) {
                     return $contributor->getIdUtilisateur();
                 }, $edgeModelToPublish->getContributeurs()->toArray())
             ]);
         }
-        return new Response("$publicationCode $issueNumber is not a non-published edge", Response::HTTP_BAD_REQUEST);
+        return new Response("$modelId is not a non-published model", Response::HTTP_BAD_REQUEST);
     }
 
     private function createStepV1(string $publicationCode, int $stepNumber, string $functionName, string $optionName): int

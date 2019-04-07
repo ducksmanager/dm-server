@@ -914,7 +914,7 @@ class EdgeCreatorTest extends TestCommon
         $this->getEm('edgecreator')->persist($model);
         $this->getEm('edgecreator')->flush();
 
-        $response = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/publish/fr/PM/1', self::$edgecreatorUser, 'PUT')->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/publish/{$model->getId()}", self::$edgecreatorUser, 'PUT')->call();
         $objectResponse = json_decode($this->getResponseContent($response));
 
         $publishedEdge = $this->getEm('dm')->getRepository(TranchesPretes::class)->findOneBy(['publicationcode' => 'fr/PM', 'issuenumber' => '1']);
