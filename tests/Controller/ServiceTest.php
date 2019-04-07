@@ -5,6 +5,17 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ServiceTest extends TestCommon
 {
+    protected function getEmNamesToCreate(): array
+    {
+        return ['coa'];
+    }
+
+    public function setUp()
+    {
+        parent::setUp();
+        self::runCommand('doctrine:fixtures:load -q -n --em=coa --group=coa');
+    }
+
     public function testCallServiceWithoutSystemCredentials(): void
     {
         $response = $this->buildService(
