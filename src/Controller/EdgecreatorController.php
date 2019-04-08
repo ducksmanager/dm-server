@@ -158,7 +158,6 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
         $model->setNumero($issueNumber);
         $model->setUsername($isEditor === '1' ? $this->getCurrentUser()['username'] : null);
         $model->setActive(true);
-        $model->setPretepourpublication(false);
 
         $ecEm->persist($model);
         $ecEm->flush();
@@ -388,81 +387,6 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
     }
 
     /**
-     * @Route(methods={"POST"}, path="/edgecreator/model/v2/{modelId}/readytopublish/{isReadyToPublish}")
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
-     */
-    public function setModelAsReadyToBePublished(Request $request, int $modelId, string $isReadyToPublish): Response
-    {
-        $dmEm = $this->getEm('dm');
-        $ecEm = $this->getEm('edgecreator');
-
-        $designers = $request->request->get('designers');
-        $photographers = $request->request->get('photographers');
-        $contributorsUsernames = array_merge($designers ?? [], $photographers ?? []);
-
-        $qb = $dmEm->createQueryBuilder();
-        $qb->select('users.id, users.username')
-            ->from(Users::class, 'users')
-            ->andWhere('users.username in (:usernames)')
-            ->setParameter(':usernames', $contributorsUsernames)
-        ;
-
-        $contributorsIdsResults = $qb->getQuery()->getResult();
-
-        $contributorsIds = [];
-        array_walk($contributorsIdsResults, function($value) use (&$contributorsIds) {
-            $contributorsIds[$value['username']] = $value['id'];
-        });
-
-        /** @var TranchesEnCoursModeles $model */
-        $model = $ecEm->getRepository(TranchesEnCoursModeles::class)->find($modelId);
-
-        $contributors = [];
-        if (!is_null($photographers)) {
-            $contributors = array_merge($contributors, array_map(function($photographUsername) use ($contributorsIds, $model) {
-                $photographer = new TranchesEnCoursContributeurs();
-                $photographer->setContribution('photographe');
-                $photographer->setIdUtilisateur($contributorsIds[$photographUsername]);
-                $photographer->setIdModele($model);
-
-                return $photographer;
-            }, array_values(array_unique($photographers))));
-        }
-        if (!is_null($designers)) {
-            $contributors = array_merge($contributors, array_map(function($designorUsername) use ($contributorsIds, $model) {
-                $designer = new TranchesEnCoursContributeurs();
-                $designer->setContribution('createur');
-                $designer->setIdUtilisateur($contributorsIds[$designorUsername]);
-                $designer->setIdModele($model);
-
-                return $designer;
-            }, array_values(array_unique($designers))));
-        }
-
-        $qbDeleteExistingContributors = $ecEm->createQueryBuilder();
-        $qbDeleteExistingContributors->delete(TranchesEnCoursContributeurs::class, 'existingContributors')
-            ->where($qb->expr()->eq('existingContributors.idModele', ':modelId'))
-            ->setParameter(':modelId', $modelId);
-        $qbDeleteExistingContributors->getQuery()->execute();
-
-        $model->setActive(false);
-        $model->setPretepourpublication($isReadyToPublish === '1');
-
-        if (!is_null($photographers) || !is_null($designers)) {
-            $model->setContributeurs($contributors);
-        }
-
-        $ecEm->persist($model);
-        $ecEm->flush();
-
-        return new JsonResponseFromObject([
-            'model' => $model,
-            'readytopublish' => $isReadyToPublish === '1'
-        ]);
-    }
-
-    /**
      * @Route(methods={"PUT"}, path="/edgecreator/model/v2/{modelId}/photo/main")
      * @throws \Doctrine\ORM\ORMException
      * @throws \Doctrine\ORM\OptimisticLockException
@@ -667,7 +591,7 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
      * @Route(methods={"PUT"}, path="/edgecreator/publish/{modelId}")
      * @throws \Doctrine\ORM\ORMException
      */
-    public function publishEdge(string $modelId) : Response {
+    public function publishEdge(Request $request, string $modelId) : Response {
         $dmEm = $this->getEm('dm');
         $ecEm = $this->getEm('edgecreator');
 
@@ -675,8 +599,21 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
         $edgeModelToPublish = $ecEm->getRepository(TranchesEnCoursModeles::class)->find($modelId);
 
         if (!is_null($edgeModelToPublish)) {
-            $edgeToPublish = new TranchesPretes();
+            $designers = $request->request->get('designers');
+            $photographers = $request->request->get('photographers');
+            $this->updateModelContributors($edgeModelToPublish, $designers, $photographers);
+
             $publicationCode = implode('/', [$edgeModelToPublish->getPays(), $edgeModelToPublish->getMagazine()]);
+
+            if (!is_null($existingEdge = $dmEm->getRepository(TranchesPretes::class)->findOneBy([
+                'publicationcode' => $publicationCode,
+                'issuenumber' => $edgeModelToPublish->getNumero()
+            ]))) {
+                $edgeToPublish = $existingEdge;
+            }
+            else {
+                $edgeToPublish = new TranchesPretes();
+            }
             $dmEm->persist($edgeToPublish
                 ->setPublicationcode($publicationCode)
                 ->setIssuenumber($edgeModelToPublish->getNumero())
@@ -692,7 +629,12 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
                     ->setContribution($modelContributor->getContribution()));
             }
 
+            $dmEm->persist($edgeToPublish);
             $dmEm->flush();
+
+            $edgeModelToPublish->setActive(false);
+            $ecEm->persist($edgeModelToPublish);
+            $ecEm->flush();
 
             return new JsonResponse([
                 'publicationCode' => $publicationCode,
@@ -704,6 +646,63 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
             ]);
         }
         return new Response("$modelId is not a non-published model", Response::HTTP_BAD_REQUEST);
+    }
+
+    /**
+     * @param TranchesEnCoursModeles $model
+     * @param array $designers
+     * @param array $photographers
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    private function updateModelContributors(TranchesEnCoursModeles $model, array $designers, array $photographers) : void {
+        $dmEm = $this->getEm('dm');
+        $ecEm = $this->getEm('edgecreator');
+
+        $contributorsUsernames = array_merge($designers ?? [], $photographers ?? []);
+
+        $qb = $dmEm->createQueryBuilder();
+        $qb->select('users.id, users.username')
+            ->from(Users::class, 'users')
+            ->andWhere('users.username in (:usernames)')
+            ->setParameter(':usernames', $contributorsUsernames)
+        ;
+
+        $contributorsIdsResults = $qb->getQuery()->getResult();
+
+        $contributorsIds = [];
+        array_walk($contributorsIdsResults, function($value) use (&$contributorsIds) {
+            $contributorsIds[$value['username']] = $value['id'];
+        });
+
+        function addNewContributors($model, &$contributors, $newContributors, $contributorsIds, $contributionType) {
+            if (!is_null($newContributors)) {
+                foreach ($newContributors as $newContributorUsername) {
+                    $contributorId = $contributorsIds[$newContributorUsername];
+                    $contributorExists = count(array_filter($contributors, function(TranchesEnCoursContributeurs $existingContributor) use ($contributionType, $contributorId) {
+                        return $existingContributor->getIdUtilisateur() === $contributorId
+                            && $existingContributor->getContribution() === $contributionType;
+                    })) > 0;
+                    if (!$contributorExists) {
+                        $newContributor = new TranchesEnCoursContributeurs();
+                        $contributors[] = $newContributor
+                            ->setContribution($contributionType)
+                            ->setIdUtilisateur($contributorId)
+                            ->setIdModele($model);
+                    }
+                }
+            }
+        }
+
+        $contributors = $model->getContributeurs()->toArray();
+
+        addNewContributors($model, $contributors, $photographers, $contributorsIds, 'photographe');
+        addNewContributors($model, $contributors, $designers, $contributorsIds, 'createur');
+
+        $model->setContributeurs($contributors);
+
+        $ecEm->persist($model);
+        $ecEm->flush();
     }
 
     private function createStepV1(string $publicationCode, int $stepNumber, string $functionName, string $optionName): int
