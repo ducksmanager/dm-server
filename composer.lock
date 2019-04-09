@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7f27ef3cb338b376c523a62de137e86b",
+    "content-hash": "ebe2037cdb5c2dc72c55ef99f05ebd4c",
     "packages": [
         {
             "name": "api-platform/api-pack",
@@ -190,12 +190,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/cloudinary/cloudinary_php.git",
-                "reference": "fd6a49f1ca585c896f0730ec46bf37967bb454db"
+                "reference": "f3b084d9e5fa67f3a0ecba931cd9da513ddf665b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cloudinary/cloudinary_php/zipball/fd6a49f1ca585c896f0730ec46bf37967bb454db",
-                "reference": "fd6a49f1ca585c896f0730ec46bf37967bb454db",
+                "url": "https://api.github.com/repos/cloudinary/cloudinary_php/zipball/f3b084d9e5fa67f3a0ecba931cd9da513ddf665b",
+                "reference": "f3b084d9e5fa67f3a0ecba931cd9da513ddf665b",
                 "shasum": ""
             },
             "require": {
@@ -234,7 +234,7 @@
                 "image management",
                 "sdk"
             ],
-            "time": "2019-03-07T12:15:03+00:00"
+            "time": "2019-04-02T13:08:04+00:00"
         },
         {
             "name": "doctrine/annotations",
