@@ -1,6 +1,8 @@
 <?php
 namespace App\Tests;
 
+use App\Entity\Dm\TranchesPretes;
+use App\Entity\Dm\TranchesPretesContributeurs;
 use App\Entity\EdgeCreator\EdgecreatorIntervalles;
 use App\Entity\EdgeCreator\EdgecreatorModeles2;
 use App\Entity\EdgeCreator\EdgecreatorValeurs;
@@ -632,86 +634,6 @@ class EdgeCreatorTest extends TestCommon
         $this->assertEquals(false, $newModel->getActive());
     }
 
-    public function testSetModelReadyForPublication(): void
-    {
-        $model = $this->getV2Model('fr', 'PM', '502');
-
-        $this->createUserCollection('otheruser');
-
-        $designerUsernames = ['dm_test_user'];
-        $designerIds = [$this->getUser('dm_test_user')->getId()];
-
-        $photographerUsernames = ['dm_test_user', 'otheruser'];
-        $photographerIds = [$this->getUser('dm_test_user')->getId(), $this->getUser('otheruser')->getId()];
-
-        $this->assertSetModelReadyForPublicationOK($model, $designerUsernames, $photographerUsernames, $designerIds, $photographerIds);
-    }
-
-    public function testSetModelReadyForPublicationDuplicateUsers(): void
-    {
-        $model = $this->getV2Model('fr', 'MP', '401');
-
-        $this->createUserCollection('otheruser');
-
-        $designerUsernames = ['dm_test_user', 'dm_test_user'];
-        $designerIds = [$this->getUser('dm_test_user')->getId(), $this->getUser('dm_test_user')->getId()];
-
-        $photographerUsernames = ['dm_test_user', 'otheruser'];
-        $photographerIds = [$this->getUser('dm_test_user')->getId(), $this->getUser('otheruser')->getId()];
-
-        $this->assertSetModelReadyForPublicationOK($model, $designerUsernames, $photographerUsernames, $designerIds, $photographerIds);
-    }
-
-
-    public function testSetModelNotReadyForPublication(): void
-    {
-        $model = $this->getV2Model('fr', 'PM', '502');
-        $contributeur1 = new TranchesEnCoursContributeurs();
-        $contributeur2 = new TranchesEnCoursContributeurs();
-        $contributeur3 = new TranchesEnCoursContributeurs();
-        $contributeur4 = new TranchesEnCoursContributeurs();
-        $model->setContributeurs([
-            $contributeur1
-                ->setIdUtilisateur(1)
-                ->setContribution('createur')
-                ->setIdModele($model),
-            $contributeur2
-                ->setIdUtilisateur(1)
-                ->setContribution('photographe')
-                ->setIdModele($model),
-            $contributeur3
-                ->setIdUtilisateur(2)
-                ->setContribution('photographe')
-                ->setIdModele($model),
-            $contributeur4
-                ->setIdUtilisateur(3)
-                ->setContribution('createur')
-                ->setIdModele($model),
-        ]);
-
-        $this->getEm('edgecreator')->persist($model);
-        $this->getEm('edgecreator')->flush();
-
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/{$model->getId()}/readytopublish/0", self::$edgecreatorUser, 'POST')
-            ->call();
-
-        $objectResponse = json_decode($this->getResponseContent($response));
-
-        $this->assertEquals($model->getId(), $objectResponse->model->id);
-        $this->assertEquals($model->getPretepourpublication(), $objectResponse->readytopublish);
-        $this->assertEquals($contributeur1->getIdUtilisateur(), $objectResponse->model->contributeurs[0]->idUtilisateur); // should be unchanged
-        $this->assertEquals($contributeur1->getContribution(), $objectResponse->model->contributeurs[0]->contribution, print_r($objectResponse->model, true)); // should be unchanged
-        $this->assertEquals($contributeur2->getIdUtilisateur(), $objectResponse->model->contributeurs[1]->idUtilisateur); // should be unchanged
-        $this->assertEquals($contributeur2->getContribution(), $objectResponse->model->contributeurs[1]->contribution); // should be unchanged
-        $this->assertEquals($contributeur3->getIdUtilisateur(), $objectResponse->model->contributeurs[2]->idUtilisateur); // should be unchanged
-        $this->assertEquals($contributeur3->getContribution(), $objectResponse->model->contributeurs[2]->contribution); // should be unchanged
-        $this->assertEquals($contributeur4->getIdUtilisateur(), $objectResponse->model->contributeurs[3]->idUtilisateur); // should be unchanged
-        $this->assertEquals($contributeur4->getContribution(), $objectResponse->model->contributeurs[3]->contribution); // should be unchanged
-
-        $newModel = $this->getV2Model('fr', 'PM', '502');
-        $this->assertEquals(false, $newModel->getPretepourpublication());
-    }
-
     public function testSetMainPhoto(): void
     {
         $model = $this->getV2Model('fr', 'PM', '502');
@@ -893,42 +815,43 @@ class EdgeCreatorTest extends TestCommon
         );
     }
 
-    /**
-     * @param TranchesEnCoursModeles $model
-     * @param string[] $designerUsernames
-     * @param string[] $photographerUsernames
-     * @param int[] $designerIds
-     * @param int[] $photographerIds
-     */
-    private function assertSetModelReadyForPublicationOK($model, $designerUsernames, $photographerUsernames, $designerIds, $photographerIds): void
-    {
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/model/v2/{$model->getId()}/readytopublish/1", self::$edgecreatorUser, 'POST', [
+    public function testPublishEdge() {
+        EdgeCreatorFixture::createModelEcV2($this->getEm('edgecreator'), self::$edgecreatorUser, 'fr/PM', '1', [1 => ['functionName' => 'Image', 'options' => ['Source' => 'MP.Tete.1.png']]]);
+        $model = $this->getEm('edgecreator')->getRepository(TranchesEnCoursModeles::class)->findOneBy(['pays' => 'fr', 'magazine' => 'PM', 'numero'=> '1']);
+
+        $contributeur1 = new TranchesEnCoursContributeurs();
+        $contributeur2 = new TranchesEnCoursContributeurs();
+        $model->setContributeurs([
+            $contributeur1
+                ->setIdUtilisateur(1)
+                ->setContribution('createur')
+                ->setIdModele($model),
+            $contributeur2
+                ->setIdUtilisateur(3)
+                ->setContribution('createur')
+                ->setIdModele($model),
+        ]);
+
+        $this->getEm('edgecreator')->persist($model);
+        $this->getEm('edgecreator')->flush();
+
+        $this->createUserCollection('otheruser');
+
+        $designerUsernames = ['dm_test_user', 'dm_test_user'];
+        $designerIds = [$this->getUser('dm_test_user')->getId(), $this->getUser('dm_test_user')->getId()];
+
+        $photographerUsernames = ['dm_test_user', 'otheruser'];
+        $photographerIds = [$this->getUser('dm_test_user')->getId(), $this->getUser('otheruser')->getId()];
+
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/publish/{$model->getId()}", self::$edgecreatorUser, 'PUT', [
             'designers' => $designerUsernames,
             'photographers' => $photographerUsernames
-        ])
-            ->call();
+        ])->call();
+        $objectResponse = json_decode($this->getResponseContent($response));
 
-        $objectResponse = json_decode($this->getResponseContent($response), true);
-
-        $this->assertEquals($model->getId(), $objectResponse['model']['id']);
-        $contributors = $objectResponse['model']['contributeurs'];
-
-        $creatorsDetails = array_filter($contributors, function ($helperUser) {
-            return $helperUser['contribution'] === 'createur';
-        });
-        $photographersDetails = array_filter($contributors, function ($helperUser) {
-            return $helperUser['contribution'] === 'photographe';
-        });
-
-        $this->assertEquals(array_unique($designerIds), array_values(array_map(function ($creator) {
-            return $creator['idUtilisateur'];
-        }, $creatorsDetails)));
-        $this->assertEquals(array_unique($photographerIds), array_values(array_map(function ($photographer) {
-            return $photographer['idUtilisateur'];
-        }, $photographersDetails)));
-
-        $newModel = $this->getV2Model($model->getPays(), $model->getMagazine(), $model->getNumero());
-        $this->assertEquals(true, $newModel->getPretepourpublication());
+        $publishedEdge = $this->getEm('dm')->getRepository(TranchesPretes::class)->findOneBy(['publicationcode' => 'fr/PM', 'issuenumber' => '1']);
+        $this->assertNotNull($publishedEdge);
+        $this->assertCount(4, $objectResponse->contributors);
     }
 
     /**

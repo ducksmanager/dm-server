@@ -72,13 +72,6 @@ class TranchesEnCoursModeles
      */
     private $active;
 
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="PretePourPublication", type="boolean", nullable=false)
-     */
-    private $pretepourpublication;
-
     public function __construct()
     {
         $this->photos = new ArrayCollection();
@@ -194,18 +187,6 @@ class TranchesEnCoursModeles
     public function setActive(bool $active): self
     {
         $this->active = $active;
-
-        return $this;
-    }
-
-    public function getPretepourpublication(): ?bool
-    {
-        return $this->pretepourpublication;
-    }
-
-    public function setPretepourpublication(bool $pretepourpublication): self
-    {
-        $this->pretepourpublication = $pretepourpublication;
 
         return $this;
     }

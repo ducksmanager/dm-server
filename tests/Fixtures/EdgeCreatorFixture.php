@@ -82,7 +82,6 @@ class EdgeCreatorFixture implements FixtureInterface
                 ->setNumero($issueNumber)
                 ->setUsername($userName)
                 ->setActive(true)
-                ->setPretepourpublication(false)
         );
 
         foreach ($steps as $stepNumber => $step) {
@@ -150,28 +149,8 @@ class EdgeCreatorFixture implements FixtureInterface
                 ->setEstphotoprincipale(true)
         );
 
-        $ecEntityManager->flush();
-
-        $ongoingModel2Contributor1 = new TranchesEnCoursContributeurs();
-        $ecEntityManager->persist(
-            $ongoingModel2Contributor1
-                ->setIdModele($ongoingModel2)
-                ->setIdUtilisateur($this->user->getId())
-                ->setContribution('photographe')
-        );
-
-        // $ongoingModel3
         self::createModelEcV2($ecEntityManager, null, 'fr/MP', '400', []);
-
-        $ongoingModel4 = self::createModelEcV2($ecEntityManager, null, 'fr/MP', '401', []);
-
-        $ongoingModel4Contributor1 = new TranchesEnCoursContributeurs();
-        $ecEntityManager->persist(
-            $ongoingModel4Contributor1
-                ->setIdModele($ongoingModel4)
-                ->setIdUtilisateur($this->user->getId())
-                ->setContribution('createur')
-        );
+        self::createModelEcV2($ecEntityManager, null, 'fr/MP', '401', []);
 
         $ecEntityManager->flush();
     }

@@ -44,52 +44,13 @@ class CollectionController extends AbstractController implements RequiresDmVersi
     public function getIssues(): JsonResponse
     {
         $dmEm = $this->getEm('dm');
-        $issues = $dmEm->getRepository(Numeros::class)->findBy(
-            ['idUtilisateur' => $this->getCurrentUser()['id']],
-            ['pays' => 'asc', 'magazine' => 'asc', 'numero' => 'asc']
-        );
+        $qb = $dmEm->createQueryBuilder();
+        $qb->select('issues.id, issues.pays AS country, issues.magazine, issues.numero AS issueNumber, issues.etat AS condition, issues.idAcquisition AS purchaseId')
+            ->from(Numeros::class, 'issues')
+            ->where($qb->expr()->eq('issues.idUtilisateur', $this->getCurrentUser()['id']))
+            ->orderBy('issues.pays, issues.magazine, issues.numero', 'ASC');
 
-        $result = new FetchCollectionResult();
-        foreach ($issues as $issue) {
-            $publicationCode = PublicationHelper::getPublicationCode($issue);
-            $numero = $issue->getNumero();
-            $etat = $issue->getEtat();
-
-            if (!$result->getNumeros()->containsKey($publicationCode)) {
-                $result->getNumeros()->set($publicationCode, new ArrayCollection());
-            }
-
-            $result->getNumeros()->get($publicationCode)->add(new NumeroSimple($numero, $etat, $issue->getIdAcquisition()));
-        }
-
-        $countryNames = json_decode(
-            $this->callService(CoaController::class, 'listCountriesFromCodes', [
-                'locale' => 'fr', // FIXME
-                'countryCodes' => implode(',', array_unique(
-                    array_map(function (Numeros $issue) {
-                        return $issue->getPays();
-                    }, $issues))
-                )
-            ])->getContent()
-        );
-
-        $publicationTitles = json_decode(
-            $this->callService(CoaController::class, 'listPublicationsFromPublicationCodes', [
-                'publicationCodes' => implode(',', array_unique(
-                    array_map(function (Numeros $issue) {
-                        return PublicationHelper::getPublicationCode($issue);
-                    }, $issues)
-                ))
-            ])->getContent()
-        );
-
-        return new JsonResponse([
-            'static' => [
-                'pays' => $countryNames,
-                'magazines' => $publicationTitles,
-            ],
-            'numeros' => $result->getNumeros()->toArray()
-        ]);
+        return new JsonResponseFromObject($qb->getQuery()->getArrayResult());
     }
 
     /**

@@ -4,7 +4,7 @@ services:
     container_name: dm-server-web-dev
     image: "nginx:1.15"
     ports:
-     - "10001:80"
+     - "10002:80"
     depends_on:
      - php
     restart: always
@@ -65,7 +65,7 @@ services:
     volumes:
      - $MYSQL_INIT_SCRIPT_COVER_INFO:/docker-entrypoint-initdb.d/$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
     ports:
-     - "64001:3306"
+     - "64009:3306"
     environment:
       MYSQL_DATABASE: cover_info
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
@@ -76,6 +76,8 @@ services:
     image: "bperel/pastec-ubuntu-1704-timestamps"
     networks:
      - cover-id-network
+    volumes:
+     - $PASTEC_INIT_INDEX:/pastec-index-last.dat:ro
 
   db_dm:
     container_name: db_dm

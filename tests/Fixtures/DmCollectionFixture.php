@@ -79,7 +79,7 @@ class DmCollectionFixture implements FixtureInterface
                     ->setMagazine('DDD')
                     ->setNumero('1')
                     ->setEtat('indefini')
-                    ->setIdAcquisition('-2')
+                    ->setIdAcquisition(1)
                     ->setAv(false)
                     ->setIdUtilisateur($user->getId())
                     ->setDateajout(new \DateTime())
