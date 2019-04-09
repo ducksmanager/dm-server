@@ -5,25 +5,52 @@ namespace App\Controller;
 use App\Entity\Dm\TranchesPretes;
 use App\Entity\Dm\TranchesPretesSprites;
 use App\Entity\Dm\TranchesPretesSpritesUrls;
+use App\Helper\SpriteHelper;
 use Doctrine\ORM\Query\Expr\OrderBy;
+use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 class EdgeSpritesController extends AbstractController implements RequiresDmVersionController
 {
+    /**
+     * @Route(methods={"PUT"}, path="/edgesprites/from/{fromEdgeID}")
+     * @throws \Doctrine\ORM\ORMException
+     */
+    public function uploadEdgesAndGenerateSprites(LoggerInterface $logger, string $fromEdgeID) {
+        $uploadEdgesResult = $this->uploadEdges($logger, $fromEdgeID);
+
+        // No stored procedure in SQLite
+        if ($_ENV['DATABASE_DRIVER'] === 'pdo_mysql') {
+            $dmEm = $this->getEm('dm');
+            $rsm = new ResultSetMappingBuilder($dmEm);
+            $query = $dmEm->createNativeQuery('CALL generate_sprite_names', $rsm);
+            $query->execute();
+        }
+
+        $updateTagsResult = $this->updateTags($logger, $fromEdgeID);
+
+        $generateSpritesResult = $this->generateSprites($logger, $fromEdgeID);
+
+        return new JsonResponse([
+            'edgesToUpload' => (array) json_decode($uploadEdgesResult->getContent()),
+            'slugsPerSprite' => (array) json_decode($updateTagsResult->getContent()),
+            'createdSprites' => (array) json_decode($generateSpritesResult->getContent()),
+        ]);
+    }
 
     /**
-     * @Route(methods={"PUT"}, path="/edgesprites/pictures/from/{fromEdgeID}")
+     * @Route(methods={"PUT"}, path="/edgesprites/upload/from/{fromEdgeID}")
      */
-    public function uploadPictures(LoggerInterface $logger, string $fromEdgeID) {
+    public function uploadEdges(LoggerInterface $logger, string $fromEdgeID) {
 
         $dmEm = $this->getEm('dm');
         $qb = $dmEm->createQueryBuilder();
         $qb
             ->select('edges.publicationcode, edges.issuenumber, edges.slug')
             ->from(TranchesPretes::class, 'edges')
-            ->andWhere($qb->expr()->gt('edges.id', ':fromID'))
+            ->andWhere($qb->expr()->gte('edges.id', ':fromID'))
             ->setParameter(':fromID', $fromEdgeID);
         $edgesToUpload = $qb->getQuery()->getArrayResult();
 
@@ -31,7 +58,7 @@ class EdgeSpritesController extends AbstractController implements RequiresDmVers
             [$country, $magazine] = explode('/', $edgeToUpload['publicationcode']);
 
             $logger->info("Uploading {$edgeToUpload['slug']}...");
-            \Cloudinary\Uploader::upload(
+            SpriteHelper::upload(
                 "{$_ENV['EDGES_ROOT']}/$country/gen/$magazine.{$edgeToUpload['issuenumber']}.png", [
                     'public_id' => $edgeToUpload['slug']
             ]);
@@ -52,7 +79,7 @@ class EdgeSpritesController extends AbstractController implements RequiresDmVers
         $qb
             ->select('sprite')
             ->from(TranchesPretesSprites::class, 'sprite')
-            ->andWhere($qb->expr()->gt('sprite.idTranche', $fromEdgeID))
+            ->andWhere($qb->expr()->gte('sprite.idTranche', $fromEdgeID))
             ->orderBy(new OrderBy('sprite.spriteName', 'ASC'));
 
         /** @var TranchesPretesSprites[] $allSpritesAndEdges */
@@ -68,7 +95,7 @@ class EdgeSpritesController extends AbstractController implements RequiresDmVers
             $numberOfEdges = count($edgeSlugs);
             $logger->info("Adding tag $spriteName on $numberOfEdges edges");
             for ($i = 0; $i < $numberOfEdges; $i += $TAGGABLE_ASSETS_LIMIT) {
-                \Cloudinary\Uploader::add_tag(
+                SpriteHelper::add_tag(
                     $spriteName,
                     array_slice($edgeSlugs, $i, $TAGGABLE_ASSETS_LIMIT - 1)
                 );
@@ -96,14 +123,14 @@ class EdgeSpritesController extends AbstractController implements RequiresDmVers
             ->from(TranchesPretesSprites::class, 'sprites')
             ->andWhere($qb->expr()->notIn('sprites.spriteName', $qbExistingUrls->getDQL()))
             ->andWhere($qb->expr()->notLike('sprites.spriteName', ':fullSprite'))
-            ->andWhere($qb->expr()->gt('sprites.idTranche', $fromEdgeID))
+            ->andWhere($qb->expr()->gte('sprites.idTranche', $fromEdgeID))
             ->setParameter(':fullSprite', '%-full');
 
-        $spritesWithNoUrl = $qb->getQuery()->getArrayResult();
+        $spritesWithNoUrl = $qb->getQuery()->getResult();
         foreach($spritesWithNoUrl as $sprite) {
             ['spriteName' => $spriteName] = $sprite;
             $logger->info("Generating sprite for $spriteName...");
-            $externalResponse = \Cloudinary\Uploader::generate_sprite($spriteName);
+            $externalResponse = SpriteHelper::generate_sprite($spriteName);
 
             $spriteUrl = new TranchesPretesSpritesUrls();
 

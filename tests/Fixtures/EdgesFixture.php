@@ -18,6 +18,7 @@ class EdgesFixture implements FixtureInterface
                 ->setPublicationcode('fr/JM')
                 ->setIssuenumber('3001')
                 ->setDateajout(new \DateTime())
+                ->setSlug('edges-fr-JM-3001')
         );
 
         $dupEdge1 = new TranchesDoublons();
@@ -36,6 +37,7 @@ class EdgesFixture implements FixtureInterface
                 ->setPublicationcode('fr/JM')
                 ->setIssuenumber('4001')
                 ->setDateajout(new \DateTime())
+                ->setSlug('edges-fr-JM-4001')
         );
 
         $dupEdge2 = new TranchesDoublons();
