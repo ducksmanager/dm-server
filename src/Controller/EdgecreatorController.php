@@ -602,7 +602,7 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
      * @Route(methods={"PUT"}, path="/edgecreator/publish/{modelId}")
      * @throws \Doctrine\ORM\ORMException
      */
-    public function publishEdge(LoggerInterface $logger, Request $request, string $modelId) : Response {
+    public function publishEdge(Request $request, string $modelId) : Response {
         $dmEm = $this->getEm('dm');
         $ecEm = $this->getEm('edgecreator');
 
@@ -660,13 +660,10 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
     }
 
     /**
-     * @param TranchesEnCoursModeles $model
-     * @param array $designers
-     * @param array $photographers
      * @throws \Doctrine\ORM\ORMException
      * @throws \Doctrine\ORM\OptimisticLockException
      */
-    private function updateModelContributors(TranchesEnCoursModeles $model, array $designers, array $photographers) : void {
+    private function updateModelContributors(TranchesEnCoursModeles $modelId, array $designers, array $photographers) : void {
         $dmEm = $this->getEm('dm');
         $ecEm = $this->getEm('edgecreator');
 
@@ -686,7 +683,7 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
             $contributorsIds[$value['username']] = $value['id'];
         });
 
-        function addNewContributors($model, &$contributors, $newContributors, $contributorsIds, $contributionType) {
+        function addNewContributors($modelId, &$contributors, $newContributors, $contributorsIds, $contributionType) {
             if (!is_null($newContributors)) {
                 foreach ($newContributors as $newContributorUsername) {
                     $contributorId = $contributorsIds[$newContributorUsername];
@@ -699,20 +696,27 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
                         $contributors[] = $newContributor
                             ->setContribution($contributionType)
                             ->setIdUtilisateur($contributorId)
-                            ->setIdModele($model);
+                            ->setIdModele($modelId);
                     }
                 }
             }
         }
 
-        $contributors = $model->getContributeurs()->toArray();
+        $qbDeleteExistingContributors = $this->getEm('edgecreator')->createQueryBuilder();
+        $qbDeleteExistingContributors
+            ->delete(TranchesEnCoursContributeurs::class, 'contributors')
+            ->where('contributors.idModele = :modelid')
+            ->setParameter('modelid', $modelId);
+        $qbDeleteExistingContributors->getQuery()->execute();
 
-        addNewContributors($model, $contributors, $photographers, $contributorsIds, 'photographe');
-        addNewContributors($model, $contributors, $designers, $contributorsIds, 'createur');
+        $contributors = [];
 
-        $model->setContributeurs($contributors);
+        addNewContributors($modelId, $contributors, $photographers, $contributorsIds, 'photographe');
+        addNewContributors($modelId, $contributors, $designers, $contributorsIds, 'createur');
 
-        $ecEm->persist($model);
+        $modelId->setContributeurs($contributors);
+
+        $ecEm->persist($modelId);
         $ecEm->flush();
     }
 
