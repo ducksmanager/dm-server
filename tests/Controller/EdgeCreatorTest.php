@@ -818,6 +818,34 @@ class EdgeCreatorTest extends TestCommon
         );
     }
 
+    public function testGetModelContributors() {
+        EdgeCreatorFixture::createModelEcV2($this->getEm('edgecreator'), self::$edgecreatorUser, 'fr/PM', '1', [1 => ['functionName' => 'Image', 'options' => ['Source' => 'MP.Tete.1.png']]]);
+        $model = $this->getEm('edgecreator')->getRepository(TranchesEnCoursModeles::class)->findOneBy(['pays' => 'fr', 'magazine' => 'PM', 'numero'=> '1']);
+
+        $contributeur1 = new TranchesEnCoursContributeurs();
+        $contributeur2 = new TranchesEnCoursContributeurs();
+        $model->setContributeurs([
+            $contributeur1
+                ->setIdUtilisateur(1)
+                ->setContribution('createur')
+                ->setIdModele($model),
+            $contributeur2
+                ->setIdUtilisateur(3)
+                ->setContribution('createur')
+                ->setIdModele($model),
+        ]);
+
+        $this->getEm('edgecreator')->persist($model);
+        $this->getEm('edgecreator')->flush();
+
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/contributors/{$model->getId()}", self::$edgecreatorUser)->call();
+        $objectResponse = json_decode($this->getResponseContent($response));
+        $this->assertEquals(1, $objectResponse[0]->idUtilisateur);
+        $this->assertEquals('createur', $objectResponse[0]->contribution);
+        $this->assertEquals(3, $objectResponse[1]->idUtilisateur);
+        $this->assertEquals('createur', $objectResponse[1]->contribution);
+    }
+
     public function testPublishEdge() {
         EdgeCreatorFixture::createModelEcV2($this->getEm('edgecreator'), self::$edgecreatorUser, 'fr/PM', '1', [1 => ['functionName' => 'Image', 'options' => ['Source' => 'MP.Tete.1.png']]]);
         $model = $this->getEm('edgecreator')->getRepository(TranchesEnCoursModeles::class)->findOneBy(['pays' => 'fr', 'magazine' => 'PM', 'numero'=> '1']);

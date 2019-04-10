@@ -588,10 +588,21 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
     }
 
     /**
+     * @Route(methods={"GET"}, path="/edgecreator/contributors/{modelId}")
+     */
+    public function getModelContributors(string $modelId) : Response {
+        $ecEm = $this->getEm('edgecreator');
+
+        return new JsonResponseFromObject(
+            $ecEm->getRepository(TranchesEnCoursModeles::class)->find($modelId)->getContributeurs()->toArray()
+        );
+    }
+
+    /**
      * @Route(methods={"PUT"}, path="/edgecreator/publish/{modelId}")
      * @throws \Doctrine\ORM\ORMException
      */
-    public function publishEdge(Request $request, string $modelId) : Response {
+    public function publishEdge(LoggerInterface $logger, Request $request, string $modelId) : Response {
         $dmEm = $this->getEm('dm');
         $ecEm = $this->getEm('edgecreator');
 

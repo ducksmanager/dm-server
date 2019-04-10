@@ -7,7 +7,6 @@ use App\Entity\EdgeCreator\EdgecreatorIntervalles;
 use App\Entity\EdgeCreator\EdgecreatorModeles2;
 use App\Entity\EdgeCreator\EdgecreatorValeurs;
 use App\Entity\EdgeCreator\ImagesTranches;
-use App\Entity\EdgeCreator\TranchesEnCoursContributeurs;
 use App\Entity\EdgeCreator\TranchesEnCoursModeles;
 use App\Entity\EdgeCreator\TranchesEnCoursModelesImages;
 use App\Entity\EdgeCreator\TranchesEnCoursValeurs;
