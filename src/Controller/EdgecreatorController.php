@@ -650,6 +650,7 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
             return new JsonResponse([
                 'publicationCode' => $publicationCode,
                 'issueNumber' => $edgeModelToPublish->getNumero(),
+                'edgeId' => $edgeToPublish->getId(),
                 'url' => "{$_ENV['EDGES_ROOT']}/{$edgeModelToPublish->getPays()}/gen/{$edgeModelToPublish->getMagazine()}.{$edgeModelToPublish->getNumero()}.png",
                 'contributors' => array_map(function(TranchesEnCoursContributeurs $contributor) {
                     return $contributor->getIdUtilisateur();

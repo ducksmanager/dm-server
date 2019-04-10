@@ -883,6 +883,7 @@ class EdgeCreatorTest extends TestCommon
         $publishedEdge = $this->getEm('dm')->getRepository(TranchesPretes::class)->findOneBy(['publicationcode' => 'fr/PM', 'issuenumber' => '1']);
         $this->assertNotNull($publishedEdge);
         $this->assertCount(3, $objectResponse->contributors);
+        $this->assertEquals($publishedEdge->getId(), $objectResponse->edgeId);
     }
 
     public function testUploadEdgeAndGenerateSprite() {
