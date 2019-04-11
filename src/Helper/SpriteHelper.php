@@ -22,6 +22,6 @@ class SpriteHelper {
     }
 
     public static function generate_sprite($tag, $options = array()) {
-        return self::$mockedResults['generate_sprite'][$tag] ?: Uploader::add_tag($tag, $options);
+        return self::$mockedResults['generate_sprite'][$tag] ?: Uploader::generate_sprite($tag, $options);
     }
 }
