@@ -7,6 +7,7 @@ cd ${webdir_new}
 
 chmod -R +x scripts && \
 APP_ENV=prod composer install --no-dev --optimize-autoloader && \
+rm -f config/packages/prod/doctrine.yaml && \
 \
 APP_ENV=prod APP_DEBUG=0 php bin/console cache:clear
 \
