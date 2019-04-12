@@ -7,35 +7,26 @@ use App\Entity\Dm\TranchesPretesSprites;
 use App\Entity\Dm\TranchesPretesSpritesUrls;
 use App\Helper\SpriteHelper;
 use Doctrine\ORM\Query\Expr\OrderBy;
-use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 class EdgeSpritesController extends AbstractController implements RequiresDmVersionController
 {
+    static $SPRITE_SIZES = [ 10, 20, 50, 100, 'full'];
+
     /**
      * @Route(methods={"PUT"}, path="/edgesprites/from/{fromEdgeID}")
      * @throws \Doctrine\ORM\ORMException
      */
     public function uploadEdgesAndGenerateSprites(LoggerInterface $logger, string $fromEdgeID) {
         $uploadEdgesResult = $this->uploadEdges($logger, $fromEdgeID);
-
-        // No stored procedure in SQLite
-        if ($_ENV['DATABASE_DRIVER'] === 'pdo_mysql') {
-            $dmEm = $this->getEm('dm');
-            $rsm = new ResultSetMappingBuilder($dmEm);
-            $query = $dmEm->createNativeQuery('CALL generate_sprite_names', $rsm);
-            $query->execute();
-        }
-
         $updateTagsResult = $this->updateTags($logger, $fromEdgeID);
-
         $generateSpritesResult = $this->generateSprites($logger, $fromEdgeID);
 
         return new JsonResponse([
             'edgesToUpload' => (array) json_decode($uploadEdgesResult->getContent()),
-            'slugsPerSprite' => (array) json_decode($updateTagsResult->getContent()),
+            'spriteNames' => (array) json_decode($updateTagsResult->getContent()),
             'createdSprites' => (array) json_decode($generateSpritesResult->getContent()),
         ]);
     }
@@ -73,7 +64,46 @@ class EdgeSpritesController extends AbstractController implements RequiresDmVers
      */
     public function updateTags(LoggerInterface $logger, int $fromEdgeID)
     {
+
         $TAGGABLE_ASSETS_LIMIT = 1000;
+
+        $qbDeleteExistingSpriteNames = $this->getEm('dm')->createQueryBuilder();
+        $qbDeleteExistingSpriteNames
+            ->delete(TranchesPretesSprites::class, 'sprite')
+            ->andWhere($qbDeleteExistingSpriteNames->expr()->gte('sprite.idTranche', $fromEdgeID));
+        $qbDeleteExistingSpriteNames->getQuery()->execute();
+
+        $edge = $this->getEm('dm')->getRepository(TranchesPretes::class)->find($fromEdgeID);
+
+        $spriteNames = [];
+
+        foreach(self::$SPRITE_SIZES as $spriteSize) {
+            if ($spriteSize === 'full') {
+                $spriteName = self::getSpriteName($edge->getPublicationcode(), 'full');
+                $spriteSize = $this->getEm('dm')->getRepository(TranchesPretes::class)->count([
+                    'publicationcode' => $edge->getPublicationcode()
+                ]);
+            }
+            else {
+                $spriteName = self::getSpriteName($edge->getPublicationcode(), self::getSpriteRange($edge->getIssuenumber(), $spriteSize));
+            }
+
+            $spriteForEdge = new TranchesPretesSprites();
+            $this->getEm('dm')->persist($spriteForEdge
+                ->setIdTranche($edge)
+                ->setSpriteName($spriteName)
+                ->setSpriteSize($spriteSize)
+            );
+            $logger->info("Adding tag $spriteName on {$edge->getSlug()}");
+            SpriteHelper::add_tag(
+                $spriteName,
+                $edge->getSlug()
+            );
+            $this->getEm('dm')->flush();
+
+            $spriteNames[] = $spriteName;
+        }
+
 
         $qb = $this->getEm('dm')->createQueryBuilder();
         $qb
@@ -102,7 +132,7 @@ class EdgeSpritesController extends AbstractController implements RequiresDmVers
             }
         }
 
-        return new JsonResponse($slugsPerSprite);
+        return new JsonResponse($spriteNames);
     }
 
     /**
@@ -143,5 +173,23 @@ class EdgeSpritesController extends AbstractController implements RequiresDmVers
             $dmEm->flush();
         }
         return new JsonResponse($spritesWithNoUrl);
+    }
+
+    static function getSpriteRange(string $issueNumber, int $rangeWidth): string
+    {
+        $issueNumberInt = (int)$issueNumber;
+        return implode('-', [
+            $issueNumberInt - ($issueNumberInt - 1) % $rangeWidth,
+            ($issueNumberInt - ($issueNumberInt - 1) % $rangeWidth) + $rangeWidth - 1
+        ]);
+    }
+
+    static function getSpriteName(string $publicationCode, string $suffix): string
+    {
+        return implode('-', [
+            'edges',
+            str_replace('/', '-', $publicationCode),
+            $suffix
+        ]);
     }
 }

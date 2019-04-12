@@ -17,11 +17,12 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
-            pattern: ^/(?!coa)(?!cover-id)(?!edgesprites)(?!status).+
+            pattern: ^/(?!coa)(?!cover-id)(?!status).+
             http_basic: ~
 
     access_control:
         - { path: ^/rawsql, roles: ROLE_RAWSQL }
         - { path: ^/ducksmanager/resetDemo, roles: ROLE_ADMIN }
+        - { path: ^/edgesprites/, roles: ROLE_ADMIN }
         - { path: ^/collection/, roles: ROLE_COLLECTION }
         - { path: ^/edgecreator/, roles: ROLE_EDGECREATOR }

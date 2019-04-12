@@ -2,8 +2,6 @@
 namespace App\Tests;
 
 use App\Entity\Dm\TranchesPretes;
-use App\Entity\Dm\TranchesPretesContributeurs;
-use App\Entity\Dm\TranchesPretesSprites;
 use App\Entity\EdgeCreator\EdgecreatorIntervalles;
 use App\Entity\EdgeCreator\EdgecreatorModeles2;
 use App\Entity\EdgeCreator\EdgecreatorValeurs;
@@ -893,22 +891,6 @@ class EdgeCreatorTest extends TestCommon
             'issuenumber' => '3001'
         ]);
 
-        // Mock for SP generate_sprite_names
-        $spritesForEdges = array_map(function($spriteNameAndSize) use ($edge) {
-            $sprite = new TranchesPretesSprites();
-            $this->getEm('dm')->persist($sprite
-                ->setIdTranche($edge)
-                ->setSpriteName($spriteNameAndSize[0])
-                ->setSpriteSize($spriteNameAndSize[1])
-            );
-        }, [
-            ['edges-fr-JM-3001-3010', 1],
-            ['edges-fr-JM-3001-3020', 20],
-            ['edges-fr-JM-3001-3050', 50],
-            ['edges-fr-JM-3001-3100', 100],
-            ['edges-fr-JM-full', 2]
-        ]);
-
         $this->getEm('dm')->flush();
 
         SpriteHelper::$mockedResults = [
@@ -923,7 +905,7 @@ class EdgeCreatorTest extends TestCommon
             ]
         ];
 
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgesprites/from/{$edge->getId()}", self::$edgecreatorUser, 'PUT')->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser("/edgesprites/from/{$edge->getId()}", self::$adminUser, 'PUT')->call();
         $objectResponse = json_decode($this->getResponseContent($response));
         $this->assertEquals((object) [
             'edgesToUpload' => [
@@ -938,12 +920,12 @@ class EdgeCreatorTest extends TestCommon
                     'slug' => 'edges-fr-JM-4001',
                 ],
             ],
-            'slugsPerSprite' => (object) [
-                'edges-fr-JM-3001-3010' => ['edges-fr-JM-3001'],
-                'edges-fr-JM-3001-3020' => ['edges-fr-JM-3001'],
-                'edges-fr-JM-3001-3050' => ['edges-fr-JM-3001'],
-                'edges-fr-JM-3001-3100' => ['edges-fr-JM-3001'],
-                'edges-fr-JM-full' => ['edges-fr-JM-3001'],
+            'spriteNames' => [
+                'edges-fr-JM-3001-3010',
+                'edges-fr-JM-3001-3020',
+                'edges-fr-JM-3001-3050',
+                'edges-fr-JM-3001-3100',
+                'edges-fr-JM-full',
             ],
             'createdSprites' => [
                 (object) ['spriteName' => 'edges-fr-JM-3001-3010'],
