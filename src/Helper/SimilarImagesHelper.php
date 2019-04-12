@@ -13,7 +13,7 @@ class SimilarImagesHelper {
   public static $mockedResults;
 
   /** @var string $sampleCover */
-  public static $sampleCover = 'https://outducks.org/au/bp/001/au_bp_001a_001.jpg';
+  public static $sampleCover = '/au/bp/001/au_bp_001a_001.jpg';
 
   /**
    * @throws \InvalidArgumentException

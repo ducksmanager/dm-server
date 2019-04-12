@@ -81,7 +81,7 @@ class StatusController extends AbstractController
         $log = [];
 
         try {
-            $outputObject = SimilarImagesHelper::getSimilarImages(new File(SimilarImagesHelper::$sampleCover, false), $logger, $pastecHost);
+            $outputObject = SimilarImagesHelper::getSimilarImages(new File($_ENV['IMAGE_REMOTE_ROOT'].SimilarImagesHelper::$sampleCover, false), $logger, $pastecHost);
             $matchNumber = count($outputObject->getImageIds());
             if ($matchNumber > 0) {
                 $log[] = "Pastec search returned $matchNumber image(s)";
