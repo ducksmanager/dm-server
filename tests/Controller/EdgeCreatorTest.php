@@ -11,9 +11,7 @@ use App\Entity\EdgeCreator\TranchesEnCoursContributeurs;
 use App\Entity\EdgeCreator\TranchesEnCoursModeles;
 use App\Entity\EdgeCreator\TranchesEnCoursModelesImages;
 use App\Entity\EdgeCreator\TranchesEnCoursValeurs;
-use App\Helper\SpriteHelper;
 use App\Tests\Fixtures\EdgeCreatorFixture;
-use App\Tests\Fixtures\EdgesFixture;
 use Countable;
 use stdClass;
 use Swift_Message;
@@ -883,58 +881,6 @@ class EdgeCreatorTest extends TestCommon
         $this->assertNotNull($publishedEdge);
         $this->assertCount(3, $objectResponse->contributors);
         $this->assertEquals($publishedEdge->getId(), $objectResponse->edgeId);
-    }
-
-    public function testUploadEdgeAndGenerateSprite() {
-        $this->loadFixture('dm', new EdgesFixture());
-        $edge = $this->getEm('dm')->getRepository(TranchesPretes::class)->findOneBy([
-            'publicationcode' => 'fr/JM',
-            'issuenumber' => '3001'
-        ]);
-
-        $this->getEm('dm')->flush();
-
-        SpriteHelper::$mockedResults = [
-            'upload' => 'Success',
-            'add_tag' => 'Success',
-            'generate_sprite' => [
-                'edges-fr-JM-3001-3010' => ['version' => 123456789],
-                'edges-fr-JM-3001-3020' => ['version' => 123456789],
-                'edges-fr-JM-3001-3050' => ['version' => 123456789],
-                'edges-fr-JM-3001-3100' => ['version' => 123456789],
-                'edges-fr-JM-full' => ['version' => 123456789]
-            ]
-        ];
-
-        $response = $this->buildAuthenticatedServiceWithTestUser("/edgesprites/from/{$edge->getId()}", self::$adminUser, 'PUT')->call();
-        $objectResponse = json_decode($this->getResponseContent($response));
-        $this->assertEquals((object) [
-            'edgesToUpload' => [
-                (object) [
-                    'publicationcode' => 'fr/JM',
-                    'issuenumber' => '3001',
-                    'slug' => 'edges-fr-JM-3001',
-                ],
-                (object) [
-                    'publicationcode' => 'fr/JM',
-                    'issuenumber' => '4001',
-                    'slug' => 'edges-fr-JM-4001',
-                ],
-            ],
-            'spriteNames' => [
-                'edges-fr-JM-3001-3010',
-                'edges-fr-JM-3001-3020',
-                'edges-fr-JM-3001-3050',
-                'edges-fr-JM-3001-3100',
-                'edges-fr-JM-full',
-            ],
-            'createdSprites' => [
-                (object) ['spriteName' => 'edges-fr-JM-3001-3010'],
-                (object) ['spriteName' => 'edges-fr-JM-3001-3020'],
-                (object) ['spriteName' => 'edges-fr-JM-3001-3050'],
-                (object) ['spriteName' => 'edges-fr-JM-3001-3100'],
-            ],
-        ], $objectResponse);
     }
 
     /**
