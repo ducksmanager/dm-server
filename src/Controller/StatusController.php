@@ -3,7 +3,10 @@ namespace App\Controller;
 
 use App\Helper\dbQueryHelper;
 use App\Helper\SimilarImagesHelper;
+use Doctrine\DBAL\DBALException;
+use Exception;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -29,10 +32,10 @@ class StatusController extends AbstractController
                 $log[] = "Pastec OK with $pastecIndexesImagesNumber images indexed";
             }
             else {
-                throw new \RuntimeException('Pastec has no images indexed');
+                throw new RuntimeException('Pastec has no images indexed');
             }
         }
-        catch(\Exception $e) {
+        catch(Exception $e) {
             $error = $e->getMessage();
         }
 
@@ -47,7 +50,7 @@ class StatusController extends AbstractController
      * @Route(methods={"GET"}, path="/status/db"))
      * @param LoggerInterface $logger
      * @return Response
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
     public function getDbStatus(LoggerInterface $logger): Response {
         $errors = [];
@@ -87,10 +90,10 @@ class StatusController extends AbstractController
                 $log[] = "Pastec search returned $matchNumber image(s)";
             }
             else {
-                throw new \RuntimeException('Pastec search returned no image');
+                throw new RuntimeException('Pastec search returned no image');
             }
         }
-        catch(\Exception $e) {
+        catch(Exception $e) {
             $error = $e->getMessage();
         }
 

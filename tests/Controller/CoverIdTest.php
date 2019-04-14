@@ -7,6 +7,7 @@ use App\Helper\SimilarImagesHelper;
 use App\Tests\Fixtures\CoaEntryFixture;
 use App\Tests\Fixtures\CoverIdFixture;
 use App\Tests\TestCommon;
+use function exif_imagetype;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
@@ -246,7 +247,7 @@ class CoverIdTest extends TestCommon
             ->call();
 
         file_put_contents(self::$uploadDestination, $this->getResponseContent($response));
-        $type=\exif_imagetype(self::$uploadDestination);
+        $type= exif_imagetype(self::$uploadDestination);
         $this->assertEquals(IMAGETYPE_JPEG, $type);
     }
 

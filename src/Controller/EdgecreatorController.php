@@ -15,13 +15,21 @@ use App\Entity\EdgeCreator\TranchesEnCoursModeles;
 use App\Entity\EdgeCreator\TranchesEnCoursModelesImages;
 use App\Entity\EdgeCreator\TranchesEnCoursValeurs;
 use App\Helper\JsonResponseFromObject;
+use DateTime;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Persistence\Mapping\MappingException;
+use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Types\Type;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
+use Exception;
 use InvalidArgumentException;
 use RuntimeException;
 use Swift_Mailer;
+use Swift_Message;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -144,8 +152,8 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
      *     methods={"PUT"},
      *     path="/edgecreator/v2/model/{publicationCode}/{issueNumber}/{isEditor}",
      *     requirements={"publicationCode"="^(?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+)$"})
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     public function createModel(string $publicationCode, string $issueNumber, string $isEditor): Response
     {
@@ -170,9 +178,9 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
      *     methods={"POST"},
      *     path="/edgecreator/v2/model/clone/to/{publicationCode}/{issueNumber}",
      *     requirements={"publicationCode"="^(?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+)$"})
-     * @throws \Doctrine\Common\Persistence\Mapping\MappingException
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws MappingException
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     public function cloneSteps(Request $request, string $publicationCode, string $issueNumber): Response
     {
@@ -218,9 +226,9 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
 
     /**
      * @Route(methods={"POST"}, path="/edgecreator/v2/step/{modelId}/{stepNumber}")
-     * @throws \Doctrine\Common\Persistence\Mapping\MappingException
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws MappingException
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     public function createOrUpdateStep(Request $request, int $modelId, int $stepNumber): Response
     {
@@ -234,8 +242,8 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
 
     /**
      * @Route(methods={"POST"}, path="/edgecreator/v2/step/shift/{modelId}/{stepNumber}/{isIncludingThisStep}")
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     public function shiftStep(int $modelId, int $stepNumber, string $isIncludingThisStep): Response
     {
@@ -271,8 +279,8 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
 
     /**
      * @Route(methods={"POST"}, path="/edgecreator/v2/step/clone/{modelId}/{stepNumber}/to/{newStepNumber}")
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     public function cloneStep(int $modelId, int $stepNumber, int $newStepNumber): Response
     {
@@ -312,8 +320,8 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
 
     /**
      * @Route(methods={"DELETE"}, path="/edgecreator/v2/step/{modelId}/{stepNumber}")
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     public function deleteStep(int $modelId, int $stepNumber): Response
     {
@@ -334,8 +342,8 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
 
     /**
      * @Route(methods={"PUT"}, path="/edgecreator/myfontspreview")
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     public function storeMyFontsPreview(Request $request): Response
     {
@@ -357,8 +365,8 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
 
     /**
      * @Route(methods={"DELETE"}, path="/edgecreator/myfontspreview/{previewId}")
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     public function deleteMyFontsPreview(int $previewId): Response
     {
@@ -372,8 +380,8 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
 
     /**
      * @Route(methods={"POST"}, path="/edgecreator/model/v2/{modelId}/deactivate")
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     public function deactivateModel(int $modelId): Response
     {
@@ -388,8 +396,8 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
 
     /**
      * @Route(methods={"PUT"}, path="/edgecreator/model/v2/{modelId}/photo/main")
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     public function setModelMainPhoto(Request $request, int $modelId): Response
     {
@@ -421,7 +429,7 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
         $mainPhoto = new ImagesTranches();
         $mainPhoto
             ->setIdUtilisateur($this->getCurrentUser()['id'])
-            ->setDateheure((new \DateTime())->setTime(0,0))
+            ->setDateheure((new DateTime())->setTime(0,0))
             ->setHash(null) // TODO
             ->setNomfichier($photoName);
         $ecEm->persist($mainPhoto);
@@ -448,7 +456,7 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
 
     /**
      * @Route(methods={"GET"}, path="/edgecreator/model/v2/{modelId}/photo/main")
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws NonUniqueResultException
      */
     public function getModelMainPhoto(int $modelId): Response
     {
@@ -475,7 +483,7 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
 
     /**
      * @Route(methods={"GET"}, path="/edgecreator/multiple_edge_photo/today")
-     * @throws \Exception
+     * @throws Exception
      */
     public function getMultipleEdgePhotosFromToday(): Response
     {
@@ -487,7 +495,7 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
             ->andWhere('photo.idUtilisateur = :idUtilisateur')
             ->setParameter(':idUtilisateur', $this->getCurrentUser()['id'])
             ->andWhere('photo.dateheure = :today')
-            ->setParameter(':today', new \DateTime('today'));
+            ->setParameter(':today', new DateTime('today'));
 
         $uploadedFiles = $qb->getQuery()->getResult();
 
@@ -509,8 +517,8 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
 
     /**
      * @Route(methods={"PUT"}, path="/edgecreator/multiple_edge_photo")
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     public function createMultipleEdgePhoto(Request $request, Swift_Mailer $mailer): Response
     {
@@ -521,13 +529,13 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
 
         $photo = new ImagesTranches();
         $photo->setHash($hash);
-        $photo->setDateheure(new \DateTime('today'));
+        $photo->setDateheure(new DateTime('today'));
         $photo->setNomfichier($fileName);
         $photo->setIdUtilisateur($user['id']);
         $ecEm->persist($photo);
         $ecEm->flush();
 
-        $message = new \Swift_Message();
+        $message = new Swift_Message();
         $message
             ->setSubject('Nouvelle photo de tranche')
             ->setFrom([$user['username']. '@' .$_ENV['SMTP_ORIGIN_EMAIL_DOMAIN_EDGECREATOR']])
@@ -544,7 +552,7 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
 
     /**
      * @Route(methods={"GET"}, path="/edgecreator/elements/images/{nameSubString}")
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
     public function getElementImagesByNameSubstring(string $nameSubString): Response
     {
@@ -600,7 +608,7 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
 
     /**
      * @Route(methods={"PUT"}, path="/edgecreator/publish/{modelId}")
-     * @throws \Doctrine\ORM\ORMException
+     * @throws ORMException
      */
     public function publishEdge(Request $request, string $modelId) : Response {
         $dmEm = $this->getEm('dm');
@@ -628,7 +636,7 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
             $dmEm->persist($edgeToPublish
                 ->setPublicationcode($publicationCode)
                 ->setIssuenumber($edgeModelToPublish->getNumero())
-                ->setDateajout(new \DateTime('now'))
+                ->setDateajout(new DateTime('now'))
             );
 
             foreach($edgeModelToPublish->getContributeurs() as $modelContributor) {
@@ -661,8 +669,8 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
     }
 
     /**
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     private function updateModelContributors(TranchesEnCoursModeles $modelId, array $designers, array $photographers) : void {
         $dmEm = $this->getEm('dm');
@@ -779,8 +787,8 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
     }
 
     /**
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     private function assignModel(int $modelId): Response
     {
@@ -795,9 +803,9 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
     }
 
     /**
-     * @throws \Doctrine\Common\Persistence\Mapping\MappingException
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws MappingException
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     public function createStepV2(int $modelId, int $stepNumber, $options, ?string $newFunctionName): array
     {

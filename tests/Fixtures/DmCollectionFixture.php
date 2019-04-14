@@ -8,8 +8,10 @@ use App\Entity\Dm\Numeros;
 use App\Entity\Dm\Users;
 use App\Entity\Dm\UsersPermissions;
 use App\Tests\TestCommon;
+use DateTime;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use Exception;
 
 class DmCollectionFixture implements FixtureInterface
 {
@@ -45,8 +47,8 @@ class DmCollectionFixture implements FixtureInterface
                 ->setUsername($username)
                 ->setPassword(sha1($password))
                 ->setEmail('test@ducksmanager.net')
-                ->setDateinscription(\DateTime::createFromFormat('Y-m-d', '2000-01-01'))
-                ->setDernieracces(\DateTime::createFromFormat('Y-m-d', '2000-01-01'))
+                ->setDateinscription(DateTime::createFromFormat('Y-m-d', '2000-01-01'))
+                ->setDernieracces(DateTime::createFromFormat('Y-m-d', '2000-01-01'))
                 ->setAccepterpartage(true)
                 ->setRecommandationslistemags(true)
                 ->setAffichervideo(true)
@@ -82,7 +84,7 @@ class DmCollectionFixture implements FixtureInterface
                     ->setIdAcquisition(1)
                     ->setAv(false)
                     ->setIdUtilisateur($user->getId())
-                    ->setDateajout(new \DateTime())
+                    ->setDateajout(new DateTime())
             );
 
             $numero2 = new Numeros();
@@ -94,7 +96,7 @@ class DmCollectionFixture implements FixtureInterface
                     ->setEtat('bon')
                     ->setAv(false)
                     ->setIdUtilisateur($user->getId())
-                    ->setDateajout(new \DateTime())
+                    ->setDateajout(new DateTime())
             );
 
             $numero3 = new Numeros();
@@ -106,13 +108,13 @@ class DmCollectionFixture implements FixtureInterface
                     ->setEtat('mauvais')
                     ->setAv(true)
                     ->setIdUtilisateur($user->getId())
-                    ->setDateajout(new \DateTime())
+                    ->setDateajout(new DateTime())
             );
 
             $purchase1 = new Achats();
             $dmEntityManager->persist(
                 $purchase1
-                    ->setDate(\DateTime::createFromFormat('Y-m-d', '2010-01-01'))
+                    ->setDate(DateTime::createFromFormat('Y-m-d', '2010-01-01'))
                     ->setDescription('Purchase')
                     ->setIdUser($user->getId())
             );
@@ -138,7 +140,7 @@ class DmCollectionFixture implements FixtureInterface
             $dmEntityManager->flush();
             $dmEntityManager->clear();
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
 
         }
     }

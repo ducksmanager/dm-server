@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Doctrine\DBAL\DBALException;
+use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,7 +14,7 @@ class RawsqlController extends AbstractController implements RequiresDmVersionCo
 {
     /**
      * @Route(methods={"POST"}, path="/rawsql")
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
     public function runQuery(Request $request, LoggerInterface $logger): Response
     {
@@ -27,7 +29,7 @@ class RawsqlController extends AbstractController implements RequiresDmVersionCo
         try {
             $em = $this->getEm($db);
         }
-        catch(\InvalidArgumentException $e) {
+        catch(InvalidArgumentException $e) {
             return new Response('Invalid parameter : db='.$db, Response::HTTP_BAD_REQUEST);
         }
         if (strpos($query, ';') !== false) { // In lack of something better

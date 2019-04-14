@@ -2,14 +2,19 @@
 namespace App\Helper;
 
 use App\Entity\Dm\Numeros;
+use DateTime;
+use Doctrine\Common\Persistence\Mapping\MappingException;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Query\QueryException;
 
 trait collectionUpdateHelper {
     /**
-     * @throws \Doctrine\Common\Persistence\Mapping\MappingException
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
-     * @throws \Doctrine\ORM\Query\QueryException
+     * @throws MappingException
+     * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws QueryException
      */
     private function addOrChangeIssues(EntityManager $em, int $userId, string $publicationCode, array $issueNumbers, ?string $condition, ?bool $istosell, ?int $purchaseId): array
     {
@@ -61,7 +66,7 @@ trait collectionUpdateHelper {
             $newIssue->setAv($istosellNewIssues);
             $newIssue->setIdAcquisition($purchaseIdNewIssues);
             $newIssue->setIdUtilisateur($userId);
-            $newIssue->setDateajout(new \DateTime());
+            $newIssue->setDateajout(new DateTime());
 
             $em->persist($newIssue);
         }

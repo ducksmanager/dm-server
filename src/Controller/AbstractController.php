@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use Doctrine\ORM\EntityManager;
+use RuntimeException;
+use stdClass;
 use Symfony\Component\HttpFoundation\Response;
 
 class AbstractController extends \Symfony\Bundle\FrameworkBundle\Controller\AbstractController
@@ -18,7 +20,7 @@ class AbstractController extends \Symfony\Bundle\FrameworkBundle\Controller\Abst
     }
 
     /**
-     * @param \stdClass[] $objectArray
+     * @param stdClass[] $objectArray
      * @return array
      */
     protected static function getSimpleArray($objectArray): array
@@ -56,11 +58,11 @@ class AbstractController extends \Symfony\Bundle\FrameworkBundle\Controller\Abst
      * @param Response $response
      * @param string $idKey
      * @return mixed
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     protected static function getResponseIdFromServiceResponse(Response $response, string $idKey) {
         if ($response->getStatusCode() !== Response::HTTP_OK) {
-            throw new \RuntimeException($response->getContent(), $response->getStatusCode());
+            throw new RuntimeException($response->getContent(), $response->getStatusCode());
         }
 
         return json_decode($response->getContent())->$idKey;

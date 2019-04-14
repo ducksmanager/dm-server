@@ -4,6 +4,7 @@ namespace App\Tests\Fixtures;
 
 use App\Entity\Dm\TranchesDoublons;
 use App\Entity\Dm\TranchesPretes;
+use DateTime;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
@@ -17,7 +18,7 @@ class EdgesFixture implements FixtureInterface
             $edge1
                 ->setPublicationcode('fr/JM')
                 ->setIssuenumber('3001')
-                ->setDateajout(new \DateTime())
+                ->setDateajout(new DateTime())
                 ->setSlug('edges-fr-JM-3001')
         );
 
@@ -36,7 +37,7 @@ class EdgesFixture implements FixtureInterface
             $edge2
                 ->setPublicationcode('fr/JM')
                 ->setIssuenumber('4001')
-                ->setDateajout(new \DateTime())
+                ->setDateajout(new DateTime())
                 ->setSlug('edges-fr-JM-4001')
         );
 

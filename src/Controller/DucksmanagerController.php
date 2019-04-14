@@ -13,11 +13,15 @@ use App\Helper\Email\EdgesPublishedEmail;
 use App\Helper\Email\ResetPasswordEmail;
 use App\Helper\Email\UserSuggestedBookstoreEmail;
 use App\Helper\JsonResponseFromObject;
+use DateTime;
+use Doctrine\Common\Persistence\Mapping\MappingException;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Query\Expr\OrderBy;
+use Exception;
 use Psr\Log\LoggerInterface;
+use Swift_Mailer;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -73,10 +77,10 @@ class DucksmanagerController extends AbstractController
 
     /**
      * @Route(methods={"POST"}, path="/ducksmanager/resetpassword/init")
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Exception
+     * @throws ORMException
+     * @throws Exception
      */
-    public function resetPasswordInit(Request $request, LoggerInterface $logger, \Swift_Mailer $mailer, TranslatorInterface $translator): Response
+    public function resetPasswordInit(Request $request, LoggerInterface $logger, Swift_Mailer $mailer, TranslatorInterface $translator): Response
     {
         $email = $request->request->get('email');
         $dmEm = $this->getEm('dm');
@@ -105,7 +109,7 @@ class DucksmanagerController extends AbstractController
 
     /**
      * @Route(methods={"POST"}, path="/ducksmanager/resetpassword")
-     * @throws \Doctrine\ORM\ORMException
+     * @throws ORMException
      */
     public function resetPassword(Request $request) {
         $token = $request->request->get('token');
@@ -135,7 +139,7 @@ class DucksmanagerController extends AbstractController
     /**
      * @Route(methods={"POST"}, path="/ducksmanager/resetDemo")
      * @throws ORMException
-     * @throws \Doctrine\Common\Persistence\Mapping\MappingException
+     * @throws MappingException
      */
     public function resetDemo() {
         $dmEm = $this->getEm('dm');
@@ -173,7 +177,7 @@ class DucksmanagerController extends AbstractController
 
             foreach ($demoUserPurchaseData as $purchaseData) {
                 $purchase = new Achats();
-                $purchase->setDate(\DateTime::createFromFormat('Y-m-d H:i:s', $purchaseData['date'].' 00:00:00'));
+                $purchase->setDate(DateTime::createFromFormat('Y-m-d H:i:s', $purchaseData['date'].' 00:00:00'));
                 $purchase->setDescription($purchaseData['description']);
                 $purchase->setIdUser($demoUser->getId());
 
@@ -253,7 +257,7 @@ class DucksmanagerController extends AbstractController
     /**
      * @Route(methods={"POST"}, path="/ducksmanager/email/bookstore")
      */
-    public function sendBookstoreEmail(Request $request, \Swift_Mailer $mailer): Response
+    public function sendBookstoreEmail(Request $request, Swift_Mailer $mailer): Response
     {
         $dmEm = $this->getEm('dm');
         $userId = $request->request->get('userId');
@@ -274,7 +278,7 @@ class DucksmanagerController extends AbstractController
     /**
      * @Route(methods={"POST"}, path="/ducksmanager/email/confirmation")
      */
-    public function sendConfirmationEmail(Request $request, \Swift_Mailer $mailer, TranslatorInterface $translator): Response
+    public function sendConfirmationEmail(Request $request, Swift_Mailer $mailer, TranslatorInterface $translator): Response
     {
         $dmEm = $this->getEm('dm');
         $userId = $request->request->get('userid');
@@ -338,8 +342,8 @@ class DucksmanagerController extends AbstractController
     }
 
     /**
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     private function createUserNoCheck(string $username, string $password, string $email): bool
     {
@@ -349,8 +353,8 @@ class DucksmanagerController extends AbstractController
         $user->setUsername($username);
         $user->setPassword(sha1($password));
         $user->setEmail($email);
-        $user->setDateinscription(new \DateTime());
-        $user->setDernieracces(new \DateTime());
+        $user->setDateinscription(new DateTime());
+        $user->setDernieracces(new DateTime());
 
         $dmEm->persist($user);
         $dmEm->flush();
@@ -384,8 +388,8 @@ class DucksmanagerController extends AbstractController
     }
 
     /**
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     private function resetBookcaseOptions(Users $user): bool
     {

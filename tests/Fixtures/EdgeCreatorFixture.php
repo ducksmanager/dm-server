@@ -10,8 +10,10 @@ use App\Entity\EdgeCreator\ImagesTranches;
 use App\Entity\EdgeCreator\TranchesEnCoursModeles;
 use App\Entity\EdgeCreator\TranchesEnCoursModelesImages;
 use App\Entity\EdgeCreator\TranchesEnCoursValeurs;
+use DateTime;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use Exception;
 
 class EdgeCreatorFixture implements FixtureInterface
 {
@@ -104,7 +106,7 @@ class EdgeCreatorFixture implements FixtureInterface
 
     /**
      * @param ObjectManager $ecEntityManager
-     * @throws \Exception
+     * @throws Exception
      */
     public function load(ObjectManager $ecEntityManager) : void
     {
@@ -135,7 +137,7 @@ class EdgeCreatorFixture implements FixtureInterface
         $ecEntityManager->persist(
             $edgePicture
                 ->setNomfichier('photo1.jpg')
-                ->setDateheure(new \DateTime('today'))
+                ->setDateheure(new DateTime('today'))
                 ->setHash(sha1('test'))
                 ->setIdUtilisateur($this->user->getId())
         );

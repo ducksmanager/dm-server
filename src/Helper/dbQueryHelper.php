@@ -1,6 +1,8 @@
 <?php
 namespace App\Helper;
 
+use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Driver\ResultStatement;
 use Doctrine\ORM\EntityManager;
 use Psr\Log\LoggerInterface;
 
@@ -10,8 +12,8 @@ trait dbQueryHelper {
      * @param EntityManager        $em
      * @param array                $parameters
      * @param LoggerInterface|null $logger
-     * @return \Doctrine\DBAL\Driver\ResultStatement|mixed[]
-     * @throws \Doctrine\DBAL\DBALException
+     * @return ResultStatement|mixed[]
+     * @throws DBALException
      */
     public static function runQueryNoCheck(string $query, EntityManager $em, array $parameters, LoggerInterface $logger = null) {
         if (stripos(trim($query), 'SELECT') === 0) {
@@ -33,7 +35,7 @@ trait dbQueryHelper {
      * @param string          $dbName
      * @param EntityManager   $em
      * @return bool|string
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
     public static function checkDatabase(LoggerInterface $logger, string $query, string $dbName, EntityManager $em) {
         $results = self::runQueryNoCheck($query, $em, []);

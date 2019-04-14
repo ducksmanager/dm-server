@@ -10,6 +10,7 @@ use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\Loader;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -110,7 +111,7 @@ abstract class TestCommon extends WebTestCase {
 
         try {
             return self::getApplication()->run(new StringInput($command));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             self::fail("Couldn't run command '$command' : {$e->getMessage()}");
         }
         return null;

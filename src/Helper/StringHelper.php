@@ -1,11 +1,13 @@
 <?php
 namespace App\Helper;
 
+use Exception;
+
 class StringHelper {
     /**
      * @param int $length
      * @return string
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getRandomString($length = 16): string
     {

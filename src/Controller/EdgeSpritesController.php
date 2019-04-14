@@ -6,6 +6,7 @@ use App\Entity\Dm\TranchesPretes;
 use App\Entity\Dm\TranchesPretesSprites;
 use App\Entity\Dm\TranchesPretesSpritesUrls;
 use App\Helper\SpriteHelper;
+use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Query\Expr\OrderBy;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -17,7 +18,7 @@ class EdgeSpritesController extends AbstractController implements RequiresDmVers
 
     /**
      * @Route(methods={"PUT"}, path="/edgesprites/from/{fromEdgeID}")
-     * @throws \Doctrine\ORM\ORMException
+     * @throws ORMException
      */
     public function uploadEdgesAndGenerateSprites(LoggerInterface $logger, string $fromEdgeID) {
         $uploadEdgesResult = $this->uploadEdges($logger, $fromEdgeID);
@@ -60,7 +61,7 @@ class EdgeSpritesController extends AbstractController implements RequiresDmVers
 
     /**
      * @Route(methods={"PUT"}, path="/edgesprites/tags/from/{fromEdgeID}")
-     * @throws \Doctrine\ORM\ORMException
+     * @throws ORMException
      */
     public function updateTags(LoggerInterface $logger, int $fromEdgeID)
     {
@@ -137,7 +138,7 @@ class EdgeSpritesController extends AbstractController implements RequiresDmVers
 
     /**
      * @Route(methods={"PUT"}, path="/edgesprites/sprites/from/{fromEdgeID}")
-     * @throws \Doctrine\ORM\ORMException
+     * @throws ORMException
      */
     public function generateSprites(LoggerInterface $logger, int $fromEdgeID) {
 

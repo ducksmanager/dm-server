@@ -4,6 +4,7 @@ namespace App\Helper;
 use App\Entity\Dm\Users;
 use RuntimeException;
 use Swift_Mailer;
+use Swift_Message;
 
 abstract class EmailHelper {
 
@@ -33,7 +34,7 @@ abstract class EmailHelper {
      */
     public function send(): void
     {
-        $message = new \Swift_Message();
+        $message = new Swift_Message();
         $message
             ->setSubject($this->getSubject())
             ->setFrom($this->getFrom(), $this->getFromName())

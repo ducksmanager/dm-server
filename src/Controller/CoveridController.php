@@ -4,8 +4,10 @@ namespace App\Controller;
 
 use App\Entity\Coverid\Covers;
 use App\Helper\SimilarImagesHelper;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr\Func;
 use Psr\Log\LoggerInterface;
+use stdClass;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,7 +22,7 @@ class CoveridController extends AbstractController
 
     /**
      * @Route(methods={"GET"}, path="/cover-id/download/{coverId}")
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws NonUniqueResultException
      */
     public function downloadCover(int $coverId) : Response {
         $coverEm = $this->getEm('coverid');
@@ -122,10 +124,10 @@ class CoveridController extends AbstractController
                 array_merge(
                     $foundIssueCodes,
                     array_map(/**
-                     * @param \stdClass $issue
+                     * @param stdClass $issue
                      * @return string
                      */
-                        function (\stdClass $issue) {
+                        function (stdClass $issue) {
                             return $issue->issuecode;
                         }, $issuesWithSameCover
                     )

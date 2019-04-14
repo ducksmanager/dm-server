@@ -15,6 +15,7 @@ use App\Helper\SpriteHelper;
 use App\Tests\Fixtures\EdgeCreatorFixture;
 use App\Tests\Fixtures\EdgesFixture;
 use Countable;
+use stdClass;
 use Swift_Message;
 use Symfony\Bundle\SwiftmailerBundle\DataCollector\MessageDataCollector;
 use Symfony\Component\HttpFoundation\Response;
@@ -140,7 +141,7 @@ class EdgeCreatorTest extends TestCommon
         $objectResponse = json_decode($this->getResponseContent($response));
 
         $this->assertCount(1, $objectResponse);
-        /** @var \stdClass $model1 */
+        /** @var stdClass $model1 */
         $model1 = $objectResponse[0];
         $this->assertEquals('fr', $model1->pays);
         $this->assertEquals('PM', $model1->magazine);
@@ -154,7 +155,7 @@ class EdgeCreatorTest extends TestCommon
         $objectResponse = json_decode($this->getResponseContent($response));
 
         $this->assertCount(3, $objectResponse);
-        /** @var \stdClass $model1 */
+        /** @var stdClass $model1 */
         $model1 = $objectResponse[0];
         $this->assertEquals('fr', $model1->pays);
         $this->assertEquals('PM', $model1->magazine);

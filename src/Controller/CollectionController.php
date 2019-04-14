@@ -14,7 +14,13 @@ use App\EntityTransform\UpdateCollectionResult;
 use App\Helper\collectionUpdateHelper;
 use App\Helper\JsonResponseFromObject;
 use App\Helper\PublicationHelper;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Persistence\Mapping\MappingException;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Query\QueryException;
+use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -70,10 +76,10 @@ class CollectionController extends AbstractController implements RequiresDmVersi
 
     /**
      * @Route(methods={"POST"}, path="/collection/issues")
-     * @throws \Doctrine\Common\Persistence\Mapping\MappingException
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
-     * @throws \Doctrine\ORM\Query\QueryException
+     * @throws MappingException
+     * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws QueryException
      */
     public function postIssues(Request $request, LoggerInterface $logger): JsonResponse
     {
@@ -116,15 +122,15 @@ class CollectionController extends AbstractController implements RequiresDmVersi
      *     methods={"POST"},
      *     path="/collection/purchases/{purchaseId}",
      *     defaults={"purchaseId"="NEW"})
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     public function postPurchase(Request $request, TranslatorInterface $translator, ?string $purchaseId): ?Response
     {
         $dmEm = $this->getEm('dm');
 
         $purchaseDateStr = $request->request->get('date');
-        $purchaseDate = \DateTime::createFromFormat('Y-m-d H:i:s', $purchaseDateStr.' 00:00:00');
+        $purchaseDate = DateTime::createFromFormat('Y-m-d H:i:s', $purchaseDateStr.' 00:00:00');
         $purchaseDescription = $request->request->get('description');
         $idUser = $this->getCurrentUser()['id'];
 
@@ -158,8 +164,8 @@ class CollectionController extends AbstractController implements RequiresDmVersi
 
     /**
      * @Route(methods={"POST"}, path="/collection/bookcase/sort")
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     public function setBookcaseSorting(Request $request): Response
     {
@@ -236,9 +242,9 @@ class CollectionController extends AbstractController implements RequiresDmVersi
 
     /**
      * @Route(methods={"POST"}, path="/collection/inducks/import")
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
-     * @throws \Exception
+     * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws Exception
      */
     public function importFromInducks(Request $request): Response
     {
@@ -257,7 +263,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
                 ->setMagazine($magazine)
                 ->setNumero($issue['issuenumber'])
                 ->setAv(false)
-                ->setDateajout(new \DateTime())
+                ->setDateajout(new DateTime())
                 ->setEtat($defaultCondition);
             $dmEm->persist($newIssue);
         }

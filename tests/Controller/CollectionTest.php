@@ -5,6 +5,7 @@ use App\Entity\Dm\Achats;
 use App\Entity\Dm\BibliothequeOrdreMagazines;
 use App\Entity\Dm\Numeros;
 use App\Tests\TestCommon;
+use DateTime;
 use Symfony\Component\HttpFoundation\Response;
 
 class CollectionTest extends TestCommon
@@ -249,7 +250,7 @@ class CollectionTest extends TestCommon
         /** @var Achats $updatedPurchase */
         $updatedPurchase = $this->getEm('dm')->getRepository(Achats::class)->find($purchaseToUpdate->getIdAcquisition());
 
-        $this->assertEquals(\DateTime::createFromFormat('Y-m-d H:i:s', '2017-01-01 00:00:00'), $updatedPurchase->getDate());
+        $this->assertEquals(DateTime::createFromFormat('Y-m-d H:i:s', '2017-01-01 00:00:00'), $updatedPurchase->getDate());
         $this->assertEquals('New description', $updatedPurchase->getDescription());
     }
 

@@ -16,7 +16,7 @@ class SimilarImagesHelper {
   public static $sampleCover = '/au/bp/001/au_bp_001a_001.jpg';
 
   /**
-   * @throws \InvalidArgumentException
+   * @throws InvalidArgumentException
    */
   private static function getPastecUrl(string $pastecHost = null): string
   {
@@ -33,7 +33,7 @@ class SimilarImagesHelper {
   }
 
   /**
-   * @throws \InvalidArgumentException|\RuntimeException
+   * @throws InvalidArgumentException|RuntimeException
    */
   public static function getIndexedImagesNumber(string $pastecHost): ?int
   {
