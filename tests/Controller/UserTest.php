@@ -50,7 +50,7 @@ class UserTest extends TestCommon
 
     public function testCallServiceWithUserCredentials(): void
     {
-        $response = $this->buildAuthenticatedServiceWithTestUser('/ducksmanager/user/new', self::$dmUser, 'POST', [
+        $response = $this->buildAuthenticatedServiceWithTestUser('/ducksmanager/user', self::$dmUser, 'PUT', [
             'username' => 'dm_test_user',
             'password' => 'test',
             'password2' => 'test',

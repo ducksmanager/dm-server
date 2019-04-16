@@ -33,7 +33,7 @@ class DucksmanagerController extends AbstractController
     use collectionUpdateHelper;
 
     /**
-     * @Route(methods={"POST"}, path="/ducksmanager/user/new")
+     * @Route(methods={"PUT"}, path="/ducksmanager/user")
      */
     public function createUser(Request $request, TranslatorInterface $translator): Response {
         $userCheckError = $this->checkNewUser(
