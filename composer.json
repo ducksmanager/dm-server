@@ -22,7 +22,7 @@
         "ext-iconv": "*",
         "ext-json": "*",
         "api-platform/api-pack": "^1.2",
-        "cloudinary/cloudinary_php": "dev-master",
+        "cloudinary/cloudinary_php": "1.14.*",
         "doctrine/doctrine-fixtures-bundle": "^3.1",
         "sensio/framework-extra-bundle": "^5.2",
         "symfony-bundles/json-request-bundle": "^2.0",
