@@ -5,6 +5,7 @@ use App\Entity\EdgeCreator\TranchesEnCoursModeles;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
@@ -15,15 +16,16 @@ class JsonResponseFromObject extends JsonResponse
     }
 
     private static function getNormalizer(): ObjectNormalizer {
-        $normalizer = new ObjectNormalizer();
-        $normalizer->setCircularReferenceHandler(function ($object) {
-            if (get_class($object) === TranchesEnCoursModeles::class) {
-                /** @var TranchesEnCoursModeles $object */
-                return $object->getId();
+        $defaultContext = [
+            AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function ($object, $format, $context) {
+                if (get_class($object) === TranchesEnCoursModeles::class) {
+                    /** @var TranchesEnCoursModeles $object */
+                    return $object->getId();
+                }
+                return null;
             }
-            return null;
-        });
-        return $normalizer;
+        ];
+        return new ObjectNormalizer(null, null, null, null, null, null, $defaultContext);
     }
 
     private static function serializeToJson($object): string {
