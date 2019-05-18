@@ -74,7 +74,6 @@ create table tranches_en_cours_modeles
   photographes         text        null,
   createurs            text        null,
   Active               tinyint(1)  not null,
-  PretePourPublication tinyint(1)  not null,
   constraint tranches_en_cours_modeles__numero
     unique (Pays, Magazine, Numero, username)
 )

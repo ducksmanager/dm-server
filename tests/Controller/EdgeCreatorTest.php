@@ -114,7 +114,6 @@ class EdgeCreatorTest extends TestCommon
             'numero' => '502',
             'username' => 'dm_test_user',
             'active' => true,
-            'pretepourpublication' => false,
             'contributeurs' => [],
             'photos' => []
         ])), $responseModel);
