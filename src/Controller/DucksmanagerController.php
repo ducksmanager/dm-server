@@ -4,14 +4,16 @@ namespace App\Controller;
 use App\Entity\Dm\Achats;
 use App\Entity\Dm\AuteursPseudos;
 use App\Entity\Dm\BibliothequeOrdreMagazines;
+use App\Entity\Dm\Bouquineries;
 use App\Entity\Dm\Numeros;
 use App\Entity\Dm\Users;
 use App\Entity\Dm\UsersPasswordTokens;
 use App\Helper\collectionUpdateHelper;
 use App\Helper\CsvHelper;
+use App\Helper\Email\BookstoreApprovedEmail;
 use App\Helper\Email\EdgesPublishedEmail;
 use App\Helper\Email\ResetPasswordEmail;
-use App\Helper\Email\UserSuggestedBookstoreEmail;
+use App\Helper\Email\BookstoreSuggestedEmail;
 use App\Helper\JsonResponseFromObject;
 use DateTime;
 use Doctrine\Common\Persistence\Mapping\MappingException;
@@ -255,9 +257,9 @@ class DucksmanagerController extends AbstractController
     }
 
     /**
-     * @Route(methods={"POST"}, path="/ducksmanager/email/bookstore")
+     * @Route(methods={"POST"}, path="/ducksmanager/email/bookstore-suggestion")
      */
-    public function sendBookstoreEmail(Request $request, Swift_Mailer $mailer): Response
+    public function sendBookstoreSuggestionEmail(Request $request, Swift_Mailer $mailer): Response
     {
         $dmEm = $this->getEm('dm');
         $userId = $request->request->get('userId');
@@ -269,7 +271,37 @@ class DucksmanagerController extends AbstractController
             $user = $dmEm->getRepository(Users::class)->find($userId);
         }
 
-        $message = new UserSuggestedBookstoreEmail($mailer, $user);
+        $message = new BookstoreSuggestedEmail($mailer, $user);
+        $message->send();
+
+        return new Response();
+    }
+
+    /**
+     * @Route(methods={"POST"}, path="/ducksmanager/email/bookstore-approved")
+     * @throws ORMException
+     */
+    public function sendBookstoreApprovedEmail(Request $request, Swift_Mailer $mailer, TranslatorInterface $translator): Response
+    {
+        $dmEm = $this->getEm('dm');
+        $bookstoreId = $request->request->get('id');
+        [$coordX, $coordY] = $request->request->get('coordinates');
+        /** @var Bouquineries $bookstore */
+        $bookstore = $dmEm->getRepository(Bouquineries::class)->find($bookstoreId);
+
+        /** @var Users $user */
+        $user = $dmEm->getRepository(Users::class)->find($bookstore->getIdUtilisateur());
+
+        $bookstore
+            ->setCoordx($coordX)
+            ->setCoordy($coordY)
+            ->setActif(true)
+            ->setDateajout(new DateTime());
+
+        $dmEm->persist($bookstore);
+        $dmEm->flush();
+
+        $message = new BookstoreApprovedEmail($mailer, $translator, $user);
         $message->send();
 
         return new Response();
@@ -399,7 +431,6 @@ class DucksmanagerController extends AbstractController
         $user->setBibliothequeSousTexture1('HONDURAS MAHOGANY');
         $user->setBibliothequeTexture2('bois');
         $user->setBibliothequeSousTexture2('KNOTTY PINE');
-        $user->setBibliothequeGrossissement(1.5);
 
         $dmEm->persist($user);
         $dmEm->flush();

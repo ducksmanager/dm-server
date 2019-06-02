@@ -3,7 +3,7 @@ namespace App\Helper\Email;
 
 use App\Helper\EmailHelper;
 
-class UserSuggestedBookstoreEmail extends EmailHelper {
+class BookstoreSuggestedEmail extends EmailHelper {
 
     protected function getFrom() : string {
         return $this->user->getUsername(). '@' .$_ENV['SMTP_ORIGIN_EMAIL_DOMAIN_DUCKSMANAGER'];

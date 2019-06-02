@@ -13,7 +13,7 @@ class EdgesPublishedEmail extends EmailHelper {
     private $extraPhotographerPoints;
     /** @var TranslatorInterface $translator */
     private $translator;
-  private $locale;
+    private $locale;
     private $newMedalLevel;
 
     public function __construct(Swift_Mailer $mailer, TranslatorInterface $translator, string $locale, Users $user, int $extraEdges, int $extraPhotographerPoints, $newMedalLevel = null) {

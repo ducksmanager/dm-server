@@ -3,6 +3,7 @@ namespace App\Tests;
 
 use App\Controller\RequiresDmVersionController;
 use App\Entity\Dm\Achats;
+use App\Entity\Dm\Bouquineries;
 use App\Entity\Dm\Numeros;
 use App\Entity\Dm\Users;
 use App\Entity\Dm\UsersPasswordTokens;
@@ -57,7 +58,6 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
         $demoUser->setBibliothequeSousTexture1('B');
         $demoUser->setBibliothequeTexture2('C');
         $demoUser->setBibliothequeSousTexture2('D');
-        $demoUser->setBibliothequeGrossissement(1);
         $demoUser->setBetauser(true);
         $this->getEm('dm')->persist($demoUser);
         $this->getEm('dm')->flush();
@@ -111,7 +111,7 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
         ]);
 
         self::$client->enableProfiler();
-        $response = $this->buildAuthenticatedService('/ducksmanager/email/bookstore', self::$dmUser, [], [
+        $response = $this->buildAuthenticatedService('/ducksmanager/email/bookstore-suggestion', self::$dmUser, [], [
             'userid' => $demoUser->getId()
         ])->call();
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
@@ -159,6 +159,60 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
             '<p style="text-align: center"><img width="100" src="http://localhost:8000/images/medailles/Photographe_2_fr.png" />',
             'Vous avez remporté la médaille "Photographe DucksManager Intermédiaire" grâce à vos contributions !</p>',
             '<b>Votre contribution vous a rapporté 4 points "Photographe"</b>, bravo à vous et merci pour votre contribution : nous sommes heureux de vous compter parmi la communauté active de DucksManager !',
+            '',
+            '',
+            'A bientôt sur le site !',
+            'L\'équipe DucksManager',
+            '<img width="400" src="http://localhost:8000/logo_petit.png" />'
+        ]);
+        $this->assertEquals($expectedMessageBody, $message->getBody());
+
+        $this->assertEquals($_ENV['SMTP_USERNAME'], array_keys($messageCopy->getTo())[0]);
+        $this->assertEquals($expectedMessageBody, $messageCopy->getBody());
+    }
+
+    public function testSendBookcaseApprovedEmail(): void
+    {
+        $this->createUserCollection('demo');
+
+        $demoUser = $this->getEm('dm')->getRepository(Users::class)->findOneBy([
+            'username' => 'demo'
+        ]);
+        $bookstore = new Bouquineries();
+        $bookstore->setActif(false);
+        $bookstore->setNom('Bouquinerie');
+        $bookstore->setCommentaire('Commentaire');
+        $bookstore->setCoordx(0);
+        $bookstore->setCoordy(0);
+        $bookstore->setAdressecomplete('1 rue A');
+        $bookstore->setIdUtilisateur($demoUser->getId());
+        $bookstore->setDateajout(new \DateTime());
+        $this->getEm('dm')->persist($bookstore);
+        $this->getEm('dm')->flush();
+
+        self::$client->enableProfiler();
+        $response = $this->buildAuthenticatedService('/ducksmanager/email/bookstore-approved', self::$dmUser, [], [
+            'id' => $bookstore->getId(),
+            'coordinates' => [1, 2]
+        ])->call();
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+
+        $updatedBookstore = $this->getEm('dm')->getRepository(Bouquineries::class)->find($bookstore->getId());
+        $this->assertEquals(1, $updatedBookstore->getCoordx());
+        $this->assertEquals(2, $updatedBookstore->getCoordy());
+        $this->assertEquals(true, $updatedBookstore->getActif());
+
+        /** @var MessageDataCollector $mailCollector */
+        $mailCollector = self::$client->getProfile()->getCollector('swiftmailer');
+        /** @var Swift_Message[]|Countable $messages */
+        $messages = $mailCollector->getMessages();
+        $this->assertCount(2, $messages);
+        [$message, $messageCopy] = $messages;
+
+        $expectedMessageBody = implode('<br />', [
+            'Bonjour demo,',
+            'La bouquinerie que vous avez proposée est maintenant visible par tous les utilisateurs DucksManager.',
+            'Bravo à vous et merci pour votre contribution : nous sommes heureux de vous accueillir parmi la communauté active de DucksManager !',
             '',
             '',
             'A bientôt sur le site !',
