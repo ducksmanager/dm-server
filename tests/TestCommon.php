@@ -5,6 +5,7 @@ namespace App\Tests;
 use App\Entity\Dm\Numeros;
 use App\Entity\Dm\Users;
 use App\Tests\Fixtures\DmCollectionFixture;
+use App\Tests\Fixtures\EdgesFixture;
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\Loader;
@@ -36,6 +37,8 @@ abstract class TestCommon extends WebTestCase {
 
     /** @var Application $application */
     protected static $application;
+
+    private static $hasLoadedEdgeFixture = false;
 
     /**
      * @return array
@@ -169,7 +172,11 @@ abstract class TestCommon extends WebTestCase {
 
     protected function createUserCollection(string $username, array $roles = [], bool $withPublicationSorts = true): void
     {
+        if (!self::$hasLoadedEdgeFixture) {
+            $this->loadFixture('dm', new EdgesFixture());
+        }
         $this->loadFixture('dm', new DmCollectionFixture($username, $roles, $withPublicationSorts));
+        self::$hasLoadedEdgeFixture = true;
     }
 
     protected function getResponseContent(Response $response): string

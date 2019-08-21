@@ -9,6 +9,7 @@ use App\Entity\Dm\Numeros;
 use App\Entity\Dm\Users;
 use App\Entity\Dm\UsersPasswordTokens;
 use App\Helper\collectionUpdateHelper;
+use App\Helper\ContributionHelper;
 use App\Helper\CsvHelper;
 use App\Helper\Email\BookstoreApprovedEmail;
 use App\Helper\Email\EdgesPublishedEmail;
@@ -297,6 +298,15 @@ class DucksmanagerController extends AbstractController
             ->setCoordy($coordY)
             ->setActif(true)
             ->setDateajout(new DateTime());
+
+        ContributionHelper::persistContribution(
+            $dmEm,
+            $bookstore->getIdUtilisateur(),
+            'duckhunter',
+            1,
+            null,
+            $bookstore
+        );
 
         $dmEm->persist($bookstore);
         $dmEm->flush();

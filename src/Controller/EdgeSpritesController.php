@@ -132,16 +132,16 @@ class EdgeSpritesController extends AbstractController implements RequiresDmVers
     public function generateSprites(LoggerInterface $logger, int $edgeID) {
 
         $dmEm = $this->getEm('dm');
-        $qbExistingUrls = $dmEm->createQueryBuilder();
-        $qbExistingUrls
-            ->select('sprites_urls.spriteName')
-            ->from(TranchesPretesSpritesUrls::class, 'sprites_urls');
+//        $qbExistingUrls = $dmEm->createQueryBuilder();
+//        $qbExistingUrls
+//            ->select('sprites_urls.spriteName')
+//            ->from(TranchesPretesSpritesUrls::class, 'sprites_urls');
 
         $qb = $dmEm->createQueryBuilder();
         $qb
             ->select('distinct sprites.spriteName')
             ->from(TranchesPretesSprites::class, 'sprites')
-            ->andWhere($qb->expr()->notIn('sprites.spriteName', $qbExistingUrls->getDQL()))
+//            ->andWhere($qb->expr()->notIn('sprites.spriteName', $qbExistingUrls->getDQL()))
             ->andWhere($qb->expr()->eq('sprites.idTranche', $edgeID));
 
         $spritesWithNoUrl = $qb->getQuery()->getResult();

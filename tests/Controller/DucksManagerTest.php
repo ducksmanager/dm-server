@@ -6,8 +6,10 @@ use App\Entity\Dm\Achats;
 use App\Entity\Dm\Bouquineries;
 use App\Entity\Dm\Numeros;
 use App\Entity\Dm\Users;
+use App\Entity\Dm\UsersContributions;
 use App\Entity\Dm\UsersPasswordTokens;
 use Countable;
+use DateTime;
 use Swift_Message;
 use Symfony\Bundle\SwiftmailerBundle\DataCollector\MessageDataCollector;
 use Symfony\Component\HttpFoundation\Response;
@@ -178,16 +180,31 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
         $demoUser = $this->getEm('dm')->getRepository(Users::class)->findOneBy([
             'username' => 'demo'
         ]);
-        $bookstore = new Bouquineries();
-        $bookstore->setActif(false);
-        $bookstore->setNom('Bouquinerie');
-        $bookstore->setCommentaire('Commentaire');
-        $bookstore->setCoordx(0);
-        $bookstore->setCoordy(0);
-        $bookstore->setAdressecomplete('1 rue A');
-        $bookstore->setIdUtilisateur($demoUser->getId());
-        $bookstore->setDateajout(new \DateTime());
+
+        $existingBookstore = (new Bouquineries())
+            ->setActif(false)
+            ->setNom('Bookstore')
+            ->setCommentaire('Comment')
+            ->setCoordx(0)
+            ->setCoordy(0)
+            ->setAdressecomplete('1 street A')
+            ->setIdUtilisateur($demoUser->getId())
+            ->setDateajout(new \DateTime());
+
+        $bookstore = (clone $existingBookstore)
+            ->setNom('Bookstore 2');
+
+        $this->getEm('dm')->persist($existingBookstore);
         $this->getEm('dm')->persist($bookstore);
+        $this->getEm('dm')->persist(
+            (new UsersContributions())
+                ->setBookstore($existingBookstore)
+                ->setIdUser($demoUser->getId())
+                ->setDate(new DateTime())
+                ->setContribution('duckhunter')
+                ->setPointsNew(1)
+                ->setPointsTotal(1)
+        );
         $this->getEm('dm')->flush();
 
         self::$client->enableProfiler();
@@ -201,6 +218,13 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
         $this->assertEquals(1, $updatedBookstore->getCoordx());
         $this->assertEquals(2, $updatedBookstore->getCoordy());
         $this->assertEquals(true, $updatedBookstore->getActif());
+
+        $userContribution = $this->getEm('dm')->getRepository(UsersContributions::class)->findOneBy([
+            'bookstore' => $bookstore,
+            'contribution' => 'duckhunter'
+        ]);
+        $this->assertEquals(1, $userContribution->getPointsNew());
+        $this->assertEquals(1 + 1, $userContribution->getPointsTotal());
 
         /** @var MessageDataCollector $mailCollector */
         $mailCollector = self::$client->getProfile()->getCollector('swiftmailer');

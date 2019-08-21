@@ -2,9 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Dm\NumerosPopularite;
 use App\Entity\Dm\TranchesPretes;
-use App\Entity\Dm\TranchesPretesContributeurs;
 use App\Entity\Dm\Users;
+use App\Entity\Dm\UsersContributions;
 use App\Entity\EdgeCreator\EdgecreatorIntervalles;
 use App\Entity\EdgeCreator\EdgecreatorModeles2;
 use App\Entity\EdgeCreator\EdgecreatorValeurs;
@@ -14,6 +15,7 @@ use App\Entity\EdgeCreator\TranchesEnCoursContributeurs;
 use App\Entity\EdgeCreator\TranchesEnCoursModeles;
 use App\Entity\EdgeCreator\TranchesEnCoursModelesImages;
 use App\Entity\EdgeCreator\TranchesEnCoursValeurs;
+use App\Helper\ContributionHelper;
 use App\Helper\JsonResponseFromObject;
 use DateTime;
 use Doctrine\Common\Collections\Collection;
@@ -37,6 +39,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class EdgecreatorController extends AbstractController implements RequiresDmVersionController, RequiresDmUserController
 {
+
     /**
      * @Route(
      *     methods={"PUT"},
@@ -639,13 +642,24 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
                 ->setDateajout(new DateTime('now'))
             );
 
+            [$countryCode, $shortPublicationCode] = explode('/', $edgeToPublish->getPublicationcode());
+            /** @var NumerosPopularite $popularity */
+            $issuePopularity = $dmEm->getRepository(NumerosPopularite::class)->findOneBy([
+                'pays' => $countryCode,
+                'magazine' => $shortPublicationCode,
+                'numero' => $edgeToPublish->getIssuenumber()
+            ]);
+            $popularity = is_null($issuePopularity) ? 0 : $issuePopularity->getPopularite();
+
+            $contributions = [];
             foreach($edgeModelToPublish->getContributeurs() as $modelContributor) {
-                $contributor = new TranchesPretesContributeurs();
-                $dmEm->persist($contributor
-                    ->setPublicationcode($publicationCode)
-                    ->setIssuenumber($edgeModelToPublish->getNumero())
-                    ->setContributeur($modelContributor->getIdUtilisateur())
-                    ->setContribution($modelContributor->getContribution()));
+                $contributions[]=ContributionHelper::persistContribution(
+                    $dmEm,
+                    $modelContributor->getIdUtilisateur(),
+                    $modelContributor->getContribution(),
+                    $popularity,
+                    $edgeToPublish
+                );
             }
 
             $dmEm->persist($edgeToPublish);
@@ -660,9 +674,9 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
                 'issueNumber' => $edgeModelToPublish->getNumero(),
                 'edgeId' => $edgeToPublish->getId(),
                 'url' => "{$_ENV['EDGES_ROOT']}/{$edgeModelToPublish->getPays()}/gen/{$edgeModelToPublish->getMagazine()}.{$edgeModelToPublish->getNumero()}.png",
-                'contributors' => array_map(function(TranchesEnCoursContributeurs $contributor) {
-                    return $contributor->getIdUtilisateur();
-                }, $edgeModelToPublish->getContributeurs()->toArray())
+                'contributors' => array_map(function(UsersContributions $contribution) {
+                    return $contribution->getIdUser();
+                }, $contributions)
             ]);
         }
         return new Response("$modelId is not a non-published model", Response::HTTP_BAD_REQUEST);

@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(name="tranches_pretes_contributeurs", uniqueConstraints={@ORM\UniqueConstraint(name="UNIQUE", columns={"publicationcode", "issuenumber", "contributeur", "contribution"})}, indexes={@ORM\Index(name="tranches_pretes_contributeurs_publicationcode_issuenumber_index", columns={"publicationcode", "issuenumber"}), @ORM\Index(name="tranches_pretes_contributeurs_contributeur_index", columns={"contributeur"})})
  * @ORM\Entity
+ * @deprecated
  */
 class TranchesPretesContributeurs
 {

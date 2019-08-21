@@ -1,7 +1,9 @@
 <?php
 namespace App\Tests;
 
+use App\Entity\Dm\NumerosPopularite;
 use App\Entity\Dm\TranchesPretes;
+use App\Entity\Dm\UsersContributions;
 use App\Entity\EdgeCreator\EdgecreatorIntervalles;
 use App\Entity\EdgeCreator\EdgecreatorModeles2;
 use App\Entity\EdgeCreator\EdgecreatorValeurs;
@@ -845,6 +847,14 @@ class EdgeCreatorTest extends TestCommon
     public function testPublishEdge() {
         EdgeCreatorFixture::createModelEcV2($this->getEm('edgecreator'), self::$edgecreatorUser, 'fr/PM', '1', [1 => ['functionName' => 'Image', 'options' => ['Source' => 'MP.Tete.1.png']]]);
         $model = $this->getEm('edgecreator')->getRepository(TranchesEnCoursModeles::class)->findOneBy(['pays' => 'fr', 'magazine' => 'PM', 'numero'=> '1']);
+        $this->getEm('dm')->persist(
+            (new NumerosPopularite())
+                ->setPays('fr')
+                ->setMagazine('PM')
+                ->setNumero('1')
+                ->setPopularite(5)
+        );
+        $this->getEm('dm')->flush();
 
         $contributeur1 = new TranchesEnCoursContributeurs();
         $contributeur2 = new TranchesEnCoursContributeurs();
@@ -880,6 +890,20 @@ class EdgeCreatorTest extends TestCommon
         $this->assertNotNull($publishedEdge);
         $this->assertCount(3, $objectResponse->contributors);
         $this->assertEquals($publishedEdge->getId(), $objectResponse->edgeId);
+
+        $userContributions = $this->getEm('dm')->getRepository(UsersContributions::class)->findBy([
+            'tranche' => $publishedEdge
+        ]);
+
+        $this->assertEquals('photographe', $userContributions[0]->getContribution());
+        $this->assertEquals($this->getUser('dm_test_user')->getId(), $userContributions[0]->getIdUser());
+        $this->assertEquals(10 + 5, $userContributions[0]->getPointsTotal());
+
+        $this->assertEquals('photographe', $userContributions[1]->getContribution());
+        $this->assertEquals($this->getUser('otheruser')->getId(), $userContributions[1]->getIdUser());
+
+        $this->assertEquals('createur', $userContributions[2]->getContribution());
+        $this->assertEquals($this->getUser('dm_test_user')->getId(), $userContributions[2]->getIdUser());
     }
 
     /**

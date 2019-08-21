@@ -5,13 +5,14 @@ namespace App\Tests\Fixtures;
 use App\Entity\Dm\Achats;
 use App\Entity\Dm\BibliothequeOrdreMagazines;
 use App\Entity\Dm\Numeros;
+use App\Entity\Dm\TranchesPretes;
 use App\Entity\Dm\Users;
+use App\Entity\Dm\UsersContributions;
 use App\Entity\Dm\UsersPermissions;
 use App\Tests\TestCommon;
 use DateTime;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use Exception;
 
 class DmCollectionFixture implements FixtureInterface
 {
@@ -74,74 +75,84 @@ class DmCollectionFixture implements FixtureInterface
         $user = self::createUser($dmEntityManager, $this->username, TestCommon::$testDmUsers[$this->username] ?? 'password', $this->roles);
 
         $numero1 = new Numeros();
-        try {
+        $dmEntityManager->persist(
+            $numero1
+                ->setPays('fr')
+                ->setMagazine('DDD')
+                ->setNumero('1')
+                ->setEtat('indefini')
+                ->setIdAcquisition(1)
+                ->setAv(false)
+                ->setIdUtilisateur($user->getId())
+                ->setDateajout(new DateTime())
+        );
+
+        $numero2 = new Numeros();
+        $dmEntityManager->persist(
+            $numero2
+                ->setPays('fr')
+                ->setMagazine('MP')
+                ->setNumero('300')
+                ->setEtat('bon')
+                ->setAv(false)
+                ->setIdUtilisateur($user->getId())
+                ->setDateajout(new DateTime())
+        );
+
+        $numero3 = new Numeros();
+        $dmEntityManager->persist(
+            $numero3
+                ->setPays('fr')
+                ->setMagazine('MP')
+                ->setNumero('301')
+                ->setEtat('mauvais')
+                ->setAv(true)
+                ->setIdUtilisateur($user->getId())
+                ->setDateajout(new DateTime())
+        );
+
+        $purchase1 = new Achats();
+        $dmEntityManager->persist(
+            $purchase1
+                ->setDate(DateTime::createFromFormat('Y-m-d', '2010-01-01'))
+                ->setDescription('Purchase')
+                ->setIdUser($user->getId())
+        );
+
+        $edge1 = $dmEntityManager->getRepository(TranchesPretes::class)->findOneBy([
+            'publicationcode' => 'fr/JM',
+            'issuenumber' => '3001'
+        ]);
+
+        $dmEntityManager->persist(
+            (new UsersContributions())
+                ->setTranche($edge1)
+                ->setIdUser($user->getId())
+                ->setDate(new DateTime())
+                ->setContribution('photographe')
+                ->setPointsNew(10)
+                ->setPointsTotal(10)
+        );
+
+        if ($this->withPublicationSorts) {
+            $publicationSort1 = new BibliothequeOrdreMagazines();
             $dmEntityManager->persist(
-                $numero1
-                    ->setPays('fr')
-                    ->setMagazine('DDD')
-                    ->setNumero('1')
-                    ->setEtat('indefini')
-                    ->setIdAcquisition(1)
-                    ->setAv(false)
+                $publicationSort1
+                    ->setPublicationcode('fr/DDD')
                     ->setIdUtilisateur($user->getId())
-                    ->setDateajout(new DateTime())
+                    ->setOrdre(1)
             );
 
-            $numero2 = new Numeros();
+            $publicationSort2 = new BibliothequeOrdreMagazines();
             $dmEntityManager->persist(
-                $numero2
-                    ->setPays('fr')
-                    ->setMagazine('MP')
-                    ->setNumero('300')
-                    ->setEtat('bon')
-                    ->setAv(false)
+                $publicationSort2
+                    ->setPublicationcode('fr/JM')
                     ->setIdUtilisateur($user->getId())
-                    ->setDateajout(new DateTime())
+                    ->setOrdre(2)
             );
-
-            $numero3 = new Numeros();
-            $dmEntityManager->persist(
-                $numero3
-                    ->setPays('fr')
-                    ->setMagazine('MP')
-                    ->setNumero('301')
-                    ->setEtat('mauvais')
-                    ->setAv(true)
-                    ->setIdUtilisateur($user->getId())
-                    ->setDateajout(new DateTime())
-            );
-
-            $purchase1 = new Achats();
-            $dmEntityManager->persist(
-                $purchase1
-                    ->setDate(DateTime::createFromFormat('Y-m-d', '2010-01-01'))
-                    ->setDescription('Purchase')
-                    ->setIdUser($user->getId())
-            );
-
-            if ($this->withPublicationSorts) {
-                $publicationSort1 = new BibliothequeOrdreMagazines();
-                $dmEntityManager->persist(
-                    $publicationSort1
-                        ->setPublicationcode('fr/DDD')
-                        ->setIdUtilisateur($user->getId())
-                        ->setOrdre(1)
-                );
-
-                $publicationSort2 = new BibliothequeOrdreMagazines();
-                $dmEntityManager->persist(
-                    $publicationSort2
-                        ->setPublicationcode('fr/JM')
-                        ->setIdUtilisateur($user->getId())
-                        ->setOrdre(2)
-                );
-            }
-
-            $dmEntityManager->flush();
-            $dmEntityManager->clear();
-
-        } catch (Exception $e) {
-
         }
+
+        $dmEntityManager->flush();
+        $dmEntityManager->clear();
     }
 }
