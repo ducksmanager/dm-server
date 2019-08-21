@@ -76,6 +76,13 @@ class UsersContributions
      */
     private $pointsTotal;
 
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="emails_sent", type="integer", nullable=false)
+     */
+    private $emailsSent = '0';
+
     public function getId(): ?int
     {
         return $this->id;
@@ -161,6 +168,18 @@ class UsersContributions
     public function setPointsTotal(int $pointsTotal): self
     {
         $this->pointsTotal = $pointsTotal;
+
+        return $this;
+    }
+
+    public function getEmailsSent(): ?int
+    {
+        return $this->emailsSent;
+    }
+
+    public function setEmailsSent(int $emailsSent): self
+    {
+        $this->emailsSent = $emailsSent;
 
         return $this;
     }
