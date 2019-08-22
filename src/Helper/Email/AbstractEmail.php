@@ -1,12 +1,13 @@
 <?php
-namespace App\Helper;
+namespace App\Helper\Email;
 
 use App\Entity\Dm\Users;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Swift_Mailer;
 use Swift_Message;
 
-abstract class EmailHelper {
+abstract class AbstractEmail {
 
     /** @var Swift_Mailer $mailer */
     private $mailer;
@@ -14,17 +15,21 @@ abstract class EmailHelper {
     /** @var Users $user */
     protected $user;
 
-    public function __construct(Swift_Mailer $mailer, Users $user)
+    /** @var LoggerInterface $logger */
+    protected $logger;
+
+    public function __construct(Swift_Mailer $mailer, Users $user, LoggerInterface $logger)
     {
         $this->mailer = $mailer;
         $this->user = $user;
+        $this->logger = $logger;
     }
 
     abstract protected function getFrom() : string;
     abstract protected function getFromName() : string;
-    abstract protected function getTo() : string;
+    abstract public function getTo() : string;
     abstract protected function getToName() : string;
-    abstract protected function getSubject() : string;
+    abstract public function getSubject() : string;
     abstract protected function getTextBody() : string;
     abstract protected function getHtmlBody() : string;
     abstract public function __toString() : string;
@@ -43,12 +48,14 @@ abstract class EmailHelper {
             ->addPart($this->getTextBody(), 'text/plain');
 
         $failures = [];
+        $this->logger->info('Sending email of type ' .get_class($this). ' to ' .$this->getTo());
         if (!$this->mailer->send($message, $failures)) {
-            throw new RuntimeException('Can\'t send e-mail \''.$this->__toString().'\': failed with '.print_r($failures, true));
+            throw new RuntimeException("Can't send e-mail '".$this->__toString()."': failed with ".print_r($failures, true));
         }
 
         $message->setSubject('[Sent to '. array_keys($message->getTo())[0] ."] {$message->getSubject()}");
         $message->setTo($_ENV['SMTP_USERNAME']);
+        $this->logger->info('Sending email of type ' .get_class($this). ' to ' .$_ENV['SMTP_USERNAME']);
         $this->mailer->send($message);
     }
 }

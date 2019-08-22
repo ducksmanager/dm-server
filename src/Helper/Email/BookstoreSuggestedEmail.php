@@ -1,9 +1,7 @@
 <?php
 namespace App\Helper\Email;
 
-use App\Helper\EmailHelper;
-
-class BookstoreSuggestedEmail extends EmailHelper {
+class BookstoreSuggestedEmail extends AbstractEmail {
 
     protected function getFrom() : string {
         return $this->user->getUsername(). '@' .$_ENV['SMTP_ORIGIN_EMAIL_DOMAIN_DUCKSMANAGER'];
@@ -13,7 +11,7 @@ class BookstoreSuggestedEmail extends EmailHelper {
         return $this->user->getUsername(). '@' .$_ENV['SMTP_ORIGIN_EMAIL_DOMAIN_DUCKSMANAGER'];
     }
 
-    protected function getTo() : string {
+    public function getTo() : string {
         return $_ENV['SMTP_USERNAME'];
     }
 
@@ -21,7 +19,7 @@ class BookstoreSuggestedEmail extends EmailHelper {
         return $_ENV['SMTP_FRIENDLYNAME'];
     }
 
-    protected function getSubject() : string {
+    public function getSubject() : string {
         return 'Ajout de bouquinerie';
     }
 

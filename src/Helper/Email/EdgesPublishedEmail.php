@@ -1,13 +1,12 @@
 <?php
 namespace App\Helper\Email;
 
-
 use App\Entity\Dm\Users;
-use App\Helper\EmailHelper;
+use Psr\Log\LoggerInterface;
 use Swift_Mailer;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class EdgesPublishedEmail extends EmailHelper {
+class EdgesPublishedEmail extends AbstractEmail {
 
     private $extraEdges;
     private $extraPhotographerPoints;
@@ -16,8 +15,8 @@ class EdgesPublishedEmail extends EmailHelper {
     private $locale;
     private $newMedalLevel;
 
-    public function __construct(Swift_Mailer $mailer, TranslatorInterface $translator, string $locale, Users $user, int $extraEdges, int $extraPhotographerPoints, $newMedalLevel = null) {
-        parent::__construct($mailer, $user);
+    public function __construct(Swift_Mailer $mailer, TranslatorInterface $translator, LoggerInterface $logger, string $locale, Users $user, int $extraEdges, int $extraPhotographerPoints, ?int $newMedalLevel = null) {
+        parent::__construct($mailer, $user, $logger);
         $this->translator = $translator;
         $this->locale = $locale;
         $this->extraEdges = $extraEdges;
@@ -33,7 +32,7 @@ class EdgesPublishedEmail extends EmailHelper {
         return $_ENV['SMTP_FRIENDLYNAME'];
     }
 
-    protected function getTo() : string {
+    public function getTo() : string {
         return $this->user->getEmail();
     }
 
@@ -41,7 +40,7 @@ class EdgesPublishedEmail extends EmailHelper {
         return $this->user->getUsername();
     }
 
-    protected function getSubject() : string {
+    public function getSubject() : string {
         return $this->extraEdges > 1
             ? $this->translator->trans('EMAIL_EDGES_PUBLISHED_SUBJECT')
             : $this->translator->trans('EMAIL_ONE_EDGE_PUBLISHED_SUBJECT');

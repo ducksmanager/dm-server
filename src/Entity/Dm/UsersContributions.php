@@ -77,11 +77,11 @@ class UsersContributions
     private $pointsTotal;
 
     /**
-     * @var int
+     * @var bool
      *
-     * @ORM\Column(name="emails_sent", type="integer", nullable=false)
+     * @ORM\Column(name="emails_sent", type="boolean", nullable=false)
      */
-    private $emailsSent = '0';
+    private $emailsSent = false;
 
     public function getId(): ?int
     {
@@ -172,12 +172,12 @@ class UsersContributions
         return $this;
     }
 
-    public function getEmailsSent(): ?int
+    public function getEmailsSent(): ?bool
     {
         return $this->emailsSent;
     }
 
-    public function setEmailsSent(int $emailsSent): self
+    public function setEmailsSent(bool $emailsSent): self
     {
         $this->emailsSent = $emailsSent;
 

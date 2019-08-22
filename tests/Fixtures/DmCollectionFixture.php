@@ -130,8 +130,8 @@ class DmCollectionFixture implements FixtureInterface
                 ->setIdUser($user->getId())
                 ->setDate(new DateTime())
                 ->setContribution('photographe')
-                ->setPointsNew(10)
-                ->setPointsTotal(10)
+                ->setPointsNew(50)
+                ->setPointsTotal(50)
         );
 
         if ($this->withPublicationSorts) {

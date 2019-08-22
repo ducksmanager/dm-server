@@ -7,6 +7,7 @@ use App\Entity\Dm\BibliothequeOrdreMagazines;
 use App\Entity\Dm\Bouquineries;
 use App\Entity\Dm\Numeros;
 use App\Entity\Dm\Users;
+use App\Entity\Dm\UsersContributions;
 use App\Entity\Dm\UsersPasswordTokens;
 use App\Helper\collectionUpdateHelper;
 use App\Helper\ContributionHelper;
@@ -15,6 +16,7 @@ use App\Helper\Email\BookstoreApprovedEmail;
 use App\Helper\Email\EdgesPublishedEmail;
 use App\Helper\Email\ResetPasswordEmail;
 use App\Helper\Email\BookstoreSuggestedEmail;
+use App\Helper\Email\AbstractEmail;
 use App\Helper\JsonResponseFromObject;
 use DateTime;
 use Doctrine\Common\Persistence\Mapping\MappingException;
@@ -105,7 +107,7 @@ class DucksmanagerController extends AbstractController
         $dmEm->persist($passwordToken);
         $dmEm->flush();
 
-        $message = new ResetPasswordEmail($mailer, $translator, $user, $token);
+        $message = new ResetPasswordEmail($mailer, $translator, $logger, $user, $token);
         $message->send();
         return new Response();
     }
@@ -258,9 +260,95 @@ class DucksmanagerController extends AbstractController
     }
 
     /**
-     * @Route(methods={"POST"}, path="/ducksmanager/email/bookstore-suggestion")
+     * @Route(methods={"POST"}, path="/ducksmanager/emails/pending")
+     * @param Request $request
+     * @param Swift_Mailer $mailer
+     * @param LoggerInterface $logger
+     * @param TranslatorInterface $translator
+     * @return Response
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
-    public function sendBookstoreSuggestionEmail(Request $request, Swift_Mailer $mailer): Response
+    public function sendPendingEmails(Request $request, Swift_Mailer $mailer, LoggerInterface $logger, TranslatorInterface $translator): Response
+    {
+        $dmEm = $this->getEm('dm');
+        static $medalLevels = [
+            'photographe' => [1 => 50, 2 => 150, 3 => 600],
+            'createur'    => [1 => 20, 2 =>  70, 3 => 150],
+            'duckhunter'  => [1 =>  1, 2 =>   3, 3 =>   5]
+        ];
+
+        $emailsSent = [];
+        foreach(array_keys($medalLevels) as $contributionType) {
+            $pendingEmailContributionsForType = $dmEm->getRepository(UsersContributions::class)->findBy([
+                'contribution' => $contributionType,
+                'emailsSent' => false
+            ], [
+                'idUser' => 'ASC',
+                'pointsTotal' => 'ASC'
+            ]);
+            if (empty($pendingEmailContributionsForType)) {
+                $logger->info("No email to send for contribution $contributionType");
+            }
+            else {
+                /** @var UsersContributions[][] $pendingEmailContributionsByUser */
+                $pendingEmailContributionsByUser = array_reduce($pendingEmailContributionsForType, function (array $accumulator, UsersContributions $contribution) {
+                    $accumulator[$contribution->getIdUser()][] = $contribution;
+                    return $accumulator;
+                }, []);
+                foreach($pendingEmailContributionsByUser as $userId => $pendingEmailContributionsForUser) {
+                    $initialPointsCount = $pendingEmailContributionsForUser[0]->getPointsTotal() - $pendingEmailContributionsForUser[0]->getPointsNew();
+                    $finalPointsCount = $pendingEmailContributionsForUser[count($pendingEmailContributionsForUser) -1]->getPointsTotal();
+                    $pointsEarned = $finalPointsCount - $initialPointsCount;
+
+                    $medalReached = null;
+                    foreach($medalLevels[$contributionType] as $medal => $medalThreshold) {
+                        if ($initialPointsCount < $medalThreshold && $finalPointsCount >= $medalThreshold) {
+                            $medalReached = $medal;
+                        }
+                    }
+                    foreach($pendingEmailContributionsForUser as $pendingEmail) {
+                        $pendingEmail->setEmailsSent(true);
+                        $dmEm->persist($pendingEmail);
+                    }
+                    $dmEm->flush();
+
+                    $user = $dmEm->getRepository(Users::class)->find($userId);
+
+                    switch($contributionType) {
+                        case 'duckhunter':
+                            $message = new BookstoreApprovedEmail(
+                                $mailer, $translator, $logger, $request->getLocale(), $user, $medalReached
+                            );
+                        break;
+                        case 'photographe':
+                            $message = new EdgesPublishedEmail(
+                                $mailer, $translator, $logger, $request->getLocale(), $user, count($pendingEmailContributionsForUser), $pointsEarned, $medalReached
+                            );
+                            break;
+                    }
+                    if (isset($message)) {
+                        $emailsSent []= $message;
+                        $message->send();
+                    }
+                }
+            }
+        }
+        return new JsonResponse([
+            'emails_sent' => array_map(function(AbstractEmail $emailHelper) {
+                return [
+                    'to' => $emailHelper->getTo(),
+                    'subject' => $emailHelper->getSubject()
+                ];
+            }, $emailsSent),
+            'contributions' => $pendingEmailContributionsByUser
+        ]);
+    }
+
+    /**
+     * @Route(methods={"POST"}, path="/ducksmanager/bookstore/suggest")
+     */
+    public function suggestBookstore(Request $request, Swift_Mailer $mailer, LoggerInterface $logger): Response
     {
         $dmEm = $this->getEm('dm');
         $userId = $request->request->get('userId');
@@ -272,17 +360,17 @@ class DucksmanagerController extends AbstractController
             $user = $dmEm->getRepository(Users::class)->find($userId);
         }
 
-        $message = new BookstoreSuggestedEmail($mailer, $user);
+        $message = new BookstoreSuggestedEmail($mailer, $user, $logger);
         $message->send();
 
         return new Response();
     }
 
     /**
-     * @Route(methods={"POST"}, path="/ducksmanager/email/bookstore-approved")
+     * @Route(methods={"POST"}, path="/ducksmanager/bookstore/approve")
      * @throws ORMException
      */
-    public function sendBookstoreApprovedEmail(Request $request, Swift_Mailer $mailer, TranslatorInterface $translator): Response
+    public function approveBookstore(Request $request, Swift_Mailer $mailer, TranslatorInterface $translator): Response
     {
         $dmEm = $this->getEm('dm');
         $bookstoreId = $request->request->get('id');
@@ -310,47 +398,6 @@ class DucksmanagerController extends AbstractController
 
         $dmEm->persist($bookstore);
         $dmEm->flush();
-
-        $message = new BookstoreApprovedEmail($mailer, $translator, $user);
-        $message->send();
-
-        return new Response();
-    }
-
-    /**
-     * @Route(methods={"POST"}, path="/ducksmanager/email/confirmation")
-     */
-    public function sendConfirmationEmail(Request $request, Swift_Mailer $mailer, TranslatorInterface $translator): Response
-    {
-        $dmEm = $this->getEm('dm');
-        $userId = $request->request->get('userid');
-        $emailType = $request->request->get('type');
-
-        /** @var Users $user */
-        $user = $dmEm->getRepository(Users::class)->find($userId);
-
-        if (is_null($user)) {
-            return new Response("User with ID $userId was not found", Response::HTTP_BAD_REQUEST);
-        }
-
-        $details = $request->request->get('details');
-        if (!is_array($details)) {
-            $details = json_decode($details, true);
-        }
-
-        switch ($emailType) {
-            case 'edges_published':
-                $newMedalLevel = $details['newMedalLevel'];
-                $extraEdges = $details['extraEdges'];
-                $extraPhotographerPoints = $details['extraPhotographerPoints'];
-
-                $message = new EdgesPublishedEmail($mailer, $translator, $request->getLocale(), $user, $extraEdges, $extraPhotographerPoints, $newMedalLevel);
-                break;
-            default:
-                return new Response("Invalid email type : $emailType", Response::HTTP_BAD_REQUEST);
-
-        }
-        $message->send();
 
         return new Response();
     }

@@ -2,18 +2,22 @@
 namespace App\Helper\Email;
 
 use App\Entity\Dm\Users;
-use App\Helper\EmailHelper;
+use Psr\Log\LoggerInterface;
 use Swift_Mailer;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class BookstoreApprovedEmail extends EmailHelper {
+class BookstoreApprovedEmail extends AbstractEmail {
 
     /** @var TranslatorInterface $translator */
     private $translator;
+    private $locale;
+    private $newMedalLevel;
 
-    public function __construct(Swift_Mailer $mailer, TranslatorInterface $translator, Users $user) {
-        parent::__construct($mailer, $user);
+    public function __construct(Swift_Mailer $mailer, TranslatorInterface $translator, LoggerInterface $logger, string $locale, Users $user, ?int $newMedalLevel = null) {
+        parent::__construct($mailer, $user, $logger);
         $this->translator = $translator;
+        $this->locale = $locale;
+        $this->newMedalLevel = $newMedalLevel;
     }
 
     protected function getFrom() : string {
@@ -24,7 +28,7 @@ class BookstoreApprovedEmail extends EmailHelper {
         return $_ENV['SMTP_FRIENDLYNAME'];
     }
 
-    protected function getTo() : string {
+    public function getTo() : string {
         return $this->user->getEmail();
     }
 
@@ -32,7 +36,7 @@ class BookstoreApprovedEmail extends EmailHelper {
         return $this->user->getUsername();
     }
 
-    protected function getSubject() : string {
+    public function getSubject() : string {
         return $this->translator->trans('EMAIL_BOOKSTORE_APPROVED_SUBJECT');
     }
 
@@ -46,7 +50,12 @@ class BookstoreApprovedEmail extends EmailHelper {
 
             $this->translator->trans('EMAIL_BOOKSTORE_APPROVED_INTRO'),
 
-            // TODO Handle new medals levels
+            !is_null($this->newMedalLevel)
+                ? ('<p style="text-align: center"><img width="100" src="'.$_ENV['ASSETS_MEDALS_PICTURES_ROOT']."Duckhunter_{$this->newMedalLevel}_{$this->locale}.png".'" /><br />'
+                .$this->translator->trans('EMAIL_BOOKSTORE_APPROVED_MEDAL', [
+                    '%medalLevel%' => $this->translator->trans("MEDAL_{$this->newMedalLevel}")
+                ]). '</p>')
+                : '',
 
             $this->translator->trans('EMAIL_BOOKSTORE_APPROVED_THANKS'),
 

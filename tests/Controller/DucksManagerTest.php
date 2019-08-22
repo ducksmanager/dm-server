@@ -75,7 +75,6 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
         $this->assertEquals('HONDURAS MAHOGANY', $demoUser->getBibliothequeSousTexture1());
         $this->assertEquals('bois', $demoUser->getBibliothequeTexture2());
         $this->assertEquals('KNOTTY PINE', $demoUser->getBibliothequeSousTexture2());
-        $this->assertEquals(1.5, $demoUser->getBibliothequeGrossissement());
 
         $this->assertEquals(true, $demoUser->getBetauser()); // This property shouldn't have reset
 
@@ -100,11 +99,24 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
 
     public function testSendBookcaseEmail(): void
     {
-        $response = $this->buildAuthenticatedService('/ducksmanager/email/bookstore', self::$dmUser, [])->call();
+        self::$client->enableProfiler();
+        $response = $this->buildAuthenticatedService('/ducksmanager/bookstore/suggest', self::$dmUser, [])->call();
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        /** @var MessageDataCollector $mailCollector */
+        $mailCollector = self::$client->getProfile()->getCollector('swiftmailer');
+        /** @var Swift_Message[]|Countable $messages */
+        $messages = $mailCollector->getMessages();
+        $this->assertCount(2, $messages);
+        [$message, $messageCopy] = $messages;
+
+        $this->assertContains('Ajout de bouquinerie', $message->getSubject());
+        $this->assertContains('Validation', $message->getBody());
+
+        $this->assertContains('[Sent to '.$_ENV['SMTP_USERNAME'].'] Ajout de bouquinerie', $messageCopy->getSubject());
+        $this->assertContains('Validation', $messageCopy->getBody());
     }
 
-    public function testSendBookcaseEmailWithUser(): void
+    public function testSuggestBookstoreWithUser(): void
     {
         $this->createUserCollection('demo');
 
@@ -113,7 +125,7 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
         ]);
 
         self::$client->enableProfiler();
-        $response = $this->buildAuthenticatedService('/ducksmanager/email/bookstore-suggestion', self::$dmUser, [], [
+        $response = $this->buildAuthenticatedService('/ducksmanager/bookstore/suggest', self::$dmUser, [], [
             'userid' => $demoUser->getId()
         ])->call();
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
@@ -132,7 +144,7 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
         $this->assertContains('Validation', $messageCopy->getBody());
     }
 
-    public function testSendBookcaseConfirmationEmail(): void
+    public function testSendPendingEmails(): void
     {
         $this->createUserCollection('demo');
 
@@ -140,40 +152,79 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
             'username' => 'demo'
         ]);
 
+        $bookstore = (new Bouquineries())
+            ->setActif(true)
+            ->setNom('Bookstore')
+            ->setCommentaire('Comment')
+            ->setCoordx(0)
+            ->setCoordy(0)
+            ->setAdressecomplete('1 street A')
+            ->setIdUtilisateur($demoUser->getId())
+            ->setDateajout(new \DateTime());
+
+        $bookstoreContribution = (new UsersContributions())
+            ->setBookstore($bookstore)
+            ->setIdUser($demoUser->getId())
+            ->setPointsNew(1)
+            ->setDate(new \DateTime())
+            ->setPointsTotal(1)
+            ->setContribution('duckhunter');
+
+        $this->getEm('dm')->persist($bookstore);
+        $this->getEm('dm')->persist($bookstoreContribution);
+        $this->getEm('dm')->flush();
+
         self::$client->enableProfiler();
-        $response = $this->buildAuthenticatedService('/ducksmanager/email/confirmation', self::$dmUser, [], [
-            'userid' => $demoUser->getId(),
-            'type' => 'edges_published',
-            'details' => ['newMedalLevel' => 2, 'extraEdges' => 4, 'extraPhotographerPoints' => 4]
-        ])->call();
+        $response = $this->buildAuthenticatedService('/ducksmanager/emails/pending', self::$dmUser, [])->call();
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $objectResponse = json_decode($this->getResponseContent($response));
 
         /** @var MessageDataCollector $mailCollector */
         $mailCollector = self::$client->getProfile()->getCollector('swiftmailer');
         /** @var Swift_Message[]|Countable $messages */
         $messages = $mailCollector->getMessages();
-        $this->assertCount(2, $messages);
-        [$message, $messageCopy] = $messages;
+        $this->assertCount(4, $messages);
+        [$edgeEmail, $edgeEmailCopy, $bookstoreEmail, $bookstoreEmailCopy] = $messages;
 
-        $expectedMessageBody = implode('<br />', [
-            'Bonjour demo,',
-            'Les 4 tranches dont vous nous avez envoyé les photos sont maintenant visionnables dans votre bibliothèque DucksManager ainsi que dans les bibliothèques des autres utilisateurs possédant ces magazines.',
-            '<p style="text-align: center"><img width="100" src="http://localhost:8000/images/medailles/Photographe_2_fr.png" />',
-            'Vous avez remporté la médaille "Photographe DucksManager Intermédiaire" grâce à vos contributions !</p>',
-            '<b>Votre contribution vous a rapporté 4 points "Photographe"</b>, bravo à vous et merci pour votre contribution : nous sommes heureux de vous compter parmi la communauté active de DucksManager !',
-            '',
-            '',
-            'A bientôt sur le site !',
-            'L\'équipe DucksManager',
-            '<img width="400" src="http://localhost:8000/logo_petit.png" />'
-        ]);
-        $this->assertEquals($expectedMessageBody, $message->getBody());
+        $expectedEdgeEmailBody = <<<MESSAGE
+            Bonjour demo,
+            La tranche dont vous nous avez envoyé la photo est maintenant visionnable dans votre bibliothèque DucksManager ainsi que dans les bibliothèques des autres utilisateurs possédant ce magazine.
+            <p style="text-align: center"><img width="100" src="http://localhost:8000/images/medailles/Photographe_1_fr.png" />
+            Vous avez remporté la médaille "Photographe DucksManager Débutant" grâce à vos contributions !</p>
+            <b>Votre contribution vous a rapporté 50 points "Photographe"</b>, bravo à vous et merci pour votre contribution : nous sommes heureux de vous compter parmi la communauté active de DucksManager !
+            
+            
+            A bientôt sur le site !
+            L'équipe DucksManager
+            <img width="400" src="http://localhost:8000/logo_petit.png" />
+            MESSAGE;
+        $this->assertEquals(str_replace("\n", '<br />', $expectedEdgeEmailBody), $edgeEmail->getBody());
 
-        $this->assertEquals($_ENV['SMTP_USERNAME'], array_keys($messageCopy->getTo())[0]);
-        $this->assertEquals($expectedMessageBody, $messageCopy->getBody());
+        $this->assertEquals(str_replace("\n", '<br />', $expectedEdgeEmailBody), $edgeEmailCopy->getBody());
+        $this->assertEquals($_ENV['SMTP_USERNAME'], array_keys($edgeEmailCopy->getTo())[0]);
+
+        $expectedBookstoreEmailBody = <<<MESSAGE
+            Bonjour demo,
+            La bouquinerie que vous avez proposée est maintenant visible par tous les utilisateurs DucksManager.
+            <p style="text-align: center"><img width="100" src="http://localhost:8000/images/medailles/Duckhunter_1_fr.png" />
+            Vous avez remporté la médaille "Duckhunter Débutant" grâce à vos contributions !</p>
+            Bravo à vous et merci pour votre contribution : nous sommes heureux de vous accueillir parmi la communauté active de DucksManager !
+            
+            
+            A bientôt sur le site !
+            L'équipe DucksManager
+            <img width="400" src="http://localhost:8000/logo_petit.png" />
+            MESSAGE;
+        $this->assertEquals(str_replace("\n", '<br />', $expectedBookstoreEmailBody), $bookstoreEmail->getBody());
+
+        $this->assertEquals(str_replace("\n", '<br />', $expectedBookstoreEmailBody), $bookstoreEmailCopy->getBody());
+        $this->assertEquals($_ENV['SMTP_USERNAME'], array_keys($bookstoreEmailCopy->getTo())[0]);
+
+        $bookstoreContribution = $this->getEm('dm')->getRepository(UsersContributions::class)->findOneBy(['bookstore' => $bookstore]);
+        $this->assertEquals(true, $bookstoreContribution->getEmailsSent());
     }
 
-    public function testSendBookcaseApprovedEmail(): void
+    public function testApprovedBookcase(): void
     {
         $this->createUserCollection('demo');
 
@@ -207,8 +258,7 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
         );
         $this->getEm('dm')->flush();
 
-        self::$client->enableProfiler();
-        $response = $this->buildAuthenticatedService('/ducksmanager/email/bookstore-approved', self::$dmUser, [], [
+        $response = $this->buildAuthenticatedService('/ducksmanager/bookstore/approve', self::$dmUser, [], [
             'id' => $bookstore->getId(),
             'coordinates' => [1, 2]
         ])->call();
@@ -225,28 +275,6 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
         ]);
         $this->assertEquals(1, $userContribution->getPointsNew());
         $this->assertEquals(1 + 1, $userContribution->getPointsTotal());
-
-        /** @var MessageDataCollector $mailCollector */
-        $mailCollector = self::$client->getProfile()->getCollector('swiftmailer');
-        /** @var Swift_Message[]|Countable $messages */
-        $messages = $mailCollector->getMessages();
-        $this->assertCount(2, $messages);
-        [$message, $messageCopy] = $messages;
-
-        $expectedMessageBody = implode('<br />', [
-            'Bonjour demo,',
-            'La bouquinerie que vous avez proposée est maintenant visible par tous les utilisateurs DucksManager.',
-            'Bravo à vous et merci pour votre contribution : nous sommes heureux de vous accueillir parmi la communauté active de DucksManager !',
-            '',
-            '',
-            'A bientôt sur le site !',
-            'L\'équipe DucksManager',
-            '<img width="400" src="http://localhost:8000/logo_petit.png" />'
-        ]);
-        $this->assertEquals($expectedMessageBody, $message->getBody());
-
-        $this->assertEquals($_ENV['SMTP_USERNAME'], array_keys($messageCopy->getTo())[0]);
-        $this->assertEquals($expectedMessageBody, $messageCopy->getBody());
     }
 
     public function testInitResetPassword(): void

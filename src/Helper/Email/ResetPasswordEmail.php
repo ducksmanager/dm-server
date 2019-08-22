@@ -2,18 +2,18 @@
 namespace App\Helper\Email;
 
 use App\Entity\Dm\Users;
-use App\Helper\EmailHelper;
+use Psr\Log\LoggerInterface;
 use Swift_Mailer;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class ResetPasswordEmail extends EmailHelper {
+class ResetPasswordEmail extends AbstractEmail {
 
     private $translator;
     private $token;
 
-    public function __construct(Swift_Mailer $mailer, TranslatorInterface $translator, Users $user, string $token)
+    public function __construct(Swift_Mailer $mailer, TranslatorInterface $translator, LoggerInterface $logger, Users $user, string $token)
     {
-        parent::__construct($mailer, $user);
+        parent::__construct($mailer, $user, $logger);
         $this->translator = $translator;
         $this->token = $token;
     }
@@ -26,7 +26,7 @@ class ResetPasswordEmail extends EmailHelper {
         return $_ENV['SMTP_FRIENDLYNAME'];
     }
 
-    protected function getTo() : string {
+    public function getTo() : string {
         return $this->user->getEmail();
     }
 
@@ -34,7 +34,7 @@ class ResetPasswordEmail extends EmailHelper {
         return $this->user->getUsername();
     }
 
-    protected function getSubject() : string {
+    public function getSubject() : string {
         return $this->translator->trans('EMAIL_RESET_PASSWORD_SUBJECT');
     }
 

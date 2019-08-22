@@ -112,12 +112,7 @@ abstract class TestCommon extends WebTestCase {
     protected static function runCommand(string $command) : ?int {
         $command = sprintf('%s --quiet', $command);
 
-        try {
-            return self::getApplication()->run(new StringInput($command));
-        } catch (Exception $e) {
-            self::fail("Couldn't run command '$command' : {$e->getMessage()}");
-        }
-        return null;
+        return self::getApplication()->run(new StringInput($command));
     }
 
     private static function getClient(): Client {
