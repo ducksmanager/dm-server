@@ -292,7 +292,7 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
         /** @var Swift_Message[]|Countable $messages */
         $messages = $mailCollector->getMessages();
         $this->assertCount(2, $messages);
-        [$message,] = $messages;
+        [$email,] = $messages;
 
         /** @var UsersPasswordTokens $generatedToken */
         $generatedToken = $this->getEm('dm')->getRepository(UsersPasswordTokens::class)->findOneBy([
@@ -301,17 +301,18 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
 
         $this->assertNotNull($generatedToken);
 
-        $expectedMessageBody = implode('<br />', [
-            'Bonjour dm_test_user,',
-            'Un visiteur a indiqué avoir oublié le mot de passe associé à l\'adresse e-mail test@ducksmanager.net.',
-            'Si c\'est vous qui en êtes à l\'origine, cliquez sur le lien suivant pour indiquer un nouveau mot de passe pour votre compte DucksManager :',
-            '<a href="http://localhost:8000/?action=reset_password&token='.$generatedToken->getToken().'">Mettre à jour mon mot de passe</a>',
-            '<br />',
-            'A bientôt sur le site !',
-            'L\'équipe DucksManager',
-            '<img width="400" src="http://localhost:8000/logo_petit.png" />'
-        ]);
-        $this->assertEquals($expectedMessageBody, $message->getBody());
+        $expectedMessageBody = <<<MESSAGE
+            Bonjour dm_test_user,
+            Un visiteur a indiqué avoir oublié le mot de passe associé à l'adresse e-mail test@ducksmanager.net.
+            Si c'est vous qui en êtes à l'origine, cliquez sur le lien suivant pour indiquer un nouveau mot de passe pour votre compte DucksManager :
+            <a href="http://localhost:8000/?action=reset_password&token={$generatedToken->getToken()}">Mettre à jour mon mot de passe</a>
+            
+            
+            A bientôt sur le site !
+            L'équipe DucksManager
+            <img width="400" src="http://localhost:8000/logo_petit.png" />
+            MESSAGE;
+        $this->assertEquals(str_replace("\n", '<br />', $expectedMessageBody), $email->getBody());
     }
 
     public function testInitResetPasswordMissingEmail(): void

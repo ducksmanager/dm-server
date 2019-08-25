@@ -1,4 +1,5 @@
 /.idea
+/current
 
 ###> symfony/framework-bundle ###
 /.env.local
