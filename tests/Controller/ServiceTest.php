@@ -1,6 +1,8 @@
 <?php
 namespace App\Tests;
 
+use App\Tests\Fixtures\CoaEntryFixture;
+use App\Tests\Fixtures\CoaFixture;
 use Symfony\Component\HttpFoundation\Response;
 
 class ServiceTest extends TestCommon
@@ -13,13 +15,14 @@ class ServiceTest extends TestCommon
     public function setUp()
     {
         parent::setUp();
-        self::runCommand('doctrine:fixtures:load -q -n --em=coa --group=coa');
+        $this->loadFixture('coa', new CoaFixture());
+        $this->loadFixture('coa', new CoaEntryFixture());
     }
 
     public function testCallServiceWithoutSystemCredentials(): void
     {
         $response = $this->buildService(
-            '/coa/list/countries/fr', [
+            '/collection/user', [
                 'username' => self::$defaultTestDmUserName,
                 'password' => sha1(self::$testDmUsers[self::$defaultTestDmUserName])
             ],

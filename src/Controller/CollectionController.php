@@ -315,7 +315,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
         $qb
             ->delete(Numeros::class, 'issues')
 
-            ->andWhere($qb->expr()->eq($qb->expr()->concat('issues.pays',  '"/"', 'issues.magazine'), ':publicationCode'))
+            ->andWhere($qb->expr()->eq($qb->expr()->concat('issues.pays',  $qb->expr()->literal('/'), 'issues.magazine'), ':publicationCode'))
             ->setParameter(':publicationCode', $publicationCode)
 
             ->andWhere($qb->expr()->in('issues.numero', ':issueNumbers'))

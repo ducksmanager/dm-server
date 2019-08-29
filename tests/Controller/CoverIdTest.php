@@ -5,12 +5,13 @@ namespace App\Tests\Controller;
 use App\Entity\Coverid\Covers;
 use App\Helper\SimilarImagesHelper;
 use App\Tests\Fixtures\CoaEntryFixture;
+use App\Tests\Fixtures\CoaFixture;
 use App\Tests\Fixtures\CoverIdFixture;
 use App\Tests\TestCommon;
-use function exif_imagetype;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
+use function exif_imagetype;
 
 class CoverIdTest extends TestCommon
 {
@@ -54,7 +55,8 @@ class CoverIdTest extends TestCommon
     public function setUp()
     {
         parent::setUp();
-        self::runCommand('doctrine:fixtures:load -q -n --em=coa --group=coa');
+        $this->loadFixture('coa', new CoaFixture());
+        $this->loadFixture('coa', new CoaEntryFixture());
         $urls = [
             'fr/DDD 1' => 'cover_example.jpg',
             'fr/DDD 2' => 'cover_example_2.jpg',

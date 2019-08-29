@@ -1,6 +1,8 @@
 <?php
 namespace App\Tests;
 
+use App\Tests\Fixtures\CoaEntryFixture;
+use App\Tests\Fixtures\CoaFixture;
 use App\Tests\Fixtures\DmStatsFixture;
 
 class StatsTest extends TestCommon
@@ -14,7 +16,8 @@ class StatsTest extends TestCommon
     {
         parent::setUp();
         $this->createUserCollection('dm_test_user');
-        self::runCommand('doctrine:fixtures:load -q -n --em=coa --group=coa');
+        $this->loadFixture('coa', new CoaFixture());
+        $this->loadFixture('coa', new CoaEntryFixture());
         $this->loadFixture('dm_stats', new DmStatsFixture(1));
     }
 

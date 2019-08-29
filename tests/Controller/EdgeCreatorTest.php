@@ -127,24 +127,8 @@ class EdgeCreatorTest extends TestCommon
 
         $responseObjects = json_decode($this->getResponseContent($response));
 
-        $this->assertCount(3, $responseObjects);
+        $this->assertCount(1, $responseObjects);
         $this->assertEquals('1', $responseObjects[0]->est_editeur);
-        $this->assertEquals('0', $responseObjects[1]->est_editeur);
-        $this->assertEquals('0', $responseObjects[2]->est_editeur);
-    }
-
-    public function testLoadV2ModelsEditedByOthers(): void
-    {
-        $response = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/v2/model/editedbyother/all', self::$edgecreatorUser)->call();
-
-        $objectResponse = json_decode($this->getResponseContent($response));
-
-        $this->assertCount(1, $objectResponse);
-        /** @var stdClass $model1 */
-        $model1 = $objectResponse[0];
-        $this->assertEquals('fr', $model1->pays);
-        $this->assertEquals('PM', $model1->magazine);
-        $this->assertEquals('503', $model1->numero);
     }
 
     public function testLoadV2UnassignedModels(): void
@@ -896,14 +880,14 @@ class EdgeCreatorTest extends TestCommon
         ]);
 
         $this->assertEquals('photographe', $userContributions[0]->getContribution());
-        $this->assertEquals($this->getUser('dm_test_user')->getId(), $userContributions[0]->getIdUser());
-        $this->assertEquals(10 + 5, $userContributions[0]->getPointsTotal());
+        $this->assertEquals($this->getUser('dm_test_user'), $userContributions[0]->getUser());
+        $this->assertEquals(50 + 5, $userContributions[0]->getPointsTotal());
 
         $this->assertEquals('photographe', $userContributions[1]->getContribution());
-        $this->assertEquals($this->getUser('otheruser')->getId(), $userContributions[1]->getIdUser());
+        $this->assertEquals($this->getUser('otheruser'), $userContributions[1]->getUser());
 
         $this->assertEquals('createur', $userContributions[2]->getContribution());
-        $this->assertEquals($this->getUser('dm_test_user')->getId(), $userContributions[2]->getIdUser());
+        $this->assertEquals($this->getUser('dm_test_user'), $userContributions[2]->getUser());
     }
 
     /**

@@ -3,6 +3,8 @@ namespace App\Tests;
 
 use App\Helper\SimilarImagesHelper;
 use App\Tests\Controller\CoverIdTest;
+use App\Tests\Fixtures\CoaEntryFixture;
+use App\Tests\Fixtures\CoaFixture;
 use App\Tests\Fixtures\CoverIdFixture;
 use App\Tests\Fixtures\DmStatsFixture;
 use App\Tests\Fixtures\EdgeCreatorFixture;
@@ -103,7 +105,8 @@ class StatusTest extends TestCommon
         $this->spinUp('edgecreator');
 
         $this->createUserCollection('dm_test_user');
-        self::runCommand('doctrine:fixtures:load -q -n --em=coa --group=coa');
+        $this->loadFixture('coa', new CoaFixture());
+        $this->loadFixture('coa', new CoaEntryFixture());
         $urls = [
             'fr/DDD 1' => '2010/12/fr_ddd_001a_001.jpg',
             'fr/DDD 2' => '2010/12/fr_ddd_002a_001.jpg',

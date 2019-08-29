@@ -2,6 +2,8 @@
 namespace App\Tests\Controller;
 
 use App\Entity\Coverid\Covers;
+use App\Tests\Fixtures\CoaEntryFixture;
+use App\Tests\Fixtures\CoaFixture;
 use App\Tests\TestCommon;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -15,7 +17,8 @@ class CoaListsTest extends TestCommon
     public function setUp()
     {
         parent::setUp();
-        self::runCommand('doctrine:fixtures:load -q -n --em=coa --group=coa');
+        $this->loadFixture('coa', new CoaFixture());
+        $this->loadFixture('coa', new CoaEntryFixture());
     }
 
     public function testGetCountryList(): void

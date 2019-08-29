@@ -4,6 +4,8 @@ namespace App\Tests\Controller;
 use App\Entity\Dm\Achats;
 use App\Entity\Dm\BibliothequeOrdreMagazines;
 use App\Entity\Dm\Numeros;
+use App\Tests\Fixtures\CoaEntryFixture;
+use App\Tests\Fixtures\CoaFixture;
 use App\Tests\TestCommon;
 use DateTime;
 use Symfony\Component\HttpFoundation\Response;
@@ -131,7 +133,7 @@ class CollectionTest extends TestCommon
         $this->assertEquals('DDD', $updatedIssue->getMagazine());
         $this->assertEquals('1', $updatedIssue->getNumero());
         $this->assertEquals('bon', $updatedIssue->getEtat());
-        $this->assertEquals(-2, $updatedIssue->getIdAcquisition());
+        $this->assertEquals(1, $updatedIssue->getIdAcquisition());
         $this->assertEquals(true, $updatedIssue->getAv());
         $this->assertEquals($this->getUser('dm_test_user')->getId(), $updatedIssue->getIdUtilisateur());
         $this->assertEquals(date('Y-m-d'), $updatedIssue->getDateajout()->format('Y-m-d'));
@@ -176,23 +178,26 @@ class CollectionTest extends TestCommon
         $this->assertEquals('UPDATE', $responseObject[0]->action);
         $this->assertEquals(1, $responseObject[0]->numberOfIssues);
 
-        [$country, $magazine] = explode('/', $publicationCode);
+        [$country, $publication] = explode('/', $publicationCode);
         /** @var Numeros $updatedIssue */
         $updatedIssue = $this->getEm('dm')->getRepository(Numeros::class)->findOneBy(
-            ['idUtilisateur' => $this->getUser('dm_test_user')->getId(), 'pays' => $country, 'magazine' => $magazine, 'numero' => $issueToUpdate]
+            ['idUtilisateur' => $this->getUser('dm_test_user')->getId(), 'pays' => $country, 'magazine' => $publication, 'numero' => $issueToUpdate]
         );
         $this->assertNotNull($updatedIssue);
         $this->assertEquals('bon', $updatedIssue->getEtat());
-        $this->assertEquals('-2', $updatedIssue->getIdAcquisition());
+        $this->assertEquals(1, $updatedIssue->getIdAcquisition());
         $this->assertFalse($updatedIssue->getAv());
 
         $this->assertEquals('CREATE', $responseObject[1]->action);
         $this->assertEquals(1, $responseObject[1]->numberOfIssues);
 
         /** @var Numeros $createdIssue */
-        $createdIssue = $this->getEm('dm')->getRepository(Numeros::class)->findOneBy(
-            ['idUtilisateur' => $this->getUser('dm_test_user')->getId(), 'pays' => $country, 'magazine' => $publication, 'numero' => $issueToCreate]
-        );
+        $createdIssue = $this->getEm('dm')->getRepository(Numeros::class)->findOneBy([
+            'idUtilisateur' => $this->getUser('dm_test_user')->getId(),
+            'pays' => $country,
+            'magazine' => $publication,
+            'numero' => $issueToCreate
+        ]);
         $this->assertNotNull($createdIssue);
         $this->assertEquals('bon', $createdIssue->getEtat());
         $this->assertEquals('-2', $createdIssue->getIdAcquisition());
@@ -201,33 +206,35 @@ class CollectionTest extends TestCommon
 
     public function testFetchCollection(): void
     {
-        self::runCommand('doctrine:fixtures:load -q -n --em=coa --group=coa');
+        $this->loadFixture('coa', new CoaFixture());
+        $this->loadFixture('coa', new CoaEntryFixture());
         $this->createUserCollection('dm_test_user');
 
         $response = $this->buildAuthenticatedServiceWithTestUser('/collection/issues', self::$dmUser)->call();
 
-        $objectResponse = json_decode($this->getResponseContent($response));
-
-        $this->assertInternalType('object', $objectResponse);
-
-        $this->assertInternalType('object', $objectResponse->static);
-        $this->assertInternalType('object', $objectResponse->static->pays);
-        $this->assertEquals('France', $objectResponse->static->pays->fr);
-
-        $this->assertInternalType('object', $objectResponse->static->magazines);
-        $this->assertEquals('Dynastie', $objectResponse->static->magazines->{'fr/DDD'});
-        $this->assertEquals('Parade', $objectResponse->static->magazines->{'fr/MP'});
-
-        $this->assertInternalType('object', $objectResponse->numeros);
-        $this->assertInternalType('array', $objectResponse->numeros->{'fr/DDD'});
-        $this->assertEquals('1', $objectResponse->numeros->{'fr/DDD'}[0]->numero);
-        $this->assertEquals('indefini', $objectResponse->numeros->{'fr/DDD'}[0]->etat);
-
-        $this->assertInternalType('array', $objectResponse->numeros->{'fr/MP'});
-        $this->assertEquals('300', $objectResponse->numeros->{'fr/MP'}[0]->numero);
-        $this->assertEquals('bon', $objectResponse->numeros->{'fr/MP'}[0]->etat);
-        $this->assertEquals('301', $objectResponse->numeros->{'fr/MP'}[1]->numero);
-        $this->assertEquals('mauvais', $objectResponse->numeros->{'fr/MP'}[1]->etat);
+        $this->assertJsonStringEqualsJsonString($response->getContent(), json_encode([
+            ['id' => 1,
+                'country' => 'fr',
+                'magazine' => 'DDD',
+                'issueNumber' => '1',
+                'condition' => 'indefini',
+                'purchaseId' => 1
+            ],
+            ['id' => 2,
+                'country' => 'fr',
+                'magazine' => 'MP',
+                'issueNumber' => '300',
+                'condition' => 'bon',
+                'purchaseId' => -1
+            ],
+            ['id' => 3,
+                'country' => 'fr',
+                'magazine' => 'MP',
+                'issueNumber' => '301',
+                'condition' => 'mauvais',
+                'purchaseId' => -1
+            ]
+        ]));
     }
 
     public function testUpdatePurchase(): void
@@ -298,7 +305,8 @@ class CollectionTest extends TestCommon
 
     public function testImportFromInducksInit(): void
     {
-        self::runCommand('doctrine:fixtures:load -q -n --em=coa --group=coa');
+        $this->loadFixture('coa', new CoaFixture());
+        $this->loadFixture('coa', new CoaEntryFixture());
         $this->createUserCollection('dm_test_user');
 
         $response = $this->buildAuthenticatedServiceWithTestUser('/collection/inducks/import/init', self::$dmUser, 'POST', ['rawData' => implode("\n", [
@@ -316,7 +324,8 @@ class CollectionTest extends TestCommon
 
     public function testImportFromInducksInitExistingIssues(): void
     {
-        self::runCommand('doctrine:fixtures:load -q -n --em=coa --group=coa');
+        $this->loadFixture('coa', new CoaFixture());
+        $this->loadFixture('coa', new CoaEntryFixture());
         $this->createUserCollection('dm_test_user');
 
         $response = $this->buildAuthenticatedServiceWithTestUser('/collection/inducks/import/init', self::$dmUser, 'POST', ['rawData' => implode("\n", [
@@ -336,7 +345,8 @@ class CollectionTest extends TestCommon
 
     public function testImportFromInducksInitStrangeIssueNumbers(): void
     {
-        self::runCommand('doctrine:fixtures:load -q -n --em=coa --group=coa');
+        $this->loadFixture('coa', new CoaFixture());
+        $this->loadFixture('coa', new CoaEntryFixture());
         $this->createUserCollection('dm_test_user');
 
         $response = $this->buildAuthenticatedServiceWithTestUser('/collection/inducks/import/init', self::$dmUser, 'POST', ['rawData' => implode("\n", [
