@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Numeros
  *
- * @ORM\Table(name="numeros", uniqueConstraints={@ORM\UniqueConstraint(name="Numero_Utilisateur", columns={"Pays", "Magazine", "Numero", "ID_Utilisateur"})}, indexes={@ORM\Index(name="Pays_Magazine_Numero", columns={"Pays", "Magazine", "Numero"}), @ORM\Index(name="Pays_Magazine_Numero_DateAjout", columns={"DateAjout", "Pays", "Magazine", "Numero"}), @ORM\Index(name="Utilisateur", columns={"ID_Utilisateur"})})
+ * @ORM\Table(name="numeros", uniqueConstraints={@ORM\UniqueConstraint(name="Numero_Utilisateur", columns={"Pays", "Magazine", "Numero", "ID_Utilisateur"})}, indexes={@ORM\Index(name="Numero_nospace_Utilisateur", columns={"Pays", "Magazine", "Numero_nospace", "ID_Utilisateur"}), @ORM\Index(name="Utilisateur", columns={"ID_Utilisateur"}), @ORM\Index(name="Pays_Magazine_Numero_DateAjout", columns={"DateAjout", "Pays", "Magazine", "Numero"}), @ORM\Index(name="Pays_Magazine_Numero", columns={"Pays", "Magazine", "Numero"})})
  * @ORM\Entity
  */
 class Numeros
@@ -32,6 +32,13 @@ class Numeros
      * @ORM\Column(name="Numero", type="string", length=8, nullable=false)
      */
     private $numero;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="Numero_nospace", type="string", length=8, nullable=true)
+     */
+    private $numeroNospace;
 
     /**
      * @var string
@@ -109,6 +116,18 @@ class Numeros
     public function setNumero(string $numero): self
     {
         $this->numero = $numero;
+
+        return $this;
+    }
+
+    public function getNumeroNospace(): ?string
+    {
+        return $this->numeroNospace;
+    }
+
+    public function setNumeroNospace(?string $numeroNospace): self
+    {
+        $this->numeroNospace = $numeroNospace;
 
         return $this;
     }
