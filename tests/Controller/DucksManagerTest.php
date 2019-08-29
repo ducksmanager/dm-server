@@ -164,7 +164,7 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
 
         $bookstoreContribution = (new UsersContributions())
             ->setBookstore($bookstore)
-            ->setIdUser($demoUser->getId())
+            ->setUser($demoUser)
             ->setPointsNew(1)
             ->setDate(new \DateTime())
             ->setPointsTotal(1)
@@ -250,7 +250,7 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
         $this->getEm('dm')->persist(
             (new UsersContributions())
                 ->setBookstore($existingBookstore)
-                ->setIdUser($demoUser->getId())
+                ->setUser($demoUser)
                 ->setDate(new DateTime())
                 ->setContribution('duckhunter')
                 ->setPointsNew(1)

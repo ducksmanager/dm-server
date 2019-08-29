@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * UsersContributions
  *
- * @ORM\Table(name="users_contributions", indexes={@ORM\Index(name="users_contributions__user_contribution", columns={"ID_user", "contribution"})})
+ * @ORM\Table(name="users_contributions", indexes={@ORM\Index(name="users_contributions__user_contribution", columns={"ID_user", "contribution"}), @ORM\Index(name="IDX_7FDC16F3CEA2F6E1", columns={"ID_user"})})
  * @ORM\Entity
  */
 class UsersContributions
@@ -22,7 +22,7 @@ class UsersContributions
     private $id;
 
     /**
-     * @var TranchesPretes
+     * @var TranchesPretes|null
      *
      * @ORM\ManyToOne(fetch="EAGER", targetEntity="TranchesPretes")
      * @ORM\JoinColumns({
@@ -32,7 +32,7 @@ class UsersContributions
     private $tranche;
 
     /**
-     * @var Bouquineries
+     * @var Bouquineries|null
      *
      * @ORM\ManyToOne(fetch="EAGER", targetEntity="Bouquineries")
      * @ORM\JoinColumns({
@@ -42,11 +42,14 @@ class UsersContributions
     private $bookstore;
 
     /**
-     * @var int
+     * @var Users
      *
-     * @ORM\Column(name="ID_user", type="integer", nullable=false)
+     * @ORM\ManyToOne(targetEntity="Users")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="ID_user", referencedColumnName="ID")
+     * })
      */
-    private $idUser;
+    private $user;
 
     /**
      * @var \DateTime
@@ -112,14 +115,14 @@ class UsersContributions
         return $this;
     }
 
-    public function getIdUser(): ?int
+    public function getUser(): Users
     {
-        return $this->idUser;
+        return $this->user;
     }
 
-    public function setIdUser(int $idUser): self
+    public function setUser(Users $user): self
     {
-        $this->idUser = $idUser;
+        $this->user = $user;
 
         return $this;
     }

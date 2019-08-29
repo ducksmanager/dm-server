@@ -655,7 +655,7 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
             foreach($edgeModelToPublish->getContributeurs() as $modelContributor) {
                 $contributions[]=ContributionHelper::persistContribution(
                     $dmEm,
-                    $modelContributor->getIdUtilisateur(),
+                    $dmEm->getRepository(Users::class)->find($modelContributor->getIdUtilisateur()),
                     $modelContributor->getContribution(),
                     $popularity,
                     $edgeToPublish
@@ -675,7 +675,7 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
                 'edgeId' => $edgeToPublish->getId(),
                 'url' => "{$_ENV['EDGES_ROOT']}/{$edgeModelToPublish->getPays()}/gen/{$edgeModelToPublish->getMagazine()}.{$edgeModelToPublish->getNumero()}.png",
                 'contributors' => array_map(function(UsersContributions $contribution) {
-                    return $contribution->getIdUser();
+                    return $contribution->getUser()->getId();
                 }, $contributions)
             ]);
         }

@@ -284,7 +284,7 @@ class DucksmanagerController extends AbstractController
                 'contribution' => $contributionType,
                 'emailsSent' => false
             ], [
-                'idUser' => 'ASC',
+                'user' => 'ASC',
                 'pointsTotal' => 'ASC'
             ]);
             if (empty($pendingEmailContributionsForType)) {
@@ -293,7 +293,7 @@ class DucksmanagerController extends AbstractController
             else {
                 /** @var UsersContributions[][] $pendingEmailContributionsByUser */
                 $pendingEmailContributionsByUser = array_reduce($pendingEmailContributionsForType, function (array $accumulator, UsersContributions $contribution) {
-                    $accumulator[$contribution->getIdUser()][] = $contribution;
+                    $accumulator[$contribution->getUser()->getId()][] = $contribution;
                     return $accumulator;
                 }, []);
                 foreach($pendingEmailContributionsByUser as $userId => $pendingEmailContributionsForUser) {
@@ -389,7 +389,7 @@ class DucksmanagerController extends AbstractController
 
         ContributionHelper::persistContribution(
             $dmEm,
-            $bookstore->getIdUtilisateur(),
+            $user,
             'duckhunter',
             1,
             null,

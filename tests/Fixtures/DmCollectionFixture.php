@@ -127,7 +127,7 @@ class DmCollectionFixture implements FixtureInterface
         $dmEntityManager->persist(
             (new UsersContributions())
                 ->setTranche($edge1)
-                ->setIdUser($user->getId())
+                ->setUser($user)
                 ->setDate(new DateTime())
                 ->setContribution('photographe')
                 ->setPointsNew(50)
