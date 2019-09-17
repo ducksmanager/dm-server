@@ -108,7 +108,14 @@ class Users
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="DernierAcces", type="datetime", nullable=false)
+     * @ORM\Column(name="PrecedentAcces", type="datetime", nullable=true)
+     */
+    private $precedentacces;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="DernierAcces", type="datetime", nullable=true)
      */
     private $dernieracces;
 
@@ -257,6 +264,18 @@ class Users
     public function setBibliothequeSousTexture2(string $bibliothequeSousTexture2): self
     {
         $this->bibliothequeSousTexture2 = $bibliothequeSousTexture2;
+
+        return $this;
+    }
+
+    public function getPrecedentacces(): ?\DateTime
+    {
+        return $this->precedentacces;
+    }
+
+    public function setPrecedentacces(\DateTime $precedentacces): self
+    {
+        $this->precedentacces = $precedentacces;
 
         return $this;
     }

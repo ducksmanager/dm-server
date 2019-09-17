@@ -4,10 +4,12 @@ namespace App\Tests\Controller;
 use App\Entity\Dm\Achats;
 use App\Entity\Dm\BibliothequeOrdreMagazines;
 use App\Entity\Dm\Numeros;
+use App\Entity\Dm\Users;
 use App\Tests\Fixtures\CoaEntryFixture;
 use App\Tests\Fixtures\CoaFixture;
 use App\Tests\TestCommon;
 use DateTime;
+use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
 class CollectionTest extends TestCommon
@@ -15,6 +17,73 @@ class CollectionTest extends TestCommon
     protected function getEmNamesToCreate(): array
     {
         return ['dm', 'coa'];
+    }
+
+    public function lastVisitProvider()
+    {
+        return [
+            'should create last visit' => [
+                'existingPreviousVisit' => null,
+                'existingLastVisit' => null,
+                'newPreviousVisit' => null,
+                'newLastVisit' => new DateTime('today midnight'),
+                'expectedStatus' => Response::HTTP_ACCEPTED
+            ],
+            'should update previous and last visit from the previous day' => [
+                'existingPreviousVisit' => null,
+                'existingLastVisit' => new DateTime('yesterday midnight'),
+                'newPreviousVisit' => new DateTime('yesterday midnight'),
+                'newLastVisit' => new DateTime('today midnight'),
+                'expectedStatus' => Response::HTTP_ACCEPTED
+            ],
+            'should not update last visit on the same day' => [
+                'existingPreviousVisit' => null,
+                'existingLastVisit' => new DateTime('today midnight'),
+                'newPreviousVisit' => null,
+                'newLastVisit' => new DateTime('today midnight'),
+                'expectedStatus' => Response::HTTP_NO_CONTENT
+            ],
+            'should update previous visit from the previous day' => [
+                'existingPreviousVisit' => new DateTime('-2 days midnight'),
+                'existingLastVisit' => new DateTime('yesterday midnight'),
+                'newPreviousVisit' => new DateTime('yesterday midnight'),
+                'newLastVisit' => new DateTime('today midnight'),
+                'expectedStatus' => Response::HTTP_ACCEPTED
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider lastVisitProvider
+     * @throws Exception
+     */
+    public function testPostLastVisit(?DateTime $existingPreviousVisit, ?DateTime $existingLastVisit, ?DateTime $newPreviousVisit, ?DateTime $newLastVisit, int $expectedStatus): void
+    {
+        $this->createUserCollection('dm_test_user');
+
+        if (!is_null($existingPreviousVisit)) {
+            /** @var Users $user */
+            $user = $this->getEm('dm')->getRepository(Users::class)->find($this->getUser('dm_test_user'));
+            $user->setPrecedentacces($existingPreviousVisit);
+            $this->getEm('dm')->persist($user);
+            $this->getEm('dm')->flush();
+        }
+
+        if (!is_null($existingLastVisit)) {
+            /** @var Users $user */
+            $user = $this->getEm('dm')->getRepository(Users::class)->find($this->getUser('dm_test_user'));
+            $user->setDernieracces($existingLastVisit);
+            $this->getEm('dm')->persist($user);
+            $this->getEm('dm')->flush();
+        }
+
+        $userResponse = $this->buildAuthenticatedServiceWithTestUser('/collection/lastvisit', self::$dmUser, 'POST')->call();
+        $this->assertEquals($expectedStatus, $userResponse->getStatusCode());
+
+        /** @var Users $user */
+        $user = $this->getEm('dm')->getRepository(Users::class)->find($this->getUser('dm_test_user'));
+        $this->assertEquals($newPreviousVisit, $user->getPrecedentacces());
+        $this->assertEquals($newLastVisit, $user->getDernieracces());
     }
 
     public function testGetUser(): void
@@ -242,9 +311,9 @@ class CollectionTest extends TestCommon
         $this->createUserCollection('dm_test_user');
 
         /** @var Achats $purchaseToUpdate */
-        $purchaseToUpdate = $this->getEm('dm')->getRepository(Achats::class)->findBy([
+        $purchaseToUpdate = $this->getEm('dm')->getRepository(Achats::class)->findOneBy([
             'idUser' => $this->getUser('dm_test_user')->getId()
-        ])[0];
+        ]);
 
         $this->buildAuthenticatedServiceWithTestUser(
             "/collection/purchases/{$purchaseToUpdate->getIdAcquisition()}",

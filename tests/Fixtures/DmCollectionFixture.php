@@ -49,7 +49,6 @@ class DmCollectionFixture implements FixtureInterface
                 ->setPassword(sha1($password))
                 ->setEmail('test@ducksmanager.net')
                 ->setDateinscription(DateTime::createFromFormat('Y-m-d', '2000-01-01'))
-                ->setDernieracces(DateTime::createFromFormat('Y-m-d', '2000-01-01'))
                 ->setAccepterpartage(true)
                 ->setRecommandationslistemags(true)
                 ->setAffichervideo(true)

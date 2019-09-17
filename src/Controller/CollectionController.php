@@ -8,14 +8,10 @@ use App\Entity\Dm\BibliothequeOrdreMagazines;
 use App\Entity\Dm\Numeros;
 use App\Entity\Dm\Users;
 use App\Entity\Dm\UsersPermissions;
-use App\EntityTransform\FetchCollectionResult;
-use App\EntityTransform\NumeroSimple;
 use App\EntityTransform\UpdateCollectionResult;
 use App\Helper\collectionUpdateHelper;
 use App\Helper\JsonResponseFromObject;
-use App\Helper\PublicationHelper;
 use DateTime;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\Mapping\MappingException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
@@ -33,14 +29,36 @@ class CollectionController extends AbstractController implements RequiresDmVersi
     use collectionUpdateHelper;
 
     /**
+     * @Route(methods={"POST"}, path="collection/lastvisit")
+     */
+    public function updateLastVisit(LoggerInterface $logger) : Response {
+        $dmEm = $this->getEm('dm');
+        $existingUser = $dmEm->getRepository(Users::class)->find($this->getCurrentUser()['id']);
+
+        $todayMidnight = new \DateTime('today midnight');
+        if (is_null($existingUser->getDernieracces()) ) {
+            $logger->info("Initializing last access for user {$existingUser->getId()}");
+        }
+        else if ($existingUser->getDernieracces() != $todayMidnight) {
+            $logger->info("Updating last access for user {$existingUser->getId()}");
+            $existingUser->setPrecedentacces($existingUser->getDernieracces());
+        }
+        else {
+            return new Response('OK', Response::HTTP_NO_CONTENT);
+        }
+
+        $existingUser->setDernieracces($todayMidnight);
+        $dmEm->persist($existingUser);
+        $dmEm->flush();
+
+        return new Response('OK', Response::HTTP_ACCEPTED);
+    }
+
+    /**
      * @Route(methods={"GET"}, path="/collection/user")
      */
     public function getDmUser() {
         $existingUser = $this->getEm('dm')->getRepository(Users::class)->find($this->getCurrentUser()['id']);
-
-        if (is_null($existingUser)) {
-            return new Response('', Response::HTTP_UNAUTHORIZED);
-        }
         return new JsonResponseFromObject($existingUser);
     }
 
@@ -95,7 +113,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
             );
         }
 
-        $istosell = $request->request->get('istosell');
+        $isToSell = $request->request->get('istosell');
         $purchaseId = $request->request->get('purchaseId');
 
         if (!$this->getUserPurchase($purchaseId)) {
@@ -108,7 +126,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
             $publication,
             $issueNumbers,
             $condition,
-            $istosell,
+            $isToSell,
             $purchaseId
         );
         return new JsonResponse(self::getSimpleArray([
