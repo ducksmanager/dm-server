@@ -35,11 +35,10 @@ class CollectionController extends AbstractController implements RequiresDmVersi
         $dmEm = $this->getEm('dm');
         $existingUser = $dmEm->getRepository(Users::class)->find($this->getCurrentUser()['id']);
 
-        $todayMidnight = new \DateTime('today midnight');
         if (is_null($existingUser->getDernieracces()) ) {
             $logger->info("Initializing last access for user {$existingUser->getId()}");
         }
-        else if ($existingUser->getDernieracces() != $todayMidnight) {
+        else if ($existingUser->getDernieracces()->format('Y-m-d') < (new \DateTime())->format('Y-m-d')) {
             $logger->info("Updating last access for user {$existingUser->getId()}");
             $existingUser->setPrecedentacces($existingUser->getDernieracces());
         }
@@ -47,7 +46,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
             return new Response('OK', Response::HTTP_NO_CONTENT);
         }
 
-        $existingUser->setDernieracces($todayMidnight);
+        $existingUser->setDernieracces(new DateTime());
         $dmEm->persist($existingUser);
         $dmEm->flush();
 

@@ -26,28 +26,28 @@ class CollectionTest extends TestCommon
                 'existingPreviousVisit' => null,
                 'existingLastVisit' => null,
                 'newPreviousVisit' => null,
-                'newLastVisit' => new DateTime('today midnight'),
+                'newLastVisit' => (new DateTime())->format('Y-m-d'),
                 'expectedStatus' => Response::HTTP_ACCEPTED
             ],
             'should update previous and last visit from the previous day' => [
                 'existingPreviousVisit' => null,
-                'existingLastVisit' => new DateTime('yesterday midnight'),
-                'newPreviousVisit' => new DateTime('yesterday midnight'),
-                'newLastVisit' => new DateTime('today midnight'),
+                'existingLastVisit' => new DateTime('yesterday'),
+                'newPreviousVisit' => (new DateTime('yesterday'))->format('Y-m-d'),
+                'newLastVisit' => (new DateTime())->format('Y-m-d'),
                 'expectedStatus' => Response::HTTP_ACCEPTED
             ],
             'should not update last visit on the same day' => [
                 'existingPreviousVisit' => null,
-                'existingLastVisit' => new DateTime('today midnight'),
+                'existingLastVisit' => new DateTime(),
                 'newPreviousVisit' => null,
-                'newLastVisit' => new DateTime('today midnight'),
+                'newLastVisit' => (new DateTime())->format('Y-m-d'),
                 'expectedStatus' => Response::HTTP_NO_CONTENT
             ],
             'should update previous visit from the previous day' => [
-                'existingPreviousVisit' => new DateTime('-2 days midnight'),
-                'existingLastVisit' => new DateTime('yesterday midnight'),
-                'newPreviousVisit' => new DateTime('yesterday midnight'),
-                'newLastVisit' => new DateTime('today midnight'),
+                'existingPreviousVisit' => new DateTime('-2 days'),
+                'existingLastVisit' => new DateTime('yesterday'),
+                'newPreviousVisit' => (new DateTime('yesterday'))->format('Y-m-d'),
+                'newLastVisit' => (new DateTime())->format('Y-m-d'),
                 'expectedStatus' => Response::HTTP_ACCEPTED
             ],
         ];
@@ -57,7 +57,7 @@ class CollectionTest extends TestCommon
      * @dataProvider lastVisitProvider
      * @throws Exception
      */
-    public function testPostLastVisit(?DateTime $existingPreviousVisit, ?DateTime $existingLastVisit, ?DateTime $newPreviousVisit, ?DateTime $newLastVisit, int $expectedStatus): void
+    public function testPostLastVisit(?DateTime $existingPreviousVisit, ?DateTime $existingLastVisit, ?string $newPreviousVisit, ?string $newLastVisit, int $expectedStatus): void
     {
         $this->createUserCollection('dm_test_user');
 
@@ -82,8 +82,18 @@ class CollectionTest extends TestCommon
 
         /** @var Users $user */
         $user = $this->getEm('dm')->getRepository(Users::class)->find($this->getUser('dm_test_user'));
-        $this->assertEquals($newPreviousVisit, $user->getPrecedentacces());
-        $this->assertEquals($newLastVisit, $user->getDernieracces());
+        if (is_null($user->getPrecedentacces())) {
+            $this->assertEquals($newPreviousVisit, $user->getPrecedentacces());
+        }
+        else {
+            $this->assertEquals($newPreviousVisit, $user->getPrecedentacces()->format('Y-m-d'));
+        }
+        if (is_null($user->getDernieracces())) {
+            $this->assertEquals($newLastVisit, $user->getDernieracces());
+        }
+        else {
+            $this->assertEquals($newLastVisit, $user->getDernieracces()->format('Y-m-d'));
+        }
     }
 
     public function testGetUser(): void
