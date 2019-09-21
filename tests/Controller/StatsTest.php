@@ -15,10 +15,11 @@ class StatsTest extends TestCommon
     public function setUp()
     {
         parent::setUp();
-        $this->createUserCollection('dm_test_user');
-        $this->loadFixture('coa', new CoaFixture());
-        $this->loadFixture('coa', new CoaEntryFixture());
-        $this->loadFixture('dm_stats', new DmStatsFixture(1));
+        $this->createUserCollection(self::$defaultTestDmUserName);
+        $this->loadFixtures([ CoaFixture::class, CoaEntryFixture::class ], true, 'coa');
+
+        DmStatsFixture::$userId = 1;
+        $this->loadFixtures([ DmStatsFixture::class ], true, 'dm_stats');
     }
 
     public function testGetWatchedAuthors(): void

@@ -8,25 +8,19 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 class CoverIdFixture implements FixtureInterface
 {
-    private $issueCode;
-    private $url;
+    public static $urls;
 
-    public function __construct(string $issueCode = '', string $url = '')
+    public function load(ObjectManager $dmEm) : void
     {
-        $this->issueCode = $issueCode;
-        $this->url = $url;
-    }
+        foreach(self::$urls as $issueCode => $url) {
+            $dmEm->persist(
+                (new Covers())
+                    ->setSitecode('webusers')
+                    ->setIssuecode($issueCode)
+                    ->setUrl($url)
+            );
+        }
 
-    public function load(ObjectManager $dmEntityManager) : void
-    {
-        $cover = new Covers();
-        $dmEntityManager->persist(
-            $cover
-                ->setSitecode('webusers')
-                ->setIssuecode($this->issueCode)
-                ->setUrl($this->url)
-        );
-
-        $dmEntityManager->flush();
+        $dmEm->flush();
     }
 }

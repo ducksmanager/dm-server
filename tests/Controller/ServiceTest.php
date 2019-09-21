@@ -15,8 +15,7 @@ class ServiceTest extends TestCommon
     public function setUp()
     {
         parent::setUp();
-        $this->loadFixture('coa', new CoaFixture());
-        $this->loadFixture('coa', new CoaEntryFixture());
+        $this->loadFixtures([ CoaFixture::class, CoaEntryFixture::class ], true, 'coa');
     }
 
     public function testCallServiceWithoutSystemCredentials(): void

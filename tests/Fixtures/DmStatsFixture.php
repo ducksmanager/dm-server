@@ -14,13 +14,13 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 class DmStatsFixture implements FixtureInterface
 {
-    protected $userId;
+    public static $userId;
 
     /**
      * @param int $userId
      */
     public function __construct(int $userId = null) {
-        $this->userId = $userId;
+        self::$userId = $userId;
     }
 
     private static function generateStory($storyCode): InducksStory
@@ -42,179 +42,161 @@ class DmStatsFixture implements FixtureInterface
         return $issue;
     }
 
-    public function load(ObjectManager $dmStatsEntityManager) : void
+    public function load(ObjectManager $dmStatsEm) : void
     {
         // Author 1
-        $authorUser1 = new AuteursPseudos();
-        $dmStatsEntityManager->persist(
-            $authorUser1
-                ->setIdUser($this->userId)
+        $dmStatsEm->persist(
+            ($authorUser1 = new AuteursPseudos())
+                ->setIdUser(self::$userId)
                 ->setNomauteurabrege('CB')
                 ->setNotation(2)
         );
 
-        $author1Story1 = new AuteursHistoires();
-        $dmStatsEntityManager->persist(
-            $author1Story1
+        $dmStatsEm->persist(
+            ($author1Story1 = new AuteursHistoires())
                 ->setPersoncode('CB')
                 ->setStorycode(self::generateStory('ARC CBL 5B')->getStorycode())
         ); // Missing, 1 issue suggested
 
-        $author1Story2 = new AuteursHistoires();
-        $dmStatsEntityManager->persist(
-            $author1Story2
+        $dmStatsEm->persist(
+            ($author1Story2 = new AuteursHistoires())
                 ->setPersoncode('CB')
                 ->setStorycode(self::generateStory('W WDC  32-02')->getStorycode())
         ); // Missing, 2 issue suggested (the same as story 1 + another one)
 
-        $author1Story3 = new AuteursHistoires();
-        $dmStatsEntityManager->persist(
-            $author1Story3
+        $dmStatsEm->persist(
+            ($author1Story3 = new AuteursHistoires())
                 ->setPersoncode('CB')
                 ->setStorycode(self::generateStory('W WDC  31-05')->getStorycode())
         ); // Not missing for user
 
-        $author1Story4 = new AuteursHistoires();
-        $dmStatsEntityManager->persist(
-            $author1Story4
+        $dmStatsEm->persist(
+            ($author1Story4 = new AuteursHistoires())
                 ->setPersoncode('CB')
                 ->setStorycode(self::generateStory('W WDC 130-02')->getStorycode())
         ); // Missing, 2 issues suggested
 
-        $missingAuthor1Story1ForUser = new UtilisateursHistoiresManquantes();
-        $dmStatsEntityManager->persist(
-            $missingAuthor1Story1ForUser
+        $dmStatsEm->persist(
+            ($missingAuthor1Story1ForUser = new UtilisateursHistoiresManquantes())
                 ->setPersoncode($author1Story1->getPersoncode())
                 ->setStorycode($author1Story1->getStorycode())
-                ->setIdUser($this->userId)
+                ->setIdUser(self::$userId)
         );
 
-        $missingAuthor1Story2ForUser = new UtilisateursHistoiresManquantes();
-        $dmStatsEntityManager->persist(
-            $missingAuthor1Story2ForUser
+        $dmStatsEm->persist(
+            ($missingAuthor1Story2ForUser = new UtilisateursHistoiresManquantes())
                 ->setPersoncode($author1Story2->getPersoncode())
                 ->setStorycode($author1Story2->getStorycode())
-                ->setIdUser($this->userId)
+                ->setIdUser(self::$userId)
         );
 
-        $missingAuthor1Story4ForUser = new UtilisateursHistoiresManquantes();
-        $dmStatsEntityManager->persist(
-            $missingAuthor1Story4ForUser
+        $dmStatsEm->persist(
+            ($missingAuthor1Story4ForUser = new UtilisateursHistoiresManquantes())
                 ->setPersoncode($author1Story4->getPersoncode())
                 ->setStorycode($author1Story4->getStorycode())
-                ->setIdUser($this->userId)
+                ->setIdUser(self::$userId)
         );
 
-        $missingAuthor1Issue1Story1ForUser = new UtilisateursPublicationsManquantes();
-        $dmStatsEntityManager->persist(
-            $missingAuthor1Issue1Story1ForUser
+        $dmStatsEm->persist(
+            ($missingAuthor1Issue1Story1ForUser = new UtilisateursPublicationsManquantes())
                 ->setPersoncode($author1Story1->getPersoncode())
                 ->setStorycode($author1Story1->getStorycode())
-                ->setIdUser($this->userId)
+                ->setIdUser(self::$userId)
                 ->setPublicationcode(self::generateIssue('us/CBL 7')->getPublicationcode())
                 ->setIssuenumber(self::generateIssue('us/CBL 7')->getIssuenumber())
                 ->setNotation($authorUser1->getNotation())
         );
 
-        $missingAuthor1Issue1Story2ForUser = new UtilisateursPublicationsManquantes();
-        $dmStatsEntityManager->persist(
-            $missingAuthor1Issue1Story2ForUser->setPersoncode($author1Story2->getPersoncode())
+        $dmStatsEm->persist(
+            ($missingAuthor1Issue1Story2ForUser = new UtilisateursPublicationsManquantes())
                 ->setStorycode($author1Story2->getStorycode())
-                ->setIdUser($this->userId)
+                ->setIdUser(self::$userId)
                 ->setPublicationcode(self::generateIssue('us/CBL 7')->getPublicationcode())
                 ->setIssuenumber(self::generateIssue('us/CBL 7')->getIssuenumber())
                 ->setNotation($authorUser1->getNotation())
         );
 
-        $missingAuthor1Issue2Story2ForUser = new UtilisateursPublicationsManquantes();
-        $dmStatsEntityManager->persist(
-            $missingAuthor1Issue2Story2ForUser->setPersoncode($author1Story2->getPersoncode())
+        $dmStatsEm->persist(
+            ($missingAuthor1Issue2Story2ForUser = new UtilisateursPublicationsManquantes())
+                ->setPersoncode($author1Story2->getPersoncode())
                 ->setStorycode($author1Story2->getStorycode())
-                ->setIdUser($this->userId)
+                ->setIdUser(self::$userId)
                 ->setPublicationcode(self::generateIssue('fr/DDD 1')->getPublicationcode())
                 ->setIssuenumber(self::generateIssue('fr/DDD 1')->getIssuenumber())
                 ->setNotation($authorUser1->getNotation())
         );
 
-        $missingAuthor1Issue1Story4ForUser = new UtilisateursPublicationsManquantes();
-        $dmStatsEntityManager->persist(
-            $missingAuthor1Issue1Story4ForUser->setPersoncode($author1Story4->getPersoncode())
+        $dmStatsEm->persist(
+            ($missingAuthor1Issue1Story4ForUser = new UtilisateursPublicationsManquantes())
                 ->setStorycode($author1Story4->getStorycode())
-                ->setIdUser($this->userId)
+                ->setIdUser(self::$userId)
                 ->setPublicationcode(self::generateIssue('fr/PM 315')->getPublicationcode())
                 ->setIssuenumber(self::generateIssue('fr/PM 315')->getIssuenumber())
                 ->setNotation($authorUser1->getNotation())
         );
 
-        $dmStatsEntityManager->flush();
+        $dmStatsEm->flush();
 
         // Author 2
 
-        $authorUser2 = new AuteursPseudos();
-        $dmStatsEntityManager->persist(
-            $authorUser2
-                ->setIdUser($this->userId)
+        $dmStatsEm->persist(
+            ($authorUser2 = new AuteursPseudos())
+                ->setIdUser(self::$userId)
                 ->setNomauteurabrege('DR')
                 ->setNotation(4)
         );
 
-        $author2Story5 = new AuteursHistoires();
-        $dmStatsEntityManager->persist(
-            $author2Story5
+        $dmStatsEm->persist(
+            ($author2Story5 = new AuteursHistoires())
                 ->setPersoncode('DR')
                 ->setStorycode(self::generateStory('AR 201')->getStorycode())
         );  // Missing, 1 issue suggested
 
-        $missingAuthor2Story1ForUser = new UtilisateursHistoiresManquantes();
-        $dmStatsEntityManager->persist(
-            $missingAuthor2Story1ForUser
+        $dmStatsEm->persist(
+            ($missingAuthor2Story1ForUser = new UtilisateursHistoiresManquantes())
                 ->setPersoncode($author2Story5->getPersoncode())
                 ->setStorycode($author2Story5->getStorycode())
-                ->setIdUser($this->userId)
+                ->setIdUser(self::$userId)
         );
 
-        $missingAuthor2Issue5Story5ForUser = new UtilisateursPublicationsManquantes();
-        $dmStatsEntityManager->persist(
-            $missingAuthor2Issue5Story5ForUser
+        $dmStatsEm->persist(
+            ($missingAuthor2Issue5Story5ForUser = new UtilisateursPublicationsManquantes())
                 ->setPersoncode($author2Story5->getPersoncode())
                 ->setStorycode($author2Story5->getStorycode())
-                ->setIdUser($this->userId)
+                ->setIdUser(self::$userId)
                 ->setPublicationcode(self::generateIssue('fr/PM 315')->getPublicationcode())
                 ->setIssuenumber(self::generateIssue('fr/PM 315')->getIssuenumber())
                 ->setNotation($authorUser2->getNotation())
         );
 
-        $dmStatsEntityManager->flush();
+        $dmStatsEm->flush();
 
         // Suggested issues
 
-        $suggestedIssue1ForUser = new UtilisateursPublicationsSuggerees();
-        $dmStatsEntityManager->persist(
-            $suggestedIssue1ForUser
+        $dmStatsEm->persist(
+            (new UtilisateursPublicationsSuggerees())
                 ->setPublicationcode(self::generateIssue('us/CBL 7')->getPublicationcode())
                 ->setIssuenumber(self::generateIssue('us/CBL 7')->getIssuenumber())
                 ->setIdUser($authorUser1->getIdUser())
                 ->setScore($missingAuthor1Issue1Story2ForUser->getNotation() + $missingAuthor1Issue1Story2ForUser->getNotation())
         );
 
-        $suggestedIssue2ForUser = new UtilisateursPublicationsSuggerees();
-        $dmStatsEntityManager->persist(
-            $suggestedIssue2ForUser
+        $dmStatsEm->persist(
+            (new UtilisateursPublicationsSuggerees())
                 ->setPublicationcode(self::generateIssue('fr/DDD 1')->getPublicationcode())
                 ->setIssuenumber(self::generateIssue('fr/DDD 1')->getIssuenumber())
                 ->setIdUser($authorUser1->getIdUser())
                 ->setScore($missingAuthor1Issue2Story2ForUser->getNotation())
         );
 
-        $suggestedIssue3ForUser = new UtilisateursPublicationsSuggerees();
-        $dmStatsEntityManager->persist(
-            $suggestedIssue3ForUser
+        $dmStatsEm->persist(
+            (new UtilisateursPublicationsSuggerees())
                 ->setPublicationcode(self::generateIssue('fr/PM 315')->getPublicationcode())
                 ->setIssuenumber(self::generateIssue('fr/PM 315')->getIssuenumber())
                 ->setIdUser($authorUser1->getIdUser())
                 ->setScore($missingAuthor1Issue1Story4ForUser->getNotation() + $missingAuthor2Issue5Story5ForUser->getNotation())
         );
-        $dmStatsEntityManager->flush();
-        $dmStatsEntityManager->clear();
+        $dmStatsEm->flush();
+        $dmStatsEm->clear();
     }
 }

@@ -11,20 +11,19 @@ use Doctrine\Common\Persistence\ObjectManager;
 class EdgesFixture implements FixtureInterface
 {
 
-    public function load(ObjectManager $dmEntityManager) : void
+    public function load(ObjectManager $dmEm) : void
     {
-        $edge1 = new TranchesPretes();
-        $dmEntityManager->persist(
-            $edge1
+        $all= $dmEm->getRepository(TranchesPretes::class)->findAll();
+        $dmEm->persist(
+            ($edge1 = new TranchesPretes())
                 ->setPublicationcode('fr/JM')
                 ->setIssuenumber('3001')
                 ->setDateajout(new DateTime())
                 ->setSlug('edges-fr-JM-3001')
         );
 
-        $dupEdge1 = new TranchesDoublons();
-        $dmEntityManager->persist(
-            $dupEdge1
+        $dmEm->persist(
+            (new TranchesDoublons())
                 ->setPays('fr')
                 ->setMagazine('JM')
                 ->setNumero('3002')
@@ -32,18 +31,16 @@ class EdgesFixture implements FixtureInterface
                 ->setTranchereference($edge1)
         );
 
-        $edge2 = new TranchesPretes();
-        $dmEntityManager->persist(
-            $edge2
+        $dmEm->persist(
+            ($edge2 = new TranchesPretes())
                 ->setPublicationcode('fr/JM')
                 ->setIssuenumber('4001')
                 ->setDateajout(new DateTime())
                 ->setSlug('edges-fr-JM-4001')
         );
 
-        $dupEdge2 = new TranchesDoublons();
-        $dmEntityManager->persist(
-            $dupEdge2
+        $dmEm->persist(
+            (new TranchesDoublons())
                 ->setPays('fr')
                 ->setMagazine('JM')
                 ->setNumero('4002')
@@ -51,6 +48,6 @@ class EdgesFixture implements FixtureInterface
                 ->setTranchereference($edge2)
         );
 
-        $dmEntityManager->flush();
+        $dmEm->flush();
     }
 }

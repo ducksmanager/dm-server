@@ -16,34 +16,21 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 class DmCollectionFixture implements FixtureInterface
 {
-    protected $username;
-    protected $roles = [];
-    protected $withPublicationSorts = true;
+    public static $username;
+    public static $roles = [];
+    public static $withPublicationSorts = true;
 
     /**
-     * @param string $username
-     * @param string[] $roles
-     * @param boolean $withPublicationSorts
-     */
-    public function __construct(string $username = null, $roles = [], $withPublicationSorts = true) {
-        $this->username = $username;
-        $this->roles = $roles;
-        $this->withPublicationSorts = $withPublicationSorts;
-    }
-
-    /**
-     * @param ObjectManager $dmEntityManager
+     * @param ObjectManager $dmEm
      * @param $username
      * @param $password
      * @param array $roles
      * @return Users|null
      */
-    protected static function createUser(ObjectManager $dmEntityManager, $username, $password, $roles = []): ?Users
+    protected static function createUser(ObjectManager $dmEm, $username, $password, $roles = []): ?Users
     {
-        $user = new Users();
-
-        $dmEntityManager->persist(
-            $user
+        $dmEm->persist(
+            ($user = new Users())
                 ->setBetauser(false)
                 ->setUsername($username)
                 ->setPassword(sha1($password))
@@ -55,27 +42,30 @@ class DmCollectionFixture implements FixtureInterface
         );
 
         foreach($roles as $role=>$privilege) {
-            $userPermission = new UsersPermissions();
-            $dmEntityManager->persist(
-                $userPermission
+            $dmEm->persist(
+                (new UsersPermissions())
                     ->setUsername($username)
                     ->setRole($role)
                     ->setPrivilege($privilege)
             );
         }
 
-        $dmEntityManager->flush();
+        $dmEm->flush();
 
         return $user;
     }
 
-    public function load(ObjectManager $dmEntityManager) : void
+    public function load(ObjectManager $dmEm) : void
     {
-        $user = self::createUser($dmEntityManager, $this->username, TestCommon::$testDmUsers[$this->username] ?? 'password', $this->roles);
+        $user = self::createUser(
+            $dmEm,
+            self::$username,
+            TestCommon::$testDmUsers[self::$username] ?? 'password',
+            self::$roles
+        );
 
-        $numero1 = new Numeros();
-        $dmEntityManager->persist(
-            $numero1
+        $dmEm->persist(
+            (new Numeros())
                 ->setPays('fr')
                 ->setMagazine('DDD')
                 ->setNumero('1')
@@ -86,9 +76,8 @@ class DmCollectionFixture implements FixtureInterface
                 ->setDateajout(new DateTime())
         );
 
-        $numero2 = new Numeros();
-        $dmEntityManager->persist(
-            $numero2
+        $dmEm->persist(
+            (new Numeros())
                 ->setPays('fr')
                 ->setMagazine('MP')
                 ->setNumero('300')
@@ -98,9 +87,8 @@ class DmCollectionFixture implements FixtureInterface
                 ->setDateajout(new DateTime())
         );
 
-        $numero3 = new Numeros();
-        $dmEntityManager->persist(
-            $numero3
+        $dmEm->persist(
+            (new Numeros())
                 ->setPays('fr')
                 ->setMagazine('MP')
                 ->setNumero('301')
@@ -110,20 +98,19 @@ class DmCollectionFixture implements FixtureInterface
                 ->setDateajout(new DateTime())
         );
 
-        $purchase1 = new Achats();
-        $dmEntityManager->persist(
-            $purchase1
+        $dmEm->persist(
+            (new Achats())
                 ->setDate(DateTime::createFromFormat('Y-m-d', '2010-01-01'))
                 ->setDescription('Purchase')
                 ->setIdUser($user->getId())
         );
 
-        $edge1 = $dmEntityManager->getRepository(TranchesPretes::class)->findOneBy([
+        $edge1 = $dmEm->getRepository(TranchesPretes::class)->findOneBy([
             'publicationcode' => 'fr/JM',
             'issuenumber' => '3001'
         ]);
 
-        $dmEntityManager->persist(
+        $dmEm->persist(
             (new UsersContributions())
                 ->setTranche($edge1)
                 ->setUser($user)
@@ -133,25 +120,23 @@ class DmCollectionFixture implements FixtureInterface
                 ->setPointsTotal(50)
         );
 
-        if ($this->withPublicationSorts) {
-            $publicationSort1 = new BibliothequeOrdreMagazines();
-            $dmEntityManager->persist(
-                $publicationSort1
+        if (self::$withPublicationSorts) {
+            $dmEm->persist(
+                (new BibliothequeOrdreMagazines())
                     ->setPublicationcode('fr/DDD')
                     ->setIdUtilisateur($user->getId())
                     ->setOrdre(1)
             );
 
-            $publicationSort2 = new BibliothequeOrdreMagazines();
-            $dmEntityManager->persist(
-                $publicationSort2
+            $dmEm->persist(
+                (new BibliothequeOrdreMagazines())
                     ->setPublicationcode('fr/JM')
                     ->setIdUtilisateur($user->getId())
                     ->setOrdre(2)
             );
         }
 
-        $dmEntityManager->flush();
-        $dmEntityManager->clear();
+        $dmEm->flush();
+        $dmEm->clear();
     }
 }

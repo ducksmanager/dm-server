@@ -21,7 +21,7 @@ class UserTest extends TestCommon
 
     public function testCallServiceWithoutClientVersion(): void
     {
-        $this->createUserCollection('dm_test_user');
+        $this->createUserCollection(self::$defaultTestDmUserName);
         $response = $this->buildService(
             '/collection/issues', [
             'username' => self::$defaultTestDmUserName,
@@ -51,7 +51,7 @@ class UserTest extends TestCommon
     public function testCallServiceWithUserCredentials(): void
     {
         $response = $this->buildAuthenticatedServiceWithTestUser('/ducksmanager/user', self::$dmUser, 'PUT', [
-            'username' => 'dm_test_user',
+            'username' => self::$defaultTestDmUserName,
             'password' => 'test',
             'password2' => 'test',
             'email' => 'test'

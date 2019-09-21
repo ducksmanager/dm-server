@@ -67,6 +67,7 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
         $response = $this->buildAuthenticatedService('/ducksmanager/resetDemo', self::$adminUser, [])->call();
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
 
+        $this->getEm('dm')->clear();
         $demoUser = $this->getEm('dm')->getRepository(Users::class)->findOneBy([
             'username' => 'demo'
         ]);
@@ -220,6 +221,7 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
         $this->assertEquals(str_replace("\n", '<br />', $expectedBookstoreEmailBody), $bookstoreEmailCopy->getBody());
         $this->assertEquals($_ENV['SMTP_USERNAME'], array_keys($bookstoreEmailCopy->getTo())[0]);
 
+        $this->getEm('dm')->clear();
         $bookstoreContribution = $this->getEm('dm')->getRepository(UsersContributions::class)->findOneBy(['bookstore' => $bookstore]);
         $this->assertEquals(true, $bookstoreContribution->getEmailsSent());
     }
@@ -264,6 +266,7 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
         ])->call();
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
 
+        $this->getEm('dm')->clear();
         $updatedBookstore = $this->getEm('dm')->getRepository(Bouquineries::class)->find($bookstore->getId());
         $this->assertEquals(1, $updatedBookstore->getCoordx());
         $this->assertEquals(2, $updatedBookstore->getCoordy());
@@ -279,9 +282,9 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
 
     public function testInitResetPassword(): void
     {
-        $this->createUserCollection('dm_test_user');
+        $this->createUserCollection(self::$defaultTestDmUserName);
         /** @var Users $user */
-        $user = $this->getEm('dm')->getRepository(Users::class)->findOneBy(['username' => 'dm_test_user']);
+        $user = $this->getEm('dm')->getRepository(Users::class)->findOneBy(['username' => self::$defaultTestDmUserName]);
 
         self::$client->enableProfiler();
         $response = $this->buildAuthenticatedService('/ducksmanager/resetpassword/init', self::$dmUser, [], ['email' => $user->getEmail()])->call();
@@ -330,9 +333,9 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
 
     public function testCheckPasswordToken(): void
     {
-        $this->createUserCollection('dm_test_user');
+        $this->createUserCollection(self::$defaultTestDmUserName);
         /** @var Users $user */
-        $user = $this->getEm('dm')->getRepository(Users::class)->findOneBy(['username' => 'dm_test_user']);
+        $user = $this->getEm('dm')->getRepository(Users::class)->findOneBy(['username' => self::$defaultTestDmUserName]);
 
         $this->buildAuthenticatedService('/ducksmanager/resetpassword/init', self::$dmUser, [], ['email' => $user->getEmail()])->call();
 
@@ -349,9 +352,9 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
 
     public function testResetPasswordToken(): void
     {
-        $this->createUserCollection('dm_test_user');
+        $this->createUserCollection(self::$defaultTestDmUserName);
         /** @var Users $user */
-        $user = $this->getEm('dm')->getRepository(Users::class)->findOneBy(['username' => 'dm_test_user']);
+        $user = $this->getEm('dm')->getRepository(Users::class)->findOneBy(['username' => self::$defaultTestDmUserName]);
 
         $this->buildAuthenticatedService('/ducksmanager/resetpassword/init', self::$dmUser, [], ['email' => $user->getEmail()])->call();
 
@@ -367,6 +370,7 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
 
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
 
+        $this->getEm('dm')->clear();
         /** @var Users $updatedUser */
         $updatedUser = $this->getEm('dm')->getRepository(Users::class)->findOneBy([
             'id' => $user->getId()
@@ -380,9 +384,9 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
 
     public function testGetLastPublicationPosition(): void
     {
-        $this->createUserCollection('dm_test_user');
+        $this->createUserCollection(self::$defaultTestDmUserName);
         /** @var Users $user */
-        $user = $this->getEm('dm')->getRepository(Users::class)->findOneBy(['username' => 'dm_test_user']);
+        $user = $this->getEm('dm')->getRepository(Users::class)->findOneBy(['username' => self::$defaultTestDmUserName]);
 
         $getResponse = $this->buildAuthenticatedServiceWithTestUser("/ducksmanager/bookcase/{$user->getId()}/sort/max", self::$dmUser)->call();
         $objectResponse = json_decode($getResponse->getContent());
@@ -393,9 +397,9 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
 
     public function testGetLastPublicationPositionNoPublication(): void
     {
-        $this->createUserCollection('dm_test_user', [], false);
+        $this->createUserCollection(self::$defaultTestDmUserName, [], false);
         /** @var Users $user */
-        $user = $this->getEm('dm')->getRepository(Users::class)->findOneBy(['username' => 'dm_test_user']);
+        $user = $this->getEm('dm')->getRepository(Users::class)->findOneBy(['username' => self::$defaultTestDmUserName]);
 
         $getResponse = $this->buildAuthenticatedServiceWithTestUser("/ducksmanager/bookcase/{$user->getId()}/sort/max", self::$dmUser)->call();
         $this->assertEquals(Response::HTTP_NO_CONTENT, $getResponse->getStatusCode());
@@ -403,9 +407,9 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
 
     public function testGetBookcaseSorts(): void
     {
-        $this->createUserCollection('dm_test_user');
+        $this->createUserCollection(self::$defaultTestDmUserName);
         /** @var Users $user */
-        $user = $this->getEm('dm')->getRepository(Users::class)->findOneBy(['username' => 'dm_test_user']);
+        $user = $this->getEm('dm')->getRepository(Users::class)->findOneBy(['username' => self::$defaultTestDmUserName]);
 
         $getResponse = $this->buildAuthenticatedServiceWithTestUser("/ducksmanager/bookcase/{$user->getId()}/sort", self::$dmUser)->call();
         $objectResponse = json_decode($getResponse->getContent());

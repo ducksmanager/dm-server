@@ -14,7 +14,8 @@ class RawSqlTest extends TestCommon
     public function setUp()
     {
         parent::setUp();
-        $this->loadFixture('dm', new DmCollectionFixture('dm_test_user'));
+        DmCollectionFixture::$username = self::$defaultTestDmUserName;
+        $this->loadFixtures([DmCollectionFixture::class], true, 'dm');
     }
 
     public function testRawSqlWithUserWithoutPermission(): void

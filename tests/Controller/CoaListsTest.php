@@ -17,8 +17,7 @@ class CoaListsTest extends TestCommon
     public function setUp()
     {
         parent::setUp();
-        $this->loadFixture('coa', new CoaFixture());
-        $this->loadFixture('coa', new CoaEntryFixture());
+        $this->loadFixtures([ CoaFixture::class, CoaEntryFixture::class ], true, 'coa');
     }
 
     public function testGetCountryList(): void
@@ -116,10 +115,6 @@ class CoaListsTest extends TestCommon
 
     public function testGetIssueListByIssueCodes(): void
     {
-        $this->spinUp('coverid');
-        self::runCommand('doctrine:database:create --connection=coverid');
-        self::runCommand('doctrine:schema:update -q --em=coverid');
-
         $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issuesbycodes/fr/DDD 1', self::$dmUser)->call();
 
         $arrayResponse = json_decode($this->getResponseContent($response));
@@ -134,8 +129,7 @@ class CoaListsTest extends TestCommon
 
     public function testGetIssueListByIssueCodesNoCoaIssue(): void
     {
-        $this->spinUp('coverid');
-
+        $this->loadFixtures([ ], true, 'coverid');
         $coveridEm = $this->getEm('coverid');
         $coveridEm->persist(
             $cover = (new Covers())

@@ -44,8 +44,10 @@ class EdgeCreatorTest extends TestCommon
     public function setUp()
     {
         parent::setUp();
-        $this->createUserCollection('dm_test_user');
-        $this->loadFixture('edgecreator', new EdgeCreatorFixture($this->getUser('dm_test_user')));
+        $this->createUserCollection(self::$defaultTestDmUserName);
+
+        EdgeCreatorFixture::$user = $this->getUser(self::$defaultTestDmUserName);
+        $this->loadFixtures([ EdgeCreatorFixture::class ], true, 'edgecreator');
     }
 
     public function testCreateV2Model(): void
@@ -58,7 +60,7 @@ class EdgeCreatorTest extends TestCommon
             'pays' => 'fr',
             'magazine' => 'DDD',
             'numero' => '10',
-            'username' => 'dm_test_user'
+            'username' => self::$defaultTestDmUserName
         ]);
 
         $objectResponse = json_decode($this->getResponseContent($response));
@@ -114,7 +116,7 @@ class EdgeCreatorTest extends TestCommon
             'pays' => 'fr',
             'magazine' => 'PM',
             'numero' => '502',
-            'username' => 'dm_test_user',
+            'username' => self::$defaultTestDmUserName,
             'active' => true,
             'contributeurs' => [],
             'photos' => []
@@ -514,6 +516,7 @@ class EdgeCreatorTest extends TestCommon
         // Existing model with steps
         $response = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/v2/model/clone/to/fr/PM/502', self::$edgecreatorUser, 'POST', $stepsToClone)->call();
 
+        $this->getEm('edgecreator')->clear();
         $objectResponse = json_decode($this->getResponseContent($response));
 
         $this->assertEquals(1, $objectResponse->modelid);
@@ -601,6 +604,7 @@ class EdgeCreatorTest extends TestCommon
 
         $this->buildAuthenticatedServiceWithTestUser("/edgecreator/myfontspreview/$newPreviewId", self::$edgecreatorUser, 'DELETE')->call();
 
+        $this->getEm('edgecreator')->clear();
         $this->assertNull($this->getEm('edgecreator')->getRepository(ImagesMyfonts::class)->find($newPreviewId));
     }
 
@@ -615,6 +619,7 @@ class EdgeCreatorTest extends TestCommon
 
         $this->assertEquals($model->getId(), $objectResponse->deactivated);
 
+        $this->getEm('edgecreator')->clear();
         $newModel = $this->getV2Model('fr', 'PM', '502');
         $this->assertEquals(false, $newModel->getActive());
     }
@@ -647,7 +652,7 @@ class EdgeCreatorTest extends TestCommon
         $model = $this->getV2Model('fr', 'PM', '502');
         $contributor = new TranchesEnCoursContributeurs();
         $contributor->setIdModele($model);
-        $contributor->setIdUtilisateur($this->getUser('dm_test_user')->getId());
+        $contributor->setIdUtilisateur($this->getUser(self::$defaultTestDmUserName)->getId());
         $contributor->setContribution('photographe');
         $this->getEm('edgecreator')->persist($contributor);
 
@@ -681,7 +686,7 @@ class EdgeCreatorTest extends TestCommon
         $model = $this->getV2Model('fr', 'PM', '502');
 
         $photo = new ImagesTranches();
-        $photo->setIdUtilisateur($this->getUser('dm_test_user')->getId());
+        $photo->setIdUtilisateur($this->getUser(self::$defaultTestDmUserName)->getId());
         $photo->setNomfichier('abc.jpg');
         $this->getEm('edgecreator')->persist($photo);
 
@@ -858,11 +863,11 @@ class EdgeCreatorTest extends TestCommon
 
         $this->createUserCollection('otheruser');
 
-        $designerUsernames = ['dm_test_user', 'dm_test_user'];
-        $designerIds = [$this->getUser('dm_test_user')->getId(), $this->getUser('dm_test_user')->getId()];
+        $designerUsernames = [self::$defaultTestDmUserName, self::$defaultTestDmUserName];
+        $designerIds = [$this->getUser(self::$defaultTestDmUserName)->getId(), $this->getUser(self::$defaultTestDmUserName)->getId()];
 
-        $photographerUsernames = ['dm_test_user', 'otheruser'];
-        $photographerIds = [$this->getUser('dm_test_user')->getId(), $this->getUser('otheruser')->getId()];
+        $photographerUsernames = [self::$defaultTestDmUserName, 'otheruser'];
+        $photographerIds = [$this->getUser(self::$defaultTestDmUserName)->getId(), $this->getUser('otheruser')->getId()];
 
         $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/publish/{$model->getId()}", self::$edgecreatorUser, 'PUT', [
             'designers' => $designerUsernames,
@@ -880,14 +885,14 @@ class EdgeCreatorTest extends TestCommon
         ]);
 
         $this->assertEquals('photographe', $userContributions[0]->getContribution());
-        $this->assertEquals($this->getUser('dm_test_user'), $userContributions[0]->getUser());
+        $this->assertEquals($this->getUser(self::$defaultTestDmUserName), $userContributions[0]->getUser());
         $this->assertEquals(50 + 5, $userContributions[0]->getPointsTotal());
 
         $this->assertEquals('photographe', $userContributions[1]->getContribution());
         $this->assertEquals($this->getUser('otheruser'), $userContributions[1]->getUser());
 
         $this->assertEquals('createur', $userContributions[2]->getContribution());
-        $this->assertEquals($this->getUser('dm_test_user'), $userContributions[2]->getUser());
+        $this->assertEquals($this->getUser(self::$defaultTestDmUserName), $userContributions[2]->getUser());
     }
 
     /**

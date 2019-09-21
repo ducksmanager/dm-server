@@ -19,6 +19,11 @@ class CollectionTest extends TestCommon
         return ['dm', 'coa'];
     }
 
+    protected function setUp(){
+        parent::setUp();
+        $this->createUserCollection(self::$defaultTestDmUserName);
+    }
+
     public function lastVisitProvider()
     {
         return [
@@ -59,11 +64,9 @@ class CollectionTest extends TestCommon
      */
     public function testPostLastVisit(?DateTime $existingPreviousVisit, ?DateTime $existingLastVisit, ?string $newPreviousVisit, ?string $newLastVisit, int $expectedStatus): void
     {
-        $this->createUserCollection('dm_test_user');
-
         if (!is_null($existingPreviousVisit)) {
             /** @var Users $user */
-            $user = $this->getEm('dm')->getRepository(Users::class)->find($this->getUser('dm_test_user'));
+            $user = $this->getEm('dm')->getRepository(Users::class)->findOneBy(['username'=>self::$defaultTestDmUserName]);
             $user->setPrecedentacces($existingPreviousVisit);
             $this->getEm('dm')->persist($user);
             $this->getEm('dm')->flush();
@@ -71,7 +74,7 @@ class CollectionTest extends TestCommon
 
         if (!is_null($existingLastVisit)) {
             /** @var Users $user */
-            $user = $this->getEm('dm')->getRepository(Users::class)->find($this->getUser('dm_test_user'));
+            $user = $this->getEm('dm')->getRepository(Users::class)->findOneBy(['username'=>self::$defaultTestDmUserName]);
             $user->setDernieracces($existingLastVisit);
             $this->getEm('dm')->persist($user);
             $this->getEm('dm')->flush();
@@ -80,8 +83,9 @@ class CollectionTest extends TestCommon
         $userResponse = $this->buildAuthenticatedServiceWithTestUser('/collection/lastvisit', self::$dmUser, 'POST')->call();
         $this->assertEquals($expectedStatus, $userResponse->getStatusCode());
 
+        $this->getEm('dm')->clear();
         /** @var Users $user */
-        $user = $this->getEm('dm')->getRepository(Users::class)->find($this->getUser('dm_test_user'));
+        $user = $this->getEm('dm')->getRepository(Users::class)->findOneBy(['username'=>self::$defaultTestDmUserName]);
         if (is_null($user->getPrecedentacces())) {
             $this->assertEquals($newPreviousVisit, $user->getPrecedentacces());
         }
@@ -98,15 +102,13 @@ class CollectionTest extends TestCommon
 
     public function testGetUser(): void
     {
-        $this->createUserCollection('dm_test_user');
         $userResponse = $this->buildAuthenticatedServiceWithTestUser('/collection/user', self::$dmUser)->call();
         $objectResponse = json_decode($userResponse->getContent());
-        $this->assertEquals('dm_test_user', $objectResponse->username);
+        $this->assertEquals(self::$defaultTestDmUserName, $objectResponse->username);
     }
 
     public function testGetIssues(): void
     {
-        $this->createUserCollection('dm_test_user');
         $userResponse = $this->buildAuthenticatedServiceWithTestUser('/collection/issues', self::$dmUser)->call();
         $objectResponse = json_decode($userResponse->getContent());
         $this->assertEquals([
@@ -139,7 +141,6 @@ class CollectionTest extends TestCommon
 
     public function testGetPurchases(): void
     {
-        $this->createUserCollection('dm_test_user');
         $userResponse = $this->buildAuthenticatedServiceWithTestUser('/collection/purchases', self::$dmUser)->call();
         $objectResponse = json_decode($userResponse->getContent());
         $this->assertEquals([
@@ -153,8 +154,6 @@ class CollectionTest extends TestCommon
 
     public function testAddIssue(): void
     {
-        $this->createUserCollection('dm_test_user');
-
         $response = $this->buildAuthenticatedServiceWithTestUser('/collection/issues', self::$dmUser, 'POST', [
             'publicationCode' => 'fr/DDD',
             'issueNumbers' => ['3'],
@@ -179,8 +178,6 @@ class CollectionTest extends TestCommon
 
     public function testUpdateCollectionCreateIssueWithOptions(): void
     {
-        $this->createUserCollection('dm_test_user');
-
         $publicationCode = 'fr/DDD';
         $issuesToUpdate = ['1'];
 
@@ -206,7 +203,7 @@ class CollectionTest extends TestCommon
         [$countryCode, $magazine] = explode('/', $publicationCode);
         /** @var Numeros $updatedIssue */
         $updatedIssue = $this->getEm('dm')->getRepository(Numeros::class)->findOneBy(
-            ['idUtilisateur' => $this->getUser('dm_test_user')->getId(), 'pays' => $countryCode, 'magazine' => $magazine, 'numero' => $issuesToUpdate[0]]
+            ['idUtilisateur' => $this->getUser(self::$defaultTestDmUserName)->getId(), 'pays' => $countryCode, 'magazine' => $magazine, 'numero' => $issuesToUpdate[0]]
         );
         $this->assertEquals('fr', $updatedIssue->getPays());
         $this->assertEquals('DDD', $updatedIssue->getMagazine());
@@ -214,14 +211,12 @@ class CollectionTest extends TestCommon
         $this->assertEquals('bon', $updatedIssue->getEtat());
         $this->assertEquals(1, $updatedIssue->getIdAcquisition());
         $this->assertEquals(true, $updatedIssue->getAv());
-        $this->assertEquals($this->getUser('dm_test_user')->getId(), $updatedIssue->getIdUtilisateur());
+        $this->assertEquals($this->getUser(self::$defaultTestDmUserName)->getId(), $updatedIssue->getIdUtilisateur());
         $this->assertEquals(date('Y-m-d'), $updatedIssue->getDateajout()->format('Y-m-d'));
     }
 
     public function testDeleteFromCollection(): void
     {
-        $this->createUserCollection('dm_test_user');
-
         $response = $this->buildAuthenticatedServiceWithTestUser('/collection/issues', self::$dmUser, 'POST', [
             'publicationCode' => 'fr/DDD',
             'issueNumbers' => ['1'],
@@ -238,8 +233,6 @@ class CollectionTest extends TestCommon
 
     public function testUpdateCollectionCreateAndUpdateIssue(): void
     {
-        $this->createUserCollection('dm_test_user');
-
         $publicationCode = 'fr/DDD';
         $issueToUpdate = '1';
         $issueToCreate = '3';
@@ -260,7 +253,7 @@ class CollectionTest extends TestCommon
         [$country, $publication] = explode('/', $publicationCode);
         /** @var Numeros $updatedIssue */
         $updatedIssue = $this->getEm('dm')->getRepository(Numeros::class)->findOneBy(
-            ['idUtilisateur' => $this->getUser('dm_test_user')->getId(), 'pays' => $country, 'magazine' => $publication, 'numero' => $issueToUpdate]
+            ['idUtilisateur' => $this->getUser(self::$defaultTestDmUserName)->getId(), 'pays' => $country, 'magazine' => $publication, 'numero' => $issueToUpdate]
         );
         $this->assertNotNull($updatedIssue);
         $this->assertEquals('bon', $updatedIssue->getEtat());
@@ -272,7 +265,7 @@ class CollectionTest extends TestCommon
 
         /** @var Numeros $createdIssue */
         $createdIssue = $this->getEm('dm')->getRepository(Numeros::class)->findOneBy([
-            'idUtilisateur' => $this->getUser('dm_test_user')->getId(),
+            'idUtilisateur' => $this->getUser(self::$defaultTestDmUserName)->getId(),
             'pays' => $country,
             'magazine' => $publication,
             'numero' => $issueToCreate
@@ -285,10 +278,7 @@ class CollectionTest extends TestCommon
 
     public function testFetchCollection(): void
     {
-        $this->loadFixture('coa', new CoaFixture());
-        $this->loadFixture('coa', new CoaEntryFixture());
-        $this->createUserCollection('dm_test_user');
-
+        $this->loadFixtures([ CoaFixture::class, CoaEntryFixture::class ], false, 'coa');
         $response = $this->buildAuthenticatedServiceWithTestUser('/collection/issues', self::$dmUser)->call();
 
         $this->assertJsonStringEqualsJsonString($response->getContent(), json_encode([
@@ -318,11 +308,9 @@ class CollectionTest extends TestCommon
 
     public function testUpdatePurchase(): void
     {
-        $this->createUserCollection('dm_test_user');
-
         /** @var Achats $purchaseToUpdate */
         $purchaseToUpdate = $this->getEm('dm')->getRepository(Achats::class)->findOneBy([
-            'idUser' => $this->getUser('dm_test_user')->getId()
+            'idUser' => $this->getUser(self::$defaultTestDmUserName)->getId()
         ]);
 
         $this->buildAuthenticatedServiceWithTestUser(
@@ -333,6 +321,7 @@ class CollectionTest extends TestCommon
                 'description' => 'New description'
             ])->call();
 
+        $this->getEm('dm')->clear();
         /** @var Achats $updatedPurchase */
         $updatedPurchase = $this->getEm('dm')->getRepository(Achats::class)->find($purchaseToUpdate->getIdAcquisition());
 
@@ -342,8 +331,6 @@ class CollectionTest extends TestCommon
 
     public function testUpdatePurchaseOfOtherUser(): void
     {
-        $this->createUserCollection('dm_test_user');
-
         $response = $this->buildAuthenticatedServiceWithTestUser('/collection/purchases/3', self::$dmUser, 'POST', [
             'date' => '2017-01-01',
             'description' => 'New description'
@@ -361,8 +348,6 @@ class CollectionTest extends TestCommon
 
     public function testSetBookcaseSorts(): void
     {
-        $this->createUserCollection('dm_test_user');
-
         $newSorts = [
             'fr/SPG', 'fr/DDD', 'se/KAP'
         ];
@@ -373,7 +358,7 @@ class CollectionTest extends TestCommon
 
         /** @var BibliothequeOrdreMagazines[] $updatedSorts */
         $updatedSorts = $this->getEm('dm')->getRepository(BibliothequeOrdreMagazines::class)->findBy([
-            'idUtilisateur' => $this->getUser('dm_test_user')->getId()
+            'idUtilisateur' => $this->getUser(self::$defaultTestDmUserName)->getId()
         ], ['ordre' => 'ASC']);
 
         $this->assertCount(3, $updatedSorts);
@@ -384,10 +369,7 @@ class CollectionTest extends TestCommon
 
     public function testImportFromInducksInit(): void
     {
-        $this->loadFixture('coa', new CoaFixture());
-        $this->loadFixture('coa', new CoaEntryFixture());
-        $this->createUserCollection('dm_test_user');
-
+        $this->loadFixtures([ CoaFixture::class, CoaEntryFixture::class ], false, 'coa');
         $response = $this->buildAuthenticatedServiceWithTestUser('/collection/inducks/import/init', self::$dmUser, 'POST', ['rawData' => implode("\n", [
             'country^entrycode^collectiontype^comment',
             'fr^PM 315^^',
@@ -403,10 +385,7 @@ class CollectionTest extends TestCommon
 
     public function testImportFromInducksInitExistingIssues(): void
     {
-        $this->loadFixture('coa', new CoaFixture());
-        $this->loadFixture('coa', new CoaEntryFixture());
-        $this->createUserCollection('dm_test_user');
-
+        $this->loadFixtures([ CoaFixture::class, CoaEntryFixture::class ], false, 'coa');
         $response = $this->buildAuthenticatedServiceWithTestUser('/collection/inducks/import/init', self::$dmUser, 'POST', ['rawData' => implode("\n", [
             'country^entrycode^collectiontype^comment',
             'fr^PM 315^^',
@@ -424,10 +403,7 @@ class CollectionTest extends TestCommon
 
     public function testImportFromInducksInitStrangeIssueNumbers(): void
     {
-        $this->loadFixture('coa', new CoaFixture());
-        $this->loadFixture('coa', new CoaEntryFixture());
-        $this->createUserCollection('dm_test_user');
-
+        $this->loadFixtures([ CoaFixture::class, CoaEntryFixture::class ], false, 'coa');
         $response = $this->buildAuthenticatedServiceWithTestUser('/collection/inducks/import/init', self::$dmUser, 'POST', ['rawData' => implode("\n", [
             'country^entrycode^collectiontype^comment',
             'de^MM1951-00^^',
@@ -446,8 +422,6 @@ class CollectionTest extends TestCommon
 
     public function testImportFromInducks(): void
     {
-        $this->createUserCollection('dm_test_user');
-
         $response = $this->buildAuthenticatedServiceWithTestUser('/collection/inducks/import', self::$dmUser, 'POST', ['issues' => [
             ['publicationcode' => 'fr/AJM', 'issuenumber' => '58'],
             ['publicationcode' => 'fr/D', 'issuenumber' => '28'],
@@ -463,7 +437,7 @@ class CollectionTest extends TestCommon
 
         /** @var Numeros $singleCreatedIssue */
         $singleCreatedIssue = $this->getEm('dm')->getRepository(Numeros::class)->findOneBy([
-            'idUtilisateur' => $this->getUser('dm_test_user')->getId(),
+            'idUtilisateur' => $this->getUser(self::$defaultTestDmUserName)->getId(),
             'magazine' => 'MAD'
         ]);
         $this->assertNotNull($singleCreatedIssue->getDateajout());
@@ -471,8 +445,6 @@ class CollectionTest extends TestCommon
 
     public function testImportFromInducksWithExistingIssues(): void
     {
-        $this->createUserCollection('dm_test_user');
-
         $response = $this->buildAuthenticatedServiceWithTestUser('/collection/inducks/import', self::$dmUser, 'POST', ['issues' => [
             ['publicationcode' => 'fr/AJM', 'issuenumber' => '58'],
             ['publicationcode' => 'fr/DDD', 'issuenumber' => '1'],

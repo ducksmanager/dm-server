@@ -14,7 +14,7 @@ class EdgeSpritesTest extends TestCommon
     }
 
     public function testUploadEdgeAndGenerateSprite() {
-        $this->loadFixture('dm', new EdgesFixture());
+        $this->loadFixtures([ EdgesFixture::class ], true, 'dm');
         $edge = $this->getEm('dm')->getRepository(TranchesPretes::class)->findOneBy([
             'publicationcode' => 'fr/JM',
             'issuenumber' => '3001'
@@ -60,7 +60,7 @@ class EdgeSpritesTest extends TestCommon
     }
 
     public function testUploadEdgeAndGenerateSpriteNoFullSprite() {
-        $this->loadFixture('dm', new EdgesFixture());
+        $this->loadFixtures([ EdgesFixture::class ], true, 'dm');
 
         for ($i=2000; $i<2100; $i++) {
             $edge = new TranchesPretes();

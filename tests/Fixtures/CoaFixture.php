@@ -41,222 +41,195 @@ class CoaFixture extends Fixture implements FixtureGroupInterface
     public function load(ObjectManager $coaEntityManager) : void
     {
 
-        self::$testCountries['frLocale-fr'] = new InducksCountryname();
         $coaEntityManager->persist(
-            self::$testCountries['frLocale-fr']
+            (self::$testCountries['frLocale-fr'] = new InducksCountryname())
                 ->setCountrycode('fr')
                 ->setLanguagecode('fr')
                 ->setCountryname('France')
         );
 
-        self::$testCountries['frLocale-es'] = new InducksCountryname();
         $coaEntityManager->persist(
-            self::$testCountries['frLocale-es']
+            (self::$testCountries['frLocale-es'] = new InducksCountryname())
                 ->setCountrycode('es')
                 ->setLanguagecode('fr')
                 ->setCountryname('Espagne')
         );
 
-        self::$testCountries['frLocale-us'] = new InducksCountryname();
         $coaEntityManager->persist(
-            self::$testCountries['frLocale-us']
+            (self::$testCountries['frLocale-us'] = new InducksCountryname())
                 ->setCountrycode('us')
                 ->setLanguagecode('fr')
                 ->setCountryname('USA')
         );
 
-        self::$testCountries['frLocale-fake'] = new InducksCountryname();
         $coaEntityManager->persist(
-            self::$testCountries['frLocale-fake']
+            (self::$testCountries['frLocale-fake'] = new InducksCountryname())
                 ->setCountrycode('fake')
                 ->setLanguagecode('fr')
                 ->setCountryname('')
         );
 
-        self::$testCountries['esLocale-fr'] = new InducksCountryname();
         $coaEntityManager->persist(
-            self::$testCountries['esLocale-fr']
+            (self::$testCountries['esLocale-fr'] = new InducksCountryname())
                 ->setCountrycode('fr')
                 ->setLanguagecode('es')
                 ->setCountryname('Francia')
         );
 
-        self::$testCountries['esLocale-es'] = new InducksCountryname();
         $coaEntityManager->persist(
-            self::$testCountries['esLocale-es']
+            (self::$testCountries['esLocale-es'] = new InducksCountryname())
                 ->setCountrycode('es')
                 ->setLanguagecode('es')
                 ->setCountryname('España')
         );
 
-        self::$testCountries['esLocale-us'] = new InducksCountryname();
         $coaEntityManager->persist(
-            self::$testCountries['esLocale-us']
+            (self::$testCountries['esLocale-us'] = new InducksCountryname())
                 ->setCountrycode('us')
                 ->setLanguagecode('es')
                 ->setCountryname('EE.UU.')
         );
 
-        self::$testPublications['fr/MP'] = new InducksPublication();
         $coaEntityManager->persist(
-            self::$testPublications['fr/MP']
+            (self::$testPublications['fr/MP'] = new InducksPublication())
                 ->setPublicationcode('fr/MP')
                 ->setCountrycode('fr')
                 ->setTitle('Parade')
         );
 
-        self::$testPublications['fr/DDD'] = new InducksPublication();
         $coaEntityManager->persist(
-            self::$testPublications['fr/DDD']
+            (self::$testPublications['fr/DDD'] = new InducksPublication())
                 ->setPublicationcode('fr/DDD')
                 ->setCountrycode('fr')
                 ->setTitle('Dynastie')
         );
 
-        self::$testPublications['us/CBL'] = new InducksPublication();
         $coaEntityManager->persist(
-            self::$testPublications['us/CBL']
+            (self::$testPublications['us/CBL'] = new InducksPublication())
                 ->setPublicationcode('us/CBL')
                 ->setCountrycode('us')
                 ->setTitle('Carl Barks Library')
         );
 
-        self::$testIssues['fr/DDD 1'] = new InducksIssue();
         $coaEntityManager->persist(
-            self::$testIssues['fr/DDD 1']
+            (self::$testIssues['fr/DDD 1'] = new InducksIssue())
                 ->setPublicationcode('fr/DDD')
                 ->setIssuenumber('1')
                 ->setIssuecode('fr/DDD 1')
         );
 
-        self::$testIssues['fr/DDD 2'] = new InducksIssue();
         $coaEntityManager->persist(
-            self::$testIssues['fr/DDD 2']
+            (self::$testIssues['fr/DDD 2'] = new InducksIssue())
                 ->setPublicationcode('fr/DDD')
                 ->setIssuenumber('2')
                 ->setIssuecode('fr/DDD 2')
         );
 
-        self::$testIssues['fr/MP 300'] = new InducksIssue();
         $coaEntityManager->persist(
-            self::$testIssues['fr/MP 300']
+            (self::$testIssues['fr/MP 300'] = new InducksIssue())
                 ->setPublicationcode('fr/MP')
                 ->setIssuenumber('300')
                 ->setIssuecode('fr/MP 300')
         );
 
-        self::$testIssues['fr/PM 315'] = new InducksIssue();
         $coaEntityManager->persist(
-            self::$testIssues['fr/PM 315']
+            (self::$testIssues['fr/PM 315'] = new InducksIssue())
                 ->setPublicationcode('fr/PM')
                 ->setIssuenumber('315')
                 ->setIssuecode('fr/PM 315')
         );
 
-        self::$testIssues['us/CBL 7'] = new InducksIssue();
         $coaEntityManager->persist(
-            self::$testIssues['us/CBL 7']
+            (self::$testIssues['us/CBL 7'] = new InducksIssue())
                 ->setPublicationcode('us/CBL')
                 ->setIssuenumber('7')
                 ->setIssuecode('us/CBL 7')
         );
 
-        self::$testIssues['de/MM1951-00'] = new InducksIssue();
         $coaEntityManager->persist(
-            self::$testIssues['de/MM1951-00']
+            (self::$testIssues['de/MM1951-00'] = new InducksIssue())
                 ->setPublicationcode('de/MM')
                 ->setIssuenumber('1951-00')
                 ->setIssuecode('de/MM1951-00')
         );
 
-        self::$testIssues['fr/CB PN  1'] = new InducksIssue();
         $coaEntityManager->persist(
-            self::$testIssues['fr/CB PN  1']
+            (self::$testIssues['fr/CB PN  1'] = new InducksIssue())
                 ->setPublicationcode('fr/CB')
                 ->setIssuenumber('PN  1')
                 ->setIssuecode('fr/CB PN  1')
         );
 
-        self::$testStories['W WDC  31-05'] = new InducksStory();
         $coaEntityManager->persist(
-            self::$testStories['W WDC  31-05']
+            (self::$testStories['W WDC  31-05'] = new InducksStory())
                 ->setTitle('Title of story W WDC  31-05')
                 ->setStorycomment('Comment of story W WDC  31-05')
                 ->setStorycode('W WDC  31-05')
         );
 
-        self::$testStories['W WDC  32-02'] = new InducksStory();
         $coaEntityManager->persist(
-            self::$testStories['W WDC  32-02']
+            (self::$testStories['W WDC  32-02'] = new InducksStory())
                 ->setTitle('Title of story W WDC  32-02')
                 ->setStorycomment('Comment of story W WDC  32-02')
                 ->setStorycode('W WDC  32-02')
         );
 
-        self::$testStories['ARC CBL 5B'] = new InducksStory();
         $coaEntityManager->persist(
-            self::$testStories['ARC CBL 5B']
+            (self::$testStories['ARC CBL 5B'] = new InducksStory())
                 ->setTitle('Title of story ARC CBL 5B')
                 ->setStorycomment('Comment of story ARC CBL 5B')
                 ->setStorycode('ARC CBL 5B')
         );
 
-        self::$testStories['W WDC 130-02'] = new InducksStory();
         $coaEntityManager->persist(
-            self::$testStories['W WDC 130-02']
+            (self::$testStories['W WDC 130-02'] = new InducksStory())
                 ->setTitle('Title of story W WDC 130-02')
                 ->setStorycomment('Comment of story W WDC 130-02')
                 ->setStorycode('W WDC 130-02')
         );
 
-        self::$testStories['AR 201'] = new InducksStory();
         $coaEntityManager->persist(
-            self::$testStories['AR 201']
+            (self::$testStories['AR 201'] = new InducksStory())
                 ->setTitle('Title of story AR 201')
                 ->setStorycomment('Comment of story AR 201')
                 ->setStorycode('AR 201')
         );
 
-        self::$testStoryversions['W WDC  31-05'] = new InducksStoryversion();
         $coaEntityManager->persist(
-            self::$testStoryversions['W WDC  31-05']
+            (self::$testStoryversions['W WDC  31-05'] = new InducksStoryversion())
                 ->setStoryversioncode('W WDC  31-05')
                 ->setStorycode('W WDC  31-05')
         );
 
-        self::$testStoryversions['de/SPBL 136c'] = new InducksStoryversion();
         $coaEntityManager->persist(
-            self::$testStoryversions['de/SPBL 136c']
+            (self::$testStoryversions['de/SPBL 136c'] = new InducksStoryversion())
                 ->setStoryversioncode('de/SPBL 136c')
                 ->setStorycode('W WDC  31-05')
         );
 
-        self::$testEntries['us/CBL 7a'] = new InducksEntry();
         $coaEntityManager->persist(
-            self::$testEntries['us/CBL 7a']
+            (self::$testEntries['us/CBL 7a'] = new InducksEntry())
                 ->setEntrycode('us/CBL 7a')
                 ->setIssuecode('fr/DDD 1')
                 ->setStoryversioncode('W WDC  31-05')
         );
 
-        self::$testEntryurls['us/CBL 7p000a'] = new InducksEntryurl();
         $coaEntityManager->persist(
-            self::$testEntryurls['us/CBL 7p000a']
+            (self::$testEntryurls['us/CBL 7p000a'] = new InducksEntryurl())
                 ->setEntrycode('us/CBL 7p000a')
                 ->setUrl('us/cbl/us_cbl_7p000a_001.png')
                 ->setSitecode('thumbnails')
         );
 
-        $inducksPerson = new InducksPerson();
         $coaEntityManager->persist(
-            $inducksPerson
+            ($inducksPerson = new InducksPerson())
                 ->setPersoncode('CB')
                 ->setFullname('Carl Barks')
         );
 
-        $inducksPerson = new InducksPerson();
         $coaEntityManager->persist(
-            $inducksPerson->setPersoncode('DR')
+            ($inducksPerson = new InducksPerson())
+                ->setPersoncode('DR')
                 ->setFullname('Don Rosa')
         );
         $coaEntityManager->flush();

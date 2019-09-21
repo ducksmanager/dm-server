@@ -18,20 +18,13 @@ use Exception;
 class EdgeCreatorFixture implements FixtureInterface
 {
     /** @var Users $user  */
-    protected $user;
+    public static $user;
 
-    /**
-     * @param Users $user
-     */
-    public function __construct(Users $user = null) {
-        $this->user = $user;
-    }
-
-    public static function createModelEcV1(ObjectManager $edgeCreatorEntityManager, string $userName, string $publicationCode, string $stepNumber, string $functionName, string $optionName, string $optionValue, string $firstIssueNumber, string $lastIssueNumber): void
+    public static function createModelEcV1(ObjectManager $ecEm, string $userName, string $publicationCode, string $stepNumber, string $functionName, string $optionName, string $optionValue, string $firstIssueNumber, string $lastIssueNumber): void
     {
         $model = new EdgecreatorModeles2();
         [$country, $magazine] = explode('/', $publicationCode);
-        $edgeCreatorEntityManager->persist(
+        $ecEm->persist(
             $model
                 ->setPays($country)
                 ->setMagazine($magazine)
@@ -39,45 +32,42 @@ class EdgeCreatorFixture implements FixtureInterface
                 ->setNomFonction($functionName)
                 ->setOptionNom($optionName)
         );
-        $edgeCreatorEntityManager->flush();
+        $ecEm->flush();
         $idOption = $model->getId();
 
-        $value = new EdgecreatorValeurs();
-        $edgeCreatorEntityManager->persist(
-            $value
+        $ecEm->persist(
+            ($value = new EdgecreatorValeurs())
                 ->setIdOption($idOption)
                 ->setOptionValeur($optionValue)
         );
-        $edgeCreatorEntityManager->flush();
+        $ecEm->flush();
         $valueId = $value->getId();
 
-        $interval = new EdgecreatorIntervalles();
-        $edgeCreatorEntityManager->persist(
-            $interval
+        $ecEm->persist(
+            (new EdgecreatorIntervalles())
                 ->setIdValeur($valueId)
                 ->setNumeroDebut($firstIssueNumber)
                 ->setNumeroFin($lastIssueNumber)
                 ->setUsername($userName)
         );
 
-        $edgeCreatorEntityManager->flush();
+        $ecEm->flush();
     }
 
     /**
-     * @param ObjectManager $edgeCreatorEntityManager
+     * @param ObjectManager $ecEm
      * @param string $userName
      * @param string $publicationCode
      * @param string $issueNumber
      * @param array $steps
      * @return TranchesEnCoursModeles|null
      */
-    public static function createModelEcV2(ObjectManager $edgeCreatorEntityManager, ?string $userName, string $publicationCode, string $issueNumber, array $steps): ?TranchesEnCoursModeles
+    public static function createModelEcV2(ObjectManager $ecEm, ?string $userName, string $publicationCode, string $issueNumber, array $steps): ?TranchesEnCoursModeles
     {
         [$country, $magazine] = explode('/', $publicationCode);
 
-        $ongoingModel = new TranchesEnCoursModeles();
-        $edgeCreatorEntityManager->persist(
-            $ongoingModel
+        $ecEm->persist(
+            ($ongoingModel = new TranchesEnCoursModeles())
                 ->setPays($country)
                 ->setMagazine($magazine)
                 ->setNumero($issueNumber)
@@ -87,9 +77,8 @@ class EdgeCreatorFixture implements FixtureInterface
 
         foreach ($steps as $stepNumber => $step) {
             foreach ($step['options'] as $optionName => $optionValue) {
-                $ongoingModel1Step1Value1 = new TranchesEnCoursValeurs();
-                $edgeCreatorEntityManager->persist(
-                    $ongoingModel1Step1Value1
+                $ecEm->persist(
+                    (new TranchesEnCoursValeurs())
                         ->setIdModele($ongoingModel)
                         ->setOrdre($stepNumber)
                         ->setNomFonction($step['functionName'])
@@ -99,23 +88,23 @@ class EdgeCreatorFixture implements FixtureInterface
             }
         }
 
-        $edgeCreatorEntityManager->flush();
+        $ecEm->flush();
 
         return $ongoingModel;
     }
 
     /**
-     * @param ObjectManager $ecEntityManager
+     * @param ObjectManager $ecEm
      * @throws Exception
      */
-    public function load(ObjectManager $ecEntityManager) : void
+    public function load(ObjectManager $ecEm) : void
     {
-        self::createModelEcV1($ecEntityManager, $this->user->getUsername(), 'fr/DDD', 1, 'Remplir', 'Couleur', '#FF0000', 1, 3);
+        self::createModelEcV1($ecEm, self::$user->getUsername(), 'fr/DDD', 1, 'Remplir', 'Couleur', '#FF0000', 1, 3);
 
         // Model v2
 
         // $ongoingModel1
-        self::createModelEcV2($ecEntityManager, $this->user->getUsername(), 'fr/PM', '502', [
+        self::createModelEcV2($ecEm, self::$user->getUsername(), 'fr/PM', '502', [
             1 => [
                 'functionName' => 'Remplir',
                 'options' => [
@@ -131,28 +120,26 @@ class EdgeCreatorFixture implements FixtureInterface
             ]
         ]);
 
-        $ongoingModel2 = self::createModelEcV2($ecEntityManager, null, 'fr/PM', '503', []);
+        $ongoingModel2 = self::createModelEcV2($ecEm, null, 'fr/PM', '503', []);
 
-        $edgePicture = new ImagesTranches();
-        $ecEntityManager->persist(
-            $edgePicture
+        $ecEm->persist(
+            ($edgePicture = new ImagesTranches())
                 ->setNomfichier('photo1.jpg')
                 ->setDateheure(new DateTime('today'))
                 ->setHash(sha1('test'))
-                ->setIdUtilisateur($this->user->getId())
+                ->setIdUtilisateur(self::$user->getId())
         );
 
-        $ongoingModel2MainEdgePicture = new TranchesEnCoursModelesImages();
-        $ecEntityManager->persist(
-            $ongoingModel2MainEdgePicture
+        $ecEm->persist(
+            (new TranchesEnCoursModelesImages())
                 ->setIdModele($ongoingModel2)
                 ->setIdImage($edgePicture)
                 ->setEstphotoprincipale(true)
         );
 
-        self::createModelEcV2($ecEntityManager, null, 'fr/MP', '400', []);
-        self::createModelEcV2($ecEntityManager, null, 'fr/MP', '401', []);
+        self::createModelEcV2($ecEm, null, 'fr/MP', '400', []);
+        self::createModelEcV2($ecEm, null, 'fr/MP', '401', []);
 
-        $ecEntityManager->flush();
+        $ecEm->flush();
     }
 }

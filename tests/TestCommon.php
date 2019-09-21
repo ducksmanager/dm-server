@@ -11,13 +11,14 @@ use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\Loader;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManagerInterface;
+use Liip\TestFixturesBundle\Test\FixturesTrait;
 use Symfony\Bundle\FrameworkBundle\Client;
-use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\HttpFoundation\Response;
 
 abstract class TestCommon extends WebTestCase {
+
+    use FixturesTrait;
 
     /** @var Client $client  */
     protected static $client;
@@ -34,9 +35,6 @@ abstract class TestCommon extends WebTestCase {
 
     public static $exampleImage = 'cover_example.jpg';
 
-    /** @var Application $application */
-    protected static $application;
-
     private static $hasLoadedEdgeFixture = false;
 
     /**
@@ -46,18 +44,13 @@ abstract class TestCommon extends WebTestCase {
         return [];
     }
 
+
     protected function setUp() {
         parent::setUp();
+        self::$client = self::createClient();
         foreach($this->getEmNamesToCreate() as $emToCreate) {
-            $this->spinUp($emToCreate);
+            $this->loadFixtures([], false, $emToCreate, 'doctrine', ORMPurger::PURGE_MODE_TRUNCATE);
         }
-    }
-
-    protected function spinUp($emName): void
-    {
-        self::runCommand("doctrine:database:drop --force --connection=$emName");
-        self::runCommand("doctrine:database:create --connection=$emName");
-        self::runCommand("doctrine:schema:create --em=$emName");
     }
 
     private static function getSystemCredentials(string $appUser, string $version = '1.3+'): array
@@ -108,26 +101,11 @@ abstract class TestCommon extends WebTestCase {
         );
     }
 
-    protected static function runCommand(string $command) : ?int {
-        $command = sprintf('%s --quiet', $command);
-
-        return self::getApplication()->run(new StringInput($command));
-    }
-
     private static function getClient(): Client {
         if (!isset(self::$client)) {
             self::$client = static::createClient();
         }
         return self::$client;
-    }
-
-    protected static function getApplication(): Application
-    {
-        if (is_null(self::$application)) {
-            self::$application = new Application(self::getClient()->getKernel());
-            self::$application->setAutoExit(false);
-        }
-        return self::$application;
     }
 
     protected static function getPathToFileToUpload(string $fileName) : string {
@@ -136,7 +114,7 @@ abstract class TestCommon extends WebTestCase {
 
     protected function getEm(string $name): EntityManagerInterface
     {
-        return self::getClient()->getKernel()->getContainer()->get('doctrine')->getManager($name);
+        return $this->getContainer()->get('doctrine')->getManager($name);
     }
 
     protected function getUser(string $username): Users
@@ -167,9 +145,14 @@ abstract class TestCommon extends WebTestCase {
     protected function createUserCollection(string $username, array $roles = [], bool $withPublicationSorts = true): void
     {
         if (!self::$hasLoadedEdgeFixture) {
-            $this->loadFixture('dm', new EdgesFixture());
+            $this->loadFixtures([ EdgesFixture::class ], true, 'dm');
         }
-        $this->loadFixture('dm', new DmCollectionFixture($username, $roles, $withPublicationSorts));
+
+        DmCollectionFixture::$username = $username;
+        DmCollectionFixture::$roles = $roles;
+        DmCollectionFixture::$withPublicationSorts = $withPublicationSorts;
+        $this->loadFixtures([ DmCollectionFixture::class ], true, 'dm');
+
         self::$hasLoadedEdgeFixture = true;
     }
 

@@ -4,7 +4,6 @@ parameters:
 
 doctrine:
     dbal:
-        default_connection: dm
         connections:
             dm:
                 dbname: '%env(DATABASE_DM_DB)%'
@@ -14,7 +13,6 @@ doctrine:
                 password: '%env(DATABASE_DM_PASS)%'
                 driver: '%env(DATABASE_DRIVER)%'
                 server_version: '%env(DATABASE_SERVER_VERSION)%'
-                memory: true
                 charset: utf8mb4
                 mapping_types:
                     enum: string
@@ -26,7 +24,6 @@ doctrine:
                 password: '%env(DATABASE_COA_PASS)%'
                 driver: '%env(DATABASE_DRIVER)%'
                 server_version: '%env(DATABASE_SERVER_VERSION)%'
-                memory: true
                 charset: utf8mb4
                 schema_filter: (inducks_countryname|inducks_entry|inducks_entryurl|inducks_issue|inducks_person|inducks_publication|inducks_story|inducks_storyversion)
                 mapping_types:
@@ -39,7 +36,6 @@ doctrine:
                 password: '%env(DATABASE_DM_COVER_ID_PASS)%'
                 driver: '%env(DATABASE_DRIVER)%'
                 server_version: '%env(DATABASE_SERVER_VERSION)%'
-                memory: true
                 charset: utf8mb4
                 mapping_types:
                     enum: string
@@ -51,7 +47,6 @@ doctrine:
                 password: '%env(DATABASE_DM_STATS_PASS)%'
                 driver: '%env(DATABASE_DRIVER)%'
                 server_version: '%env(DATABASE_SERVER_VERSION)%'
-                memory: true
                 charset: utf8mb4
                 mapping_types:
                     enum: string
@@ -63,7 +58,6 @@ doctrine:
                 password: '%env(DATABASE_EDGECREATOR_PASS)%'
                 driver: '%env(DATABASE_DRIVER)%'
                 server_version: '%env(DATABASE_SERVER_VERSION)%'
-                memory: true
                 charset: utf8mb4
                 mapping_types:
                     enum: string

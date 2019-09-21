@@ -13,7 +13,7 @@ class EdgesTest extends TestCommon
     public function setUp()
     {
         parent::setUp();
-        $this->loadFixture('dm', new EdgesFixture());
+        $this->loadFixtures([ EdgesFixture::class ], true, 'dm');
     }
 
     public function testGetEdges(): void {

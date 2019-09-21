@@ -1,7 +1,6 @@
 <?php
 namespace App\Tests\Controller;
 
-
 use App\Entity\Coverid\Covers;
 use App\Helper\SimilarImagesHelper;
 use App\Tests\Fixtures\CoaEntryFixture;
@@ -15,7 +14,6 @@ use function exif_imagetype;
 
 class CoverIdTest extends TestCommon
 {
-
     public static $uploadDestination = '/tmp/test.jpg';
 
     public static $exampleImageToUpload = 'cover_example_to_upload.jpg';
@@ -55,17 +53,16 @@ class CoverIdTest extends TestCommon
     public function setUp()
     {
         parent::setUp();
-        $this->loadFixture('coa', new CoaFixture());
-        $this->loadFixture('coa', new CoaEntryFixture());
+        $this->loadFixtures([ CoaFixture::class, CoaEntryFixture::class ], true, 'coa');
         $urls = [
             'fr/DDD 1' => 'cover_example.jpg',
             'fr/DDD 2' => 'cover_example_2.jpg',
             'fr/MP 300' => 'cover_example_3.jpg',
             'fr/XXX 111' => 'cover_example_4.jpg'
         ];
-        foreach($urls as $issueNumber => $url) {
-            $this->loadFixture('coverid', new CoverIdFixture($issueNumber, $url));
-        }
+
+        CoverIdFixture::$urls = $urls;
+        $this->loadFixtures([CoverIdFixture::class], true, 'coverid');
 
         @unlink(self::$uploadDestination);
     }
@@ -124,12 +121,6 @@ class CoverIdTest extends TestCommon
         $this->mockCoverSearchResults(self::$coverSearchResultsSimple);
         $this->assertFileNotExists(self::$uploadDestination);
 
-        $similarCoverIssuePublicationCode = 'fr/DDD';
-        $similarCoverIssueNumber = '10';
-
-        $this->loadFixture('coa', new CoaEntryFixture('fr/AR 101', $coverId1->getUrl(),
-            $similarCoverIssuePublicationCode, $similarCoverIssueNumber));
-
         $response = $this->buildAuthenticatedServiceWithTestUser(
             '/cover-id/search', self::$dmUser, 'POST', [], [
                 'wtd_jpg' => self::getCoverIdSearchUploadImage()
@@ -160,9 +151,9 @@ class CoverIdTest extends TestCommon
         $similarCoverIssueNumber = '10';
 
         $coverId1 = $this->getEm('coverid')->getRepository(Covers::class)->find(1);
-        $this->loadFixture('coa', new CoaEntryFixture('fr/AR 101', $coverId1->getUrl(),
-            $similarCoverIssuePublicationCode, $similarCoverIssueNumber));
-        $this->loadFixture('coverid', new CoverIdFixture($similarCoverIssuePublicationCode.' '.$similarCoverIssueNumber, $coverId1->getUrl()));
+
+        CoverIdFixture::$urls = [ $similarCoverIssuePublicationCode.' '.$similarCoverIssueNumber => $coverId1->getUrl()];
+        $this->loadFixtures([CoverIdFixture::class], true, 'coverid');
 
         $response = $this->buildAuthenticatedServiceWithTestUser(
             '/cover-id/search', self::$dmUser, 'POST', [], [
