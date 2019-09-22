@@ -8,6 +8,7 @@ use App\Entity\Dm\Numeros;
 use App\Entity\Dm\TranchesPretes;
 use App\Entity\Dm\Users;
 use App\Entity\Dm\UsersContributions;
+use App\Entity\Dm\UsersOptions;
 use App\Entity\Dm\UsersPermissions;
 use App\Tests\TestCommon;
 use DateTime;
@@ -118,6 +119,13 @@ class DmCollectionFixture implements FixtureInterface
                 ->setContribution('photographe')
                 ->setPointsNew(50)
                 ->setPointsTotal(50)
+        );
+
+        $dmEm->persist(
+            (new UsersOptions())
+                ->setUser($user)
+                ->setOptionNom('suggestion_notification_country')
+                ->setOptionValeur('fr')
         );
 
         if (self::$withPublicationSorts) {

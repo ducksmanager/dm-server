@@ -24,5 +24,6 @@ security:
         - { path: ^/rawsql, roles: ROLE_RAWSQL }
         - { path: ^/ducksmanager/resetDemo, roles: ROLE_ADMIN }
         - { path: ^/edgesprites/, roles: ROLE_ADMIN }
+        - { path: ^/notifications/, roles: ROLE_ADMIN }
         - { path: ^/collection/, roles: ROLE_COLLECTION }
         - { path: ^/edgecreator/, roles: ROLE_EDGECREATOR }

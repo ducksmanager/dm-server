@@ -109,6 +109,7 @@ class DmStatsFixture implements FixtureInterface
 
         $dmStatsEm->persist(
             ($missingAuthor1Issue1Story2ForUser = new UtilisateursPublicationsManquantes())
+                ->setPersoncode($author1Story2->getPersoncode())
                 ->setStorycode($author1Story2->getStorycode())
                 ->setIdUser(self::$userId)
                 ->setPublicationcode(self::generateIssue('us/CBL 7')->getPublicationcode())
@@ -128,6 +129,7 @@ class DmStatsFixture implements FixtureInterface
 
         $dmStatsEm->persist(
             ($missingAuthor1Issue1Story4ForUser = new UtilisateursPublicationsManquantes())
+                ->setPersoncode($author1Story4->getPersoncode())
                 ->setStorycode($author1Story4->getStorycode())
                 ->setIdUser(self::$userId)
                 ->setPublicationcode(self::generateIssue('fr/PM 315')->getPublicationcode())
@@ -178,6 +180,7 @@ class DmStatsFixture implements FixtureInterface
                 ->setPublicationcode(self::generateIssue('us/CBL 7')->getPublicationcode())
                 ->setIssuenumber(self::generateIssue('us/CBL 7')->getIssuenumber())
                 ->setIdUser($authorUser1->getIdUser())
+                ->setOldestdate(new \DateTime('yesterday midnight'))
                 ->setScore($missingAuthor1Issue1Story2ForUser->getNotation() + $missingAuthor1Issue1Story2ForUser->getNotation())
         );
 
@@ -186,6 +189,7 @@ class DmStatsFixture implements FixtureInterface
                 ->setPublicationcode(self::generateIssue('fr/DDD 1')->getPublicationcode())
                 ->setIssuenumber(self::generateIssue('fr/DDD 1')->getIssuenumber())
                 ->setIdUser($authorUser1->getIdUser())
+                ->setOldestdate(new \DateTime('yesterday midnight'))
                 ->setScore($missingAuthor1Issue2Story2ForUser->getNotation())
         );
 
@@ -194,6 +198,7 @@ class DmStatsFixture implements FixtureInterface
                 ->setPublicationcode(self::generateIssue('fr/PM 315')->getPublicationcode())
                 ->setIssuenumber(self::generateIssue('fr/PM 315')->getIssuenumber())
                 ->setIdUser($authorUser1->getIdUser())
+                ->setOldestdate(new \DateTime('today midnight'))
                 ->setScore($missingAuthor1Issue1Story4ForUser->getNotation() + $missingAuthor2Issue5Story5ForUser->getNotation())
         );
         $dmStatsEm->flush();

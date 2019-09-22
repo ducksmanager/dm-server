@@ -36,6 +36,13 @@ class UtilisateursPublicationsSuggerees
     private $issuenumber;
 
     /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="oldestdate", type="date", nullable=true)
+     */
+    private $oldestdate;
+
+    /**
      * @var int
      *
      * @ORM\Column(name="Score", type="integer", nullable=false)
@@ -74,6 +81,18 @@ class UtilisateursPublicationsSuggerees
     public function setIssuenumber(string $issuenumber): self
     {
         $this->issuenumber = $issuenumber;
+
+        return $this;
+    }
+
+    public function getOldestdate(): ?\DateTimeInterface
+    {
+        return $this->oldestdate;
+    }
+
+    public function setOldestdate(?\DateTimeInterface $oldestdate): self
+    {
+        $this->oldestdate = $oldestdate;
 
         return $this;
     }

@@ -18,6 +18,7 @@ use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Query\QueryException;
 use Exception;
 use Psr\Log\LoggerInterface;
+use Pusher\PushNotifications\PushNotifications;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,6 +28,28 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class CollectionController extends AbstractController implements RequiresDmVersionController, RequiresDmUserController
 {
     use collectionUpdateHelper;
+
+    /**
+     * @Route(methods={"GET"}, path="collection/notification_token")
+     */
+    public function getNotificationToken(Request $request) : Response {
+        $currentUsername = $this->getCurrentUser()['username'];
+        $passedUsername = $request->query->get('user_id');
+
+        if ($currentUsername !== $passedUsername) {
+            return new Response(Response::HTTP_UNAUTHORIZED);
+        }
+
+        try {
+            $beamsClient = new PushNotifications([
+                'instanceId' => $_ENV['PUSHER_INSTANCE_ID'],
+                'secretKey' => $_ENV['PUSHER_SECRET_KEY'],
+            ]);
+            return new JsonResponse($beamsClient->generateToken($currentUsername));
+        } catch (Exception $e) {
+            return new Response(Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 
     /**
      * @Route(methods={"POST"}, path="collection/lastvisit")

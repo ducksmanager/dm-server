@@ -67,7 +67,7 @@ class CoverIdTest extends TestCommon
         @unlink(self::$uploadDestination);
     }
 
-    public function tearDown()
+    public function tearDown() : void
     {
         parent::tearDown();
         @unlink(self::$imageToUpload);
