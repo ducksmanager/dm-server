@@ -20,7 +20,6 @@ class SimilarImagesResult
         $outputObject->setType($resultArray['type']);
 
         if (array_key_exists('bounding_rects', $resultArray)) {
-            $boundingRect = $resultArray['bounding_rects'];
             if (count($resultArray['image_ids']) === 0) {
                 return null;
             }

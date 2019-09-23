@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\Dm\UsersOptions;
 use App\Entity\DmStats\UtilisateursPublicationsSuggerees;
 use App\Service\NotificationService;
+use DateTime;
+use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -23,7 +25,7 @@ class NotificationController extends AbstractController implements RequiresDmVer
     public function sendNotification(LoggerInterface $logger, NotificationService $notificationService) : Response
     {
         try {
-            $yesterday = new \DateTime('yesterday midnight');
+            $yesterday = new DateTime('yesterday midnight');
 
             /** @var UtilisateursPublicationsSuggerees[] $suggestedIssuesReleasedYesterday */
             $suggestedIssuesReleasedYesterday = $this->getEm('dm_stats')->getRepository(UtilisateursPublicationsSuggerees::class)
@@ -39,7 +41,6 @@ class NotificationController extends AbstractController implements RequiresDmVer
                 ->setParameter(':option_name', 'suggestion_notification_country')
                 ->groupBy('user.username');
 
-            $sql = $userOptionsQb->getQuery()->getSQL();
             $usersAndNotificationCountries = $userOptionsQb->getQuery()->getResult();
 
             foreach($suggestedIssuesReleasedYesterday as $suggestedIssue) {
@@ -57,7 +58,7 @@ class NotificationController extends AbstractController implements RequiresDmVer
 
             $this->getEm('dm')->flush();
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $logger->error($e->getMessage());
             return new Response(Response::HTTP_INTERNAL_SERVER_ERROR);
         }

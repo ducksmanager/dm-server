@@ -9,6 +9,7 @@ use App\Entity\DmStats\AuteursPseudos;
 use App\Entity\DmStats\UtilisateursHistoiresManquantes;
 use App\Entity\DmStats\UtilisateursPublicationsManquantes;
 use App\Entity\DmStats\UtilisateursPublicationsSuggerees;
+use DateTime;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
@@ -180,7 +181,7 @@ class DmStatsFixture implements FixtureInterface
                 ->setPublicationcode(self::generateIssue('us/CBL 7')->getPublicationcode())
                 ->setIssuenumber(self::generateIssue('us/CBL 7')->getIssuenumber())
                 ->setIdUser($authorUser1->getIdUser())
-                ->setOldestdate(new \DateTime('yesterday midnight'))
+                ->setOldestdate(new DateTime('yesterday midnight'))
                 ->setScore($missingAuthor1Issue1Story2ForUser->getNotation() + $missingAuthor1Issue1Story2ForUser->getNotation())
         );
 
@@ -189,7 +190,7 @@ class DmStatsFixture implements FixtureInterface
                 ->setPublicationcode(self::generateIssue('fr/DDD 1')->getPublicationcode())
                 ->setIssuenumber(self::generateIssue('fr/DDD 1')->getIssuenumber())
                 ->setIdUser($authorUser1->getIdUser())
-                ->setOldestdate(new \DateTime('yesterday midnight'))
+                ->setOldestdate(new DateTime('yesterday midnight'))
                 ->setScore($missingAuthor1Issue2Story2ForUser->getNotation())
         );
 
@@ -198,7 +199,7 @@ class DmStatsFixture implements FixtureInterface
                 ->setPublicationcode(self::generateIssue('fr/PM 315')->getPublicationcode())
                 ->setIssuenumber(self::generateIssue('fr/PM 315')->getIssuenumber())
                 ->setIdUser($authorUser1->getIdUser())
-                ->setOldestdate(new \DateTime('today midnight'))
+                ->setOldestdate(new DateTime('today midnight'))
                 ->setScore($missingAuthor1Issue1Story4ForUser->getNotation() + $missingAuthor2Issue5Story5ForUser->getNotation())
         );
         $dmStatsEm->flush();

@@ -37,12 +37,9 @@ class NotificationService
     public function sendNotification(UtilisateursPublicationsSuggerees $suggestedIssue, int $userId, string $username) {
         $issueCode = "{$suggestedIssue->getPublicationcode()} {$suggestedIssue->getIssuenumber()}";
 
-        $title = 'New issue release!';
-        $body = $issueCode;
-
         try {
-            $result = $this->publishToUsers(
-                ['demo'],
+            $this->publishToUsers(
+                [$username],
                 [
                     'fcm' => [
                         'notification' => compact(['title', 'body'])

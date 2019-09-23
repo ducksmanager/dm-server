@@ -1,12 +1,7 @@
 <?php
 namespace App\Helper;
 
-use App\EntityTransform\SimilarImagesResult;
 use Cloudinary\Uploader;
-use InvalidArgumentException;
-use Psr\Log\LoggerInterface;
-use RuntimeException;
-use Symfony\Component\HttpFoundation\File\File;
 
 class SpriteHelper {
 

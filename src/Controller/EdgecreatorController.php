@@ -587,7 +587,7 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
         ])->fetchAll();
 
         $matches = array_filter($templatedValues, function($match) use ($nameSubString) {
-            $string_chunks = preg_split('/\[[^\]]+\]/', $match['Option_valeur']);
+            $string_chunks = preg_split('/\[[^]]+]/', $match['Option_valeur']);
             foreach($string_chunks as $string_chunk) {
                 if (strpos($nameSubString, $string_chunk) === false) {
                     return false;

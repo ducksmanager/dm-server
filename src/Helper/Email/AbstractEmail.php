@@ -50,7 +50,7 @@ abstract class AbstractEmail {
         $failures = [];
         $this->logger->info('Sending email of type ' .get_class($this). ' to ' .$this->getTo());
         if (!$this->mailer->send($message, $failures)) {
-            throw new RuntimeException("Can't send e-mail '".$this->__toString()."': failed with ".print_r($failures, true));
+            throw new RuntimeException("Can't send e-mail '". $this ."': failed with ".print_r($failures, true));
         }
 
         $message->setSubject('[Sent to '. array_keys($message->getTo())[0] ."] {$message->getSubject()}");

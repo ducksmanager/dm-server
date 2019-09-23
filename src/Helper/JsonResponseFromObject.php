@@ -17,7 +17,7 @@ class JsonResponseFromObject extends JsonResponse
 
     private static function getNormalizer(): ObjectNormalizer {
         $defaultContext = [
-            AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function ($object, $format, $context) {
+            AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function ($object) {
                 if (get_class($object) === TranchesEnCoursModeles::class) {
                     /** @var TranchesEnCoursModeles $object */
                     return $object->getId();
@@ -31,10 +31,5 @@ class JsonResponseFromObject extends JsonResponse
     private static function serializeToJson($object): string {
         $serializer = new Serializer([self::getNormalizer()], [new JsonEncoder()]);
         return $serializer->serialize($object, 'json');
-    }
-
-    public static function deserializeFromJson($object, $class): string {
-        $serializer = new Serializer([self::getNormalizer()], [new JsonEncoder()]);
-        return $serializer->deserialize($object, $class,'json');
     }
 }

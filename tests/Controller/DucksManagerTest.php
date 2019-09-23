@@ -161,13 +161,13 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
             ->setCoordy(0)
             ->setAdressecomplete('1 street A')
             ->setIdUtilisateur($demoUser->getId())
-            ->setDateajout(new \DateTime());
+            ->setDateajout(new DateTime());
 
         $bookstoreContribution = (new UsersContributions())
             ->setBookstore($bookstore)
             ->setUser($demoUser)
             ->setPointsNew(1)
-            ->setDate(new \DateTime())
+            ->setDate(new DateTime())
             ->setPointsTotal(1)
             ->setContribution('duckhunter');
 
@@ -178,7 +178,6 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
         self::$client->enableProfiler();
         $response = $this->buildAuthenticatedService('/ducksmanager/emails/pending', self::$dmUser, [])->call();
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
-        $objectResponse = json_decode($this->getResponseContent($response));
 
         /** @var MessageDataCollector $mailCollector */
         $mailCollector = self::$client->getProfile()->getCollector('swiftmailer');
@@ -242,7 +241,7 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
             ->setCoordy(0)
             ->setAdressecomplete('1 street A')
             ->setIdUtilisateur($demoUser->getId())
-            ->setDateajout(new \DateTime());
+            ->setDateajout(new DateTime());
 
         $bookstore = (clone $existingBookstore)
             ->setNom('Bookstore 2');

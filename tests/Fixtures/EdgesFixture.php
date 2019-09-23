@@ -13,7 +13,6 @@ class EdgesFixture implements FixtureInterface
 
     public function load(ObjectManager $dmEm) : void
     {
-        $all= $dmEm->getRepository(TranchesPretes::class)->findAll();
         $dmEm->persist(
             ($edge1 = new TranchesPretes())
                 ->setPublicationcode('fr/JM')

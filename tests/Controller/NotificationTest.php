@@ -29,7 +29,7 @@ class NotificationTest extends TestCommon
             'OK'
         ];
 
-        $response = $this->buildAuthenticatedServiceWithTestUser('/notification/send', self::$rawSqlUser, 'POST')
+        $this->buildAuthenticatedServiceWithTestUser('/notification/send', self::$rawSqlUser, 'POST')
             ->call();
 
         $notificationsSentForUser = $this->getEm('dm')->getRepository(UsersSuggestionsNotifications::class)->findBy([

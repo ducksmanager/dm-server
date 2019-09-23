@@ -864,10 +864,7 @@ class EdgeCreatorTest extends TestCommon
         $this->createUserCollection('otheruser');
 
         $designerUsernames = [self::$defaultTestDmUserName, self::$defaultTestDmUserName];
-        $designerIds = [$this->getUser(self::$defaultTestDmUserName)->getId(), $this->getUser(self::$defaultTestDmUserName)->getId()];
-
         $photographerUsernames = [self::$defaultTestDmUserName, 'otheruser'];
-        $photographerIds = [$this->getUser(self::$defaultTestDmUserName)->getId(), $this->getUser('otheruser')->getId()];
 
         $response = $this->buildAuthenticatedServiceWithTestUser("/edgecreator/publish/{$model->getId()}", self::$edgecreatorUser, 'PUT', [
             'designers' => $designerUsernames,

@@ -117,7 +117,6 @@ class CoverIdTest extends TestCommon
 
     public function testCoverIdSearch(): void
     {
-        $coverId1 = $this->getEm('coverid')->getRepository(Covers::class)->find(1);
         $this->mockCoverSearchResults(self::$coverSearchResultsSimple);
         $this->assertFileNotExists(self::$uploadDestination);
 

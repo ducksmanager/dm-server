@@ -61,7 +61,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
         if (is_null($existingUser->getDernieracces()) ) {
             $logger->info("Initializing last access for user {$existingUser->getId()}");
         }
-        else if ($existingUser->getDernieracces()->format('Y-m-d') < (new \DateTime())->format('Y-m-d')) {
+        else if ($existingUser->getDernieracces()->format('Y-m-d') < (new DateTime())->format('Y-m-d')) {
             $logger->info("Updating last access for user {$existingUser->getId()}");
             $existingUser->setPrecedentacces($existingUser->getDernieracces());
         }
@@ -245,7 +245,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
             return new Response('No headers', Response::HTTP_NO_CONTENT);
         }
 
-        preg_match_all('#^((?!country)[^\n\^]+\^[^\n\^]+)\^[^\n\^]*\^.*$#m', $rawData, $matches, PREG_SET_ORDER);
+        preg_match_all('#^((?!country)[^\n^]+\^[^\n^]+)\^[^\n^]*\^.*$#m', $rawData, $matches, PREG_SET_ORDER);
         if (count($matches) === 0) {
             return new Response('No content', Response::HTTP_NO_CONTENT);
         }

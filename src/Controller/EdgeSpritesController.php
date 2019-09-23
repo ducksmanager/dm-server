@@ -65,8 +65,6 @@ class EdgeSpritesController extends AbstractController implements RequiresDmVers
      */
     public function updateTags(LoggerInterface $logger, int $edgeID)
     {
-        $TAGGABLE_ASSETS_LIMIT = 1000;
-
         $qbDeleteExistingSpriteNames = $this->getEm('dm')->createQueryBuilder();
         $qbDeleteExistingSpriteNames
             ->delete(TranchesPretesSprites::class, 'sprite')

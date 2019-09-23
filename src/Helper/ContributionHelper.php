@@ -29,7 +29,7 @@ class ContributionHelper {
             ->where('uc.user = :user and uc.contribution = :contribution')
             ->setParameter(':user', $user)
             ->setParameter(':contribution', $contributionType);
-        $currentUserPoints = intval($qb->getQuery()->getSingleScalarResult());
+        $currentUserPoints = (int)$qb->getQuery()->getSingleScalarResult();
 
         $contribution = new UsersContributions();
         $contribution

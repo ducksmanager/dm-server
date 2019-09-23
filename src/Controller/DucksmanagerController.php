@@ -370,7 +370,7 @@ class DucksmanagerController extends AbstractController
      * @Route(methods={"POST"}, path="/ducksmanager/bookstore/approve")
      * @throws ORMException
      */
-    public function approveBookstore(Request $request, Swift_Mailer $mailer, TranslatorInterface $translator): Response
+    public function approveBookstore(Request $request): Response
     {
         $dmEm = $this->getEm('dm');
         $bookstoreId = $request->request->get('id');
