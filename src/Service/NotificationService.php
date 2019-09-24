@@ -8,21 +8,24 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Pusher\PushNotifications\PushNotifications;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class NotificationService
 {
     private static $client;
     private static $dmEm;
     private static $logger;
+    private static $translator;
 
     public static $mockResultsStack = [];
 
-    public function __construct(LoggerInterface $logger, ManagerRegistry $doctrineManagerRegistry)
+    public function __construct(TranslatorInterface $translator, LoggerInterface $logger, ManagerRegistry $doctrineManagerRegistry)
     {
         self::$logger = $logger;
+        self::$translator = $translator;
         self::$dmEm = $doctrineManagerRegistry->getManager('dm');
 
-        if (isset($_ENV['PUSHER_INSTANCE_ID'])) {
+        if (!empty($_ENV['PUSHER_INSTANCE_ID'])) {
             try {
                 self::$client = new PushNotifications([
                     'instanceId' => $_ENV['PUSHER_INSTANCE_ID'],
@@ -37,18 +40,23 @@ class NotificationService
     public function sendNotification(UtilisateursPublicationsSuggerees $suggestedIssue, int $userId, string $username) {
         $issueCode = "{$suggestedIssue->getPublicationcode()} {$suggestedIssue->getIssuenumber()}";
 
+        $notificationContent = [
+            'title' => self::$translator->trans('NOTIFICATION_TITLE', ['%issueTitle%' => $issueCode ]),
+            'body' => self::$translator->trans('NOTIFICATION_BODY'),
+        ];
         try {
             $this->publishToUsers(
                 [$username],
                 [
                     'fcm' => [
-                        'notification' => compact(['title', 'body'])
+                        'notification' => $notificationContent
                     ],
                     'apns' => ['aps' => [
-                        'alert' => compact(['title', 'body'])
+                        'alert' => $notificationContent
                     ]]
                 ]
             );
+            self::$logger->info("Notification sent to user $userId concerning the release of issue $issueCode");
 
             $userSuggestionNotification = (new UsersSuggestionsNotifications())
                 ->setIssuecode($issueCode)

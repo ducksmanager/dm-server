@@ -25,6 +25,9 @@ MEDAL_2: Intermédiaire
 MEDAL_3: Expert
 MOT_DE_PASSE_6_CHAR_ERREUR: Le mot de passe doit comporter au moins 6 caractères !
 MOTS_DE_PASSE_DIFFERENTS: Les deux mots de passe ne correspondent pas !
+NOTIFICATION_TITLE: >-
+  %issueTitle% est sorti !
+NOTIFICATION_BODY: Ce numéro contient des histoires de vos auteurs favoris que vous ne possédez pas
 UTILISATEUR_3_CHAR_ERREUR: Choisissez un nom d'utilisateur d'au moins 3 caractères.
 UTILISATEUR_EXISTANT: Ce nom d'utilisateur est déjà utilisé !
 UTILISATEUR_INVALIDE: Le nom d'utilisateur est invalide. Choisissez un nom d'utilisateur d'au moins 3 caractères contenant seulement des lettres, des chiffres et des tirets.
