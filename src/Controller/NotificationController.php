@@ -68,7 +68,7 @@ class NotificationController extends AbstractController implements RequiresDmVer
 
         } catch (Exception $e) {
             $logger->error($e->getMessage());
-            return new Response('Internel server error', Response::HTTP_INTERNAL_SERVER_ERROR);
+            return new Response('Internal server error', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         return new JsonResponse(['notifications_sent' => $notificationsSent], Response::HTTP_ACCEPTED);
