@@ -1,11 +1,11 @@
 <?php
-namespace App\Helper;
+namespace App\Service;
 
-class CsvHelper
+class CsvService
 {
-    public static $csvRoot=__DIR__.'/../DataFixtures/';
+    public static $csvRoot= __DIR__ . '/../DataFixtures/';
 
-    public static function readCsv($fileName): array
+    public function readCsv($fileName): array
     {
         $headers = [];
         $outputData = [];

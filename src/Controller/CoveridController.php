@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Coverid\Covers;
-use App\Helper\SimilarImagesHelper;
+use App\Service\SimilarImagesService;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr\Func;
 use Psr\Log\LoggerInterface;
@@ -78,7 +78,7 @@ class CoveridController extends AbstractController
      * @Route(methods={"POST"}, path="/cover-id/search")
      * @return Response
      */
-    public function searchCover(Request $request, LoggerInterface $logger): Response
+    public function searchCover(Request $request, LoggerInterface $logger, SimilarImagesService $similarImagesService): Response
     {
         $logger->info('Cover ID search: start');
         if (($nbUploaded = $request->files->count()) !== 1) {
@@ -97,7 +97,7 @@ class CoveridController extends AbstractController
         $file = $uploadedFile->move(self::$uploadDestination[0], self::$uploadDestination[1]);
         $logger->info('Cover ID search: upload file moving done');
 
-        $engineResponse = SimilarImagesHelper::getSimilarImages($file, $logger);
+        $engineResponse = $similarImagesService->getSimilarImages($file, $logger);
 
         $logger->info('Cover ID search: processing done');
 

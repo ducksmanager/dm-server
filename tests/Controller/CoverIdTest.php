@@ -2,7 +2,7 @@
 namespace App\Tests\Controller;
 
 use App\Entity\Coverid\Covers;
-use App\Helper\SimilarImagesHelper;
+use App\Service\SimilarImagesService;
 use App\Tests\Fixtures\CoaEntryFixture;
 use App\Tests\Fixtures\CoaFixture;
 use App\Tests\Fixtures\CoverIdFixture;
@@ -75,7 +75,7 @@ class CoverIdTest extends TestCommon
 
     private function mockCoverSearchResults($mockedResponse): void
     {
-        SimilarImagesHelper::$mockedResults = json_encode($mockedResponse);
+        SimilarImagesService::$mockedResults = json_encode($mockedResponse);
     }
 
     public function testGetIssueListByIssueCodes(): void

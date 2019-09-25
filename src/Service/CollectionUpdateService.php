@@ -1,28 +1,40 @@
 <?php
-namespace App\Helper;
+namespace App\Service;
 
 use App\Entity\Dm\Numeros;
 use DateTime;
-use Doctrine\Common\Persistence\Mapping\MappingException;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
-use Doctrine\ORM\Query\QueryException;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\QueryBuilder;
+use Exception;
 
-trait collectionUpdateHelper {
+class CollectionUpdateService {
+
+    private static $dmEm;
+
+    public function __construct(ManagerRegistry $doctrineManagerRegistry)
+    {
+        self::$dmEm = $doctrineManagerRegistry->getManager('dm');
+    }
+
+
     /**
-     * @throws MappingException
-     * @throws ORMException
-     * @throws OptimisticLockException
-     * @throws QueryException
+     * @param int $userId
+     * @param string $publicationCode
+     * @param array $issueNumbers
+     * @param string|null $condition
+     * @param bool|null $istosell
+     * @param int|null $purchaseId
+     * @return array
+     * @throws Exception
      */
-    private function addOrChangeIssues(EntityManager $em, int $userId, string $publicationCode, array $issueNumbers, ?string $condition, ?bool $istosell, ?int $purchaseId): array
+    public function addOrChangeIssues(int $userId, string $publicationCode, array $issueNumbers, ?string $condition, ?bool $istosell, ?int $purchaseId): array
     {
         $conditionNewIssues = is_null($condition) ? 'possede' : $condition;
         $istosellNewIssues = is_null($istosell) ? false : $istosell;
         $purchaseIdNewIssues = is_null($purchaseId) ? -2 : $purchaseId; // TODO allow NULL
 
-        $qb = $em->createQueryBuilder();
+        /** @var QueryBuilder $qb */
+        $qb = self::$dmEm->createQueryBuilder();
         $qb
             ->select('issues')
             ->from(Numeros::class, 'issues')
@@ -51,7 +63,7 @@ trait collectionUpdateHelper {
             if (!is_null($purchaseId)) {
                 $existingIssue->setIdAcquisition($purchaseId);
             }
-            $em->persist($existingIssue);
+            self::$dmEm->persist($existingIssue);
         }
 
         [$countryCode, $magazine] = explode('/', $publicationCode);
@@ -68,11 +80,11 @@ trait collectionUpdateHelper {
             $newIssue->setIdUtilisateur($userId);
             $newIssue->setDateajout(new DateTime());
 
-            $em->persist($newIssue);
+            self::$dmEm->persist($newIssue);
         }
 
-        $em->flush();
-        $em->clear();
+        self::$dmEm->flush();
+        self::$dmEm->clear();
 
         $updateResult = count($existingIssues);
         $creationResult = count($issueNumbersToCreate);

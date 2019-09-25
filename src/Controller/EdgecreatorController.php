@@ -15,8 +15,8 @@ use App\Entity\EdgeCreator\TranchesEnCoursContributeurs;
 use App\Entity\EdgeCreator\TranchesEnCoursModeles;
 use App\Entity\EdgeCreator\TranchesEnCoursModelesImages;
 use App\Entity\EdgeCreator\TranchesEnCoursValeurs;
-use App\Helper\ContributionHelper;
 use App\Helper\JsonResponseFromObject;
+use App\Service\ContributionService;
 use DateTime;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
@@ -612,8 +612,9 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
     /**
      * @Route(methods={"PUT"}, path="/edgecreator/publish/{modelId}")
      * @throws ORMException
+     * @throws Exception
      */
-    public function publishEdge(Request $request, string $modelId) : Response {
+    public function publishEdge(Request $request, ContributionService $contributionService, string $modelId) : Response {
         $dmEm = $this->getEm('dm');
         $ecEm = $this->getEm('edgecreator');
 
@@ -653,8 +654,7 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
 
             $contributions = [];
             foreach($edgeModelToPublish->getContributeurs() as $modelContributor) {
-                $contributions[]=ContributionHelper::persistContribution(
-                    $dmEm,
+                $contributions[]=$contributionService->persistContribution(
                     $dmEm->getRepository(Users::class)->find($modelContributor->getIdUtilisateur()),
                     $modelContributor->getContribution(),
                     $popularity,

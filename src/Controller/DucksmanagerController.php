@@ -9,17 +9,16 @@ use App\Entity\Dm\Numeros;
 use App\Entity\Dm\Users;
 use App\Entity\Dm\UsersContributions;
 use App\Entity\Dm\UsersPasswordTokens;
-use App\Helper\collectionUpdateHelper;
-use App\Helper\ContributionHelper;
-use App\Helper\CsvHelper;
+use App\Helper\Email\AbstractEmail;
 use App\Helper\Email\BookstoreApprovedEmail;
+use App\Helper\Email\BookstoreSuggestedEmail;
 use App\Helper\Email\EdgesPublishedEmail;
 use App\Helper\Email\ResetPasswordEmail;
-use App\Helper\Email\BookstoreSuggestedEmail;
-use App\Helper\Email\AbstractEmail;
 use App\Helper\JsonResponseFromObject;
+use App\Service\CollectionUpdateService;
+use App\Service\ContributionService;
+use App\Service\CsvService;
 use DateTime;
-use Doctrine\Common\Persistence\Mapping\MappingException;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
@@ -35,8 +34,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DucksmanagerController extends AbstractController
 {
-    use collectionUpdateHelper;
-
     /**
      * @Route(methods={"PUT"}, path="/ducksmanager/user")
      */
@@ -143,10 +140,12 @@ class DucksmanagerController extends AbstractController
 
     /**
      * @Route(methods={"POST"}, path="/ducksmanager/resetDemo")
+     * @return JsonResponseFromObject|Response
      * @throws ORMException
-     * @throws MappingException
+     * @throws OptimisticLockException
+     * @throws Exception
      */
-    public function resetDemo() {
+    public function resetDemo(CollectionUpdateService $collectionUpdateService, CsvService $csvService) {
         $dmEm = $this->getEm('dm');
         $demoUser = $dmEm->getRepository(Users::class)->findOneBy([
             'username' => 'demo'
@@ -164,21 +163,15 @@ class DucksmanagerController extends AbstractController
                 return new Response('Error while resetting bookcase options : '.$e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
             }
 
-            $demoUserIssueData = CsvHelper::readCsv('demo_user/issues.csv');
+            $demoUserIssueData = $csvService->readCsv('demo_user/issues.csv');
 
             foreach ($demoUserIssueData as $publicationData) {
-                $this->addOrChangeIssues(
-                    $dmEm,
-                    $demoUser->getId(),
-                    $publicationData['publicationCode'],
-                    $publicationData['issueNumbers'],
-                    $publicationData['condition'],
-                    null,
-                    null
+                $collectionUpdateService->addOrChangeIssues(
+                    $demoUser->getId(), $publicationData['publicationCode'], $publicationData['issueNumbers'], $publicationData['condition'], null, null
                 );
             }
 
-            $demoUserPurchaseData = CsvHelper::readCsv('demo_user/purchases.csv');
+            $demoUserPurchaseData = $csvService->readCsv('demo_user/purchases.csv');
 
             foreach ($demoUserPurchaseData as $purchaseData) {
                 $purchase = new Achats();
@@ -369,8 +362,9 @@ class DucksmanagerController extends AbstractController
     /**
      * @Route(methods={"POST"}, path="/ducksmanager/bookstore/approve")
      * @throws ORMException
+     * @throws Exception
      */
-    public function approveBookstore(Request $request): Response
+    public function approveBookstore(Request $request, ContributionService $contributionService): Response
     {
         $dmEm = $this->getEm('dm');
         $bookstoreId = $request->request->get('id');
@@ -387,8 +381,7 @@ class DucksmanagerController extends AbstractController
             ->setActif(true)
             ->setDateajout(new DateTime());
 
-        ContributionHelper::persistContribution(
-            $dmEm,
+        $contributionService->persistContribution(
             $user,
             'duckhunter',
             1,

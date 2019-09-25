@@ -9,13 +9,11 @@ use App\Entity\Dm\Numeros;
 use App\Entity\Dm\Users;
 use App\Entity\Dm\UsersPermissions;
 use App\EntityTransform\UpdateCollectionResult;
-use App\Helper\collectionUpdateHelper;
 use App\Helper\JsonResponseFromObject;
+use App\Service\CollectionUpdateService;
 use DateTime;
-use Doctrine\Common\Persistence\Mapping\MappingException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
-use Doctrine\ORM\Query\QueryException;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Pusher\PushNotifications\PushNotifications;
@@ -27,8 +25,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CollectionController extends AbstractController implements RequiresDmVersionController, RequiresDmUserController
 {
-    use collectionUpdateHelper;
-
     /**
      * @Route(methods={"GET"}, path="collection/notification_token")
      */
@@ -116,12 +112,10 @@ class CollectionController extends AbstractController implements RequiresDmVersi
 
     /**
      * @Route(methods={"POST"}, path="/collection/issues")
-     * @throws MappingException
-     * @throws ORMException
-     * @throws OptimisticLockException
-     * @throws QueryException
+     * @return JsonResponse
+     * @throws Exception
      */
-    public function postIssues(Request $request, LoggerInterface $logger): JsonResponse
+    public function postIssues(Request $request, LoggerInterface $logger, CollectionUpdateService $collectionUpdateService): JsonResponse
     {
         $dmEm = $this->getEm('dm');
         $publication = $request->request->get('publicationCode');
@@ -142,14 +136,8 @@ class CollectionController extends AbstractController implements RequiresDmVersi
             $logger->warning("User {$this->getCurrentUser()['id']} tried to use purchase ID $purchaseId which is owned by another user");
             $purchaseId = null;
         }
-        [$nbUpdated, $nbCreated] = $this->addOrChangeIssues(
-            $dmEm,
-            $this->getCurrentUser()['id'],
-            $publication,
-            $issueNumbers,
-            $condition,
-            $isToSell,
-            $purchaseId
+        [$nbUpdated, $nbCreated] = $collectionUpdateService->addOrChangeIssues(
+            $this->getCurrentUser()['id'], $publication, $issueNumbers, $condition, $isToSell, $purchaseId
         );
         return new JsonResponse(self::getSimpleArray([
             new UpdateCollectionResult('UPDATE', $nbUpdated),

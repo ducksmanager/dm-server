@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Entity\Dm\TranchesPretes;
 use App\Entity\Dm\TranchesPretesSprites;
 use App\Entity\Dm\TranchesPretesSpritesUrls;
-use App\Helper\SpriteHelper;
+use App\Service\SpriteService;
 use Doctrine\ORM\ORMException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -20,10 +20,10 @@ class EdgeSpritesController extends AbstractController implements RequiresDmVers
      * @Route(methods={"PUT"}, path="/edgesprites/{edgeID}")
      * @throws ORMException
      */
-    public function uploadEdgesAndGenerateSprites(LoggerInterface $logger, string $edgeID) {
-        $uploadEdgesResult = $this->uploadEdges($logger, $edgeID);
-        $updateTagsResult = $this->updateTags($logger, $edgeID);
-        $generateSpritesResult = $this->generateSprites($logger, $edgeID);
+    public function uploadEdgesAndGenerateSprites(LoggerInterface $logger, SpriteService $spriteService, string $edgeID) {
+        $uploadEdgesResult = $this->uploadEdges($logger, $spriteService, $edgeID);
+        $updateTagsResult = $this->updateTags($logger, $spriteService, $edgeID);
+        $generateSpritesResult = $this->generateSprites($logger, $spriteService, $edgeID);
 
         return new JsonResponse([
             'edgesToUpload' => json_decode($uploadEdgesResult->getContent(), true),
@@ -35,7 +35,7 @@ class EdgeSpritesController extends AbstractController implements RequiresDmVers
     /**
      * @Route(methods={"PUT"}, path="/edgesprites/upload/{edgeID}")
      */
-    public function uploadEdges(LoggerInterface $logger, string $edgeID) {
+    public function uploadEdges(LoggerInterface $logger, SpriteService $spriteService, string $edgeID) {
 
         $dmEm = $this->getEm('dm');
         $qb = $dmEm->createQueryBuilder();
@@ -50,7 +50,7 @@ class EdgeSpritesController extends AbstractController implements RequiresDmVers
             [$country, $magazine] = explode('/', $edgeToUpload['publicationcode']);
 
             $logger->info("Uploading {$edgeToUpload['slug']}...");
-            SpriteHelper::upload(
+            $spriteService->upload(
                 "{$_ENV['EDGES_ROOT']}/$country/gen/$magazine.{$edgeToUpload['issuenumber']}.png", [
                     'public_id' => $edgeToUpload['slug']
             ]);
@@ -63,7 +63,7 @@ class EdgeSpritesController extends AbstractController implements RequiresDmVers
      * @Route(methods={"PUT"}, path="/edgesprites/tags/{edgeID}")
      * @throws ORMException
      */
-    public function updateTags(LoggerInterface $logger, int $edgeID)
+    public function updateTags(LoggerInterface $logger, SpriteService $spriteService, int $edgeID)
     {
         $qbDeleteExistingSpriteNames = $this->getEm('dm')->createQueryBuilder();
         $qbDeleteExistingSpriteNames
@@ -97,7 +97,7 @@ class EdgeSpritesController extends AbstractController implements RequiresDmVers
             }
 
             $logger->info("Adding tag $spriteName on {$edge->getSlug()}");
-            SpriteHelper::add_tag(
+            $spriteService->add_tag(
                 $spriteName,
                 $edge->getSlug()
             );
@@ -127,7 +127,7 @@ class EdgeSpritesController extends AbstractController implements RequiresDmVers
      * @Route(methods={"PUT"}, path="/edgesprites/sprites/{edgeID}")
      * @throws ORMException
      */
-    public function generateSprites(LoggerInterface $logger, int $edgeID) {
+    public function generateSprites(LoggerInterface $logger, SpriteService $spriteService, int $edgeID) {
 
         $dmEm = $this->getEm('dm');
 //        $qbExistingUrls = $dmEm->createQueryBuilder();
@@ -146,7 +146,7 @@ class EdgeSpritesController extends AbstractController implements RequiresDmVers
         foreach($spritesWithNoUrl as $sprite) {
             ['spriteName' => $spriteName] = $sprite;
             $logger->info("Generating sprite for $spriteName...");
-            $externalResponse = SpriteHelper::generate_sprite($spriteName);
+            $externalResponse = $spriteService->generate_sprite($spriteName);
 
             $spriteUrl = new TranchesPretesSpritesUrls();
 

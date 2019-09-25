@@ -1,8 +1,8 @@
 <?php
 namespace App\Controller;
 
-use App\Helper\dbQueryHelper;
-use App\Helper\SimilarImagesHelper;
+use App\Service\QueryHelperService;
+use App\Service\SimilarImagesService;
 use Doctrine\DBAL\DBALException;
 use Exception;
 use Psr\Log\LoggerInterface;
@@ -13,8 +13,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class StatusController extends AbstractController
 {
-    use dbQueryHelper;
-
     /**
      * @Route(
      *     methods={"GET"},
@@ -23,11 +21,11 @@ class StatusController extends AbstractController
      *     defaults={"pastecHost"="pastec"}
      * )
      */
-    public function getPastecStatus(string $pastecHost) : Response {
+    public function getPastecStatus(SimilarImagesService $similarImagesService, string $pastecHost) : Response {
         $log = [];
 
         try {
-            $pastecIndexesImagesNumber = SimilarImagesHelper::getIndexedImagesNumber($pastecHost);
+            $pastecIndexesImagesNumber = $similarImagesService->getIndexedImagesNumber($pastecHost);
             if ($pastecIndexesImagesNumber > 0) {
                 $log[] = "Pastec OK with $pastecIndexesImagesNumber images indexed";
             }
@@ -48,21 +46,19 @@ class StatusController extends AbstractController
 
     /**
      * @Route(methods={"GET"}, path="/status/db"))
-     * @param LoggerInterface $logger
-     * @return Response
      * @throws DBALException
      */
-    public function getDbStatus(LoggerInterface $logger): Response {
+    public function getDbStatus(QueryHelperService $queryHelperService): Response {
         $errors = [];
         $databaseChecks = [
             'dm' => 'SELECT * FROM users LIMIT 1',
-            'coa' => self::generateRowCheckOnTables($this->getEm('coa')),
+            'coa' => $queryHelperService->generateRowCheckOnTables('coa'),
             'coverid' => 'SELECT ID, issuecode, url FROM covers LIMIT 1',
             'dm_stats' => 'SELECT * FROM utilisateurs_histoires_manquantes LIMIT 1',
             'edgecreator' => 'SELECT * FROM edgecreator_modeles2 LIMIT 1'
         ];
         foreach ($databaseChecks as $db=>$dbCheckQuery) {
-            $response = self::checkDatabase($logger, $dbCheckQuery, $db, $this->getEm($db));
+            $response = $queryHelperService->checkDatabase($dbCheckQuery, $db);
             if ($response !== true) {
                 $errors[] = $response;
             }
@@ -76,15 +72,13 @@ class StatusController extends AbstractController
 
     /**
      * @Route(methods={"GET"}, path="/status/pastecsearch/{pastecHost}", defaults={"pastecHost"="pastec"}))
-     * @param LoggerInterface $logger
-     * @param string          $pastecHost
      * @return Response
      */
-    public function getPastecSearchStatus(LoggerInterface $logger, string $pastecHost): Response {
+    public function getPastecSearchStatus(LoggerInterface $logger, SimilarImagesService $similarImagesService, string $pastecHost): Response {
         $log = [];
 
         try {
-            $outputObject = SimilarImagesHelper::getSimilarImages(new File($_ENV['IMAGE_REMOTE_ROOT'].SimilarImagesHelper::$sampleCover, false), $logger, $pastecHost);
+            $outputObject = $similarImagesService->getSimilarImages(new File($_ENV['IMAGE_REMOTE_ROOT'].SimilarImagesService::$sampleCover, false), $logger, $pastecHost);
             $matchNumber = count($outputObject->getImageIds());
             if ($matchNumber > 0) {
                 $log[] = "Pastec search returned $matchNumber image(s)";

@@ -1,22 +1,22 @@
 <?php
-namespace App\Helper;
+namespace App\Service;
 
 use Cloudinary\Uploader;
 
-class SpriteHelper {
+class SpriteService {
 
   /** @var array $mockedResults */
   public static $mockedResults;
 
-    public static function upload($file, $options = array()) {
+    public function upload($file, $options = array()) {
         return self::$mockedResults['upload'] ?: Uploader::upload($file, $options);
     }
 
-    public static function add_tag($tag, $public_ids = array(), $options = array()) {
+    public function add_tag($tag, $public_ids = array(), $options = array()) {
         return self::$mockedResults['add_tag'] ?: Uploader::add_tag($tag, $public_ids, $options);
     }
 
-    public static function generate_sprite($tag, $options = array()) {
+    public function generate_sprite($tag, $options = array()) {
         return self::$mockedResults['generate_sprite'][$tag] ?: Uploader::generate_sprite($tag, $options);
     }
 }

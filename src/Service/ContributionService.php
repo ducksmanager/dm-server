@@ -1,29 +1,37 @@
 <?php
-namespace App\Helper;
+namespace App\Service;
 
 use App\Entity\Dm\Bouquineries;
 use App\Entity\Dm\TranchesPretes;
 use App\Entity\Dm\Users;
 use App\Entity\Dm\UsersContributions;
 use DateTime;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\ORMException;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\QueryBuilder;
+use Exception;
 
-class ContributionHelper {
+class ContributionService {
+
+    private static $dmEm;
+
+    public function __construct(ManagerRegistry $doctrineManagerRegistry)
+    {
+        self::$dmEm = $doctrineManagerRegistry->getManager('dm');
+    }
 
     /**
-     * @param EntityManager $dmEm
      * @param Users $user
      * @param string $contributionType
      * @param int $newPoints
      * @param TranchesPretes|null $edgeToPublish
      * @param Bouquineries|null $bookStoreToPublish
      * @return UsersContributions
-     * @throws ORMException
+     * @throws Exception
      */
-    public static function persistContribution(EntityManager $dmEm, Users $user, string $contributionType, int $newPoints, ?TranchesPretes $edgeToPublish = null, ?Bouquineries $bookStoreToPublish = null): UsersContributions
+    public function persistContribution(Users $user, string $contributionType, int $newPoints, ?TranchesPretes $edgeToPublish = null, ?Bouquineries $bookStoreToPublish = null): UsersContributions
     {
-        $qb = $dmEm->createQueryBuilder();
+        /** @var QueryBuilder $qb */
+        $qb = self::$dmEm->createQueryBuilder();
         $qb->select('sum(uc.pointsNew)')
             ->from(UsersContributions::class, 'uc')
             ->where('uc.user = :user and uc.contribution = :contribution')
@@ -45,7 +53,7 @@ class ContributionHelper {
         if (!is_null($bookStoreToPublish)) {
             $contribution->setBookstore($bookStoreToPublish);
         }
-        $dmEm->persist($contribution);
+        self::$dmEm->persist($contribution);
         return $contribution;
     }
 }

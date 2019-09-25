@@ -1,7 +1,7 @@
 <?php
 namespace App\Tests;
 
-use App\Helper\SimilarImagesHelper;
+use App\Service\SimilarImagesService;
 use App\Tests\Controller\CoverIdTest;
 use App\Tests\Fixtures\CoaEntryFixture;
 use App\Tests\Fixtures\CoaFixture;
@@ -19,7 +19,7 @@ class StatusTest extends TestCommon
 
     private function getCoverIdStatusForMockedResults($url, $mockedResults): Response {
         $this->createUserCollection(self::$defaultTestDmUserName);
-        SimilarImagesHelper::$mockedResults = $mockedResults;
+        SimilarImagesService::$mockedResults = $mockedResults;
 
         return $this->buildAuthenticatedService($url, self::$dmUser, [], [], 'GET')->call();
     }

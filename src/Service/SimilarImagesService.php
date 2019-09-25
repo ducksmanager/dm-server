@@ -1,5 +1,5 @@
 <?php
-namespace App\Helper;
+namespace App\Service;
 
 use App\EntityTransform\SimilarImagesResult;
 use InvalidArgumentException;
@@ -7,7 +7,7 @@ use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\File\File;
 
-class SimilarImagesHelper {
+class SimilarImagesService {
 
   /** @var string $mockedResults */
   public static $mockedResults;

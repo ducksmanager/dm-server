@@ -3,7 +3,7 @@ namespace App\Tests;
 
 use App\Entity\Dm\TranchesPretes;
 use App\Entity\Dm\TranchesPretesSprites;
-use App\Helper\SpriteHelper;
+use App\Service\SpriteService;
 use App\Tests\Fixtures\EdgesFixture;
 use DateTime;
 
@@ -20,7 +20,7 @@ class EdgeSpritesTest extends TestCommon
             'issuenumber' => '3001'
         ]);
 
-        SpriteHelper::$mockedResults = [
+        SpriteService::$mockedResults = [
             'upload' => 'Success',
             'add_tag' => 'Success',
             'generate_sprite' => [
@@ -85,7 +85,7 @@ class EdgeSpritesTest extends TestCommon
             'issuenumber' => '3001'
         ]);
 
-        SpriteHelper::$mockedResults = [
+        SpriteService::$mockedResults = [
             'upload' => 'Success',
             'add_tag' => 'Success',
             'generate_sprite' => [
