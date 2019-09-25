@@ -1,6 +1,7 @@
 <?php
 namespace App\Tests;
 
+use App\Entity\Dm\Users;
 use App\Entity\Dm\UsersSuggestionsNotifications;
 use App\Service\NotificationService;
 use App\Tests\Fixtures\DmCollectionFixture;
@@ -33,7 +34,7 @@ class NotificationTest extends TestCommon
             ->call();
 
         $notificationsSentForUser = $this->getEm('dm')->getRepository(UsersSuggestionsNotifications::class)->findBy([
-            'userId' => 1
+            'user' => $this->getEm('dm')->getRepository(Users::class)->findOneBy(['username' => DmCollectionFixture::$username])
         ]);
 
         $this->assertCount(1, $notificationsSentForUser);

@@ -34,32 +34,25 @@ class NotificationController extends AbstractController implements RequiresDmVer
 
             $userOptionsQb = $this->getEm('dm')->createQueryBuilder();
             $userOptionsQb
+                ->select('uo AS user_options')
                 ->from(UsersOptions::class, 'uo')
-                ->innerJoin('uo.user', 'user')
-                ->addSelect('user.id as user_id, user.username')
                 ->addSelect('GROUP_CONCAT(uo.optionValeur) AS countries')
+                ->innerJoin('uo.user', 'u')
                 ->where('uo.optionNom = :option_name')
                 ->setParameter(':option_name', 'suggestion_notification_country')
-                ->groupBy('user.username');
+                ->groupBy('u.id');
 
-            $sql = $userOptionsQb->getQuery()->getSQL();
-
+            $dql = $userOptionsQb->getQuery()->getDQL();
             $usersAndNotificationCountries = $userOptionsQb->getQuery()->getResult();
 
             foreach($suggestedIssuesReleasedYesterday as $suggestedIssue) {
-                foreach($usersAndNotificationCountries as ['user_id' => $userId, 'username' => $username, 'countries' => $notificationCountries]) {
-                    $notificationCountries = explode(',', $notificationCountries);
+                /** @var UsersOptions $userOptions */
+                /** @var string $notificationCountries */
+                foreach($usersAndNotificationCountries as ['user_options' => $userOptions, 'countries' => $notificationCountries]) {
+                    $notificationCountriesForUser = explode(',', $notificationCountries);
 
-                    $countryCode = explode('/', $suggestedIssue->getPublicationcode())[0];
-                    if (in_array(
-                        $countryCode,
-                        $notificationCountries,
-                        true)) {
-                        $notificationService->sendNotification($suggestedIssue, $userId, $username);
+                    if ($notificationService->sendNotification($suggestedIssue, $userOptions->getUser(), $notificationCountriesForUser)) {
                         $notificationsSent++;
-                    }
-                    else {
-                        $logger->info("User $userId doesn't want to be notified for releases of country $countryCode");
                     }
                 }
             }

@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * UsersSuggestionsNotifications
  *
- * @ORM\Table(name="users_suggestions_notifications", uniqueConstraints={@ORM\UniqueConstraint(name="users_notifications__index_user_issue", columns={"User_ID", "issuecode"})})
+ * @ORM\Table(name="users_suggestions_notifications", uniqueConstraints={@ORM\UniqueConstraint(name="users_notifications__index_user_issue", columns={"ID_User", "issuecode"})})
  * @ORM\Entity
  */
 class UsersSuggestionsNotifications
@@ -22,11 +22,14 @@ class UsersSuggestionsNotifications
     private $id;
 
     /**
-     * @var int
+     * @var Users
      *
-     * @ORM\Column(name="User_ID", type="integer", nullable=false)
+     * @ORM\ManyToOne(fetch="EAGER", targetEntity="Users")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="ID_User", referencedColumnName="ID")
+     * })
      */
-    private $userId;
+    private $user;
 
     /**
      * @var string
@@ -47,14 +50,14 @@ class UsersSuggestionsNotifications
         return $this->id;
     }
 
-    public function getUserId(): ?int
+    public function getUser(): Users
     {
-        return $this->userId;
+        return $this->user;
     }
 
-    public function setUserId(int $userId): self
+    public function setUser(Users $user): self
     {
-        $this->userId = $userId;
+        $this->user = $user;
 
         return $this;
     }
