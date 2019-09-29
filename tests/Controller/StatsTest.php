@@ -1,6 +1,8 @@
 <?php
 namespace App\Tests;
 
+use App\Entity\Dm\Users;
+use App\Entity\Dm\UsersOptions;
 use App\Tests\Fixtures\CoaEntryFixture;
 use App\Tests\Fixtures\CoaFixture;
 use App\Tests\Fixtures\DmStatsFixture;
@@ -119,7 +121,7 @@ class StatsTest extends TestCommon
 
         $objectResponse = json_decode($this->getResponseContent($response));
         $this->assertInternalType('object', $objectResponse);
-        $this->assertCount(1, get_object_vars($objectResponse->issues));
+        $this->assertCount(2, get_object_vars($objectResponse->issues));
 
         $issue1 = $objectResponse->issues->{'fr/PM 315'};
         $this->assertEquals(6, $issue1->score);
@@ -128,5 +130,22 @@ class StatsTest extends TestCommon
 
         $this->assertEquals('W WDC 130-02', $issue1->stories->CB[0]);
         $this->assertEquals('AR 201', $issue1->stories->DR[0]);
+    }
+
+
+    public function testGetSuggestionsSincePreviousVisitMultipleNotifiedCountries(): void {
+        $this->getEm('dm')->persist(
+            (new UsersOptions())
+                ->setUser($this->getEm('dm')->getRepository(Users::class)->find(DmStatsFixture::$userId))
+                ->setOptionNom('suggestion_notification_country')
+                ->setOptionValeur('us')
+        );
+        $this->getEm('dm')->flush();
+
+        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/stats/suggestedissues/ALL/since_previous_visit', self::$dmUser)->call();
+
+        $objectResponse = json_decode($this->getResponseContent($response));
+        $this->assertInternalType('object', $objectResponse);
+        $this->assertCount(3, get_object_vars($objectResponse->issues));
     }
 }

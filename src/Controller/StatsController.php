@@ -3,11 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Dm\Users;
+use App\Entity\Dm\UsersOptions;
 use App\Entity\DmStats\AuteursHistoires;
 use App\Entity\DmStats\UtilisateursHistoiresManquantes;
 use App\Entity\DmStats\UtilisateursPublicationsManquantes;
 use App\Entity\DmStats\UtilisateursPublicationsSuggerees;
-use DateTime;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\Query\Expr\OrderBy;
 use stdClass;
@@ -55,14 +55,26 @@ class StatsController extends AbstractController implements RequiresDmVersionCon
      * )
      */
     public function getSuggestedIssuesWithDetails(string $countryCode, string $sincePreviousVisit) {
+        $countryCodes = $countryCode === 'ALL' ? null : [$countryCode];
+
         if ($sincePreviousVisit === 'since_previous_visit') {
-            /** @var DateTime $previousVisit */
-            $previousVisit = $this->getEm('dm')->getRepository(Users::class)->find($this->getCurrentUser()['id'])->getPrecedentacces();
+            /** @var Users $user */
+            $user = $this->getEm('dm')->getRepository(Users::class)->find($this->getCurrentUser()['id']);
+            if (is_null($countryCodes)) {
+                $userCountryNotifications = $this->getEm('dm')->getRepository(UsersOptions::class)->findBy([
+                    'user' => $user,
+                    'optionNom' => 'suggestion_notification_country'
+                ]);
+                $countryCodes = array_map(function(UsersOptions $option) {
+                    return $option->getOptionValeur();
+                }, $userCountryNotifications);
+            }
+            $previousVisit = $user->getPrecedentacces();
             if (!is_null($previousVisit)) {
                 $since = $previousVisit->format('Y-m-d');
             }
         }
-        $suggestedStories = $this->getSuggestedIssues($countryCode, $since ?? 'forever');
+        $suggestedStories = $this->getSuggestedIssues($countryCodes, $since ?? 'forever');
 
         if (count($suggestedStories) === 0) {
             return new JsonResponse([
@@ -184,7 +196,7 @@ class StatsController extends AbstractController implements RequiresDmVersionCon
         return $storyCounts;
     }
 
-    private function getSuggestedIssues(string $countryCode, string $since) : array
+    private function getSuggestedIssues(?array $countryCodes, string $since) : array
     {
         $qbGetMostWantedSuggestions = $this->getEm('dm_stats')->createQueryBuilder();
 
@@ -196,10 +208,14 @@ class StatsController extends AbstractController implements RequiresDmVersionCon
             ->orderBy(new OrderBy('most_suggested.score', 'DESC'))
             ->setMaxResults(20);
 
-        if ($countryCode !== 'ALL') {
+        if (!is_null($countryCodes)) {
             $qbGetMostWantedSuggestions
-                ->andWhere($qbGetMostWantedSuggestions->expr()->like('most_suggested.publicationcode', ':countrycodePrefix'))
-                ->setParameter(':countrycodePrefix', $countryCode.'/%');
+                ->andWhere('('.implode(' or ', array_map(function(string $countryCode) {
+                    return "most_suggested.publicationcode LIKE :countryCodeParameter$countryCode";
+                }, $countryCodes)).')');
+            foreach($countryCodes as $countryCode) {
+                $qbGetMostWantedSuggestions->setParameter(":countryCodeParameter$countryCode", "$countryCode/%");
+            }
         }
 
         if ($since !== 'forever') {
