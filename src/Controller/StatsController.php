@@ -2,12 +2,15 @@
 
 namespace App\Controller;
 
+use App\Entity\Dm\Users;
 use App\Entity\DmStats\AuteursHistoires;
 use App\Entity\DmStats\UtilisateursHistoiresManquantes;
 use App\Entity\DmStats\UtilisateursPublicationsManquantes;
 use App\Entity\DmStats\UtilisateursPublicationsSuggerees;
+use DateTime;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\Query\Expr\OrderBy;
+use stdClass;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -46,16 +49,30 @@ class StatsController extends AbstractController implements RequiresDmVersionCon
     /**
      * @Route(
      *     methods={"GET"},
-     *     path="/collection/stats/suggestedissues/{countryCode}",
-     *     requirements={"countryCode"="^(?P<countrycode_regex>[a-z]+)$"},
-     *     defaults={"countryCode"="ALL"}
+     *     path="/collection/stats/suggestedissues/{countryCode}/{sincePreviousVisit}",
+     *     requirements={"countryCode"="^(?P<countrycode_regex>[a-z]+)|ALL$", "sincePreviousVisit"="^since_previous_visit|_$"},
+     *     defaults={"countryCode"="ALL", "sincePreviousVisit"="_"}
      * )
      */
-    public function getSuggestedIssuesWithDetails(string $countryCode) {
-        $suggestedStories = $this->getSuggestedIssues($countryCode);
+    public function getSuggestedIssuesWithDetails(string $countryCode, string $sincePreviousVisit) {
+        if ($sincePreviousVisit === 'since_previous_visit') {
+            /** @var DateTime $previousVisit */
+            $previousVisit = $this->getEm('dm')->getRepository(Users::class)->find($this->getCurrentUser()['id'])->getPrecedentacces();
+            if (!is_null($previousVisit)) {
+                $since = $previousVisit->format('Y-m-d');
+            }
+        }
+        $suggestedStories = $this->getSuggestedIssues($countryCode, $since ?? 'forever');
 
         if (count($suggestedStories) === 0) {
-            return new JsonResponse([]);
+            return new JsonResponse([
+                'maxScore' => 0,
+                'minScore' => 0,
+                'issues' => new stdClass(),
+                'authors' => new stdClass(),
+                'publicationTitles' => new stdClass(),
+                'storyDetails' => new stdClass()
+            ]);
         }
 
         // Get author names
@@ -167,7 +184,7 @@ class StatsController extends AbstractController implements RequiresDmVersionCon
         return $storyCounts;
     }
 
-    private function getSuggestedIssues(string $countryCode) : array
+    private function getSuggestedIssues(string $countryCode, string $since) : array
     {
         $qbGetMostWantedSuggestions = $this->getEm('dm_stats')->createQueryBuilder();
 
@@ -183,6 +200,12 @@ class StatsController extends AbstractController implements RequiresDmVersionCon
             $qbGetMostWantedSuggestions
                 ->andWhere($qbGetMostWantedSuggestions->expr()->like('most_suggested.publicationcode', ':countrycodePrefix'))
                 ->setParameter(':countrycodePrefix', $countryCode.'/%');
+        }
+
+        if ($since !== 'forever') {
+            $qbGetMostWantedSuggestions
+                ->andWhere($qbGetMostWantedSuggestions->expr()->gt('most_suggested.oldestdate', ':since'))
+                ->setParameter(':since', $since);
         }
 
         $mostWantedSuggestionsResults = $qbGetMostWantedSuggestions->getQuery()->getResult();

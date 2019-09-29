@@ -97,7 +97,7 @@ class StatsTest extends TestCommon
         $this->assertEquals('Carl Barks', $objectResponse->authors->CB);
     }
 
-    public function testGetSuggestionsCountryFilter(): void
+    public function testGetSuggestionsByCountry(): void
     {
         $response = $this->buildAuthenticatedServiceWithTestUser('/collection/stats/suggestedissues/fr', self::$dmUser)->call();
 
@@ -110,7 +110,23 @@ class StatsTest extends TestCommon
         $this->assertEquals('fr/DDD', $issue1->publicationcode);
         $this->assertEquals('1', $issue1->issuenumber);
 
-        $story1 = 'W WDC  32-02';
-        $this->assertEquals($story1, $issue1->stories->CB[0]);
+        $this->assertEquals('W WDC  32-02', $issue1->stories->CB[0]);
+    }
+
+    public function testGetSuggestionsSincePreviousVisit(): void
+    {
+        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/stats/suggestedissues/ALL/since_previous_visit', self::$dmUser)->call();
+
+        $objectResponse = json_decode($this->getResponseContent($response));
+        $this->assertInternalType('object', $objectResponse);
+        $this->assertCount(1, get_object_vars($objectResponse->issues));
+
+        $issue1 = $objectResponse->issues->{'fr/PM 315'};
+        $this->assertEquals(6, $issue1->score);
+        $this->assertEquals('fr/PM', $issue1->publicationcode);
+        $this->assertEquals('315', $issue1->issuenumber);
+
+        $this->assertEquals('W WDC 130-02', $issue1->stories->CB[0]);
+        $this->assertEquals('AR 201', $issue1->stories->DR[0]);
     }
 }
