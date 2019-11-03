@@ -33,11 +33,12 @@ class NotificationTest extends TestCommon
         $this->buildAuthenticatedServiceWithTestUser('/notification/send', self::$rawSqlUser, 'POST')
             ->call();
 
-        $notificationsSentForUser = $this->getEm('dm')->getRepository(UsersSuggestionsNotifications::class)->findBy([
+        $notificationsSentToUser = $this->getEm('dm')->getRepository(UsersSuggestionsNotifications::class)->findBy([
             'user' => $this->getEm('dm')->getRepository(Users::class)->findOneBy(['username' => DmCollectionFixture::$username])
         ]);
 
-        $this->assertCount(1, $notificationsSentForUser);
-        $this->assertEquals(true, $notificationsSentForUser[0]->getNotified());
+        $this->assertCount(1, $notificationsSentToUser);
+        $this->assertEquals('Dynastie 1', $notificationsSentToUser[0]->getIssuecode());
+        $this->assertEquals(true, $notificationsSentToUser[0]->getNotified());
     }
 }

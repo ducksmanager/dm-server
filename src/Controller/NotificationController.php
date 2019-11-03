@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Coa\InducksPublication;
 use App\Entity\Dm\Users;
 use App\Entity\Dm\UsersSuggestionsNotifications;
 use App\Entity\DmStats\UtilisateursPublicationsSuggerees;
@@ -49,7 +50,7 @@ class NotificationController extends AbstractController implements RequiresDmVer
             /** @var Users $user */
             foreach($usersAndNotificationCountries as ['user' => $user, 'countries' => $notificationCountries]) {
                 $notificationCountriesForUser = explode(',', $notificationCountries);
-                $suggestedIssuesForUser = $this->getSuggestedIssueCodesToNotifyForUser($suggestedIssuesAllUsers, $user->getId(), $notificationCountriesForUser, $logger);
+                $suggestedIssuesForUser = $this->getSuggestedIssuesToNotifyUser($suggestedIssuesAllUsers, $user->getId(), $notificationCountriesForUser, $logger);
 
                 foreach($suggestedIssuesForUser as $suggestedIssueForUser) {
                     if (!isset($issueNotificationsToSend[$suggestedIssueForUser])) {
@@ -59,7 +60,9 @@ class NotificationController extends AbstractController implements RequiresDmVer
             }
 
             foreach($issueNotificationsToSend as $issue => $usersToNotify) {
-                $notificationsSent+=$notificationService->sendSuggestedIssueNotification($issue, $usersToNotify);
+                /** @var InducksPublication $publication */
+                $publication = $this->getEm('coa')->getRepository(InducksPublication::class)->find(json_decode($issue)->publicationcode);
+                $notificationsSent+=$notificationService->sendSuggestedIssueNotification($publication->getTitle().' '.json_decode($issue)->issuenumber, $usersToNotify);
             }
 
             $this->getEm('dm')->flush();
@@ -77,9 +80,9 @@ class NotificationController extends AbstractController implements RequiresDmVer
      * @param int $userId
      * @param string[] $notificationCountriesForUser
      * @param LoggerInterface $logger
-     * @return string[]
+     * @return UtilisateursPublicationsSuggerees[]
      */
-    private function getSuggestedIssueCodesToNotifyForUser(array $suggestedIssuesToNotify, int $userId, array $notificationCountriesForUser, LoggerInterface $logger): array
+    private function getSuggestedIssuesToNotifyUser(array $suggestedIssuesToNotify, int $userId, array $notificationCountriesForUser, LoggerInterface $logger): array
     {
         $suggestionsToNotifyForUser = [];
         foreach ($suggestedIssuesToNotify as $key => $suggestedIssue) {
@@ -108,7 +111,10 @@ class NotificationController extends AbstractController implements RequiresDmVer
                 continue;
             }
 
-            $suggestionsToNotifyForUser[] = $suggestedIssueCode;
+            $suggestionsToNotifyForUser[] = json_encode([
+                'publicationcode' => $suggestedIssue->getPublicationcode(),
+                'issuenumber' => $suggestedIssue->getIssuenumber()
+            ]);
         }
         return $suggestionsToNotifyForUser;
     }
