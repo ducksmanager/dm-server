@@ -8,6 +8,7 @@ use App\Entity\Dm\UsersSuggestionsNotifications;
 use App\Entity\DmStats\UtilisateursPublicationsSuggerees;
 use App\Service\NotificationService;
 use DateTime;
+use Doctrine\Common\Collections\Criteria;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -28,13 +29,17 @@ class NotificationController extends AbstractController implements RequiresDmVer
         $issueNotificationsToSend = [];
         $userIdsToNotify = [];
         try {
-            $yesterday = new DateTime('yesterday midnight');
+            $recently = new DateTime('-7 days midnight');
+            $today = new DateTime('today midnight');
 
             /** @var UtilisateursPublicationsSuggerees[] $suggestedIssuesAllUsers */
             $suggestedIssuesAllUsers = $this->getEm('dm_stats')->getRepository(UtilisateursPublicationsSuggerees::class)
-                ->findby(['oldestdate' => $yesterday]);
+                ->matching((new Criteria())->where(Criteria::expr()->andX(
+                    Criteria::expr()->gte('oldestdate', $recently),
+                    Criteria::expr()->lt('oldestdate', $today)
+                )))->getValues();
 
-            $logger->info(count($suggestedIssuesAllUsers).' potential notifications from suggested issues released yesterday');
+            $logger->info(count($suggestedIssuesAllUsers).' potential notifications from suggested issues released recently');
 
             $userNotificationCountriesQb = ($this->getEm('dm')->createQueryBuilder())
                 ->select('u AS user')

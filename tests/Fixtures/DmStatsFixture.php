@@ -181,7 +181,7 @@ class DmStatsFixture implements FixtureInterface
                 ->setPublicationcode(self::generateIssue('us/CBL 7')->getPublicationcode())
                 ->setIssuenumber(self::generateIssue('us/CBL 7')->getIssuenumber())
                 ->setIdUser($authorUser1->getIdUser())
-                ->setOldestdate(new DateTime('yesterday midnight'))
+                ->setOldestdate(new DateTime('-5 days midnight'))
                 ->setScore($missingAuthor1Issue1Story2ForUser->getNotation() + $missingAuthor1Issue1Story2ForUser->getNotation())
         );
 
@@ -190,7 +190,7 @@ class DmStatsFixture implements FixtureInterface
                 ->setPublicationcode(self::generateIssue('fr/DDD 1')->getPublicationcode())
                 ->setIssuenumber(self::generateIssue('fr/DDD 1')->getIssuenumber())
                 ->setIdUser($authorUser1->getIdUser())
-                ->setOldestdate(new DateTime('yesterday midnight'))
+                ->setOldestdate(new DateTime('-5 days midnight'))
                 ->setScore($missingAuthor1Issue2Story2ForUser->getNotation())
         );
 
