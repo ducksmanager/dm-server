@@ -62,13 +62,13 @@ class NotificationService
                 ]
             );
             foreach($usersToNotify as $userNotified) {
-                self::$logger->info("Notification sent to user {$userNotified->getId()} concerning the release of issue $text");
                 $userSuggestionNotification = (new UsersSuggestionsNotifications())
                     ->setIssuecode($issueCode)
                     ->setText($text)
                     ->setUser($userNotified)
                     ->setNotified(true);
                 self::$dmEm->persist($userSuggestionNotification);
+                self::$logger->info("Notification sent to user {$userNotified->getId()} concerning the release of issue $text");
             }
 
             return count($usersToNotify);
