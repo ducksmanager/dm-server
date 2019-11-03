@@ -38,14 +38,15 @@ class NotificationService
     }
 
     /**
-     * @param string $suggestedIssueCode
+     * @param string $issueCode
+     * @param string $text
      * @param Users[] $usersToNotify
      * @return int
      */
-    public function sendSuggestedIssueNotification(string $suggestedIssueCode, array $usersToNotify) : int {
+    public function sendSuggestedIssueNotification(string $issueCode, string $text, array $usersToNotify) : int {
 
         $notificationContent = [
-            'title' => self::$translator->trans('NOTIFICATION_TITLE', ['%issueTitle%' => $suggestedIssueCode ]),
+            'title' => self::$translator->trans('NOTIFICATION_TITLE', ['%issueTitle%' => $text ]),
             'body' => self::$translator->trans('NOTIFICATION_BODY'),
         ];
         try {
@@ -61,9 +62,10 @@ class NotificationService
                 ]
             );
             foreach($usersToNotify as $userNotified) {
-                self::$logger->info("Notification sent to user {$userNotified->getId()} concerning the release of issue $suggestedIssueCode");
+                self::$logger->info("Notification sent to user {$userNotified->getId()} concerning the release of issue $text");
                 $userSuggestionNotification = (new UsersSuggestionsNotifications())
-                    ->setIssuecode($suggestedIssueCode)
+                    ->setIssuecode($issueCode)
+                    ->setText($text)
                     ->setUser($userNotified)
                     ->setNotified(true);
                 self::$dmEm->persist($userSuggestionNotification);

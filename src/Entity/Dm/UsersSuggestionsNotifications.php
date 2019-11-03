@@ -39,6 +39,13 @@ class UsersSuggestionsNotifications
     private $issuecode;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="text", type="text", nullable=false)
+     */
+    private $text;
+
+    /**
      * @var bool
      *
      * @ORM\Column(name="notified", type="boolean", nullable=false)
@@ -70,6 +77,18 @@ class UsersSuggestionsNotifications
     public function setIssuecode(string $issuecode): self
     {
         $this->issuecode = $issuecode;
+
+        return $this;
+    }
+
+    public function getText(): ?string
+    {
+        return $this->text;
+    }
+
+    public function setText(string $text): self
+    {
+        $this->text = $text;
 
         return $this;
     }

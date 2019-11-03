@@ -38,7 +38,8 @@ class NotificationTest extends TestCommon
         ]);
 
         $this->assertCount(1, $notificationsSentToUser);
-        $this->assertEquals('Dynastie 1', $notificationsSentToUser[0]->getIssuecode());
+        $this->assertEquals('fr/DDD 1', $notificationsSentToUser[0]->getIssuecode());
+        $this->assertEquals('Dynastie 1', $notificationsSentToUser[0]->getText());
         $this->assertEquals(true, $notificationsSentToUser[0]->getNotified());
     }
 }

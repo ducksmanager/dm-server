@@ -67,7 +67,10 @@ class NotificationController extends AbstractController implements RequiresDmVer
             foreach($issueNotificationsToSend as $issue => $usersToNotify) {
                 /** @var InducksPublication $publication */
                 $publication = $this->getEm('coa')->getRepository(InducksPublication::class)->find(json_decode($issue)->publicationcode);
-                $notificationsSent+=$notificationService->sendSuggestedIssueNotification($publication->getTitle().' '.json_decode($issue)->issuenumber, $usersToNotify);
+
+                $issueCode = json_decode($issue)->publicationcode.' '.json_decode($issue)->issuenumber;
+                $title = $publication->getTitle().' '.json_decode($issue)->issuenumber;
+                $notificationsSent += $notificationService->sendSuggestedIssueNotification($issueCode, $title, $usersToNotify);
             }
 
             $this->getEm('dm')->flush();
