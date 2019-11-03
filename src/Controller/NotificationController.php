@@ -2,7 +2,8 @@
 
 namespace App\Controller;
 
-use App\Entity\Dm\UsersOptions;
+use App\Entity\Dm\Users;
+use App\Entity\Dm\UsersSuggestionsNotifications;
 use App\Entity\DmStats\UtilisateursPublicationsSuggerees;
 use App\Service\NotificationService;
 use DateTime;
@@ -23,38 +24,42 @@ class NotificationController extends AbstractController implements RequiresDmVer
     public function sendNotification(LoggerInterface $logger, NotificationService $notificationService) : Response
     {
         $notificationsSent = 0;
+        $issueNotificationsToSend = [];
+        $userIdsToNotify = [];
         try {
             $yesterday = new DateTime('yesterday midnight');
 
-            /** @var UtilisateursPublicationsSuggerees[] $suggestedIssuesReleasedYesterday */
-            $suggestedIssuesReleasedYesterday = $this->getEm('dm_stats')->getRepository(UtilisateursPublicationsSuggerees::class)
+            /** @var UtilisateursPublicationsSuggerees[] $suggestedIssuesAllUsers */
+            $suggestedIssuesAllUsers = $this->getEm('dm_stats')->getRepository(UtilisateursPublicationsSuggerees::class)
                 ->findby(['oldestdate' => $yesterday]);
 
-            $logger->info(count($suggestedIssuesReleasedYesterday).' potential notifications from suggested issues released yesterday');
+            $logger->info(count($suggestedIssuesAllUsers).' potential notifications from suggested issues released yesterday');
 
-            $userOptionsQb = $this->getEm('dm')->createQueryBuilder();
-            $userOptionsQb
-                ->select('uo AS user_options')
-                ->from(UsersOptions::class, 'uo')
+            $userNotificationCountriesQb = ($this->getEm('dm')->createQueryBuilder())
+                ->select('u AS user')
                 ->addSelect('GROUP_CONCAT(uo.optionValeur) AS countries')
-                ->innerJoin('uo.user', 'u')
+                ->from(Users::class, 'u')
+                ->leftJoin('u.options', 'uo')
                 ->where('uo.optionNom = :option_name')
                 ->setParameter(':option_name', 'suggestion_notification_country')
                 ->groupBy('u.id');
 
-            $dql = $userOptionsQb->getQuery()->getDQL();
-            $usersAndNotificationCountries = $userOptionsQb->getQuery()->getResult();
+            $usersAndNotificationCountries = $userNotificationCountriesQb->getQuery()->getResult();
 
-            foreach($suggestedIssuesReleasedYesterday as $suggestedIssue) {
-                /** @var UsersOptions $userOptions */
-                /** @var string $notificationCountries */
-                foreach($usersAndNotificationCountries as ['user_options' => $userOptions, 'countries' => $notificationCountries]) {
-                    $notificationCountriesForUser = explode(',', $notificationCountries);
+            /** @var Users $user */
+            foreach($usersAndNotificationCountries as ['user' => $user, 'countries' => $notificationCountries]) {
+                $notificationCountriesForUser = explode(',', $notificationCountries);
+                $suggestedIssuesForUser = $this->getSuggestedIssueCodesToNotifyForUser($suggestedIssuesAllUsers, $user->getId(), $notificationCountriesForUser, $logger);
 
-                    if ($notificationService->sendNotification($suggestedIssue, $userOptions->getUser(), $notificationCountriesForUser)) {
-                        $notificationsSent++;
+                foreach($suggestedIssuesForUser as $suggestedIssueForUser) {
+                    if (!isset($issueNotificationsToSend[$suggestedIssueForUser])) {
+                        $issueNotificationsToSend[$suggestedIssueForUser][] = $user;
                     }
                 }
+            }
+
+            foreach($issueNotificationsToSend as $issue => $usersToNotify) {
+                $notificationsSent+=$notificationService->sendSuggestedIssueNotification($issue, $usersToNotify);
             }
 
             $this->getEm('dm')->flush();
@@ -65,5 +70,46 @@ class NotificationController extends AbstractController implements RequiresDmVer
         }
 
         return new JsonResponse(['notifications_sent' => $notificationsSent], Response::HTTP_ACCEPTED);
+    }
+
+    /**
+     * @param UtilisateursPublicationsSuggerees[] $suggestedIssuesToNotify
+     * @param int $userId
+     * @param string[] $notificationCountriesForUser
+     * @param LoggerInterface $logger
+     * @return string[]
+     */
+    private function getSuggestedIssueCodesToNotifyForUser(array $suggestedIssuesToNotify, int $userId, array $notificationCountriesForUser, LoggerInterface $logger): array
+    {
+        $suggestionsToNotifyForUser = [];
+        foreach ($suggestedIssuesToNotify as $key => $suggestedIssue) {
+            $suggestedIssueCountryCode = explode('/', $suggestedIssue->getPublicationcode())[0];
+            $suggestedIssueCode = "{$suggestedIssue->getPublicationcode()} {$suggestedIssue->getIssuenumber()}";
+            if ($suggestedIssue->getIdUser() !== $userId) {
+                continue;
+            }
+            if (!in_array($suggestedIssueCountryCode, $notificationCountriesForUser, true)) {
+                $logger->info("User $userId doesn't want to be notified for releases of country $suggestedIssueCountryCode");
+                continue;
+            }
+
+            $alreadySentNotificationQb = $this->getEm('dm')->createQueryBuilder();
+            $alreadySentNotificationQb
+                ->select('existingNotification')
+                ->from(UsersSuggestionsNotifications::class, 'existingNotification')
+                ->innerJoin('existingNotification.user', 'u')
+                ->where('u.id = :userId')
+                ->setParameter(':userId', $userId)
+                ->andWhere('existingNotification.issuecode = :issueCode')
+                ->setParameter(':issueCode', $suggestedIssueCode);
+
+            if (!empty($alreadySentNotificationQb->getQuery()->getResult())) {
+                $logger->info("A notification has already been sent to user $userId concerning the release of issue $suggestedIssueCode");
+                continue;
+            }
+
+            $suggestionsToNotifyForUser[] = $suggestedIssueCode;
+        }
+        return $suggestionsToNotifyForUser;
     }
 }

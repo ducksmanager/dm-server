@@ -3,6 +3,7 @@
 namespace App\Entity\Dm;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\OneToMany;
 
 /**
  * Users
@@ -118,6 +119,13 @@ class Users
      * @ORM\Column(name="DernierAcces", type="datetime", nullable=true)
      */
     private $dernieracces;
+
+    /**
+     * @var UsersOptions[]
+     *
+     * @OneToMany(targetEntity="UsersOptions", mappedBy="user")
+     */
+    private $options = [];
 
     public function getId(): ?int
     {
@@ -292,5 +300,24 @@ class Users
         return $this;
     }
 
+    /**
+     * @param UsersOptions[] $options
+     *
+     * @return Users
+     */
+    public function setOptions($options)
+    {
+        $this->options = $options;
+
+        return $this;
+    }
+
+    /**
+     * @return UsersOptions[]
+     */
+    public function getOptions()
+    {
+        return $this->options;
+    }
 
 }

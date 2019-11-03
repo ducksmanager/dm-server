@@ -24,10 +24,8 @@ class UsersOptions
     /**
      * @var Users
      *
-     * @ORM\ManyToOne(fetch="EAGER", targetEntity="Users")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="ID_User", referencedColumnName="ID")
-     * })
+     * @ORM\ManyToOne(fetch="EAGER", targetEntity="Users", inversedBy="options")
+     * @ORM\JoinColumn(name="ID_User", referencedColumnName="ID")
      */
     private $user;
 

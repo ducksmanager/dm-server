@@ -4,7 +4,6 @@ namespace App\Service;
 
 use App\Entity\Dm\Users;
 use App\Entity\Dm\UsersSuggestionsNotifications;
-use App\Entity\DmStats\UtilisateursPublicationsSuggerees;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Exception;
 use Psr\Log\LoggerInterface;
@@ -38,31 +37,20 @@ class NotificationService
         }
     }
 
-    public function sendNotification(UtilisateursPublicationsSuggerees $suggestedIssue, Users $user, array $notificationCountriesForUser) : bool {
-        $countryCode = explode('/', $suggestedIssue->getPublicationcode())[0];
-        $issueCode = "{$suggestedIssue->getPublicationcode()} {$suggestedIssue->getIssuenumber()}";
+    /**
+     * @param string $suggestedIssueCode
+     * @param Users[] $usersToNotify
+     * @return int
+     */
+    public function sendSuggestedIssueNotification(string $suggestedIssueCode, array $usersToNotify) : int {
 
-        if (!in_array(
-            $countryCode,
-            $notificationCountriesForUser,
-            true)) {
-            self::$logger->info("User {$user->getId()} doesn't want to be notified for releases of country $countryCode");
-            return false;
-        }
-
-        $alreadySentNotification = self::$dmEm->getRepository(UsersSuggestionsNotifications::class)->findOneBy(['user' => $user, 'issuecode' => $issueCode]);
-
-        if (!is_null($alreadySentNotification)) {
-            self::$logger->info("A notification has already been sent to user {$user->getId()} concerning the release of issue $issueCode");
-            return false;
-        }
         $notificationContent = [
-            'title' => self::$translator->trans('NOTIFICATION_TITLE', ['%issueTitle%' => $issueCode ]),
+            'title' => self::$translator->trans('NOTIFICATION_TITLE', ['%issueTitle%' => $suggestedIssueCode ]),
             'body' => self::$translator->trans('NOTIFICATION_BODY'),
         ];
         try {
             $this->publishToUsers(
-                [$user->getUsername()],
+                array_map(function(Users $user) { return $user->getUsername(); }, $usersToNotify),
                 [
                     'fcm' => [
                         'notification' => $notificationContent
@@ -72,20 +60,22 @@ class NotificationService
                     ]]
                 ]
             );
-            self::$logger->info("Notification sent to user {$user->getId()} concerning the release of issue $issueCode");
+            foreach($usersToNotify as $userNotified) {
+                self::$logger->info("Notification sent to user {$userNotified->getId()} concerning the release of issue $suggestedIssueCode");
+                $userSuggestionNotification = (new UsersSuggestionsNotifications())
+                    ->setIssuecode($suggestedIssueCode)
+                    ->setUser($userNotified)
+                    ->setNotified(true);
+                self::$dmEm->persist($userSuggestionNotification);
+            }
 
-            $userSuggestionNotification = (new UsersSuggestionsNotifications())
-                ->setIssuecode($issueCode)
-                ->setUser($user)
-                ->setNotified(true);
-            self::$dmEm->persist($userSuggestionNotification);
-            return true;
+            return count($usersToNotify);
 
         } catch (Exception $e) {
             self::$logger->error($e->getMessage());
         }
 
-        return false;
+        return 0;
     }
 
     /**
