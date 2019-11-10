@@ -54,10 +54,14 @@ class CollectionController extends AbstractController implements RequiresDmVersi
     public function getCountriesToNotify() : Response {
         $currentUser = $this->getEm('dm')->getRepository(Users::class)->find($this->getCurrentUser()['id']);
 
-        return new JsonResponseFromObject($this->getEm('dm')->getRepository(UsersOptions::class)->findBy([
-            'user' => $currentUser,
-            'optionNom' => 'suggestion_notification_country'
-        ]));
+        return new JsonResponseFromObject(
+            array_map(function (UsersOptions $values) {
+                return $values->getOptionValeur();
+            }, $this->getEm('dm')->getRepository(UsersOptions::class)->findBy([
+                'user' => $currentUser,
+                'optionNom' => 'suggestion_notification_country'
+            ]))
+        );
     }
 
     /**

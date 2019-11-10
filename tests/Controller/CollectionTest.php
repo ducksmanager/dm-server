@@ -478,8 +478,7 @@ class CollectionTest extends TestCommon
         $this->createUserCollection('demo');
         $response = $this->buildAuthenticatedServiceWithTestUser('/collection/notifications/countries', self::$dmUser)->call();
         $objectResponse = json_decode($this->getResponseContent($response));
-        $this->assertCount(1, $objectResponse);
-        $this->assertEquals('fr', $objectResponse[0]->optionValeur);
+        $this->assertEquals(['fr'], $objectResponse);
     }
 
     public function testUpdateCountriesToNotify() : void
