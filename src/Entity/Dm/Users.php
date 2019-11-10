@@ -2,6 +2,7 @@
 
 namespace App\Entity\Dm;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\OneToMany;
 
@@ -123,7 +124,7 @@ class Users
     /**
      * @var UsersOptions[]
      *
-     * @OneToMany(targetEntity="UsersOptions", mappedBy="user")
+     * @OneToMany(targetEntity="UsersOptions", mappedBy="user",cascade={"persist"})
      */
     private $options = [];
 
@@ -313,7 +314,7 @@ class Users
     }
 
     /**
-     * @return UsersOptions[]
+     * @return Collection|UsersOptions[]
      */
     public function getOptions()
     {

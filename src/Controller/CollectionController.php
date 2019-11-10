@@ -7,6 +7,7 @@ use App\Entity\Dm\Achats;
 use App\Entity\Dm\BibliothequeOrdreMagazines;
 use App\Entity\Dm\Numeros;
 use App\Entity\Dm\Users;
+use App\Entity\Dm\UsersOptions;
 use App\Entity\Dm\UsersPermissions;
 use App\EntityTransform\UpdateCollectionResult;
 use App\Helper\JsonResponseFromObject;
@@ -45,6 +46,55 @@ class CollectionController extends AbstractController implements RequiresDmVersi
         } catch (Exception $e) {
             return new Response(Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    /**
+     * @Route(methods={"GET"}, path="collection/notifications/countries")
+     */
+    public function getCountriesToNotify() : Response {
+        $currentUser = $this->getEm('dm')->getRepository(Users::class)->find($this->getCurrentUser()['id']);
+
+        return new JsonResponseFromObject($this->getEm('dm')->getRepository(UsersOptions::class)->findBy([
+            'user' => $currentUser,
+            'optionNom' => 'suggestion_notification_country'
+        ]));
+    }
+
+    /**
+     * @Route(methods={"POST"}, path="collection/notifications/countries")
+     */
+    public function updateCountriesToNotify(Request $request) : Response {
+        $countries = $request->request->get('countries');
+
+        /** @var Users $currentUser */
+        $currentUser = $this->getEm('dm')->getRepository(Users::class)->find($this->getCurrentUser()['id']);
+        $optionName = 'suggestion_notification_country';
+
+        try {
+            $usersOptions = $currentUser->getOptions();
+            foreach($usersOptions as $key=>$option) {
+                if ($option->getOptionNom() === $optionName) {
+                    $currentUser->getOptions()->removeElement($option);
+                    $option->setUser(null);
+                    $this->getEm('dm')->persist($option);
+                }
+            }
+            $this->getEm('dm')->persist($currentUser);
+            $this->getEm('dm')->flush();
+            foreach($countries as $countryCode) {
+                $currentUser->getOptions()->add(
+                    (new UsersOptions())
+                        ->setUser($currentUser)
+                        ->setOptionNom($optionName)
+                        ->setOptionValeur($countryCode)
+                );
+            }
+            $this->getEm('dm')->flush($currentUser);
+        } catch (ORMException $e) {
+            return new Response('Error when updating user options', Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return new Response('OK', Response::HTTP_OK);
     }
 
     /**

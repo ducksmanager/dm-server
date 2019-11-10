@@ -5,6 +5,7 @@ use App\Entity\Dm\Achats;
 use App\Entity\Dm\BibliothequeOrdreMagazines;
 use App\Entity\Dm\Numeros;
 use App\Entity\Dm\Users;
+use App\Entity\Dm\UsersOptions;
 use App\Tests\Fixtures\CoaEntryFixture;
 use App\Tests\Fixtures\CoaFixture;
 use App\Tests\TestCommon;
@@ -470,5 +471,36 @@ class CollectionTest extends TestCommon
         ], [], 'GET')->call();
         $objectResponse = json_decode($this->getResponseContent($response));
         $this->assertEquals('Affichage', $objectResponse->EdgeCreator);
+    }
+
+    public function testGetCountriesToNotify() : void
+    {
+        $this->createUserCollection('demo');
+        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/notifications/countries', self::$dmUser)->call();
+        $objectResponse = json_decode($this->getResponseContent($response));
+        $this->assertCount(1, $objectResponse);
+        $this->assertEquals('fr', $objectResponse[0]->optionValeur);
+    }
+
+    public function testUpdateCountriesToNotify() : void
+    {
+        $user = $this->getEm('dm')->getRepository(Users::class)->findOneBy(['username'=>self::$defaultTestDmUserName]);
+        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/notifications/countries', self::$dmUser, 'POST', [
+            'countries' => [
+                'fr',
+                'se',
+                'us'
+            ]
+        ])->call();
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+
+        $updatedCountriesToNotify = $this->getEm('dm')->getRepository(UsersOptions::class)->findBy([
+            'optionNom' => 'suggestion_notification_country',
+            'user' => $user
+        ]);
+        $this->assertCount(3, $updatedCountriesToNotify);
+        $this->assertEquals(['fr', 'se', 'us'], array_map(function(UsersOptions $option) {
+            return $option->getOptionValeur();
+        }, $updatedCountriesToNotify));
     }
 }

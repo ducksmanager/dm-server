@@ -41,6 +41,7 @@ class DmCollectionFixture implements FixtureInterface
                 ->setRecommandationslistemags(true)
                 ->setAffichervideo(true)
                 ->setPrecedentacces(new DateTime('-2 days midnight'))
+                ->setOptions([])
         );
 
         foreach($roles as $role=>$privilege) {
