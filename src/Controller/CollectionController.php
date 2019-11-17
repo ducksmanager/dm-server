@@ -71,20 +71,21 @@ class CollectionController extends AbstractController implements RequiresDmVersi
         $countries = $request->request->get('countries');
 
         /** @var Users $currentUser */
-        $currentUser = $this->getEm('dm')->getRepository(Users::class)->find($this->getCurrentUser()['id']);
+        $dmEm = $this->getEm('dm');
+        $currentUser = $dmEm->getRepository(Users::class)->find($this->getCurrentUser()['id']);
         $optionName = 'suggestion_notification_country';
 
         try {
             $usersOptions = $currentUser->getOptions();
-            foreach($usersOptions as $key=>$option) {
-                if ($option->getOptionNom() === $optionName) {
-                    $currentUser->getOptions()->removeElement($option);
-                    $option->setUser(null);
-                    $this->getEm('dm')->persist($option);
-                }
-            }
-            $this->getEm('dm')->persist($currentUser);
-            $this->getEm('dm')->flush();
+
+            $qbDeleteExistingValues = ($dmEm->createQueryBuilder())
+                ->delete(UsersOptions::class, 'options')
+                ->where('options.user = :user AND options.optionNom = :optionName')
+                ->setParameter(':user', $currentUser)
+                ->setParameter(':optionName', $optionName);
+
+            $qbDeleteExistingValues->getQuery()->execute();
+
             foreach($countries as $countryCode) {
                 $currentUser->getOptions()->add(
                     (new UsersOptions())
@@ -93,7 +94,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
                         ->setOptionValeur($countryCode)
                 );
             }
-            $this->getEm('dm')->flush($currentUser);
+            $dmEm->flush($currentUser);
         } catch (ORMException $e) {
             return new Response('Error when updating user options', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
