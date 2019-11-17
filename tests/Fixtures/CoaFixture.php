@@ -105,6 +105,13 @@ class CoaFixture extends Fixture implements FixtureGroupInterface
         );
 
         $coaEntityManager->persist(
+            (self::$testPublications['fr/PM'] = new InducksPublication())
+                ->setPublicationcode('fr/PM')
+                ->setCountrycode('fr')
+                ->setTitle('Picsou Magazine')
+        );
+
+        $coaEntityManager->persist(
             (self::$testPublications['us/CBL'] = new InducksPublication())
                 ->setPublicationcode('us/CBL')
                 ->setCountrycode('us')

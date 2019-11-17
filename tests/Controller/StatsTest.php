@@ -1,8 +1,6 @@
 <?php
 namespace App\Tests;
 
-use App\Entity\Dm\Users;
-use App\Entity\Dm\UsersOptions;
 use App\Tests\Fixtures\CoaEntryFixture;
 use App\Tests\Fixtures\CoaFixture;
 use App\Tests\Fixtures\DmStatsFixture;
@@ -29,17 +27,18 @@ class StatsTest extends TestCommon
         $response = $this->buildAuthenticatedServiceWithTestUser('/collection/stats/watchedauthorsstorycount', self::$dmUser)->call();
 
         $objectResponse = json_decode($this->getResponseContent($response));
-        $this->assertInternalType('object', $objectResponse);
-        $this->assertCount(2, get_object_vars($objectResponse));
-        $this->assertEquals('CB', array_keys(get_object_vars($objectResponse))[0]);
-        $this->assertEquals('Carl Barks', $objectResponse->CB->fullname);
-        $this->assertEquals(4, $objectResponse->CB->storycount);
-        $this->assertEquals(3, $objectResponse->CB->missingstorycount);
-
-        $this->assertEquals('DR', array_keys(get_object_vars($objectResponse))[1]);
-        $this->assertEquals('Don Rosa', $objectResponse->DR->fullname);
-        $this->assertEquals(1, $objectResponse->DR->storycount);
-        $this->assertEquals(1, $objectResponse->DR->missingstorycount);
+        $this->assertEquals((object)[
+            'CB' => (object)[
+                'fullname' => 'Carl Barks',
+                'missingstorycount' => 3,
+                'storycount' => 4,
+            ],
+            'DR' => (object)[
+                'fullname' => 'Don Rosa',
+                'missingstorycount' => 1,
+                'storycount' => 1,
+            ],
+        ], $objectResponse);
     }
 
     public function testGetSuggestions(): void
@@ -47,56 +46,72 @@ class StatsTest extends TestCommon
         $response = $this->buildAuthenticatedServiceWithTestUser('/collection/stats/suggestedissues', self::$dmUser)->call();
 
         $objectResponse = json_decode($this->getResponseContent($response));
+        $this->assertEquals((object)[
+            'maxScore' => 6,
+            'minScore' => 2,
+            'issues' => (object)[
+                'fr/PM 315' => (object)[
+                    'stories' => (object)[
+                        'CB' => ['W WDC 130-02'],
+                        'DR' => ['AR 201'],
+                    ],
+                    'score' => 6,
+                    'publicationcode' => 'fr/PM',
+                    'issuenumber' => '315',
+                ],
+                'us/CBL 7' => (object)[
+                    'stories' => (object)[
+                        'CB' => [
+                            'ARC CBL 5B',
+                            'W WDC  32-02',
+                        ],
+                    ],
+                    'score' => 4,
+                    'publicationcode' => 'us/CBL',
+                    'issuenumber' => '7',
+                ],
+                'fr/DDD 1' => (object)[
+                    'stories' => (object)[
+                        'CB' => ['W WDC  32-02'],
+                    ],
+                    'score' => 2,
+                    'publicationcode' => 'fr/DDD',
+                    'issuenumber' => '1',
+                ],
+            ],
+            'authors' => (object)[
+                'CB' => 'Carl Barks',
+                'DR' => 'Don Rosa',
+            ],
+            'publicationTitles' => (object)[
+                'us/CBL' => 'Carl Barks Library',
+                'fr/DDD' => 'Dynastie',
+                'fr/PM' => 'Picsou Magazine',
+            ],
+            'storyDetails' => (object)[
+                'AR 201' => (object)[
+                    'storycomment' => 'Comment of story AR 201',
+                    'title' => 'Title of story AR 201',
+                    'personcode' => 'DR',
+                ],
+                'ARC CBL 5B' => (object)[
+                    'storycomment' => 'Comment of story ARC CBL 5B',
+                    'title' => 'Title of story ARC CBL 5B',
+                    'personcode' => 'CB',
+                ],
+                'W WDC  32-02' => (object)[
+                    'storycomment' => 'Comment of story W WDC  32-02',
+                    'title' => 'Title of story W WDC  32-02',
+                    'personcode' => 'CB',
+                ],
+                'W WDC 130-02' => (object)[
+                    'storycomment' => 'Comment of story W WDC 130-02',
+                    'title' => 'Title of story W WDC 130-02',
+                    'personcode' => 'CB',
+                ],
+            ],
+        ], $objectResponse);
         $this->assertInternalType('object', $objectResponse);
-
-        $this->assertEquals(2, $objectResponse->minScore);
-        $this->assertEquals(6, $objectResponse->maxScore); // fr/PM 315 : 1xDR + 1xCB = 1x4 + 1x2
-
-        $this->assertCount(3, get_object_vars($objectResponse->issues));
-
-        $issue1 = $objectResponse->issues->{'us/CBL 7'};
-        $this->assertEquals(4, $issue1->score);
-        $this->assertEquals('us/CBL', $issue1->publicationcode);
-        $this->assertEquals('7', $issue1->issuenumber);
-
-        $story1 = 'ARC CBL 5B';
-        $this->assertEquals($story1, $issue1->stories->CB[0]);
-
-        $story2 = 'W WDC  32-02';
-        $this->assertEquals($story2, $issue1->stories->CB[1]);
-
-
-        $issue2 = $objectResponse->issues->{'fr/DDD 1'};
-        $this->assertEquals(2, $issue2->score);
-        $this->assertEquals('fr/DDD', $issue2->publicationcode);
-        $this->assertEquals('1', $issue2->issuenumber);
-
-        $this->assertEquals($story2, $issue2->stories->CB[0]);
-
-        $issue3 = $objectResponse->issues->{'fr/PM 315'};
-        $this->assertEquals(6, $issue3->score);
-        $this->assertEquals('fr/PM', $issue3->publicationcode);
-        $this->assertEquals('315', $issue3->issuenumber);
-
-        $story3 = 'AR 201';
-        $this->assertEquals($story3, $issue3->stories->DR[0]);
-
-        $story4 = 'W WDC 130-02';
-        $this->assertEquals($story4, $issue3->stories->CB[0]);
-
-        // Story details assertions
-
-        $this->assertEquals('CB', $objectResponse->storyDetails->$story1->personcode);
-        $this->assertEquals('Title of story ARC CBL 5B', $objectResponse->storyDetails->$story1->title);
-        $this->assertEquals('Comment of story ARC CBL 5B', $objectResponse->storyDetails->$story1->storycomment);
-
-        $this->assertEquals('CB', $objectResponse->storyDetails->$story2->personcode);
-        $this->assertEquals('Title of story W WDC  32-02', $objectResponse->storyDetails->$story2->title);
-        $this->assertEquals('Comment of story W WDC  32-02', $objectResponse->storyDetails->$story2->storycomment);
-
-        // Author details assertions
-
-        $this->assertEquals('Carl Barks', $objectResponse->authors->CB);
     }
 
     public function testGetSuggestionsByCountry(): void
@@ -104,6 +119,54 @@ class StatsTest extends TestCommon
         $response = $this->buildAuthenticatedServiceWithTestUser('/collection/stats/suggestedissues/fr', self::$dmUser)->call();
 
         $objectResponse = json_decode($this->getResponseContent($response));
+        $this->assertEquals((object)[
+            'maxScore' => 6,
+            'minScore' => 2,
+            'issues' => (object)[
+                'fr/PM 315' => (object)[
+                    'stories' => (object)[
+                        'CB' => ['W WDC 130-02'],
+                        'DR' => ['AR 201'],
+                    ],
+                    'score' => 6,
+                    'publicationcode' => 'fr/PM',
+                    'issuenumber' => '315',
+                ],
+                'fr/DDD 1' => (object)[
+                    'stories' => (object)[
+                        'CB' => ['W WDC  32-02'],
+                    ],
+                    'score' => 2,
+                    'publicationcode' => 'fr/DDD',
+                    'issuenumber' => '1',
+                ],
+            ],
+            'authors' => (object)[
+                'CB' => 'Carl Barks',
+                'DR' => 'Don Rosa',
+            ],
+            'publicationTitles' => (object)[
+                'fr/DDD' => 'Dynastie',
+                'fr/PM' => 'Picsou Magazine',
+            ],
+            'storyDetails' => (object)[
+                'AR 201' => (object)[
+                    'storycomment' => 'Comment of story AR 201',
+                    'title' => 'Title of story AR 201',
+                    'personcode' => 'DR',
+                ],
+                'W WDC  32-02' => (object)[
+                    'storycomment' => 'Comment of story W WDC  32-02',
+                    'title' => 'Title of story W WDC  32-02',
+                    'personcode' => 'CB',
+                ],
+                'W WDC 130-02' => (object)[
+                    'storycomment' => 'Comment of story W WDC 130-02',
+                    'title' => 'Title of story W WDC 130-02',
+                    'personcode' => 'CB',
+                ],
+            ],
+        ], $objectResponse);
         $this->assertInternalType('object', $objectResponse);
         $this->assertCount(2, get_object_vars($objectResponse->issues));
 
@@ -120,32 +183,97 @@ class StatsTest extends TestCommon
         $response = $this->buildAuthenticatedServiceWithTestUser('/collection/stats/suggestedissues/ALL/since_previous_visit', self::$dmUser)->call();
 
         $objectResponse = json_decode($this->getResponseContent($response));
-        $this->assertInternalType('object', $objectResponse);
-        $this->assertCount(2, get_object_vars($objectResponse->issues));
-
-        $issue1 = $objectResponse->issues->{'fr/PM 315'};
-        $this->assertEquals(6, $issue1->score);
-        $this->assertEquals('fr/PM', $issue1->publicationcode);
-        $this->assertEquals('315', $issue1->issuenumber);
-
-        $this->assertEquals('W WDC 130-02', $issue1->stories->CB[0]);
-        $this->assertEquals('AR 201', $issue1->stories->DR[0]);
+        $this->assertEquals((object)[
+            'maxScore' => 6,
+            'minScore' => 6,
+            'issues' => (object)[
+                'fr/PM 315' => (object)[
+                    'stories' => (object)[
+                        'CB' => ['W WDC 130-02'],
+                        'DR' => ['AR 201'],
+                    ],
+                    'score' => 6,
+                    'publicationcode' => 'fr/PM',
+                    'issuenumber' => '315',
+                ],
+            ],
+            'authors' => (object)[
+                'CB' => 'Carl Barks',
+                'DR' => 'Don Rosa',
+            ],
+            'publicationTitles' => (object)[
+                'fr/PM' => 'Picsou Magazine'
+            ],
+            'storyDetails' => (object)[
+                'AR 201' => (object)[
+                    'storycomment' => 'Comment of story AR 201',
+                    'title' => 'Title of story AR 201',
+                    'personcode' => 'DR',
+                ],
+                'W WDC 130-02' => (object)[
+                    'storycomment' => 'Comment of story W WDC 130-02',
+                    'title' => 'Title of story W WDC 130-02',
+                    'personcode' => 'CB',
+                ],
+            ],
+        ], $objectResponse);
     }
 
 
-    public function testGetSuggestionsSincePreviousVisitMultipleNotifiedCountries(): void {
-        $this->getEm('dm')->persist(
-            (new UsersOptions())
-                ->setUser($this->getEm('dm')->getRepository(Users::class)->find(DmStatsFixture::$userId))
-                ->setOptionNom('suggestion_notification_country')
-                ->setOptionValeur('us')
-        );
-        $this->getEm('dm')->flush();
-
-        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/stats/suggestedissues/ALL/since_previous_visit', self::$dmUser)->call();
+    public function testGetSuggestionsForNotifiedCountries(): void {
+        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/stats/suggestedissues/countries_to_notify/_', self::$dmUser)->call();
 
         $objectResponse = json_decode($this->getResponseContent($response));
-        $this->assertInternalType('object', $objectResponse);
-        $this->assertCount(3, get_object_vars($objectResponse->issues));
+        $this->assertEquals((object)[
+            'maxScore' => 6,
+            'minScore' => 2,
+            'issues' => (object)[
+                'fr/PM 315' => (object)[
+                    'oldestdate' => (new \DateTime('today'))->format('Y-m-d'),
+                    'stories' => (object)[
+                        'CB' => ['W WDC 130-02'],
+                        'DR' => ['AR 201'],
+                    ],
+                    'score' => 6,
+                    'publicationcode' => 'fr/PM',
+                    'issuenumber' => '315',
+                ],
+                'fr/DDD 1' => (object)[
+                    'oldestdate' => (new \DateTime('-5 days'))->format('Y-m-d'),
+                    'stories' => (object)[
+                        'CB' => ['W WDC  32-02'],
+                    ],
+                    'score' => 2,
+                    'publicationcode' => 'fr/DDD',
+                    'issuenumber' => '1',
+                ],
+            ],
+            'authors' => (object)[
+                'CB' => 'Carl Barks',
+                'DR' => 'Don Rosa',
+            ],
+            'publicationTitles' => (object)[
+                'fr/DDD' => 'Dynastie',
+                'fr/PM' => 'Picsou Magazine',
+            ],
+            'storyDetails' => (object)[
+                'AR 201' => (object)[
+                    'storycomment' => 'Comment of story AR 201',
+                    'title' => 'Title of story AR 201',
+                    'personcode' => 'DR',
+                ],
+                'W WDC  32-02' => (object)[
+                    'storycomment' => 'Comment of story W WDC  32-02',
+                    'title' => 'Title of story W WDC  32-02',
+                    'personcode' => 'CB',
+                ],
+                'W WDC 130-02' => (object)[
+                    'storycomment' => 'Comment of story W WDC 130-02',
+                    'title' => 'Title of story W WDC 130-02',
+                    'personcode' => 'CB',
+                ],
+            ],
+        ], $objectResponse
+        );
     }
 }

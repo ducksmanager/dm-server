@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Dm\Users;
-use App\Entity\Dm\UsersOptions;
 use App\Entity\DmStats\AuteursHistoires;
 use App\Entity\DmStats\UtilisateursHistoiresManquantes;
 use App\Entity\DmStats\UtilisateursPublicationsManquantes;
@@ -50,25 +49,28 @@ class StatsController extends AbstractController implements RequiresDmVersionCon
      * @Route(
      *     methods={"GET"},
      *     path="/collection/stats/suggestedissues/{countryCode}/{sincePreviousVisit}",
-     *     requirements={"countryCode"="^(?P<countrycode_regex>[a-z]+)|ALL$", "sincePreviousVisit"="^since_previous_visit|_$"},
+     *     requirements={"countryCode"="^(?P<countrycode_regex>[a-z]+)|ALL|countries_to_notify", "sincePreviousVisit"="^since_previous_visit|_$"},
      *     defaults={"countryCode"="ALL", "sincePreviousVisit"="_"}
      * )
      */
     public function getSuggestedIssuesWithDetails(string $countryCode, string $sincePreviousVisit) {
-        $countryCodes = $countryCode === 'ALL' ? null : [$countryCode];
+        /** @var Users $user */
+        $user = $this->getEm('dm')->getRepository(Users::class)->find($this->getCurrentUser()['id']);
+
+        switch ($countryCode) {
+            case 'ALL':
+                $countryCodes = null;
+            break;
+            case 'countries_to_notify':
+                $countryCodes = json_decode(
+                    $this->callService(CollectionController::class, 'getCountriesToNotify')->getContent()
+                );
+            break;
+            default:
+                $countryCodes = [$countryCode];
+        }
 
         if ($sincePreviousVisit === 'since_previous_visit') {
-            /** @var Users $user */
-            $user = $this->getEm('dm')->getRepository(Users::class)->find($this->getCurrentUser()['id']);
-            if (is_null($countryCodes)) {
-                $userCountryNotifications = $this->getEm('dm')->getRepository(UsersOptions::class)->findBy([
-                    'user' => $user,
-                    'optionNom' => 'suggestion_notification_country'
-                ]);
-                $countryCodes = array_map(function(UsersOptions $option) {
-                    return $option->getOptionValeur();
-                }, $userCountryNotifications);
-            }
             $previousVisit = $user->getPrecedentacces();
             if (!is_null($previousVisit)) {
                 $since = $previousVisit->format('Y-m-d');
@@ -125,7 +127,7 @@ class StatsController extends AbstractController implements RequiresDmVersionCon
 
         $publicationTitles = json_decode(
             $this->callService(CoaController::class, 'listPublicationsFromPublicationCodes', [
-                'publicationCodes' => implode(',', $publicationCodes)
+                'publicationCodes' => implode(',', array_unique($publicationCodes))
             ])->getContent()
         );
 
@@ -133,12 +135,14 @@ class StatsController extends AbstractController implements RequiresDmVersionCon
 
         $issues = [];
         foreach ($suggestedStories as $story) {
-            ['publicationcode' => $publicationcode, 'issuenumber' => $issuenumber, 'personcode' => $personcode, 'score' => $score, 'storycode' => $storycode] = $story;
+            ['publicationcode' => $publicationcode, 'issuenumber' => $issuenumber, 'personcode' => $personcode, 'score' => $score, 'storycode' => $storycode, 'oldestdate' => $oldestdate] = $story;
+            /** @var \DateTime|null $oldestdate */
+            $oldestdate = is_null($oldestdate) ? null : $oldestdate->format('Y-m-d');
             $issueCode = implode(' ', [$publicationcode, $issuenumber]);
             if (!isset($issues[$issueCode]['stories'])) {
                 $issues[$issueCode] =
                     ['stories' => []]
-                    + compact('score', 'publicationcode', 'issuenumber');
+                    + compact('score', 'publicationcode', 'issuenumber', 'oldestdate');
             }
             if (!isset($issues[$issueCode]['stories'][$personcode])) {
                 $issues[$issueCode]['stories'][$personcode] = [];
@@ -234,7 +238,7 @@ class StatsController extends AbstractController implements RequiresDmVersionCon
 
         $qbGetSuggestionDetails
             ->select('missing.personcode, missing.storycode, ' .
-                'suggested.publicationcode, suggested.issuenumber, suggested.score')
+                'suggested.publicationcode, suggested.issuenumber, suggested.score, suggested.oldestdate')
             ->from(UtilisateursPublicationsSuggerees::class, 'suggested')
             ->join(UtilisateursPublicationsManquantes::class, 'missing', Join::WITH,  $qbGetSuggestionDetails->expr()->andX(
                 $qbGetSuggestionDetails->expr()->eq('suggested.idUser', 'missing.idUser'),

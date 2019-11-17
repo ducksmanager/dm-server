@@ -200,13 +200,13 @@ class CoaController extends AbstractController
      */
     public function listStoryDetailsFromStoryCodes(string $storyCodes): JsonResponse
     {
-        $storyList = array_unique(explode(',', $storyCodes));
+        $storyCodesList = array_unique(explode(',', $storyCodes));
 
         $qbStoryDetails = $this->getEm('coa')->createQueryBuilder();
         $qbStoryDetails
             ->select('story.storycode, story.title, story.storycomment')
             ->from(InducksStory::class, 'story')
-            ->where($qbStoryDetails->expr()->in('story.storycode', $storyList));
+            ->where($qbStoryDetails->expr()->in('story.storycode', $storyCodesList));
 
         $storyDetailsResults = $qbStoryDetails->getQuery()->getResult();
 
@@ -217,6 +217,16 @@ class CoaController extends AbstractController
                 'title' => $story['title']
             ];
         });
+
+        // Empty properties if the story couldn't be found
+        foreach($storyCodesList as $storyCode) {
+            if (!isset($storyDetails[$storyCode])) {
+                $storyDetails[$storyCode] = [
+                    'storycomment' => '',
+                    'title' => '?'
+                ];
+            }
+        }
         return new JsonResponse($storyDetails);
     }
 }
