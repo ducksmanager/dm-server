@@ -66,10 +66,11 @@ class NotificationService
                     ->setIssuecode($issueCode)
                     ->setText($text)
                     ->setUser($userNotified)
-                    ->setNotified(true);
+                    ->setDate(new \DateTime());
                 self::$dmEm->persist($userSuggestionNotification);
                 self::$logger->info("Notification sent to user {$userNotified->getId()} concerning the release of issue $text");
             }
+            self::$dmEm->flush();
 
             return count($usersToNotify);
 

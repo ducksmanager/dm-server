@@ -72,9 +72,6 @@ class NotificationController extends AbstractController implements RequiresDmVer
                 $title = $publication->getTitle().' '.json_decode($issue)->issuenumber;
                 $notificationsSent += $notificationService->sendSuggestedIssueNotification($issueCode, $title, $usersToNotify);
             }
-
-            $this->getEm('dm')->flush();
-
         } catch (Exception $e) {
             $logger->error($e->getMessage());
             return new Response('Internal server error', Response::HTTP_INTERNAL_SERVER_ERROR);

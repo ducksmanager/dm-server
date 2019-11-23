@@ -40,6 +40,7 @@ class NotificationTest extends TestCommon
         $this->assertCount(1, $notificationsSentToUser);
         $this->assertEquals('fr/DDD 1', $notificationsSentToUser[0]->getIssuecode());
         $this->assertEquals('Dynastie 1', $notificationsSentToUser[0]->getText());
-        $this->assertEquals(true, $notificationsSentToUser[0]->getNotified());
+        $notificationDate = $notificationsSentToUser[0]->getDate();
+        $this->assertEquals((new \DateTime())->format('Y-m-d'), $notificationDate->format('Y-m-d'));
     }
 }

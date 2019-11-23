@@ -46,11 +46,11 @@ class UsersSuggestionsNotifications
     private $text;
 
     /**
-     * @var bool
+     * @var \DateTime
      *
-     * @ORM\Column(name="notified", type="boolean", nullable=false)
+     * @ORM\Column(name="date", type="datetime", nullable=true)
      */
-    private $notified;
+    private $date;
 
     public function getId(): ?int
     {
@@ -93,14 +93,14 @@ class UsersSuggestionsNotifications
         return $this;
     }
 
-    public function getNotified(): ?bool
+    public function getDate(): ?\DateTimeInterface
     {
-        return $this->notified;
+        return $this->date;
     }
 
-    public function setNotified(bool $notified): self
+    public function setDate(?\DateTimeInterface $date): self
     {
-        $this->notified = $notified;
+        $this->date = $date;
 
         return $this;
     }
