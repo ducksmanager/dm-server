@@ -1,5 +1,3 @@
-create schema dm collate latin1_swedish_ci;
-
 create table achats
 (
   ID_Acquisition int auto_increment
@@ -222,6 +220,7 @@ create table users_points
   NbPoints int default 0 null
 );
 
+delimiter ||
 create definer = root@`%` procedure reset_issue_popularities()
 BEGIN
   -- Cleanup: prevents problems with issues having the same issuenumber but with a different case
@@ -296,3 +295,6 @@ BEGIN
   HAVING sum(contributions.Popularite) > 0
   ORDER BY sum(contributions.Popularite);
 END;
+
+||
+delimiter ;
