@@ -14,6 +14,7 @@ use App\Tests\TestCommon;
 use DateTime;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use Exception;
 
 class DmCollectionFixture implements FixtureInterface
 {
@@ -27,6 +28,7 @@ class DmCollectionFixture implements FixtureInterface
      * @param $password
      * @param array $roles
      * @return Users|null
+     * @throws Exception
      */
     protected static function createUser(ObjectManager $dmEm, $username, $password, $roles = []): ?Users
     {
