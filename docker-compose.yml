@@ -33,7 +33,7 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-     - ./ssmtp.conf:/etc/ssmtp/ssmtp.conf
+     - ./msmtp.conf:/etc/msmtprc
      - ./current:/var/www:z
     networks:
      - front-network
