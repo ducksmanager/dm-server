@@ -6,19 +6,35 @@ use App\Entity\Coverid\Covers;
 use App\Service\SimilarImagesService;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr\Func;
+use Doctrine\ORM\QueryBuilder;
 use Psr\Log\LoggerInterface;
-use stdClass;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class CoveridController extends AbstractController
 {
     public static $uploadFileName = 'wtd_jpg';
     public static $uploadDestination = ['/tmp', 'test.jpg'];
+
+    /**
+     * @param QueryBuilder $qb
+     * @return Func
+     */
+    public static function getFullUrlFunc(QueryBuilder $qb): Func
+    {
+        return new Func('CONCAT', [
+            $qb->expr()->literal($_ENV['IMAGE_REMOTE_ROOT']),
+            'covers.sitecode',
+            $qb->expr()->literal('/'),
+            'case covers.sitecode when \'webusers\' then \'webusers/\' else \'\' end',
+            'covers.url'
+        ]);
+    }
 
     /**
      * @Route(methods={"GET"}, path="/cover-id/download/{coverId}")
@@ -28,18 +44,10 @@ class CoveridController extends AbstractController
         $coverEm = $this->getEm('coverid');
         $qb = $coverEm->createQueryBuilder();
 
-        $concatFunc = new Func('CONCAT', [
-            $qb->expr()->literal($_ENV['IMAGE_REMOTE_ROOT']),
-            'covers.sitecode',
-            $qb->expr()->literal('/'),
-            'case covers.sitecode when \'webusers\' then \'webusers/\' else \'\' end',
-            'covers.url'
-        ]);
-
         $qb
             ->select(
                 'covers.url',
-                $concatFunc. 'as full_url')
+                self::getFullUrlFunc($qb). 'as full_url')
             ->from(Covers::class, 'covers')
             ->where($qb->expr()->eq('covers.id', $coverId));
 
@@ -78,7 +86,7 @@ class CoveridController extends AbstractController
      * @Route(methods={"POST"}, path="/cover-id/search")
      * @return Response
      */
-    public function searchCover(Request $request, LoggerInterface $logger, SimilarImagesService $similarImagesService): Response
+    public function searchCover(Request $request, LoggerInterface $logger, SimilarImagesService $similarImagesService, KernelInterface $kernel): Response
     {
         $logger->info('Cover ID search: start');
         if (($nbUploaded = $request->files->count()) !== 1) {
@@ -94,7 +102,7 @@ class CoveridController extends AbstractController
         }
 
         $logger->info('Cover ID search: upload file validation done');
-        $file = $uploadedFile->move(self::$uploadDestination[0], self::$uploadDestination[1]);
+        $file = $uploadedFile->move($kernel->getProjectDir(), self::$uploadDestination[1]);
         $logger->info('Cover ID search: upload file moving done');
 
         $engineResponse = $similarImagesService->getSimilarImages($file, $logger);
@@ -104,8 +112,11 @@ class CoveridController extends AbstractController
         if (is_null($engineResponse)) {
             return new Response('Pastec returned NULL', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-        if (count($engineResponse->getImageIds()) === 0) {
-            return new JsonResponse(['type' => $engineResponse->getType()]);
+        if (empty($engineResponse->getImageIds())) {
+            return new JsonResponse([
+                'issues' => [],
+                'imageIds' => []
+            ]);
         }
 
         $coverIds = implode(',', $engineResponse->getImageIds());
@@ -117,23 +128,7 @@ class CoveridController extends AbstractController
         }, $coverInfos);
         $logger->info('Cover ID search: matched issue codes ' . implode(',', $foundIssueCodes));
 
-        $issuesWithSameCover = [];
-
-        $issueCodes = implode(',',
-            array_unique(
-                array_merge(
-                    $foundIssueCodes,
-                    array_map(/**
-                     * @param stdClass $issue
-                     * @return string
-                     */
-                        function (stdClass $issue) {
-                            return $issue->issuecode;
-                        }, $issuesWithSameCover
-                    )
-                )
-            )
-        );
+        $issueCodes = implode(',', array_unique($foundIssueCodes));
 
         $issues = $this->callService(CoaController::class, 'listIssuesFromIssueCodes', compact('issueCodes'))->getContent();
         $logger->info('Cover ID search: matched ' . count($coverInfos) . ' issues');
@@ -170,7 +165,7 @@ class CoveridController extends AbstractController
         array_walk(
             $results,
             function ($cover, $i) use ($coverIds, &$coverInfos) {
-                $coverInfos[$coverIds[$i]] = ['url' => $cover['url'], 'issuecode' => $cover['issuecode']];
+                $coverInfos[$coverIds[$i]] = $cover;
             }
         );
 

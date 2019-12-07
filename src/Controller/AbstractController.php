@@ -25,11 +25,8 @@ class AbstractController extends \Symfony\Bundle\FrameworkBundle\Controller\Abst
      */
     protected static function getSimpleArray($objectArray): array
     {
-        return array_map(/**
-         * @param GenericReturnObjectInterface $object
-         * @return array
-         */
-            function(GenericReturnObjectInterface $object) {
+        return array_map(
+            function(GenericReturnObjectInterface $object) : array {
                 return $object->toArray();
             }, $objectArray);
     }

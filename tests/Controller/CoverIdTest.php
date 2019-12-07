@@ -14,7 +14,7 @@ use function exif_imagetype;
 
 class CoverIdTest extends TestCommon
 {
-    public static $uploadDestination = '/tmp/test.jpg';
+    public static $uploadDestination = '/var/www/html/test.jpg';
 
     public static $exampleImageToUpload = 'cover_example_to_upload.jpg';
     public static $imageToUpload = 'cover_example_to_upload_willberemoved.jpg';
@@ -89,14 +89,20 @@ class CoverIdTest extends TestCommon
 
         $objectResponse = json_decode($this->getResponseContent($response));
 
-        $this->assertInternalType('object', $objectResponse);
-        $this->assertCount(2, get_object_vars($objectResponse));
-
-        $this->assertObjectHasAttribute('issuecode', $objectResponse->{$coverId1->getId()});
-        $this->assertEquals('fr/DDD 1', $objectResponse->{$coverId1->getId()}->issuecode);
-
-        $this->assertObjectHasAttribute('issuecode', $objectResponse->{$coverId3->getId()});
-        $this->assertEquals('fr/MP 300', $objectResponse->{$coverId3->getId()}->issuecode);
+        $this->assertEquals(
+            (object) [
+                '1' =>
+                    (object) [
+                        'issuecode' => 'fr/DDD 1',
+                        'url' => 'cover_example.jpg'
+                    ],
+                '3' =>
+                    (object) [
+                        'issuecode' => 'fr/MP 300',
+                        'url' => 'cover_example_3.jpg'
+                    ],
+            ],
+            $objectResponse);
     }
 
     public function testCoverIdSearchMultipleUploads(): void
@@ -162,37 +168,35 @@ class CoverIdTest extends TestCommon
 
         $this->assertFileExists(self::$uploadDestination);
         $this->assertJsonStringEqualsJsonString(json_encode([
-            'issues' => [
-                'fr/DDD 1' => [
-                    'countrycode' => 'fr',
-                    'publicationcode' => 'fr/DDD',
-                    'publicationtitle' => 'Dynastie',
-                    'issuenumber' => '1',
-                    'coverid' => 1
+            (object)[
+                'issues' => (object)[
+                    'fr/DDD 1' => (object)[
+                        'countrycode' => 'fr',
+                        'publicationcode' => 'fr/DDD',
+                        'publicationtitle' => 'Dynastie',
+                        'issuenumber' => '1',
+                        'coverid' => 1,
+                        'coverurl' => '/var/www/html/tests/Fixtures/webusers/webusers/cover_example.jpg',
+                    ],
+                    'fr/DDD 2' => (object)[
+                        'countrycode' => 'fr',
+                        'publicationcode' => 'fr/DDD',
+                        'publicationtitle' => 'Dynastie',
+                        'issuenumber' => '2',
+                        'coverid' => 2,
+                        'coverurl' => '/var/www/html/tests/Fixtures/webusers/webusers/cover_example_2.jpg',
+                    ],
+                    'fr/MP 300' => (object)[
+                        'countrycode' => 'fr',
+                        'publicationcode' => 'fr/MP',
+                        'publicationtitle' => 'Parade',
+                        'issuenumber' => '300',
+                        'coverid' => 3,
+                        'coverurl' => '/var/www/html/tests/Fixtures/webusers/webusers/cover_example_3.jpg',
+                    ],
                 ],
-                'fr/DDD 10' => [
-                    'countrycode' => 'fr',
-                    'publicationcode' => 'fr/DDD',
-                    'publicationtitle' => 'Dynastie',
-                    'issuenumber' => '10',
-                    'coverid' => 5
-                ],
-                'fr/DDD 2' => [
-                    'countrycode' => 'fr',
-                    'publicationcode' => 'fr/DDD',
-                    'publicationtitle' => 'Dynastie',
-                    'issuenumber' => '2',
-                    'coverid' => 2
-                ],
-                'fr/MP 300' => [
-                    'countrycode' => 'fr',
-                    'publicationcode' => 'fr/MP',
-                    'publicationtitle' => 'Parade',
-                    'issuenumber' => '300',
-                    'coverid' => 3
-                ]
-            ],
-            'imageIds' => [1,2,3,4,5,6,7,8,9,10]
+                'imageIds' => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            ]
         ]), $this->getResponseContent($response));
     }
 

@@ -144,7 +144,7 @@ class CoaController extends AbstractController
         $coverInfoEm = $this->getEm('coverid');
         $qbCoverInfo = $coverInfoEm->createQueryBuilder();
         $qbCoverInfo
-            ->select('covers.id AS coverid, covers.issuecode')
+            ->select('covers.id AS coverid, covers.issuecode, '.CoveridController::getFullUrlFunc($qbCoverInfo).' as coverurl')
             ->from(Covers::class, 'covers');
 
         $qbCoverInfo->where($qbCoverInfo->expr()->in('covers.issuecode', $issuecodesList));
@@ -154,14 +154,12 @@ class CoaController extends AbstractController
         array_walk(
             $resultsCoverInfo,
             function ($issue) use (&$issues, $logger) {
-
                 if (empty($issues[$issue['issuecode']])) {
                     $logger->error('No COA data exists for this issue : ' . $issue['issuecode']);
                     unset($issues[$issue['issuecode']]);
                 } else {
-                    /** @var SimpleIssueWithCoverId $issueObject */
-                    $issueObject = $issues[$issue['issuecode']];
-                    $issueObject->setCoverid($issue['coverid']);
+                    $issues[$issue['issuecode']]->setCoverid($issue['coverid']);
+                    $issues[$issue['issuecode']]->setCoverurl($issue['coverurl']);
                 }
             }
         );

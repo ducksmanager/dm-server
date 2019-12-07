@@ -11,6 +11,7 @@ class SimpleIssueWithCoverId implements GenericReturnObjectInterface
     private $publicationtitle;
     private $issuenumber;
     private $coverid;
+    private $coverurl;
 
     public static function buildWithoutCoverId($countrycode, $publicationcode, $publicationtitle, $issuenumber)
     {
@@ -110,6 +111,20 @@ class SimpleIssueWithCoverId implements GenericReturnObjectInterface
         $this->coverid = $coverid;
     }
 
+    public function getCoverurl() : string
+    {
+        return $this->coverurl;
+    }
+
+    /**
+     * @param string $coverurl
+     */
+    public function setCoverurl(string $coverurl): void
+    {
+        $this->coverurl = $coverurl;
+    }
+
+
 
     public function toArray() {
         return [
@@ -117,7 +132,8 @@ class SimpleIssueWithCoverId implements GenericReturnObjectInterface
             'publicationcode' => $this->getPublicationcode(),
             'publicationtitle' => $this->getPublicationtitle(),
             'issuenumber' => $this->getIssuenumber(),
-            'coverid' => $this->getCoverid()
+            'coverid' => $this->getCoverid(),
+            'coverurl' => $this->getCoverurl()
         ];
     }
 }

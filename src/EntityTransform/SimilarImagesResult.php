@@ -20,13 +20,16 @@ class SimilarImagesResult
         $outputObject->setType($resultArray['type']);
 
         if (array_key_exists('bounding_rects', $resultArray)) {
-            if (count($resultArray['image_ids']) === 0) {
-                return null;
+            if (empty($resultArray['image_ids'])) {
+                $outputObject->setImageIds([]);
+                $outputObject->setScores([]);
+                $outputObject->setTags([]);
             }
-
-            $outputObject->setImageIds(array_slice($resultArray['image_ids'], 0, 10, true));
-            $outputObject->setScores(array_slice($resultArray['scores'], 0, 10, true));
-            $outputObject->setTags($resultArray['tags']);
+            else {
+                $outputObject->setImageIds(array_slice($resultArray['image_ids'], 0, 10, true));
+                $outputObject->setScores(array_slice($resultArray['scores'], 0, 10, true));
+                $outputObject->setTags($resultArray['tags']);
+            }
         }
 
         return $outputObject;
