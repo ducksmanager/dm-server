@@ -1,9 +1,9 @@
-FROM php:7.3-fpm
+FROM php:7.4-fpm
 MAINTAINER Bruno Perel
 
-RUN apt-get update && apt-get install -y git wget unzip mariadb-client nano ssmtp
+RUN apt-get update && apt-get install -y git wget unzip mariadb-client nano msmtp
 
-RUN echo 'sendmail_path = "/usr/sbin/ssmtp -t"' > /usr/local/etc/php/conf.d/mail.ini
+RUN echo 'sendmail_path = "/usr/sbin/msmtp -t"' > /usr/local/etc/php/conf.d/mail.ini
 
 RUN pecl install apcu
 RUN echo "extension=apcu.so" > /usr/local/etc/php/conf.d/apcu.ini

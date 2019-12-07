@@ -198,9 +198,9 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
             L'équipe DucksManager
             <img width="400" src="http://localhost:8000/logo_petit.png" />
             MESSAGE;
-        $this->assertEquals(str_replace("\n", '<br />', $expectedEdgeEmailBody), $edgeEmail->getBody());
+        $this->assertEquals(str_replace(PHP_EOL, '<br />', $expectedEdgeEmailBody), $edgeEmail->getBody());
 
-        $this->assertEquals(str_replace("\n", '<br />', $expectedEdgeEmailBody), $edgeEmailCopy->getBody());
+        $this->assertEquals(str_replace(PHP_EOL, '<br />', $expectedEdgeEmailBody), $edgeEmailCopy->getBody());
         $this->assertEquals($_ENV['SMTP_USERNAME'], array_keys($edgeEmailCopy->getTo())[0]);
 
         $expectedBookstoreEmailBody = <<<MESSAGE
@@ -215,9 +215,9 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
             L'équipe DucksManager
             <img width="400" src="http://localhost:8000/logo_petit.png" />
             MESSAGE;
-        $this->assertEquals(str_replace("\n", '<br />', $expectedBookstoreEmailBody), $bookstoreEmail->getBody());
+        $this->assertEquals(str_replace(PHP_EOL, '<br />', $expectedBookstoreEmailBody), $bookstoreEmail->getBody());
 
-        $this->assertEquals(str_replace("\n", '<br />', $expectedBookstoreEmailBody), $bookstoreEmailCopy->getBody());
+        $this->assertEquals(str_replace(PHP_EOL, '<br />', $expectedBookstoreEmailBody), $bookstoreEmailCopy->getBody());
         $this->assertEquals($_ENV['SMTP_USERNAME'], array_keys($bookstoreEmailCopy->getTo())[0]);
 
         $this->getEm('dm')->clear();
@@ -314,7 +314,7 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
             L'équipe DucksManager
             <img width="400" src="http://localhost:8000/logo_petit.png" />
             MESSAGE;
-        $this->assertEquals(str_replace("\n", '<br />', $expectedMessageBody), $email->getBody());
+        $this->assertEquals(str_replace(PHP_EOL, '<br />', $expectedMessageBody), $email->getBody());
     }
 
     public function testInitResetPasswordMissingEmail(): void
