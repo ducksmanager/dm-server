@@ -12,16 +12,18 @@ use App\EntityTransform\SimpleIssueWithCoverId;
 use Doctrine\ORM\Query\Expr\Join;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class CoaController extends AbstractController
 {
     /**
-     * @Route(methods={"GET"}, path="/coa/list/countries/{locale}/{countryCodes}", defaults={"countryCodes"=""})
+     * @Route(methods={"GET"}, path="/coa/list/countries/{_locale}/{countryCodes}", defaults={"countryCodes"=""})
      */
-    public function listCountriesFromCodes(string $locale, ?string $countryCodes): Response
+    public function listCountriesFromCodes(?string $countryCodes, Request $request): Response
     {
+        $locale = $request->getLocale();
         $coaEm = $this->getEm('coa');
         $qb = $coaEm->createQueryBuilder();
         $qb
