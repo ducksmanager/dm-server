@@ -115,7 +115,8 @@ class CoveridController extends AbstractController
         if (empty($engineResponse->getImageIds())) {
             return new JsonResponse([
                 'issues' => [],
-                'imageIds' => []
+                'imageIds' => [],
+                'type' => $engineResponse->getType()
             ]);
         }
 

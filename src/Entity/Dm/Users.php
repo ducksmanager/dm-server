@@ -282,7 +282,7 @@ class Users
         return $this->precedentacces;
     }
 
-    public function setPrecedentacces(\DateTime $precedentacces): self
+    public function setPrecedentacces(?\DateTime $precedentacces): self
     {
         $this->precedentacces = $precedentacces;
 
@@ -294,7 +294,7 @@ class Users
         return $this->dernieracces;
     }
 
-    public function setDernieracces(\DateTime $dernieracces): self
+    public function setDernieracces(?\DateTime $dernieracces): self
     {
         $this->dernieracces = $dernieracces;
 

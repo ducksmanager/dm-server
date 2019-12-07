@@ -140,7 +140,8 @@ class CoverIdTest extends TestCommon
                     'publicationcode' => 'fr/DDD',
                     'publicationtitle' => 'Dynastie',
                     'issuenumber' => '1',
-                    'coverid' => 1
+                    'coverid' => 1,
+                    'coverurl' => '/var/www/html/tests/Fixtures/webusers/webusers/cover_example.jpg'
                 ]
             ],
             'imageIds' => [1]
@@ -167,7 +168,7 @@ class CoverIdTest extends TestCommon
         )->call();
 
         $this->assertFileExists(self::$uploadDestination);
-        $this->assertJsonStringEqualsJsonString(json_encode([
+        $this->assertJsonStringEqualsJsonString(json_encode(
             (object)[
                 'issues' => (object)[
                     'fr/DDD 1' => (object)[
@@ -196,7 +197,6 @@ class CoverIdTest extends TestCommon
                     ],
                 ],
                 'imageIds' => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-            ]
         ]), $this->getResponseContent($response));
     }
 
@@ -215,6 +215,8 @@ class CoverIdTest extends TestCommon
         )->call();
 
         $this->assertJsonStringEqualsJsonString(json_encode([
+            'issues' => [],
+            'imageIds' => [],
             'type' => 'IMAGE_SIZE_TOO_SMALL'
             ]), $this->getResponseContent($response));
     }

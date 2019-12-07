@@ -4,6 +4,7 @@ namespace App\Tests;
 use App\Tests\Fixtures\CoaEntryFixture;
 use App\Tests\Fixtures\CoaFixture;
 use App\Tests\Fixtures\DmStatsFixture;
+use DateTime;
 
 class StatsTest extends TestCommon
 {
@@ -58,6 +59,7 @@ class StatsTest extends TestCommon
                     'score' => 6,
                     'publicationcode' => 'fr/PM',
                     'issuenumber' => '315',
+                    'oldestdate' => (new DateTime())->format('Y-m-d')
                 ],
                 'us/CBL 7' => (object)[
                     'stories' => (object)[
@@ -69,6 +71,7 @@ class StatsTest extends TestCommon
                     'score' => 4,
                     'publicationcode' => 'us/CBL',
                     'issuenumber' => '7',
+                    'oldestdate' => (new DateTime('-5 days midnight'))->format('Y-m-d')
                 ],
                 'fr/DDD 1' => (object)[
                     'stories' => (object)[
@@ -77,6 +80,7 @@ class StatsTest extends TestCommon
                     'score' => 2,
                     'publicationcode' => 'fr/DDD',
                     'issuenumber' => '1',
+                    'oldestdate' => (new DateTime('-5 days midnight'))->format('Y-m-d')
                 ],
             ],
             'authors' => (object)[
@@ -131,6 +135,7 @@ class StatsTest extends TestCommon
                     'score' => 6,
                     'publicationcode' => 'fr/PM',
                     'issuenumber' => '315',
+                    'oldestdate' => (new DateTime())->format('Y-m-d')
                 ],
                 'fr/DDD 1' => (object)[
                     'stories' => (object)[
@@ -139,6 +144,7 @@ class StatsTest extends TestCommon
                     'score' => 2,
                     'publicationcode' => 'fr/DDD',
                     'issuenumber' => '1',
+                    'oldestdate' => (new DateTime('-5 days midnight'))->format('Y-m-d')
                 ],
             ],
             'authors' => (object)[
@@ -195,6 +201,7 @@ class StatsTest extends TestCommon
                     'score' => 6,
                     'publicationcode' => 'fr/PM',
                     'issuenumber' => '315',
+                    'oldestdate' => (new DateTime())->format('Y-m-d')
                 ],
             ],
             'authors' => (object)[
@@ -229,7 +236,7 @@ class StatsTest extends TestCommon
             'minScore' => 2,
             'issues' => (object)[
                 'fr/PM 315' => (object)[
-                    'oldestdate' => (new \DateTime('today'))->format('Y-m-d'),
+                    'oldestdate' => (new DateTime('today'))->format('Y-m-d'),
                     'stories' => (object)[
                         'CB' => ['W WDC 130-02'],
                         'DR' => ['AR 201'],
@@ -239,7 +246,7 @@ class StatsTest extends TestCommon
                     'issuenumber' => '315',
                 ],
                 'fr/DDD 1' => (object)[
-                    'oldestdate' => (new \DateTime('-5 days'))->format('Y-m-d'),
+                    'oldestdate' => (new DateTime('-5 days'))->format('Y-m-d'),
                     'stories' => (object)[
                         'CB' => ['W WDC  32-02'],
                     ],

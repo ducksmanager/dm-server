@@ -65,21 +65,13 @@ class CollectionTest extends TestCommon
      */
     public function testPostLastVisit(?DateTime $existingPreviousVisit, ?DateTime $existingLastVisit, ?string $newPreviousVisit, ?string $newLastVisit, int $expectedStatus): void
     {
-        if (!is_null($existingPreviousVisit)) {
-            /** @var Users $user */
-            $user = $this->getEm('dm')->getRepository(Users::class)->findOneBy(['username'=>self::$defaultTestDmUserName]);
-            $user->setPrecedentacces($existingPreviousVisit);
-            $this->getEm('dm')->persist($user);
-            $this->getEm('dm')->flush();
-        }
+        /** @var Users $user */
+        $user = $this->getEm('dm')->getRepository(Users::class)->findOneBy(['username'=>self::$defaultTestDmUserName]);
+        $user->setPrecedentacces($existingPreviousVisit);
+        $user->setDernieracces($existingLastVisit);
 
-        if (!is_null($existingLastVisit)) {
-            /** @var Users $user */
-            $user = $this->getEm('dm')->getRepository(Users::class)->findOneBy(['username'=>self::$defaultTestDmUserName]);
-            $user->setDernieracces($existingLastVisit);
-            $this->getEm('dm')->persist($user);
-            $this->getEm('dm')->flush();
-        }
+        $this->getEm('dm')->persist($user);
+        $this->getEm('dm')->flush();
 
         $userResponse = $this->buildAuthenticatedServiceWithTestUser('/collection/lastvisit', self::$dmUser, 'POST')->call();
         $this->assertEquals($expectedStatus, $userResponse->getStatusCode());

@@ -7,11 +7,16 @@ doctrine:
     connections:
       dm:
         path: "%env(DATABASE_DM_PATH)%"
+        memory: true
       coa:
         path: "%env(DATABASE_COA_PATH)%"
+        memory: true
       coverid:
         path: "%env(DATABASE_COVER_ID_PATH)%"
+        memory: true
       dm_stats:
         path: "%env(DATABASE_DM_STATS_PATH)%"
+        memory: true
       edgecreator:
         path: "%env(DATABASE_EDGECREATOR_PATH)%"
+        memory: true
