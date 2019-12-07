@@ -683,9 +683,6 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
     }
 
     /**
-     * @param TranchesEnCoursModeles $modelId
-     * @param array $designers
-     * @param array $photographers
      * @throws ORMException
      * @throws OptimisticLockException
      */
