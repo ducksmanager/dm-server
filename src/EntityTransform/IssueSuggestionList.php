@@ -10,10 +10,10 @@ class IssueSuggestionList
     private $issues = [];
 
     /** @var int $minScore */
-    private $minScore;
+    private $minScore = 0;
 
     /** @var int $maxScore */
-    private $maxScore;
+    private $maxScore = 0;
 
     public function getIssueWithCode(string $issueCode) : ?IssueSuggestion {
         return $this->issues[$issueCode] ?? null;

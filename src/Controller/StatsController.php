@@ -9,7 +9,6 @@ use App\EntityTransform\IssueSuggestion;
 use App\EntityTransform\IssueSuggestionList;
 use App\Service\CoaService;
 use App\Service\SuggestionService;
-use App\Service\UsersOptionsService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -49,7 +48,7 @@ class StatsController extends AbstractController implements RequiresDmVersionCon
      *     defaults={"countryCode"="ALL", "sincePreviousVisit"="_"}
      * )
      */
-    public function getSuggestedIssuesWithDetails(?string $countryCode, string $sincePreviousVisit, SuggestionService $suggestionService, UsersOptionsService $usersOptionsService) {
+    public function getSuggestedIssuesWithDetails(?string $countryCode, string $sincePreviousVisit, SuggestionService $suggestionService) {
         $userId = $this->getSessionUser()['id'];
 
         switch ($countryCode) {
@@ -75,14 +74,20 @@ class StatsController extends AbstractController implements RequiresDmVersionCon
             $userId
         );
         /** @var IssueSuggestionList $suggestions */
-        $suggestionsForUser = $suggestionsPerUser[$userId];
+        $suggestionsForUser = $suggestionsPerUser[$userId] ?? new IssueSuggestionList();
+
+        $sortedSuggestions = $suggestionsForUser->getIssues();
+        usort($sortedSuggestions, function(IssueSuggestion $issueSuggestion1, IssueSuggestion $issueSuggestion2) {
+            return $issueSuggestion1->getScore() <=> $issueSuggestion2->getScore();
+        });
+        $sortedSuggestions = array_reverse($sortedSuggestions);
 
         return new JsonResponse([
             'minScore' => $suggestionsForUser->getMinScore(),
             'maxScore' => $suggestionsForUser->getMaxScore(),
             'issues' => (object) array_map(function(IssueSuggestion $issue) {
                 return $issue->toSimpleObject();
-            }, $suggestionsForUser->getIssues())
+            }, $sortedSuggestions)
         ] + compact('authors', 'storyDetails', 'publicationTitles')
         );
     }
