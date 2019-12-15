@@ -78,8 +78,8 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
             ->andWhere('modeles.active = :active')
             ->setParameter(':active', true)
             ->andWhere('modeles.username = :username or helperusers.idUtilisateur = :usernameid')
-            ->setParameter(':username', $this->getCurrentUser()['username'])
-            ->setParameter(':usernameid', $this->getCurrentUser()['id'])
+            ->setParameter(':username', $this->getSessionUser()['username'])
+            ->setParameter(':usernameid', $this->getSessionUser()['id'])
         ;
 
         return new JsonResponseFromObject($qb->getQuery()->getResult());
@@ -109,8 +109,8 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
             ->setParameter(':active', true)
             ->andWhere('modeles.username != :username or modeles.username is null')
             ->andWhere('helperusers.idUtilisateur = :usernameid and helperusers.contribution = :contribution')
-            ->setParameter(':username', $this->getCurrentUser()['username'])
-            ->setParameter(':usernameid', $this->getCurrentUser()['id'])
+            ->setParameter(':username', $this->getSessionUser()['username'])
+            ->setParameter(':usernameid', $this->getSessionUser()['id'])
             ->setParameter(':contribution', 'photographe')
         ;
 
@@ -167,7 +167,7 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
         $model->setPays($country);
         $model->setMagazine($publication);
         $model->setNumero($issueNumber);
-        $model->setUsername($isEditor === '1' ? $this->getCurrentUser()['username'] : null);
+        $model->setUsername($isEditor === '1' ? $this->getSessionUser()['username'] : null);
         $model->setActive(true);
 
         $ecEm->persist($model);
@@ -415,7 +415,7 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
             'idModele' => $modelId
         ]);
 
-        $currentUserId = $this->getCurrentUser()['id'];
+        $currentUserId = $this->getSessionUser()['id'];
         if (count(array_filter($helperUsers, function(TranchesEnCoursContributeurs $helperUser) use ($currentUserId) {
                 return $helperUser->getIdUtilisateur() === $currentUserId;
             })) === 0) {
@@ -431,7 +431,7 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
 
         $mainPhoto = new ImagesTranches();
         $mainPhoto
-            ->setIdUtilisateur($this->getCurrentUser()['id'])
+            ->setIdUtilisateur($this->getSessionUser()['id'])
             ->setDateheure((new DateTime())->setTime(0,0))
             ->setHash(null) // TODO
             ->setNomfichier($photoName);
@@ -496,7 +496,7 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
         $qb->select('photo.id, photo.hash, photo.dateheure, photo.idUtilisateur')
             ->from(ImagesTranches::class, 'photo')
             ->andWhere('photo.idUtilisateur = :idUtilisateur')
-            ->setParameter(':idUtilisateur', $this->getCurrentUser()['id'])
+            ->setParameter(':idUtilisateur', $this->getSessionUser()['id'])
             ->andWhere('photo.dateheure = :today')
             ->setParameter(':today', new DateTime('today'));
 
@@ -512,7 +512,7 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
     {
         $ecEm = $this->getEm('edgecreator');
         $uploadedFile = $ecEm->getRepository(ImagesTranches::class)->findOneBy([
-            'idUtilisateur' => $this->getCurrentUser()['id'],
+            'idUtilisateur' => $this->getSessionUser()['id'],
             'hash' => $hash
         ]);
         return new JsonResponseFromObject($uploadedFile);
@@ -528,7 +528,7 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
         $ecEm = $this->getEm('edgecreator');
         $hash = $request->request->get('hash');
         $fileName = $request->request->get('filename');
-        $user = $this->getCurrentUser();
+        $user = $this->getSessionUser();
 
         $photo = new ImagesTranches();
         $photo->setHash($hash);
@@ -782,7 +782,7 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
         $interval->setIdValeur($valueId);
         $interval->setNumeroDebut($firstIssueNumber);
         $interval->setNumeroFin($lastIssueNumber);
-        $interval->setUsername($this->getCurrentUser()['username']);
+        $interval->setUsername($this->getSessionUser()['username']);
 
         $ecEm->persist($interval);
         $ecEm->flush();
@@ -808,7 +808,7 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
     {
         $ecEm = $this->getEm('edgecreator');
         $model = $ecEm->getRepository(TranchesEnCoursModeles::class)->find($modelId);
-        $model->setUsername($this->getCurrentUser()['username']);
+        $model->setUsername($this->getSessionUser()['username']);
 
         $ecEm->persist($model);
         $ecEm->flush();

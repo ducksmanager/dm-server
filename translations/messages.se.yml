@@ -1,0 +1,4 @@
+NOTIFICATION_TITLE: >-
+  %flag% %issueTitle% är ut!
+NOTIFICATION_BODY_ONE_STORY: • 1 ny berättelse från %author%
+NOTIFICATION_BODY_MULTIPLE_STORIES: • %new_stories_author% nya berättelser från %author%

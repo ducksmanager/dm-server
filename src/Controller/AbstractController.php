@@ -46,7 +46,7 @@ class AbstractController extends \Symfony\Bundle\FrameworkBundle\Controller\Abst
         return $this->container->get('doctrine')->getManager($name);
     }
 
-    protected function getCurrentUser(): array
+    protected function getSessionUser(): array
     {
         return $this->get('session')->get('user');
     }

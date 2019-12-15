@@ -59,6 +59,7 @@ class StatsTest extends TestCommon
                     'score' => 6,
                     'publicationcode' => 'fr/PM',
                     'issuenumber' => '315',
+                    'issuecode' => 'fr/PM 315',
                     'oldestdate' => (new DateTime())->format('Y-m-d')
                 ],
                 'us/CBL 7' => (object)[
@@ -71,6 +72,7 @@ class StatsTest extends TestCommon
                     'score' => 4,
                     'publicationcode' => 'us/CBL',
                     'issuenumber' => '7',
+                    'issuecode' => 'us/CBL 7',
                     'oldestdate' => (new DateTime('-5 days midnight'))->format('Y-m-d')
                 ],
                 'fr/DDD 1' => (object)[
@@ -80,6 +82,7 @@ class StatsTest extends TestCommon
                     'score' => 2,
                     'publicationcode' => 'fr/DDD',
                     'issuenumber' => '1',
+                    'issuecode' => 'fr/DDD 1',
                     'oldestdate' => (new DateTime('-5 days midnight'))->format('Y-m-d')
                 ],
             ],
@@ -135,6 +138,7 @@ class StatsTest extends TestCommon
                     'score' => 6,
                     'publicationcode' => 'fr/PM',
                     'issuenumber' => '315',
+                    'issuecode' => 'fr/PM 315',
                     'oldestdate' => (new DateTime())->format('Y-m-d')
                 ],
                 'fr/DDD 1' => (object)[
@@ -144,6 +148,7 @@ class StatsTest extends TestCommon
                     'score' => 2,
                     'publicationcode' => 'fr/DDD',
                     'issuenumber' => '1',
+                    'issuecode' => 'fr/DDD 1',
                     'oldestdate' => (new DateTime('-5 days midnight'))->format('Y-m-d')
                 ],
             ],
@@ -186,7 +191,7 @@ class StatsTest extends TestCommon
 
     public function testGetSuggestionsSincePreviousVisit(): void
     {
-        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/stats/suggestedissues/ALL/since_previous_visit', self::$dmUser)->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/stats/suggestedissues/fr/since_previous_visit', self::$dmUser)->call();
 
         $objectResponse = json_decode($this->getResponseContent($response));
         $this->assertEquals((object)[
@@ -201,6 +206,7 @@ class StatsTest extends TestCommon
                     'score' => 6,
                     'publicationcode' => 'fr/PM',
                     'issuenumber' => '315',
+                    'issuecode' => 'fr/PM 315',
                     'oldestdate' => (new DateTime())->format('Y-m-d')
                 ],
             ],
@@ -244,6 +250,7 @@ class StatsTest extends TestCommon
                     'score' => 6,
                     'publicationcode' => 'fr/PM',
                     'issuenumber' => '315',
+                    'issuecode' => 'fr/PM 315',
                 ],
                 'fr/DDD 1' => (object)[
                     'oldestdate' => (new DateTime('-5 days'))->format('Y-m-d'),
@@ -253,6 +260,7 @@ class StatsTest extends TestCommon
                     'score' => 2,
                     'publicationcode' => 'fr/DDD',
                     'issuenumber' => '1',
+                    'issuecode' => 'fr/DDD 1',
                 ],
             ],
             'authors' => (object)[

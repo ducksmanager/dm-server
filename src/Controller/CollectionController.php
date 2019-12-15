@@ -12,6 +12,7 @@ use App\Entity\Dm\UsersPermissions;
 use App\EntityTransform\UpdateCollectionResult;
 use App\Helper\JsonResponseFromObject;
 use App\Service\CollectionUpdateService;
+use App\Service\UsersOptionsService;
 use DateTime;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
@@ -30,7 +31,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
      * @Route(methods={"GET"}, path="collection/notification_token")
      */
     public function getNotificationToken(Request $request) : Response {
-        $currentUsername = $this->getCurrentUser()['username'];
+        $currentUsername = $this->getSessionUser()['username'];
         $passedUsername = $request->query->get('user_id');
 
         if ($currentUsername !== $passedUsername) {
@@ -51,16 +52,13 @@ class CollectionController extends AbstractController implements RequiresDmVersi
     /**
      * @Route(methods={"GET"}, path="collection/notifications/countries")
      */
-    public function getCountriesToNotify() : Response {
-        $currentUser = $this->getEm('dm')->getRepository(Users::class)->find($this->getCurrentUser()['id']);
+    public function getCountriesToNotify(UsersOptionsService $usersOptionsService) : Response {
+        $currentUser = $this->getEm('dm')->getRepository(Users::class)->find($this->getSessionUser()['id']);
 
-        return new JsonResponseFromObject(
-            array_map(function (UsersOptions $values) {
-                return $values->getOptionValeur();
-            }, $this->getEm('dm')->getRepository(UsersOptions::class)->findBy([
-                'user' => $currentUser,
-                'optionNom' => 'suggestion_notification_country'
-            ]))
+        return new JsonResponseFromObject($usersOptionsService->getOptionValueForUser(
+            $currentUser,
+            UsersOptionsService::OPTION_NAME_SUGGESTION_NOTIFICATION_COUNTRY
+        )->getValue()
         );
     }
 
@@ -72,7 +70,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
 
         /** @var Users $currentUser */
         $dmEm = $this->getEm('dm');
-        $currentUser = $dmEm->getRepository(Users::class)->find($this->getCurrentUser()['id']);
+        $currentUser = $dmEm->getRepository(Users::class)->find($this->getSessionUser()['id']);
         $optionName = 'suggestion_notification_country';
 
         try {
@@ -107,7 +105,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
      */
     public function updateLastVisit(LoggerInterface $logger) : Response {
         $dmEm = $this->getEm('dm');
-        $existingUser = $dmEm->getRepository(Users::class)->find($this->getCurrentUser()['id']);
+        $existingUser = $dmEm->getRepository(Users::class)->find($this->getSessionUser()['id']);
 
         if (is_null($existingUser->getDernieracces()) ) {
             $logger->info("Initializing last access for user {$existingUser->getId()}");
@@ -131,7 +129,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
      * @Route(methods={"GET"}, path="/collection/user")
      */
     public function getDmUser() {
-        $existingUser = $this->getEm('dm')->getRepository(Users::class)->find($this->getCurrentUser()['id']);
+        $existingUser = $this->getEm('dm')->getRepository(Users::class)->find($this->getSessionUser()['id']);
         return new JsonResponseFromObject($existingUser);
     }
 
@@ -144,7 +142,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
         $qb = $dmEm->createQueryBuilder();
         $qb->select('issues.id, issues.pays AS country, issues.magazine, issues.numero AS issueNumber, issues.etat AS condition, issues.idAcquisition AS purchaseId')
             ->from(Numeros::class, 'issues')
-            ->where($qb->expr()->eq('issues.idUtilisateur', $this->getCurrentUser()['id']))
+            ->where($qb->expr()->eq('issues.idUtilisateur', $this->getSessionUser()['id']))
             ->orderBy('issues.pays, issues.magazine, issues.numero', 'ASC');
 
         return new JsonResponseFromObject($qb->getQuery()->getArrayResult());
@@ -159,7 +157,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
         $qb = $dmEm->createQueryBuilder();
         $qb->select('purchases.idAcquisition AS id, purchases.description, concat(purchases.date, \'\') AS date')
             ->from(Achats::class, 'purchases')
-            ->where($qb->expr()->eq('purchases.idUser', $this->getCurrentUser()['id']))
+            ->where($qb->expr()->eq('purchases.idUser', $this->getSessionUser()['id']))
             ->orderBy('purchases.date', 'ASC');
 
         return new JsonResponse($qb->getQuery()->getArrayResult());
@@ -188,11 +186,11 @@ class CollectionController extends AbstractController implements RequiresDmVersi
         $purchaseId = $request->request->get('purchaseId');
 
         if (!$this->getUserPurchase($purchaseId)) {
-            $logger->warning("User {$this->getCurrentUser()['id']} tried to use purchase ID $purchaseId which is owned by another user");
+            $logger->warning("User {$this->getSessionUser()['id']} tried to use purchase ID $purchaseId which is owned by another user");
             $purchaseId = null;
         }
         [$nbUpdated, $nbCreated] = $collectionUpdateService->addOrChangeIssues(
-            $this->getCurrentUser()['id'], $publication, $issueNumbers, $condition, $isToSell, $purchaseId
+            $this->getSessionUser()['id'], $publication, $issueNumbers, $condition, $isToSell, $purchaseId
         );
         return new JsonResponse(self::getSimpleArray([
             new UpdateCollectionResult('UPDATE', $nbUpdated),
@@ -215,11 +213,11 @@ class CollectionController extends AbstractController implements RequiresDmVersi
         $purchaseDateStr = $request->request->get('date');
         $purchaseDate = DateTime::createFromFormat('Y-m-d H:i:s', $purchaseDateStr.' 00:00:00');
         $purchaseDescription = $request->request->get('description');
-        $idUser = $this->getCurrentUser()['id'];
+        $idUser = $this->getSessionUser()['id'];
 
         if ($purchaseId === 'NEW') {
             $duplicatePurchase = $dmEm->getRepository(Achats::class)->findOneBy([
-                'idUser' => $this->getCurrentUser()['id'],
+                'idUser' => $this->getSessionUser()['id'],
                 'date' => $purchaseDate,
                 'description' => $purchaseDescription
             ]);
@@ -260,7 +258,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
             $qbMissingSorts
                 ->delete(BibliothequeOrdreMagazines::class, 'sorts')
                 ->where('sorts.idUtilisateur = :userId')
-                ->setParameter(':userId', $this->getCurrentUser()['id']);
+                ->setParameter(':userId', $this->getSessionUser()['id']);
             $qbMissingSorts->getQuery()->execute();
 
             $maxSort = -1;
@@ -268,7 +266,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
                 $sort = new BibliothequeOrdreMagazines();
                 $sort->setPublicationcode($publicationCode);
                 $sort->setOrdre(++$maxSort);
-                $sort->setIdUtilisateur($this->getCurrentUser()['id']);
+                $sort->setIdUtilisateur($this->getSessionUser()['id']);
                 $dmEm->persist($sort);
             }
             $dmEm->flush();
@@ -314,7 +312,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
             return $issue['issuecode'];
         }, $issues)));
 
-        $newIssues = $this->getNonPossessedIssues($issues, $this->getCurrentUser()['id']);
+        $newIssues = $this->getNonPossessedIssues($issues, $this->getSessionUser()['id']);
 
         return new JsonResponse([
             'issues' => $newIssues,
@@ -334,14 +332,14 @@ class CollectionController extends AbstractController implements RequiresDmVersi
         $issues = $request->request->get('issues');
         $defaultCondition = $request->request->get('defaultCondition');
 
-        $newIssues = $this->getNonPossessedIssues($issues, $this->getCurrentUser()['id']);
+        $newIssues = $this->getNonPossessedIssues($issues, $this->getSessionUser()['id']);
         $dmEm = $this->getEm('dm');
 
         foreach($newIssues as $issue) {
             [$country, $magazine] = explode('/', $issue['publicationcode']);
             $newIssue = new Numeros();
             $newIssue
-                ->setIdUtilisateur($this->getCurrentUser()['id'])
+                ->setIdUtilisateur($this->getSessionUser()['id'])
                 ->setPays($country)
                 ->setMagazine($magazine)
                 ->setNumero($issue['issuenumber'])
@@ -364,7 +362,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
     public function getUserPrivileges(): JsonResponse
     {
         $privileges = $this->getEm('dm')->getRepository(UsersPermissions::class)->findBy([
-            'username' => $this->getCurrentUser()['username']
+            'username' => $this->getSessionUser()['username']
         ]);
 
         $privilegesAssoc = [];
@@ -405,7 +403,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
             ->setParameter(':issueNumbers', $issueNumbers)
 
             ->andWhere($qb->expr()->in('issues.idUtilisateur', ':userId'))
-            ->setParameter(':userId', $this->getCurrentUser()['id']);
+            ->setParameter(':userId', $this->getSessionUser()['id']);
 
         return $qb->getQuery()->getResult();
     }
@@ -415,7 +413,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
             ? null
             : $this->getEm('dm')->getRepository(Achats::class)->findOneBy([
                 'idAcquisition' => $purchaseId,
-                'idUser' => $this->getCurrentUser()['id']
+                'idUser' => $this->getSessionUser()['id']
             ]);
     }
 }

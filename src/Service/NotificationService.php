@@ -4,7 +4,11 @@ namespace App\Service;
 
 use App\Entity\Dm\Users;
 use App\Entity\Dm\UsersSuggestionsNotifications;
+use App\EntityTransform\IssueSuggestion;
+use App\EntityTransform\IssueSuggestionList;
+use DateTime;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManager;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Pusher\PushNotifications\PushNotifications;
@@ -13,6 +17,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class NotificationService
 {
     private static $client;
+    /** @var EntityManager */
     private static $dmEm;
     private static $logger;
     private static $translator;
@@ -39,19 +44,23 @@ class NotificationService
 
     /**
      * @param string $issueCode
-     * @param string $text
-     * @param Users[] $usersToNotify
-     * @return int
+     * @param string $issueTitle
+     * @param int[] $storyCountPerAuthor
+     * @param Users $userToNotify
+     * @return bool
      */
-    public function sendSuggestedIssueNotification(string $issueCode, string $text, array $usersToNotify) : int {
+    public function sendSuggestedIssueNotification(string $issueCode, string $issueTitle, array $storyCountPerAuthor, Users $userToNotify) : bool {
 
         $notificationContent = [
-            'title' => self::$translator->trans('NOTIFICATION_TITLE', ['%issueTitle%' => $text ]),
-            'body' => self::$translator->trans('NOTIFICATION_BODY'),
+            'title' => self::$translator->trans('NOTIFICATION_TITLE', ['%issueTitle%' => $issueTitle ]),
+            'body' => implode('', array_map(function(string $authorName) use ($storyCountPerAuthor) {
+                $storyCount = $storyCountPerAuthor[$authorName];
+                return self::$translator->trans($storyCount === 1 ? 'NOTIFICATION_BODY_ONE_STORY' : 'NOTIFICATION_BODY_MULTIPLE_STORIES');
+            }, array_keys($storyCountPerAuthor)))
         ];
         try {
             $this->publishToUsers(
-                array_map(function(Users $user) { return $user->getUsername(); }, $usersToNotify),
+                [$userToNotify],
                 [
                     'fcm' => [
                         'notification' => $notificationContent
@@ -61,24 +70,21 @@ class NotificationService
                     ]]
                 ]
             );
-            foreach($usersToNotify as $userNotified) {
-                $userSuggestionNotification = (new UsersSuggestionsNotifications())
-                    ->setIssuecode($issueCode)
-                    ->setText($text)
-                    ->setUser($userNotified)
-                    ->setDate(new \DateTime());
-                self::$dmEm->persist($userSuggestionNotification);
-                self::$logger->info("Notification sent to user {$userNotified->getId()} concerning the release of issue $text");
-            }
+            self::$logger->info("Notification sent to user {$userToNotify->getId()} concerning the release of issue $issueTitle");
+            $userSuggestionNotification = (new UsersSuggestionsNotifications())
+                ->setIssuecode($issueCode)
+                ->setText($issueTitle)
+                ->setUser($userToNotify)
+                ->setDate(new DateTime());
+            self::$dmEm->persist($userSuggestionNotification);
             self::$dmEm->flush();
 
-            return count($usersToNotify);
-
+            return true;
         } catch (Exception $e) {
             self::$logger->error($e->getMessage());
         }
 
-        return 0;
+        return false;
     }
 
     /**
@@ -93,5 +99,30 @@ class NotificationService
         }
 
         return array_pop(self::$mockResultsStack);
+    }
+
+    /**
+     * @param IssueSuggestionList $suggestedIssuesToNotify
+     * @param int $userId
+     * @return IssueSuggestion[]
+     */
+    public function filterUnNotifiedIssues(IssueSuggestionList $suggestedIssuesToNotify, int $userId): array
+    {
+        return array_filter($suggestedIssuesToNotify->getIssues(), function(IssueSuggestion $suggestedIssue) use ($userId) {
+            $suggestedIssueCountryCode = explode('/', $suggestedIssue->getPublicationcode())[0];
+            $suggestedIssueCode = "{$suggestedIssue->getPublicationcode()} {$suggestedIssue->getIssuenumber()}";
+
+            $alreadySentNotificationQb = self::$dmEm->createQueryBuilder();
+            $alreadySentNotificationQb
+                ->select('existingNotification')
+                ->from(UsersSuggestionsNotifications::class, 'existingNotification')
+                ->innerJoin('existingNotification.user', 'u')
+                ->where('u.id = :userId')
+                ->setParameter(':userId', $userId)
+                ->andWhere('existingNotification.issuecode = :issueCode')
+                ->setParameter(':issueCode', $suggestedIssueCode);
+
+            return empty($alreadySentNotificationQb->getQuery()->getResult());
+        });
     }
 }

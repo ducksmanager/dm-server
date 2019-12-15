@@ -5,11 +5,11 @@ namespace App\Controller;
 use App\Entity\Dm\Users;
 use App\Entity\DmStats\AuteursHistoires;
 use App\Entity\DmStats\UtilisateursHistoiresManquantes;
-use App\Entity\DmStats\UtilisateursPublicationsManquantes;
-use App\Entity\DmStats\UtilisateursPublicationsSuggerees;
-use Doctrine\ORM\Query\Expr\Join;
-use Doctrine\ORM\Query\Expr\OrderBy;
-use stdClass;
+use App\EntityTransform\IssueSuggestion;
+use App\EntityTransform\IssueSuggestionList;
+use App\Service\CoaService;
+use App\Service\SuggestionService;
+use App\Service\UsersOptionsService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -18,17 +18,13 @@ class StatsController extends AbstractController implements RequiresDmVersionCon
     /**
      * @Route(methods={"GET"}, path="/collection/stats/watchedauthorsstorycount")
      */
-    public function getWatchedAuthorStoryCount() {
+    public function getWatchedAuthorStoryCount(CoaService $coaService) {
 
         $authorsAndStoryMissingForUserCount = $this->getMissingStoriesCount();
 
         $authorsAndStoryCount = $this->getStoriesCount(array_keys($authorsAndStoryMissingForUserCount));
 
-        $authorsFullNames = json_decode(
-            $this->callService(CoaController::class, 'listAuthorsFromAuthorCodes', [
-                'authors' => implode(',', array_keys($authorsAndStoryCount))
-            ])->getContent()
-        );
+        $authorsFullNames = $coaService->getAuthorNames(array_keys($authorsAndStoryCount));
 
         $watchedAuthorsStoryCount = [];
         array_walk($authorsFullNames, function ($authorFullName, $personCode) use (
@@ -53,111 +49,42 @@ class StatsController extends AbstractController implements RequiresDmVersionCon
      *     defaults={"countryCode"="ALL", "sincePreviousVisit"="_"}
      * )
      */
-    public function getSuggestedIssuesWithDetails(string $countryCode, string $sincePreviousVisit) {
-        /** @var Users $user */
-        $user = $this->getEm('dm')->getRepository(Users::class)->find($this->getCurrentUser()['id']);
+    public function getSuggestedIssuesWithDetails(?string $countryCode, string $sincePreviousVisit, SuggestionService $suggestionService, UsersOptionsService $usersOptionsService) {
+        $userId = $this->getSessionUser()['id'];
 
         switch ($countryCode) {
             case 'ALL':
-                $countryCodes = null;
+                $countryCode = SuggestionService::SUGGESTION_ALL_COUNTRIES;
             break;
             case 'countries_to_notify':
-                $countryCodes = json_decode(
-                    $this->callService(CollectionController::class, 'getCountriesToNotify')->getContent()
-                );
+                $countryCode = SuggestionService::SUGGESTION_COUNTRIES_TO_NOTIFY;
             break;
-            default:
-                $countryCodes = [$countryCode];
         }
 
         if ($sincePreviousVisit === 'since_previous_visit') {
+            $user = $this->getEm('dm')->getRepository(Users::class)->find($this->getSessionUser()['id']);
             $previousVisit = $user->getPrecedentacces();
             if (!is_null($previousVisit)) {
-                $since = $previousVisit->format('Y-m-d');
+                $since = $previousVisit;
             }
         }
-        $suggestedStories = $this->getSuggestedIssues($countryCodes, $since ?? 'forever');
 
-        if (count($suggestedStories) === 0) {
-            return new JsonResponse([
-                'maxScore' => 0,
-                'minScore' => 0,
-                'issues' => new stdClass(),
-                'authors' => new stdClass(),
-                'publicationTitles' => new stdClass(),
-                'storyDetails' => new stdClass()
-            ]);
-        }
-
-        // Get author names
-        $storyAuthors = array_map(function ($story) {
-            return $story['personcode'];
-        }, $suggestedStories);
-
-        $authors = json_decode(
-            $this->callService(CoaController::class, 'listAuthorsFromAuthorCodes', [
-                'authors' => implode(',', $storyAuthors)
-            ])->getContent()
+        [$suggestionsPerUser, $authors, $storyDetails, $publicationTitles] = $suggestionService->getSuggestions(
+            $since ?? null,
+            $countryCode,
+            $userId
         );
-
-        // Get author names - END
-
-        // Get story details
-        $storyCodes = array_map(function ($story) {
-            return $story['storycode'];
-        }, $suggestedStories);
-
-        $storyDetails = json_decode(
-            $this->callService(CoaController::class, 'listStoryDetailsFromStoryCodes', [
-                'storyCodes' => implode(',', $storyCodes)
-            ])->getContent()
-        );
-
-        // Add author to story details
-        foreach ($suggestedStories as $suggestedStory) {
-            $storyDetails->{$suggestedStory['storycode']}->personcode = $suggestedStory['personcode'];
-        }
-
-        // Get story details - END
-
-        // Get publication titles
-        $publicationCodes = array_map(function ($story) {
-            return $story['publicationcode'];
-        }, $suggestedStories);
-
-        $publicationTitles = json_decode(
-            $this->callService(CoaController::class, 'listPublicationsFromPublicationCodes', [
-                'publicationCodes' => implode(',', array_unique($publicationCodes))
-            ])->getContent()
-        );
-
-        // Get publication titles - END
-
-        $issues = [];
-        foreach ($suggestedStories as $story) {
-            ['publicationcode' => $publicationcode, 'issuenumber' => $issuenumber, 'personcode' => $personcode, 'score' => $score, 'storycode' => $storycode, 'oldestdate' => $oldestdate] = $story;
-            /** @var \DateTime|null $oldestdate */
-            $oldestdate = is_null($oldestdate) ? null : $oldestdate->format('Y-m-d');
-            $issueCode = implode(' ', [$publicationcode, $issuenumber]);
-            if (!isset($issues[$issueCode]['stories'])) {
-                $issues[$issueCode] =
-                    ['stories' => []]
-                    + compact('score', 'publicationcode', 'issuenumber', 'oldestdate');
-            }
-            if (!isset($issues[$issueCode]['stories'][$personcode])) {
-                $issues[$issueCode]['stories'][$personcode] = [];
-            }
-            $issues[$issueCode]['stories'][$personcode][] = $storycode;
-        }
+        /** @var IssueSuggestionList $suggestions */
+        $suggestionsForUser = $suggestionsPerUser[$userId];
 
         return new JsonResponse([
-            'maxScore' => $suggestedStories[0]['score'],
-            'minScore' => $suggestedStories[count($suggestedStories) - 1]['score'],
-            'issues' => json_decode(json_encode($issues)),
-            'authors' => $authors,
-            'publicationTitles' => $publicationTitles,
-            'storyDetails' => $storyDetails
-        ]);
+            'minScore' => $suggestionsForUser->getMinScore(),
+            'maxScore' => $suggestionsForUser->getMaxScore(),
+            'issues' => (object) array_map(function(IssueSuggestion $issue) {
+                return $issue->toSimpleObject();
+            }, $suggestionsForUser->getIssues())
+        ] + compact('authors', 'storyDetails', 'publicationTitles')
+        );
     }
 
     private function getMissingStoriesCount() : array
@@ -167,7 +94,7 @@ class StatsController extends AbstractController implements RequiresDmVersionCon
             ->select('author_stories_missing_for_user.personcode, COUNT(author_stories_missing_for_user.storycode) AS storyNumber')
             ->from(UtilisateursHistoiresManquantes::class, 'author_stories_missing_for_user')
             ->where($qbMissingStoryCountPerAuthor->expr()->eq('author_stories_missing_for_user.idUser', ':userId'))
-            ->setParameter(':userId', $this->getCurrentUser()['id'])
+            ->setParameter(':userId', $this->getSessionUser()['id'])
             ->groupBy('author_stories_missing_for_user.personcode');
 
         $missingStoryCountResults = $qbMissingStoryCountPerAuthor->getQuery()->getResult();
@@ -198,64 +125,5 @@ class StatsController extends AbstractController implements RequiresDmVersionCon
         });
 
         return $storyCounts;
-    }
-
-    private function getSuggestedIssues(?array $countryCodes, string $since) : array
-    {
-        $qbGetMostWantedSuggestions = $this->getEm('dm_stats')->createQueryBuilder();
-
-        $qbGetMostWantedSuggestions
-            ->select('most_suggested.publicationcode', 'most_suggested.issuenumber')
-            ->from(UtilisateursPublicationsSuggerees::class, 'most_suggested')
-            ->where($qbGetMostWantedSuggestions->expr()->eq('most_suggested.idUser', ':userId'))
-            ->setParameter(':userId', $this->getCurrentUser()['id'])
-            ->orderBy(new OrderBy('most_suggested.score', 'DESC'))
-            ->setMaxResults(20);
-
-        if (!is_null($countryCodes)) {
-            $qbGetMostWantedSuggestions
-                ->andWhere('('.implode(' or ', array_map(function(string $countryCode) {
-                    return "most_suggested.publicationcode LIKE :countryCodeParameter$countryCode";
-                }, $countryCodes)).')');
-            foreach($countryCodes as $countryCode) {
-                $qbGetMostWantedSuggestions->setParameter(":countryCodeParameter$countryCode", "$countryCode/%");
-            }
-        }
-
-        if ($since !== 'forever') {
-            $qbGetMostWantedSuggestions
-                ->andWhere($qbGetMostWantedSuggestions->expr()->gt('most_suggested.oldestdate', ':since'))
-                ->setParameter(':since', $since);
-        }
-
-        $mostWantedSuggestionsResults = $qbGetMostWantedSuggestions->getQuery()->getResult();
-
-        $mostWantedSuggestions = array_map(function($suggestion) {
-            return implode('', [$suggestion['publicationcode'], $suggestion['issuenumber']]);
-        }, $mostWantedSuggestionsResults);
-
-        $qbGetSuggestionDetails = $this->getEm('dm_stats')->createQueryBuilder();
-
-        $qbGetSuggestionDetails
-            ->select('missing.personcode, missing.storycode, ' .
-                'suggested.publicationcode, suggested.issuenumber, suggested.score, suggested.oldestdate')
-            ->from(UtilisateursPublicationsSuggerees::class, 'suggested')
-            ->join(UtilisateursPublicationsManquantes::class, 'missing', Join::WITH,  $qbGetSuggestionDetails->expr()->andX(
-                $qbGetSuggestionDetails->expr()->eq('suggested.idUser', 'missing.idUser'),
-                $qbGetSuggestionDetails->expr()->eq('suggested.publicationcode', 'missing.publicationcode'),
-                $qbGetSuggestionDetails->expr()->eq('suggested.issuenumber', 'missing.issuenumber')
-            ))
-
-            ->where($qbGetSuggestionDetails->expr()->eq('suggested.idUser', ':userId'))
-            ->setParameter(':userId', $this->getCurrentUser()['id'])
-
-            ->andWhere($qbGetSuggestionDetails->expr()->in($qbGetSuggestionDetails->expr()->concat('suggested.publicationcode', 'suggested.issuenumber'), ':mostSuggestedIssues'))
-            ->setParameter(':mostSuggestedIssues', $mostWantedSuggestions)
-
-            ->addOrderBy(new OrderBy('suggested.score', 'DESC'))
-            ->addOrderBy(new OrderBy('suggested.publicationcode', 'ASC'))
-            ->addOrderBy(new OrderBy('suggested.issuenumber', 'ASC'));
-
-        return $qbGetSuggestionDetails->getQuery()->getResult();
     }
 }

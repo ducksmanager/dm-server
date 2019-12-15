@@ -1,0 +1,4 @@
+NOTIFICATION_TITLE: >-
+  %flag% %issueTitle% is out!
+NOTIFICATION_BODY_ONE_STORY: • 1 new story from %author%
+NOTIFICATION_BODY_MULTIPLE_STORIES: • %new_stories_author% new stories from %author%

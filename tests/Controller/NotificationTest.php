@@ -6,6 +6,7 @@ use App\Entity\Dm\UsersSuggestionsNotifications;
 use App\Service\NotificationService;
 use App\Tests\Fixtures\DmCollectionFixture;
 use App\Tests\Fixtures\DmStatsFixture;
+use DateTime;
 
 class NotificationTest extends TestCommon
 {
@@ -37,10 +38,45 @@ class NotificationTest extends TestCommon
             'user' => $this->getEm('dm')->getRepository(Users::class)->findOneBy(['username' => DmCollectionFixture::$username])
         ]);
 
-        $this->assertCount(1, $notificationsSentToUser);
+        $this->assertCount(2, $notificationsSentToUser);
         $this->assertEquals('fr/DDD 1', $notificationsSentToUser[0]->getIssuecode());
         $this->assertEquals('Dynastie 1', $notificationsSentToUser[0]->getText());
-        $notificationDate = $notificationsSentToUser[0]->getDate();
-        $this->assertEquals((new \DateTime())->format('Y-m-d'), $notificationDate->format('Y-m-d'));
+        $this->assertEquals('fr/PM 315', $notificationsSentToUser[1]->getIssuecode());
+        $this->assertEquals('Picsou Magazine 315', $notificationsSentToUser[1]->getText());
+        foreach($notificationsSentToUser as $notificationSentToUser) {
+            $notificationDate = $notificationSentToUser->getDate();
+            $this->assertEquals((new DateTime())->format('Y-m-d'), $notificationDate->format('Y-m-d'));
+        }
+    }
+
+    public function testSendNotificationAlreadySent(): void
+    {
+        $currentUser = $this->getEm('dm')->getRepository(Users::class)->findOneBy(['username' => DmCollectionFixture::$username]);
+
+        $existingNotification = (new UsersSuggestionsNotifications())
+            ->setIssuecode('fr/DDD 1')
+            ->setUser($currentUser)
+            ->setDate(new DateTime('yesterday'))
+            ->setText('Notification body');
+        $this->getEm('dm')->persist($existingNotification);
+        $this->getEm('dm')->flush();
+
+        NotificationService::$mockResultsStack = [
+            'OK'
+        ];
+        $this->buildAuthenticatedServiceWithTestUser('/notification/send', self::$rawSqlUser, 'POST')
+            ->call();
+$notificationsSentToUser = $this->getEm('dm')->getRepository(UsersSuggestionsNotifications::class)->findBy([
+            'user' => $currentUser
+        ]);
+
+        $this->assertCount(2, $notificationsSentToUser);
+
+        $newNotifications = array_values(array_filter($notificationsSentToUser, function(UsersSuggestionsNotifications $notification) {
+            return $notification->getDate()->format('Y-m-d') === (new DateTime())->format('Y-m-d');
+        }));
+        $this->assertCount(1, $newNotifications);
+        $this->assertEquals('fr/PM 315', $newNotifications[0]->getIssuecode());
+        $this->assertEquals('Picsou Magazine 315', $newNotifications[0]->getText());
     }
 }

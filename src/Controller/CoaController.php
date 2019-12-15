@@ -4,11 +4,10 @@ namespace App\Controller;
 
 use App\Entity\Coa\InducksCountryname;
 use App\Entity\Coa\InducksIssue;
-use App\Entity\Coa\InducksPerson;
 use App\Entity\Coa\InducksPublication;
-use App\Entity\Coa\InducksStory;
 use App\Entity\Coverid\Covers;
 use App\EntityTransform\SimpleIssueWithCoverId;
+use App\Service\CoaService;
 use Doctrine\ORM\Query\Expr\Join;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -55,34 +54,17 @@ class CoaController extends AbstractController
     /**
      * @Route(
      *     methods={"GET"},
-     *     path="/coa/list/publications/{publicationCodes}",
-     *     requirements={"publicationCodes"="^([a-z]+|((?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+),){0,9}[a-z]+/[-A-Z0-9]+)$"}
+     *     path="/coa/list/publications/{publicationCodesOrCountry}",
+     *     requirements={"publicationCodesOrCountry"="^([a-z]+|((?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+),){0,9}[a-z]+/[-A-Z0-9]+)$"}
      * )
      */
-    public function listPublicationsFromPublicationCodes(string $publicationCodes): Response
+    public function listPublicationsFromPublicationCodes(string $publicationCodesOrCountry, CoaService $coaService): Response
     {
-        $coaEm = $this->getEm('coa');
-        $qb = $coaEm->createQueryBuilder();
-        $qb
-            ->select('inducks_publication.publicationcode, inducks_publication.title')
-            ->from(InducksPublication::class, 'inducks_publication');
-
-        if (preg_match('#^[a-z]+$#', $publicationCodes)) {
-            $qb->where($qb->expr()->like('inducks_publication.publicationcode', "'$publicationCodes/%'"));
-        } else {
-            $qb->where($qb->expr()->in('inducks_publication.publicationcode', explode(',', $publicationCodes)));
-        }
-        $qb->orderBy('inducks_publication.title');
-
-        $results = $qb->getQuery()->getResult();
-        $publicationTitles = [];
-        array_walk(
-            $results,
-            function ($result) use (&$publicationTitles) {
-                $publicationTitles[$result['publicationcode']] = $result['title'];
-            }
+        return new JsonResponse(
+            preg_match('#^[a-z]+$#', $publicationCodesOrCountry)
+                ? $coaService->getPublicationTitlesFromCountry($publicationCodesOrCountry)
+                : $coaService->getPublicationTitles(array_unique(explode(',', $publicationCodesOrCountry)))
         );
-        return new JsonResponse($publicationTitles);
     }
 
     /**
@@ -172,23 +154,11 @@ class CoaController extends AbstractController
     /**
      * @Route(methods={"GET"}, path="/coa/authorsfullnames/{authors}")
      */
-    public function listAuthorsFromAuthorCodes(string $authors): JsonResponse
+    public function listAuthorsFromAuthorCodes(string $authors, CoaService $coaService): JsonResponse
     {
-        $authorsList = array_unique(explode(',', $authors));
-
-        $qbAuthorsFullNames = $this->getEm('coa')->createQueryBuilder();
-        $qbAuthorsFullNames
-            ->select('p.personcode, p.fullname')
-            ->from(InducksPerson::class, 'p')
-            ->where($qbAuthorsFullNames->expr()->in('p.personcode', $authorsList));
-
-        $fullNamesResults = $qbAuthorsFullNames->getQuery()->getResult();
-
-        $fullNames = [];
-        array_walk($fullNamesResults, function($authorFullName) use (&$fullNames) {
-            $fullNames[$authorFullName['personcode']] = $authorFullName['fullname'];
-        });
-        return new JsonResponse($fullNames);
+        return new JsonResponse(
+            array_unique($coaService->getAuthorNames(explode(',', $authors)))
+        );
     }
 
     /**
@@ -198,35 +168,10 @@ class CoaController extends AbstractController
      *     requirements={"storyCodes"="^((?P<storycode_regex>[-/A-Za-z0-9 ?&]+),){0,49}[-/A-Za-z0-9 ?&]+$"}
      * )
      */
-    public function listStoryDetailsFromStoryCodes(string $storyCodes): JsonResponse
+    public function listStoryDetailsFromStoryCodes(string $storyCodes, CoaService $coaService): JsonResponse
     {
-        $storyCodesList = array_unique(explode(',', $storyCodes));
-
-        $qbStoryDetails = $this->getEm('coa')->createQueryBuilder();
-        $qbStoryDetails
-            ->select('story.storycode, story.title, story.storycomment')
-            ->from(InducksStory::class, 'story')
-            ->where($qbStoryDetails->expr()->in('story.storycode', $storyCodesList));
-
-        $storyDetailsResults = $qbStoryDetails->getQuery()->getResult();
-
-        $storyDetails = [];
-        array_walk($storyDetailsResults, function($story) use (&$storyDetails) {
-            $storyDetails[$story['storycode']] = [
-                'storycomment' => $story['storycomment'],
-                'title' => $story['title']
-            ];
-        });
-
-        // Empty properties if the story couldn't be found
-        foreach($storyCodesList as $storyCode) {
-            if (!isset($storyDetails[$storyCode])) {
-                $storyDetails[$storyCode] = [
-                    'storycomment' => '',
-                    'title' => '?'
-                ];
-            }
-        }
-        return new JsonResponse($storyDetails);
+        return new JsonResponse(
+            array_unique($coaService->getStoryDetails(explode(',', $storyCodes)))
+        );
     }
 }
