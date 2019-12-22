@@ -55,7 +55,7 @@ class NotificationService
             'title' => self::$translator->trans('NOTIFICATION_TITLE', ['%issueTitle%' => $issueTitle ]),
             'body' => implode('', array_map(function(string $authorName) use ($storyCountPerAuthor) {
                 $storyCount = $storyCountPerAuthor[$authorName];
-                return self::$translator->trans($storyCount === 1 ? 'NOTIFICATION_BODY_ONE_STORY' : 'NOTIFICATION_BODY_MULTIPLE_STORIES');
+                return self::$translator->trans($storyCount === 1 ? 'NOTIFICATION_BODY_ONE_STORY' : 'NOTIFICATION_BODY_MULTIPLE_STORIES', ['%author%' => $authorName]);
             }, array_keys($storyCountPerAuthor)))
         ];
         try {
