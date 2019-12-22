@@ -60,7 +60,7 @@ class NotificationService
         ];
         try {
             $this->publishToUsers(
-                [$userToNotify],
+                [$userToNotify->getUsername()],
                 [
                     'fcm' => [
                         'notification' => $notificationContent

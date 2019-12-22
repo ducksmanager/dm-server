@@ -42,7 +42,7 @@ class NotificationController extends AbstractController implements RequiresDmVer
                 );
 
                 $logger->info(count($suggestedIssuesForUserNotAlreadySent)." new issues will be suggested to user $userId");
-                $logger->info((count($suggestionsForUser->getIssues()) - count($suggestedIssuesForUserNotAlreadySent))." new issues have already been suggested to user $userId");
+                $logger->info((count($suggestionsForUser->getIssues()) - count($suggestedIssuesForUserNotAlreadySent))." issues have already been suggested to user $userId");
 
                 foreach($suggestedIssuesForUserNotAlreadySent as $suggestedIssue) {
                     $issueTitle = $publicationTitles[$suggestedIssue->getPublicationcode()].' '.$suggestedIssue->getIssuenumber();

@@ -4,6 +4,7 @@ namespace App\Tests;
 use App\Entity\Dm\Users;
 use App\Entity\Dm\UsersSuggestionsNotifications;
 use App\Service\NotificationService;
+use App\Tests\Fixtures\CoaFixture;
 use App\Tests\Fixtures\DmCollectionFixture;
 use App\Tests\Fixtures\DmStatsFixture;
 use DateTime;
@@ -23,6 +24,8 @@ class NotificationTest extends TestCommon
 
         DmStatsFixture::$userId = 1;
         $this->loadFixtures([DmStatsFixture::class], true, 'dm_stats');
+
+        $this->loadFixtures([CoaFixture::class], true, 'coa');
     }
 
     public function testSendNotification(): void
