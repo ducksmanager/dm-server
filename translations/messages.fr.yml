@@ -27,7 +27,8 @@ MOT_DE_PASSE_6_CHAR_ERREUR: Le mot de passe doit comporter au moins 6 caractère
 MOTS_DE_PASSE_DIFFERENTS: Les deux mots de passe ne correspondent pas !
 NOTIFICATION_TITLE: >-
   %issueTitle% est sorti !
-NOTIFICATION_BODY: Ce numéro contient des histoires de vos auteurs favoris que vous ne possédez pas
+NOTIFICATION_BODY_ONE_STORY: • 1 nouvelle histoire de %author%
+NOTIFICATION_BODY_MULTIPLE_STORIES: • %new_stories_author% nouvelles histoires de %author%
 UTILISATEUR_3_CHAR_ERREUR: Choisissez un nom d'utilisateur d'au moins 3 caractères.
 UTILISATEUR_EXISTANT: Ce nom d'utilisateur est déjà utilisé !
 UTILISATEUR_INVALIDE: Le nom d'utilisateur est invalide. Choisissez un nom d'utilisateur d'au moins 3 caractères contenant seulement des lettres, des chiffres et des tirets.
