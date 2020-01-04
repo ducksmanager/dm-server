@@ -54,10 +54,11 @@ services:
      - db-network
     << : *gelf-logging
   db_coa:
-    container_name: mariadb-server-for-coa-box
+    container_name: db_coa
     image: "mariadb:10.2"
     volumes:
      - $MYSQL_INIT_SCRIPT_COA:/docker-entrypoint-initdb.d/$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
+     - data_db_coa:/var/lib/mysql
     ports:
      - "44000:3306"
     environment:
@@ -90,10 +91,11 @@ services:
      - cover-id-network
     << : *gelf-logging
   db_cover_id:
-    container_name: mariadb-server-for-cover-info-box
+    container_name: db_cover_id
     image: "mariadb:10.2"
     volumes:
      - $MYSQL_INIT_SCRIPT_COVER_INFO:/docker-entrypoint-initdb.d/$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
+     - data_db_cover_id:/var/lib/mysql
     ports:
      - "44009:3306"
     environment:
@@ -112,10 +114,11 @@ services:
      - cover-id-network
 
   db_dm:
-    container_name: mariadb-server-for-dm
+    container_name: db_dm
     image: "mariadb:10.2"
     volumes:
      - $MYSQL_INIT_SCRIPT_DM:/docker-entrypoint-initdb.d/$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
+     - data_db_dm:/var/lib/mysql
     ports:
      - "44002:3306"
     environment:
@@ -125,10 +128,11 @@ services:
      - db-network
     << : *gelf-logging
   db_edgecreator:
-    container_name: mariadb-server-for-edgecreator
+    container_name: db_edgecreator
     image: "mariadb:10.2"
     volumes:
      - $MYSQL_INIT_SCRIPT_EDGECREATOR:/docker-entrypoint-initdb.d/$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
+     - data_db_edgecreator:/var/lib/mysql
     ports:
      - "44003:3306"
     environment:
@@ -157,10 +161,11 @@ services:
     - db-network
     << : *gelf-logging
   db_dm_stats:
-    container_name: mariadb-server-for-dm-stats
+    container_name: db_dm_stats
     image: "mariadb:10.2"
     volumes:
      - $MYSQL_INIT_SCRIPT_DM_STATS:/docker-entrypoint-initdb.d/$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
+     - data_db_dm_stats:/var/lib/mysql
     ports:
      - "44010:3306"
     environment:
@@ -177,3 +182,12 @@ networks:
     driver: bridge
   cover-id-network:
     driver: bridge
+  workspace_global-front-network:
+    external: true
+
+volumes:
+  data_db_coa:
+  data_db_cover_id:
+  data_db_dm:
+  data_db_edgecreator:
+  data_db_dm_stats:
