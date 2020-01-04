@@ -1,11 +1,5 @@
 version: '2.4'
 
-x-gelf-logging: &gelf-logging
-  logging:
-    driver: gelf
-    options:
-      gelf-address: $LOG_SERVER_ADDRESS
-
 services:
   web:
     container_name: dm-server-web
@@ -25,7 +19,6 @@ services:
      - ./current:/var/www:z
     networks:
      - front-network
-    << : *gelf-logging
 
   php:
     container_name: dm-server-php
@@ -39,7 +32,6 @@ services:
      - front-network
      - db-network
      - cover-id-network
-    << : *gelf-logging
 
   coa-updater:
     container_name: coa-updater
@@ -52,7 +44,7 @@ services:
       - MYSQL_PASSWORD=$MYSQL_ROOT_PASSWORD
     networks:
      - db-network
-    << : *gelf-logging
+
   db_coa:
     container_name: db_coa
     image: "mariadb:10.2"
@@ -68,7 +60,6 @@ services:
     networks:
      - db-network
      - cover-id-network
-    << : *gelf-logging
 
   cover-updater:
     container_name: cover-updater
@@ -89,7 +80,7 @@ services:
     networks:
      - db-network
      - cover-id-network
-    << : *gelf-logging
+
   db_cover_id:
     container_name: db_cover_id
     image: "mariadb:10.2"
@@ -103,7 +94,7 @@ services:
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
     networks:
      - db-network
-    << : *gelf-logging
+
   pastec:
     container_name: pastec-ubuntu-1704-timestamps
     image: "bperel/pastec-ubuntu-1704-timestamps"
@@ -126,7 +117,7 @@ services:
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
     networks:
      - db-network
-    << : *gelf-logging
+
   db_edgecreator:
     container_name: db_edgecreator
     image: "mariadb:10.2"
@@ -140,7 +131,6 @@ services:
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
     networks:
      - db-network
-    << : *gelf-logging
 
   stats-updater:
     container_name: stats-updater
@@ -159,7 +149,7 @@ services:
     - MYSQL_PASSWORD=$MYSQL_ROOT_PASSWORD
     networks:
     - db-network
-    << : *gelf-logging
+
   db_dm_stats:
     container_name: db_dm_stats
     image: "mariadb:10.2"
@@ -173,7 +163,6 @@ services:
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
     networks:
      - db-network
-    << : *gelf-logging
 
 networks:
   front-network:
