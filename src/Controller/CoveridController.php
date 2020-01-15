@@ -13,13 +13,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class CoveridController extends AbstractController
 {
     public static $uploadFileName = 'wtd_jpg';
-    public static $uploadDestination = ['/tmp', 'test.jpg'];
+    public static $uploadDestination = '/tmp';
 
     /**
      * @param QueryBuilder $qb
@@ -86,7 +85,7 @@ class CoveridController extends AbstractController
      * @Route(methods={"POST"}, path="/cover-id/search")
      * @return Response
      */
-    public function searchCover(Request $request, LoggerInterface $logger, SimilarImagesService $similarImagesService, KernelInterface $kernel): Response
+    public function searchCover(Request $request, LoggerInterface $logger, SimilarImagesService $similarImagesService): Response
     {
         $logger->info('Cover ID search: start');
         if (($nbUploaded = $request->files->count()) !== 1) {
@@ -102,10 +101,12 @@ class CoveridController extends AbstractController
         }
 
         $logger->info('Cover ID search: upload file validation done');
-        $file = $uploadedFile->move($kernel->getProjectDir(), self::$uploadDestination[1]);
+        $targetFileName = random_int(0, 1000000) . '.jpg';
+        $file = $uploadedFile->move(self::$uploadDestination, $targetFileName);
         $logger->info('Cover ID search: upload file moving done');
 
         $engineResponse = $similarImagesService->getSimilarImages($file, $logger);
+        @unlink("/tmp/$targetFileName");
 
         $logger->info('Cover ID search: processing done');
 
