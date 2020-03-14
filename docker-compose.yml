@@ -25,6 +25,7 @@ services:
 
   php:
     container_name: dm-server-php
+    restart: always
     build:
       context: .
       dockerfile: Dockerfile

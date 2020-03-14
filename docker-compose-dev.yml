@@ -19,6 +19,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-dev
+    restart: always
     depends_on:
       - db_coa
       - db_cover_id
