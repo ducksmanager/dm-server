@@ -51,7 +51,7 @@ class StatsTest extends TestCommon
             'maxScore' => 6,
             'minScore' => 2,
             'issues' => (object)[
-                'fr/PM 315' => (object)[
+                (object)[
                     'stories' => (object)[
                         'CB' => ['W WDC 130-02'],
                         'DR' => ['AR 201'],
@@ -62,7 +62,7 @@ class StatsTest extends TestCommon
                     'issuecode' => 'fr/PM 315',
                     'oldestdate' => (new DateTime())->format('Y-m-d')
                 ],
-                'us/CBL 7' => (object)[
+                (object)[
                     'stories' => (object)[
                         'CB' => [
                             'ARC CBL 5B',
@@ -75,7 +75,7 @@ class StatsTest extends TestCommon
                     'issuecode' => 'us/CBL 7',
                     'oldestdate' => (new DateTime('-5 days midnight'))->format('Y-m-d')
                 ],
-                'fr/DDD 1' => (object)[
+                (object)[
                     'stories' => (object)[
                         'CB' => ['W WDC  32-02'],
                     ],
@@ -130,7 +130,7 @@ class StatsTest extends TestCommon
             'maxScore' => 6,
             'minScore' => 2,
             'issues' => (object)[
-                'fr/PM 315' => (object)[
+                (object)[
                     'stories' => (object)[
                         'CB' => ['W WDC 130-02'],
                         'DR' => ['AR 201'],
@@ -141,7 +141,7 @@ class StatsTest extends TestCommon
                     'issuecode' => 'fr/PM 315',
                     'oldestdate' => (new DateTime())->format('Y-m-d')
                 ],
-                'fr/DDD 1' => (object)[
+                (object)[
                     'stories' => (object)[
                         'CB' => ['W WDC  32-02'],
                     ],
@@ -178,15 +178,6 @@ class StatsTest extends TestCommon
                 ],
             ],
         ], $objectResponse);
-        $this->assertInternalType('object', $objectResponse);
-        $this->assertCount(2, get_object_vars($objectResponse->issues));
-
-        $issue1 = $objectResponse->issues->{'fr/DDD 1'};
-        $this->assertEquals(2, $issue1->score);
-        $this->assertEquals('fr/DDD', $issue1->publicationcode);
-        $this->assertEquals('1', $issue1->issuenumber);
-
-        $this->assertEquals('W WDC  32-02', $issue1->stories->CB[0]);
     }
 
     public function testGetSuggestionsSincePreviousVisit(): void
@@ -198,7 +189,7 @@ class StatsTest extends TestCommon
             'maxScore' => 6,
             'minScore' => 6,
             'issues' => (object)[
-                'fr/PM 315' => (object)[
+                (object)[
                     'stories' => (object)[
                         'CB' => ['W WDC 130-02'],
                         'DR' => ['AR 201'],
@@ -241,7 +232,7 @@ class StatsTest extends TestCommon
             'maxScore' => 6,
             'minScore' => 2,
             'issues' => (object)[
-                'fr/PM 315' => (object)[
+                (object)[
                     'oldestdate' => (new DateTime('today'))->format('Y-m-d'),
                     'stories' => (object)[
                         'CB' => ['W WDC 130-02'],
@@ -252,7 +243,7 @@ class StatsTest extends TestCommon
                     'issuenumber' => '315',
                     'issuecode' => 'fr/PM 315',
                 ],
-                'fr/DDD 1' => (object)[
+                (object)[
                     'oldestdate' => (new DateTime('-5 days'))->format('Y-m-d'),
                     'stories' => (object)[
                         'CB' => ['W WDC  32-02'],
