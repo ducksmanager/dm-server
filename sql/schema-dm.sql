@@ -1,300 +1,303 @@
-create table achats
+CREATE TABLE `achats`
 (
-  ID_Acquisition int auto_increment
-    primary key,
-  ID_User int not null,
-  Date date not null,
-  Description varchar(100) not null,
-  constraint user_date_description_unique
-    unique (ID_User, Date, Description)
-)
-  engine=MyISAM;
+    `ID_Acquisition` int(11)      NOT NULL AUTO_INCREMENT,
+    `ID_User`        int(11)      NOT NULL,
+    `Date`           date         NOT NULL,
+    `Description`    varchar(100) NOT NULL,
+    PRIMARY KEY (`ID_Acquisition`),
+    UNIQUE KEY `user_date_description_unique` (`ID_User`, `Date`, `Description`)
+) ENGINE = MyISAM
+  DEFAULT CHARSET = latin1;
 
-create table auteurs_pseudos
+CREATE TABLE `auteurs_pseudos`
 (
-  NomAuteurAbrege varchar(30) charset latin1 not null,
-  ID_user int not null,
-  Notation int(4) default -1 not null,
-  primary key (NomAuteurAbrege, ID_user)
-)
-  engine=MyISAM collate=utf8_bin;
+    `NomAuteurAbrege` varchar(30) CHARACTER SET latin1 NOT NULL,
+    `ID_user`         int(11)                          NOT NULL,
+    `Notation`        int(4)                           NOT NULL DEFAULT -1,
+    PRIMARY KEY (`NomAuteurAbrege`, `ID_user`)
+) ENGINE = MyISAM
+  DEFAULT CHARSET = utf8
+  COLLATE = utf8_bin
+  ROW_FORMAT = DYNAMIC;
 
-create table bibliotheque_contributeurs
+CREATE TABLE `bibliotheque_contributeurs`
 (
-  ID int auto_increment
-    primary key,
-  Nom varchar(30) null,
-  Texte text null
-)
-  engine=MyISAM collate=latin1_german2_ci;
+    `ID`    int(11) NOT NULL AUTO_INCREMENT,
+    `Nom`   varchar(30) COLLATE latin1_german2_ci DEFAULT NULL,
+    `Texte` text COLLATE latin1_german2_ci        DEFAULT NULL,
+    PRIMARY KEY (`ID`)
+) ENGINE = MyISAM
+  DEFAULT CHARSET = latin1
+  COLLATE = latin1_german2_ci;
 
-create table bibliotheque_ordre_magazines
+CREATE TABLE `bibliotheque_ordre_magazines`
 (
-  ID int auto_increment
-    primary key,
-  ID_Utilisateur int not null,
-  publicationcode varchar(12) not null,
-  Ordre int(3) not null,
-  constraint bibliotheque_ordre_magazines_uindex
-    unique (ID_Utilisateur, publicationcode)
-)
-  engine=MyISAM collate=latin1_german2_ci;
+    `ID`              int(11)                               NOT NULL AUTO_INCREMENT,
+    `ID_Utilisateur`  int(11)                               NOT NULL,
+    `publicationcode` varchar(12) COLLATE latin1_german2_ci NOT NULL,
+    `Ordre`           int(3)                                NOT NULL,
+    PRIMARY KEY (`ID`),
+    UNIQUE KEY `bibliotheque_ordre_magazines_uindex` (`ID_Utilisateur`, `publicationcode`)
+) ENGINE = MyISAM
+  DEFAULT CHARSET = latin1
+  COLLATE = latin1_german2_ci;
 
-create table bouquineries
+CREATE TABLE `bouquineries`
 (
-  ID int auto_increment
-    primary key,
-  Nom varchar(25) charset latin1 not null,
-  Adresse text charset latin1 null,
-  AdresseComplete text not null,
-  CodePostal int null,
-  Ville varchar(20) charset latin1 null,
-  Pays varchar(20) charset latin1 default 'France' null,
-  Commentaire text charset latin1 not null,
-  ID_Utilisateur int null,
-  CoordX double not null,
-  CoordY double not null,
-  DateAjout timestamp default current_timestamp() not null,
-  Actif tinyint(1) default 0 not null
-)
-  engine=MyISAM charset=utf8;
+    `ID`              int(11)                          NOT NULL AUTO_INCREMENT,
+    `Nom`             varchar(25) CHARACTER SET latin1 NOT NULL,
+    `Adresse`         text CHARACTER SET latin1                 DEFAULT NULL,
+    `AdresseComplete` text                             NOT NULL,
+    `CodePostal`      int(11)                                   DEFAULT NULL,
+    `Ville`           varchar(20) CHARACTER SET latin1          DEFAULT NULL,
+    `Pays`            varchar(20) CHARACTER SET latin1          DEFAULT 'France',
+    `Commentaire`     text CHARACTER SET latin1        NOT NULL,
+    `ID_Utilisateur`  int(11)                                   DEFAULT NULL,
+    `CoordX`          double                           NOT NULL,
+    `CoordY`          double                           NOT NULL,
+    `DateAjout`       timestamp                        NOT NULL DEFAULT current_timestamp(),
+    `Actif`           tinyint(1)                       NOT NULL DEFAULT 0,
+    PRIMARY KEY (`ID`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
 
-create table demo
+CREATE TABLE `demo`
 (
-  DateDernierInit datetime not null
-    primary key
-)
-  engine=MyISAM collate=latin1_german2_ci;
+    `DateDernierInit` datetime NOT NULL,
+    PRIMARY KEY (`DateDernierInit`)
+) ENGINE = MyISAM
+  DEFAULT CHARSET = latin1
+  COLLATE = latin1_german2_ci;
 
-create table magazines
+CREATE TABLE `magazines`
 (
-  PaysAbrege varchar(4) charset latin1 not null,
-  NomAbrege varchar(7) charset latin1 not null,
-  NomComplet varchar(70) not null,
-  RedirigeDepuis varchar(7) not null,
-  NeParaitPlus tinyint(1) null,
-  primary key (PaysAbrege, NomAbrege, RedirigeDepuis)
-)
-  engine=MyISAM collate=utf8_bin;
+    `PaysAbrege`     varchar(4) CHARACTER SET latin1 NOT NULL,
+    `NomAbrege`      varchar(7) CHARACTER SET latin1 NOT NULL,
+    `NomComplet`     varchar(70) COLLATE utf8_bin    NOT NULL,
+    `RedirigeDepuis` varchar(7) COLLATE utf8_bin     NOT NULL,
+    `NeParaitPlus`   tinyint(1) DEFAULT NULL,
+    PRIMARY KEY (`PaysAbrege`, `NomAbrege`, `RedirigeDepuis`)
+) ENGINE = MyISAM
+  DEFAULT CHARSET = utf8
+  COLLATE = utf8_bin;
 
-create table numeros
+CREATE TABLE `numeros`
 (
-  ID int auto_increment
-    primary key,
-  Pays varchar(3) not null,
-  Magazine varchar(6) not null,
-  Numero varchar(8) collate utf8_bin not null,
-  Numero_nospace varchar(8) as (replace(`Numero`,' ','')),
-  Etat enum('mauvais', 'moyen', 'bon', 'indefini') default 'indefini' not null,
-  ID_Acquisition int default -1 not null,
-  AV tinyint(1) not null,
-  ID_Utilisateur int not null,
-  DateAjout timestamp default current_timestamp() not null,
-  constraint Numero_Utilisateur
-    unique (Pays, Magazine, Numero, ID_Utilisateur)
-)
-  engine=MyISAM collate=latin1_german2_ci;
+    `ID`             int(11)                                                             NOT NULL AUTO_INCREMENT,
+    `Pays`           varchar(3) COLLATE latin1_german2_ci                                NOT NULL,
+    `Magazine`       varchar(6) COLLATE latin1_german2_ci                                NOT NULL,
+    `Numero`         varchar(8) CHARACTER SET utf8 COLLATE utf8_bin                      NOT NULL,
+    `Numero_nospace` varchar(8) GENERATED ALWAYS AS (replace(`Numero`, ' ', '')) VIRTUAL,
+    `Etat`           enum ('mauvais','moyen','bon','indefini') COLLATE latin1_german2_ci NOT NULL DEFAULT 'indefini',
+    `ID_Acquisition` int(11)                                                             NOT NULL DEFAULT -1,
+    `AV`             tinyint(1)                                                          NOT NULL,
+    `ID_Utilisateur` int(11)                                                             NOT NULL,
+    `DateAjout`      timestamp                                                           NOT NULL DEFAULT current_timestamp(),
+    PRIMARY KEY (`ID`),
+    UNIQUE KEY `Numero_Utilisateur` (`Pays`, `Magazine`, `Numero`, `ID_Utilisateur`),
+    KEY `Utilisateur` (`ID_Utilisateur`),
+    KEY `Pays_Magazine_Numero` (`Pays`, `Magazine`, `Numero`),
+    KEY `Pays_Magazine_Numero_DateAjout` (`DateAjout`, `Pays`, `Magazine`, `Numero`),
+    KEY `Numero_nospace_Utilisateur` (`Pays`, `Magazine`, `Numero_nospace`, `ID_Utilisateur`)
+) ENGINE = MyISAM
+  DEFAULT CHARSET = latin1
+  COLLATE = latin1_german2_ci;
 
-create index Numero_nospace_Utilisateur
-  on numeros (Pays, Magazine, Numero_nospace, ID_Utilisateur);
-
-create index Pays_Magazine_Numero
-  on numeros (Pays, Magazine, Numero);
-
-create index Pays_Magazine_Numero_DateAjout
-  on numeros (DateAjout, Pays, Magazine, Numero);
-
-create index Utilisateur
-  on numeros (ID_Utilisateur);
-
-create table numeros_popularite
+CREATE TABLE `numeros_popularite`
 (
-  Pays varchar(3) not null,
-  Magazine varchar(6) not null,
-  Numero varchar(8) not null,
-  Popularite int not null,
-  primary key (Pays, Magazine, Numero)
-)
-  engine=MyISAM charset=utf8;
+    `Pays`       varchar(3) NOT NULL,
+    `Magazine`   varchar(6) NOT NULL,
+    `Numero`     varchar(8) NOT NULL,
+    `Popularite` int(11)    NOT NULL,
+    `ID`         int(11)    NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (`ID`),
+    UNIQUE KEY `numeros_popularite_unique` (`Pays`, `Magazine`, `Numero`)
+) ENGINE = MyISAM
+  DEFAULT CHARSET = utf8;
 
-create table tranches_doublons
+CREATE TABLE `tranches_doublons`
 (
-  ID int auto_increment
-    primary key,
-  Pays varchar(3) not null,
-  Magazine varchar(6) not null,
-  Numero varchar(8) not null,
-  NumeroReference varchar(8) not null,
-  TrancheReference int null,
-  constraint tranches_doublons_Pays_Magazine_Numero_uindex
-    unique (Pays, Magazine, Numero)
-)
-  engine=MyISAM collate=latin1_german2_ci;
+    `ID`               int(11)                              NOT NULL AUTO_INCREMENT,
+    `Pays`             varchar(3) COLLATE latin1_german2_ci NOT NULL,
+    `Magazine`         varchar(6) COLLATE latin1_german2_ci NOT NULL,
+    `Numero`           varchar(8) COLLATE latin1_german2_ci NOT NULL,
+    `NumeroReference`  varchar(8) COLLATE latin1_german2_ci NOT NULL,
+    `TrancheReference` int(11) DEFAULT NULL,
+    PRIMARY KEY (`ID`),
+    UNIQUE KEY `tranches_doublons_Pays_Magazine_Numero_uindex` (`Pays`, `Magazine`, `Numero`),
+    KEY `tranches_doublons_tranches_pretes_ID_fk` (`TrancheReference`)
+) ENGINE = MyISAM
+  DEFAULT CHARSET = latin1
+  COLLATE = latin1_german2_ci;
 
-create index tranches_doublons_tranches_pretes_ID_fk
-  on tranches_doublons (TrancheReference);
-
-create table tranches_pretes
+CREATE TABLE `tranches_pretes`
 (
-  ID int auto_increment
-    primary key,
-  publicationcode varchar(12) not null,
-  issuenumber varchar(10) not null,
-  dateajout timestamp default current_timestamp() not null,
-  points int null,
-  constraint tranchespretes_unique
-    unique (publicationcode, issuenumber)
-)
-  engine=MyISAM collate=latin1_german2_ci;
+    `ID`              int(11)                               NOT NULL AUTO_INCREMENT,
+    `publicationcode` varchar(12) COLLATE latin1_german2_ci NOT NULL,
+    `issuenumber`     varchar(10) COLLATE latin1_german2_ci NOT NULL,
+    `dateajout`       timestamp                             NOT NULL DEFAULT current_timestamp(),
+    `points`          int(11)                                        DEFAULT NULL,
+    `slug`            varchar(30) GENERATED ALWAYS AS (concat('edges-', replace(`publicationcode`, '/', '-'), '-',
+                                                              `issuenumber`)) VIRTUAL,
+    PRIMARY KEY (`ID`),
+    UNIQUE KEY `tranchespretes_unique` (`publicationcode`, `issuenumber`),
+    KEY `tranches_pretes_dateajout_index` (`dateajout`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = latin1
+  COLLATE = latin1_german2_ci;
 
-create index tranches_pretes_dateajout_index
-  on tranches_pretes (dateajout);
-
-create table tranches_pretes_contributeurs
+CREATE TABLE `tranches_pretes_contributeurs`
 (
-  publicationcode varchar(15) not null,
-  issuenumber varchar(30) not null,
-  contributeur int not null,
-  contribution enum('photographe', 'createur') default 'createur' not null,
-  primary key (publicationcode, issuenumber, contributeur, contribution)
-)
-  engine=MyISAM charset=utf8;
+    `publicationcode` varchar(15)                     NOT NULL,
+    `issuenumber`     varchar(30)                     NOT NULL,
+    `contributeur`    int(11)                         NOT NULL,
+    `contribution`    enum ('photographe','createur') NOT NULL DEFAULT 'createur',
+    PRIMARY KEY (`publicationcode`, `issuenumber`, `contributeur`, `contribution`),
+    KEY `tranches_pretes_contributeurs_publicationcode_issuenumber_index` (`publicationcode`, `issuenumber`),
+    KEY `tranches_pretes_contributeurs_contributeur_index` (`contributeur`)
+) ENGINE = MyISAM
+  DEFAULT CHARSET = utf8;
 
-create index tranches_pretes_contributeurs_contributeur_index
-  on tranches_pretes_contributeurs (contributeur);
-
-create index tranches_pretes_contributeurs_publicationcode_issuenumber_index
-  on tranches_pretes_contributeurs (publicationcode, issuenumber);
-
-create table users
+CREATE TABLE `tranches_pretes_contributions`
 (
-  ID int auto_increment
-    primary key,
-  username varchar(25) collate utf8_bin not null,
-  password varchar(40) charset latin1 not null,
-  AccepterPartage tinyint(1) default 1 not null,
-  DateInscription date default '0000-00-00' not null,
-  EMail varchar(50) charset latin1 not null,
-  RecommandationsListeMags tinyint(1) default 1 not null,
-  BetaUser tinyint(1) default 0 not null,
-  AfficherVideo tinyint(1) default 1 not null,
-  Bibliotheque_Texture1 varchar(20) charset latin1 default 'bois' not null,
-  Bibliotheque_Sous_Texture1 varchar(50) charset latin1 default 'HONDURAS MAHOGANY' not null,
-  Bibliotheque_Texture2 varchar(20) charset latin1 default 'bois' not null,
-  Bibliotheque_Sous_Texture2 varchar(50) charset latin1 default 'KNOTTY PINE' not null,
-  DernierAcces timestamp default current_timestamp() not null on update current_timestamp(),
-  constraint username
-    unique (username)
-)
-  engine=MyISAM collate=latin1_german2_ci;
+    `ID`           int(11)                         NOT NULL AUTO_INCREMENT,
+    `ID_tranche`   int(11)                         NOT NULL,
+    `ID_user`      int(11)                         NOT NULL,
+    `dateajout`    timestamp                       NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+    `contribution` enum ('photographe','createur') NOT NULL,
+    `points_new`   int(11)                         NOT NULL,
+    `points_total` int(11)                         NOT NULL,
+    PRIMARY KEY (`ID`),
+    KEY `tranches_pretes_contributions_ID_user_contribution_index` (`ID_user`, `contribution`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = latin1;
 
-create table users_password_tokens
+CREATE TABLE `tranches_pretes_sprites`
 (
-  ID int auto_increment
-    primary key,
-  ID_User int not null,
-  Token varchar(16) not null,
-  constraint users_password_tokens_unique
-    unique (ID_User, Token)
-)
-  collate=utf8_unicode_ci;
+    `ID`          int(11)     NOT NULL AUTO_INCREMENT,
+    `ID_Tranche`  int(11)     NOT NULL,
+    `Sprite_name` varchar(25) NOT NULL,
+    `Sprite_size` int(11) DEFAULT NULL,
+    PRIMARY KEY (`ID`),
+    UNIQUE KEY `tranches_pretes_sprites_unique` (`ID_Tranche`, `Sprite_name`)
+) ENGINE = MyISAM
+  DEFAULT CHARSET = latin1;
 
-create table users_permissions
+CREATE TABLE `tranches_pretes_sprites_size`
 (
-  ID int auto_increment
-    primary key,
-  username varchar(25) not null,
-  role varchar(20) not null,
-  privilege enum('Admin', 'Edition', 'Affichage') not null,
-  constraint permission_username_role
-    unique (username, role)
-)
-  engine=MyISAM collate=latin1_german2_ci;
+    `sprite_name` varchar(25) DEFAULT NULL,
+    `size`        int(11)     DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = latin1;
 
-create table users_points
+CREATE TABLE `tranches_pretes_sprites_urls`
 (
-  ID int auto_increment
-    primary key,
-  ID_Utilisateur int not null,
-  TypeContribution enum('photographe', 'createur', 'duckhunter') not null,
-  NbPoints int default 0 null
-);
+    `ID`          int(11)     NOT NULL AUTO_INCREMENT,
+    `Sprite_name` varchar(25) NOT NULL,
+    `Version`     varchar(12) NOT NULL,
+    PRIMARY KEY (`ID`),
+    UNIQUE KEY `tranches_pretes_sprites_urls_unique` (`Sprite_name`, `Version`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = latin1;
 
-delimiter ||
-create definer = root@`%` procedure reset_issue_popularities()
-BEGIN
-  -- Cleanup: prevents problems with issues having the same issuenumber but with a different case
-  UPDATE numeros n
-    INNER JOIN (
-      SELECT DISTINCT
-        n_inner.Pays,
-        n_inner.Magazine,
-        n_inner.Numero
-      FROM numeros n_inner, numeros n2_inner
-      WHERE n_inner.NUMERO NOT REGEXP '^[0-9]+$' AND n2_inner.NUMERO NOT REGEXP '^[0-9]+$' AND
-          LOWER(n_inner.Numero) = LOWER(n2_inner.Numero) AND n_inner.Numero != n2_inner.Numero
-    ) n2
-  SET n.Numero = LOWER(n.Numero)
-  WHERE n.Pays = n2.Pays AND n.Magazine = n2.Magazine AND n.Numero = n2.Numero;
+CREATE TABLE `users`
+(
+    `ID`                         int(11)                                         NOT NULL AUTO_INCREMENT,
+    `username`                   varchar(25) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+    `password`                   varchar(40) CHARACTER SET latin1                NOT NULL,
+    `AccepterPartage`            tinyint(1)                                      NOT NULL DEFAULT 1,
+    `DateInscription`            date                                            NOT NULL,
+    `EMail`                      varchar(50) CHARACTER SET latin1                NOT NULL,
+    `RecommandationsListeMags`   tinyint(1)                                      NOT NULL DEFAULT 1,
+    `BetaUser`                   tinyint(1)                                      NOT NULL DEFAULT 0,
+    `AfficherVideo`              tinyint(1)                                      NOT NULL DEFAULT 1,
+    `Bibliotheque_Texture1`      varchar(20) CHARACTER SET latin1                NOT NULL DEFAULT 'bois',
+    `Bibliotheque_Sous_Texture1` varchar(50) CHARACTER SET latin1                NOT NULL DEFAULT 'HONDURAS MAHOGANY',
+    `Bibliotheque_Texture2`      varchar(20) CHARACTER SET latin1                NOT NULL DEFAULT 'bois',
+    `Bibliotheque_Sous_Texture2` varchar(50) CHARACTER SET latin1                NOT NULL DEFAULT 'KNOTTY PINE',
+    `DernierAcces`               datetime                                                 DEFAULT NULL,
+    `PrecedentAcces`             datetime                                                 DEFAULT NULL,
+    PRIMARY KEY (`ID`),
+    UNIQUE KEY `username` (`username`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = latin1
+  COLLATE = latin1_german2_ci;
 
-  -- Set issues' popularity. This number will vary over time
-  TRUNCATE numeros_popularite;
-  INSERT INTO numeros_popularite(Pays,Magazine,Numero,Popularite)
-  SELECT DISTINCT
-    n.Pays,
-    n.Magazine,
-    REPLACE(n.Numero, ' ', ''),
-    COUNT(*) AS Popularite
-  FROM numeros n
-  WHERE
-      n.ID_Utilisateur NOT IN (
-      SELECT u.ID
-      FROM users u
-      WHERE u.username LIKE 'test%'
-    ) AND
-      n.DateAjout < DATE_SUB(NOW(), INTERVAL -1 MONTH)
-  GROUP BY n.Pays, n.Magazine, REPLACE(n.Numero, ' ', '');
+CREATE TABLE `users_contributions`
+(
+    `ID`           int(11)                                                       NOT NULL AUTO_INCREMENT,
+    `ID_user`      int(11)                                                       NOT NULL,
+    `date`         datetime                                                      NOT NULL DEFAULT current_timestamp(),
+    `contribution` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    `points_new`   int(11)                                                       NOT NULL,
+    `points_total` int(11)                                                       NOT NULL,
+    `emails_sent`  tinyint(1)                                                    NOT NULL,
+    `ID_tranche`   int(11)                                                                DEFAULT NULL,
+    `ID_bookstore` int(11)                                                                DEFAULT NULL,
+    PRIMARY KEY (`ID`),
+    KEY `IDX_7FDC16F375567043` (`ID_tranche`),
+    KEY `IDX_7FDC16F3A5778B6C` (`ID_bookstore`),
+    KEY `users_contributions__user_contribution` (`ID_user`, `contribution`),
+    CONSTRAINT `FK_7FDC16F375567043` FOREIGN KEY (`ID_tranche`) REFERENCES `tranches_pretes` (`ID`),
+    CONSTRAINT `FK_7FDC16F3A5778B6C` FOREIGN KEY (`ID_bookstore`) REFERENCES `bouquineries` (`ID`),
+    CONSTRAINT `users_contributions___fk_user` FOREIGN KEY (`ID_user`) REFERENCES `users` (`ID`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = latin1
+  COLLATE = latin1_german2_ci;
 
-  -- Associate issues' popularity with edges. This will not vary over time: we only modify the edges that don't have their popularity set
-  UPDATE tranches_pretes tp
-  SET points = (
-    SELECT Popularite
-    FROM numeros_popularite np
-    WHERE
-        np.Pays = SUBSTRING(tp.publicationcode, 1, POSITION('/' IN tp.publicationcode) - 1) AND
-        np.Magazine = SUBSTRING(tp.publicationcode, POSITION('/' IN tp.publicationcode) + 1) AND
-        np.Numero = tp.issuenumber
-  )
-  WHERE points IS NULL;
+CREATE TABLE `users_options`
+(
+    `ID`            int(11)                                  NOT NULL AUTO_INCREMENT,
+    `ID_User`       int(11)                                  NOT NULL,
+    `Option_nom`    enum ('suggestion_notification_country') NOT NULL,
+    `Option_valeur` varchar(50)                              NOT NULL,
+    PRIMARY KEY (`ID`),
+    UNIQUE KEY `users_options__unique` (`ID_User`, `Option_nom`, `Option_valeur`),
+    KEY `users_options__user_option` (`ID_User`, `Option_nom`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = latin1;
 
-  -- Update the users' points
-  TRUNCATE users_points;
-  INSERT INTO users_points(ID_Utilisateur, TypeContribution, NbPoints)
-  SELECT
-    contributions.contributeur,
-    contributions.type_contribution,
-    sum(contributions.Popularite) AS points
-  FROM (
-         SELECT
-           tp.*,
-           tpc.contributeur,
-           tpc.contribution AS type_contribution,
-           (
-             SELECT np.Popularite
-             FROM numeros_popularite np
-             WHERE
-                 np.Pays = SUBSTRING_INDEX(tp.publicationcode, '/', 1) AND
-                 np.Magazine = SUBSTRING_INDEX(tp.publicationcode, '/', -1) AND
-                 np.Numero = tp.issuenumber
-           ) AS Popularite
-         FROM tranches_pretes tp
-                INNER JOIN tranches_pretes_contributeurs tpc USING (publicationcode, issuenumber)
-       ) contributions
-         INNER JOIN users ON contributions.contributeur = users.ID
-  GROUP BY contributions.contributeur, contributions.type_contribution
-  HAVING sum(contributions.Popularite) > 0
-  ORDER BY sum(contributions.Popularite);
-END;
+CREATE TABLE `users_password_tokens`
+(
+    `ID`      int(11)                             NOT NULL AUTO_INCREMENT,
+    `ID_User` int(11)                             NOT NULL,
+    `Token`   varchar(16) COLLATE utf8_unicode_ci NOT NULL,
+    PRIMARY KEY (`ID`),
+    UNIQUE KEY `users_password_tokens_unique` (`ID_User`, `Token`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8
+  COLLATE = utf8_unicode_ci;
 
-||
-delimiter ;
+CREATE TABLE `users_permissions`
+(
+    `ID`        int(11)                                                        NOT NULL AUTO_INCREMENT,
+    `username`  varchar(25) COLLATE latin1_german2_ci                          NOT NULL,
+    `role`      varchar(20) COLLATE latin1_german2_ci                          NOT NULL,
+    `privilege` enum ('Admin','Edition','Affichage') COLLATE latin1_german2_ci NOT NULL,
+    PRIMARY KEY (`ID`),
+    UNIQUE KEY `permission_username_role` (`username`, `role`)
+) ENGINE = MyISAM
+  DEFAULT CHARSET = latin1
+  COLLATE = latin1_german2_ci;
+
+CREATE TABLE `users_points`
+(
+    `ID`               int(11)                                      NOT NULL AUTO_INCREMENT,
+    `ID_Utilisateur`   int(11)                                      NOT NULL,
+    `TypeContribution` enum ('photographe','createur','duckhunter') NOT NULL,
+    `NbPoints`         int(11) DEFAULT 0,
+    PRIMARY KEY (`ID`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = latin1;
+
+CREATE TABLE `users_suggestions_notifications`
+(
+    `ID`        int(11)     NOT NULL AUTO_INCREMENT,
+    `ID_User`   int(10)     NOT NULL,
+    `issuecode` varchar(12) NOT NULL,
+    `text`      text     DEFAULT NULL,
+    `date`      datetime DEFAULT current_timestamp(),
+    PRIMARY KEY (`ID`),
+    UNIQUE KEY `users_notifications__index_user_issue` (`ID_User`, `issuecode`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = latin1;
