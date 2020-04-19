@@ -39,10 +39,11 @@ class SuggestionService
      * @param DateTime|null $since
      * @param string $countryCode
      * @param int|null $singleUserId
+     * @param int|null $limit
      * @return UtilisateursPublicationsSuggerees[]
      * @throws Exception
      */
-    public function getSuggestions(?DateTime $since, string $countryCode, ?int $singleUserId = null) : array
+    public function getSuggestions(?DateTime $since, string $countryCode, ?int $singleUserId = null, ?int $limit = null) : array
     {
         $singleCountry = in_array($countryCode, [self::SUGGESTION_ALL_COUNTRIES, self::SUGGESTION_COUNTRIES_TO_NOTIFY], true) ? null : $countryCode;
 
@@ -65,7 +66,7 @@ class SuggestionService
                   $dateFilter
                   $userFilter
                   $countryFilter
-            ORDER BY ID_User, Score, publicationcode, issuenumber";
+            ORDER BY ID_User, Score DESC, publicationcode, issuenumber";
 
         $suggestions = self::$dmStatsEm->getConnection()->fetchAll($sql,
            [ ':untilDate' => (new DateTime())->format('Y-m-d')] +
@@ -93,11 +94,16 @@ class SuggestionService
                     $suggestionsPerUser[$userId] = new IssueSuggestionList();
                 }
 
-                $issuecode = implode(' ', [$suggestedStory['publicationcode'], $suggestedStory['issuenumber']]);
-                $issue = $suggestionsPerUser[$userId]->getIssueWithCode($issuecode);
+                $issueCode = implode(' ', [$suggestedStory['publicationcode'], $suggestedStory['issuenumber']]);
+
+                if (!is_null($limit) && !array_key_exists($issueCode, $suggestionsPerUser[$userId]->getIssues()) && $suggestionsPerUser[$userId]->getIssuesCount() >= $limit) {
+                    continue;
+                }
+
+                $issue = $suggestionsPerUser[$userId]->getIssueWithCode($issueCode);
                 if (!isset($issue)) {
                     $issue = new IssueSuggestion(
-                        $issuecode,
+                        $issueCode,
                         $suggestedStory['score'],
                         [],
                         $suggestedStory['publicationcode'],

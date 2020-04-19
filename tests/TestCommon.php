@@ -12,7 +12,7 @@ use Doctrine\Common\DataFixtures\Loader;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManagerInterface;
 use Liip\TestFixturesBundle\Test\FixturesTrait;
-use Symfony\Bundle\FrameworkBundle\Client;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -20,7 +20,7 @@ abstract class TestCommon extends WebTestCase {
 
     use FixturesTrait;
 
-    /** @var Client $client  */
+    /** @var KernelBrowser $client  */
     protected static $client;
 
     protected static $defaultTestDmUserName = 'dm_test_user';
@@ -101,7 +101,7 @@ abstract class TestCommon extends WebTestCase {
         );
     }
 
-    private static function getClient(): Client {
+    private static function getClient(): KernelBrowser {
         if (!isset(self::$client)) {
             self::$client = static::createClient();
         }
@@ -156,7 +156,7 @@ abstract class TestCommon extends WebTestCase {
         self::$hasLoadedEdgeFixture = true;
     }
 
-    protected function getResponseContent(Response $response): string
+    protected function getResponseContent(Response $response): ?string
     {
         if ($response->isSuccessful()) {
             return $response->getContent();

@@ -43,12 +43,12 @@ class StatsController extends AbstractController implements RequiresDmVersionCon
     /**
      * @Route(
      *     methods={"GET"},
-     *     path="/collection/stats/suggestedissues/{countryCode}/{sincePreviousVisit}",
+     *     path="/collection/stats/suggestedissues/{countryCode}/{sincePreviousVisit}/{limit}",
      *     requirements={"countryCode"="^(?P<countrycode_regex>[a-z]+)|ALL|countries_to_notify", "sincePreviousVisit"="^since_previous_visit|_$"},
-     *     defaults={"countryCode"="ALL", "sincePreviousVisit"="_"}
+     *     defaults={"countryCode"="ALL", "sincePreviousVisit"="_", "limit"=20}
      * )
      */
-    public function getSuggestedIssuesWithDetails(?string $countryCode, string $sincePreviousVisit, SuggestionService $suggestionService) {
+    public function getSuggestedIssuesWithDetails(?string $countryCode, string $sincePreviousVisit, SuggestionService $suggestionService, ?int $limit) {
         $userId = $this->getSessionUser()['id'];
 
         switch ($countryCode) {
@@ -71,16 +71,16 @@ class StatsController extends AbstractController implements RequiresDmVersionCon
         [$suggestionsPerUser, $authors, $storyDetails, $publicationTitles] = $suggestionService->getSuggestions(
             $since ?? null,
             $countryCode,
-            $userId
+            $userId,
+            $limit
         );
         /** @var IssueSuggestionList $suggestions */
         $suggestionsForUser = $suggestionsPerUser[$userId] ?? new IssueSuggestionList();
 
         $sortedSuggestions = $suggestionsForUser->getIssues();
         usort($sortedSuggestions, function(IssueSuggestion $issueSuggestion1, IssueSuggestion $issueSuggestion2) {
-            return $issueSuggestion1->getScore() <=> $issueSuggestion2->getScore();
+            return $issueSuggestion2->getScore() <=> $issueSuggestion1->getScore();
         });
-        $sortedSuggestions = array_reverse($sortedSuggestions);
 
         return new JsonResponse([
             'minScore' => $suggestionsForUser->getMinScore(),

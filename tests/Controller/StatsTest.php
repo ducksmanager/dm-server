@@ -121,6 +121,50 @@ class StatsTest extends TestCommon
         $this->assertInternalType('object', $objectResponse);
     }
 
+    public function testGetSuggestionsWithLimit(): void
+    {
+        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/stats/suggestedissues/ALL/_/1', self::$dmUser)->call();
+
+        $objectResponse = json_decode($this->getResponseContent($response));
+        $this->assertEquals((object)[
+            'maxScore' => 6,
+            'minScore' => 6,
+            'issues' => (object)[
+                (object)[
+                    'stories' => (object)[
+                        'CB' => ['W WDC 130-02'],
+                        'DR' => ['AR 201'],
+                    ],
+                    'score' => 6,
+                    'publicationcode' => 'fr/PM',
+                    'issuenumber' => '315',
+                    'issuecode' => 'fr/PM 315',
+                    'oldestdate' => (new DateTime())->format('Y-m-d')
+                ]
+            ],
+            'authors' => (object)[
+                'CB' => 'Carl Barks',
+                'DR' => 'Don Rosa',
+            ],
+            'publicationTitles' => (object)[
+                'fr/PM' => 'Picsou Magazine',
+            ],
+            'storyDetails' => (object)[
+                'AR 201' => (object)[
+                    'storycomment' => 'Comment of story AR 201',
+                    'title' => 'Title of story AR 201',
+                    'personcode' => 'DR',
+                ],
+                'W WDC 130-02' => (object)[
+                    'storycomment' => 'Comment of story W WDC 130-02',
+                    'title' => 'Title of story W WDC 130-02',
+                    'personcode' => 'CB',
+                ],
+            ],
+        ], $objectResponse);
+        $this->assertInternalType('object', $objectResponse);
+    }
+
     public function testGetSuggestionsByCountry(): void
     {
         $response = $this->buildAuthenticatedServiceWithTestUser('/collection/stats/suggestedissues/fr', self::$dmUser)->call();

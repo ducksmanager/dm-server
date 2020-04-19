@@ -24,13 +24,6 @@ class IssueSuggestionList
         $this->recalculateMinMaxScore();
     }
 
-    public function setIssues(array $issues) {
-        $this->issues=$issues;
-        $this->recalculateMinMaxScore();
-
-        return $this;
-    }
-
     private function recalculateMinMaxScore(): void
     {
         $scores = array_values(array_map(function (IssueSuggestion $issue) {
@@ -47,6 +40,11 @@ class IssueSuggestionList
     public function getIssues(): array
     {
         return $this->issues;
+    }
+
+    public function getIssuesCount(): int
+    {
+        return count($this->issues);
     }
 
     /**

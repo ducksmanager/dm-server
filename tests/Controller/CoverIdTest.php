@@ -132,7 +132,6 @@ class CoverIdTest extends TestCommon
             ]
         )->call();
 
-        $this->assertFileExists(self::$uploadDestination);
         $this->assertJsonStringEqualsJsonString(json_encode([
             'issues' => [
                 'fr/DDD 1' => [
@@ -167,7 +166,6 @@ class CoverIdTest extends TestCommon
             ]
         )->call();
 
-        $this->assertFileExists(self::$uploadDestination);
         $this->assertJsonStringEqualsJsonString(json_encode(
             (object)[
                 'issues' => (object)[

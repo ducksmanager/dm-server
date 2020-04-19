@@ -13,7 +13,7 @@ class NotificationTest extends TestCommon
 {
     protected function getEmNamesToCreate(): array
     {
-        return ['dm', 'dm_stats'];
+        return ['dm', 'dm_stats', 'coa'];
     }
 
     public function setUp()
@@ -42,10 +42,10 @@ class NotificationTest extends TestCommon
         ]);
 
         $this->assertCount(2, $notificationsSentToUser);
-        $this->assertEquals('fr/DDD 1', $notificationsSentToUser[0]->getIssuecode());
-        $this->assertEquals('Dynastie 1', $notificationsSentToUser[0]->getText());
-        $this->assertEquals('fr/PM 315', $notificationsSentToUser[1]->getIssuecode());
-        $this->assertEquals('Picsou Magazine 315', $notificationsSentToUser[1]->getText());
+        $this->assertEquals('fr/PM 315', $notificationsSentToUser[0]->getIssuecode());
+        $this->assertEquals('Picsou Magazine 315', $notificationsSentToUser[0]->getText());
+        $this->assertEquals('fr/DDD 1', $notificationsSentToUser[1]->getIssuecode());
+        $this->assertEquals('Dynastie 1', $notificationsSentToUser[1]->getText());
         foreach($notificationsSentToUser as $notificationSentToUser) {
             $notificationDate = $notificationSentToUser->getDate();
             $this->assertEquals((new DateTime())->format('Y-m-d'), $notificationDate->format('Y-m-d'));
