@@ -3,7 +3,6 @@ namespace App\Helper\Email;
 
 use App\Entity\Dm\Users;
 use Psr\Log\LoggerInterface;
-use RuntimeException;
 use Swift_Mailer;
 use Swift_Message;
 
@@ -34,9 +33,6 @@ abstract class AbstractEmail {
     abstract protected function getHtmlBody() : string;
     abstract public function __toString() : string;
 
-    /**
-     * @throws RuntimeException
-     */
     public function send(): void
     {
         $message = new Swift_Message();
@@ -50,12 +46,14 @@ abstract class AbstractEmail {
         $failures = [];
         $this->logger->info('Sending email of type ' .get_class($this). ' to ' .$this->getTo());
         if (!$this->mailer->send($message, $failures)) {
-            throw new RuntimeException("Can't send e-mail '". $this ."': failed with ".print_r($failures, true));
+            $this->logger->error("Can't send e-mail '". $this ."': failed with ".print_r($failures, true));
         }
 
         $message->setSubject('[Sent to '. array_keys($message->getTo())[0] ."] {$message->getSubject()}");
         $message->setTo($_ENV['SMTP_USERNAME']);
         $this->logger->info('Sending email of type ' .get_class($this). ' to ' .$_ENV['SMTP_USERNAME']);
-        $this->mailer->send($message);
+        if (!$this->mailer->send($message, $failures)) {
+            $this->logger->error("Can't send e-mail '". $this ."': failed with ".print_r($failures, true));
+        }
     }
 }

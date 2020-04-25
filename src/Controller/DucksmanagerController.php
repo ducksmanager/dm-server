@@ -290,6 +290,7 @@ class DucksmanagerController extends AbstractController
                     return $accumulator;
                 }, []);
                 foreach($pendingEmailContributionsByUser as $userId => $pendingEmailContributionsForUser) {
+                    $logger->info(count($pendingEmailContributionsForUser)." contributions pending for user $userId");
                     $initialPointsCount = $pendingEmailContributionsForUser[0]->getPointsTotal() - $pendingEmailContributionsForUser[0]->getPointsNew();
                     $finalPointsCount = $pendingEmailContributionsForUser[count($pendingEmailContributionsForUser) -1]->getPointsTotal();
                     $pointsEarned = $finalPointsCount - $initialPointsCount;
@@ -306,6 +307,7 @@ class DucksmanagerController extends AbstractController
                     }
                     $dmEm->flush();
 
+                    /** @var Users $user */
                     $user = $dmEm->getRepository(Users::class)->find($userId);
 
                     switch($contributionType) {
@@ -333,8 +335,7 @@ class DucksmanagerController extends AbstractController
                     'to' => $emailHelper->getTo(),
                     'subject' => $emailHelper->getSubject()
                 ];
-            }, $emailsSent),
-            'contributions' => $pendingEmailContributionsByUser
+            }, $emailsSent)
         ]);
     }
 
