@@ -63,10 +63,10 @@ class CoaFixture extends Fixture implements FixtureGroupInterface
         );
 
         $coaEntityManager->persist(
-            (self::$testCountries['frLocale-fake'] = new InducksCountryname())
-                ->setCountrycode('fake')
+            (self::$testCountries['frLocale-zz'] = new InducksCountryname())
+                ->setCountrycode('zz')
                 ->setLanguagecode('fr')
-                ->setCountryname('')
+                ->setCountryname('fake')
         );
 
         $coaEntityManager->persist(

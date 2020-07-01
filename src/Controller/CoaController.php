@@ -9,6 +9,7 @@ use App\Entity\Coverid\Covers;
 use App\EntityTransform\SimpleIssueWithCoverId;
 use App\Service\CoaService;
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\Query\Expr\OrderBy;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,19 +29,20 @@ class CoaController extends AbstractController
         $qb
             ->select('inducks_countryname.countrycode, inducks_countryname.countryname')
             ->from(InducksCountryname::class, 'inducks_countryname')
-            ->where($qb->expr()->eq('inducks_countryname.languagecode', ':locale'));
-        $parameters = [':locale' => $locale];
+            ->where($qb->expr()->eq('inducks_countryname.languagecode', ':locale'))
+            ->setParameter(':locale', $locale);
 
         if (empty($countryCodes)) {
-            $qb->andWhere($qb->expr()->neq('inducks_countryname.countrycode', ':fakeCountry'));
-            $parameters[':fakeCountry'] = 'fake';
+            $qb
+                ->andWhere($qb->expr()->neq('inducks_countryname.countrycode', ':fakeCountry'))
+                ->setParameter(':fakeCountry', 'zz');
         } else {
             $qb->andWhere($qb->expr()->in('inducks_countryname.countrycode', explode(',', $countryCodes)));
         }
 
-        $results = $qb->getQuery()
-            ->setParameters($parameters)
-            ->getResult();
+        $qb->addOrderBy(new OrderBy('inducks_countryname.countryname'));
+
+        $results = $qb->getQuery()->getResult();
         $countryNames = [];
         array_walk(
             $results,
