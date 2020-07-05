@@ -17,7 +17,7 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
-            pattern: ^/(?!coa)(?!cover-id)(?!status).+
+            pattern: ^/(?!coa)(?!cover-id)(?!edges)(?!status).+
             http_basic: ~
 
     access_control:

@@ -11,8 +11,8 @@ use Symfony\Component\Serializer\Serializer;
 
 class JsonResponseFromObject extends JsonResponse
 {
-    public function __construct($object) {
-        parent::__construct(self::serializeToJson($object), Response::HTTP_OK, [], true);
+    public function __construct($object, $status = Response::HTTP_OK) {
+        parent::__construct(self::serializeToJson($object), $status, [], true);
     }
 
     private static function getNormalizer(): ObjectNormalizer {

@@ -22,7 +22,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Persistence\Mapping\MappingException;
 use Doctrine\DBAL\DBALException;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
@@ -93,6 +93,31 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
         return new JsonResponseFromObject(
             $this->getEm('edgecreator')->getRepository(TranchesEnCoursModeles::class)->find($modelId)
         );
+    }
+
+    /**
+     * @Route(methods={"GET"}, path="/edgecreator/v2/model/{modelId}/steps")
+     */
+    public function getSteps(int $modelId): JsonResponse
+    {
+        $ecEm = $this->getEm('edgecreator');
+        $qb = $ecEm->createQueryBuilder();
+
+        $options = <<<'CONCAT'
+concat('{', group_concat(concat('"', values.optionNom, '": ', '"', values.optionValeur, '"')), '}')
+CONCAT;
+        $qb->select("values.ordre, values.nomFonction, $options AS options")
+            ->from(TranchesEnCoursValeurs::class, 'values')
+            ->andWhere('values.idModele = :modelId')
+            ->setParameter(':modelId', $modelId)
+            ->groupBy('values.ordre')
+            ->orderBy('values.ordre')
+        ;
+
+        return new JsonResponse(array_map(function(array $result) {
+            $result['options'] = json_decode($result['options'], true);
+            return $result;
+        }, $qb->getQuery()->getArrayResult()));
     }
 
     /**
@@ -344,6 +369,30 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
     }
 
     /**
+     * @Route(
+     *     methods={"GET"},
+     *     path="/edgecreator/myfontspreview/{foregroundColor}/{backgroundColor}/{width}/font/{fontUrl}/text/{text}",
+     *     requirements={"fontUrl"="^[-a-z0-9]+/[-a-z0-9]+(/[-a-z0-9]+)?$"})
+     */
+    public function getMyFontsPreview(Request $request, string $foregroundColor, string $backgroundColor, string $width, string $text, string $fontUrl): Response
+    {
+        $text=str_replace("'","\'",preg_replace('#[ ]+\.$#','',$text));
+
+        $ecEm = $this->getEm('edgecreator');
+        $criteria = [
+            'font' => $fontUrl,
+            'color' => $foregroundColor,
+            'colorbg' => $backgroundColor,
+            'width' => $width,
+            'texte' => $text,
+        ];
+        $textImage = $ecEm->getRepository(ImagesMyfonts::class)->findOneBy($criteria);
+        return is_null($textImage)
+            ? new JsonResponseFromObject($criteria, 404)
+            : new JsonResponseFromObject(array_merge($criteria, ['result' => $textImage]));
+    }
+
+    /**
      * @Route(methods={"PUT"}, path="/edgecreator/myfontspreview")
      * @throws ORMException
      * @throws OptimisticLockException
@@ -357,6 +406,29 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
         $preview->setColorbg($request->request->get('bgColor'));
         $preview->setWidth($request->request->get('width'));
         $preview->setTexte($request->request->get('text'));
+        $preview->setPrecision($request->request->get('precision'));
+
+        $ecEm = $this->getEm('edgecreator');
+        $ecEm->persist($preview);
+        $ecEm->flush();
+
+        return new JsonResponse(['previewid' => $preview->getId()]);
+    }
+
+    /**
+     * @Route(methods={"PUT"}, path="/edgecreator/v2/myfontspreview")
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function storeMyFontsPreviewV2(Request $request): Response
+    {
+        $preview = new ImagesMyfonts();
+
+        $preview->setFont($request->request->get('font'));
+        $preview->setColor($request->request->get('color'));
+        $preview->setColorbg($request->request->get('colorbg'));
+        $preview->setWidth($request->request->get('width'));
+        $preview->setTexte($request->request->get('texte'));
         $preview->setPrecision($request->request->get('precision'));
 
         $ecEm = $this->getEm('edgecreator');
@@ -579,11 +651,11 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
                 'optionValueTemplate' => '%[Numero]%',
                 'optionValueExtension' => '%.png',
             ], [
-            Type::STRING,
-            Type::STRING,
-            Type::STRING,
-            Type::STRING,
-            Type::STRING,
+            Types::STRING,
+            Types::STRING,
+            Types::STRING,
+            Types::STRING,
+            Types::STRING,
         ])->fetchAll();
 
         $matches = array_filter($templatedValues, function($match) use ($nameSubString) {
