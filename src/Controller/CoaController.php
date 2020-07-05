@@ -99,6 +99,31 @@ class CoaController extends AbstractController
     /**
      * @Route(
      *     methods={"GET"},
+     *     path="/coa/list/issues/withTitle/{publicationCode}",
+     *     requirements={"publicationCode"="^(?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+)$"}
+     * )
+     */
+    public function listIssuesWithTitleFromPublicationCode(string $publicationCode): Response
+    {
+        $coaEm = $this->getEm('coa');
+        $qb = $coaEm->createQueryBuilder();
+        $qb
+            ->select('inducks_issue.issuenumber, inducks_issue.title')
+            ->from(InducksIssue::class, 'inducks_issue');
+
+        $qb->where($qb->expr()->eq('inducks_issue.publicationcode', "'" . $publicationCode . "'"));
+
+        $results = $qb->getQuery()->getResult();
+        $issueNumbers = [];
+        foreach($results as $result) {
+            $issueNumbers[$result['issuenumber']] = $result['title'];
+        }
+        return new JsonResponse($issueNumbers);
+    }
+
+    /**
+     * @Route(
+     *     methods={"GET"},
      *     path="/coa/list/issuesbycodes/{issueCodes}",
      *     requirements={"issueCodes"="^((?P<issuecode_regex>[a-z]+/[-A-Z0-9 ]+),){0,3}[a-z]+/[-A-Z0-9 ]+$"}
      * )

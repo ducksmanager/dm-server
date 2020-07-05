@@ -123,6 +123,7 @@ class CoaFixture extends Fixture implements FixtureGroupInterface
                 ->setPublicationcode('fr/DDD')
                 ->setIssuenumber('1')
                 ->setIssuecode('fr/DDD 1')
+                ->setTitle('Volume 3')
         );
 
         $coaEntityManager->persist(
