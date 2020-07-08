@@ -92,8 +92,9 @@ class CoaListsTest extends TestCommon
         $arrayResponse = json_decode($this->getResponseContent($response));
 
         $this->assertInternalType('array', $arrayResponse);
-        $this->assertEquals('1', $arrayResponse[0]);
-        $this->assertEquals('2', $arrayResponse[1]);
+        $this->assertEquals('0', $arrayResponse[0]);
+        $this->assertEquals('1', $arrayResponse[1]);
+        $this->assertEquals('2', $arrayResponse[2]);
     }
 
     public function testGetIssueListWithTitles(): void
@@ -101,7 +102,8 @@ class CoaListsTest extends TestCommon
         $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issues/withTitle/fr/DDD', self::$dmUser)->call();
 
         $this->assertJsonStringEqualsJsonString(json_encode([
-            '1' => 'Volume 3',
+            '0' => 'Volume 0',
+            '1' => 'Volume 1',
             '2' => null
         ]), $this->getResponseContent($response));
     }

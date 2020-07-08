@@ -11,6 +11,7 @@ use App\Service\CoaService;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\Query\Expr\OrderBy;
 use Psr\Log\LoggerInterface;
+use stdClass;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -114,9 +115,9 @@ class CoaController extends AbstractController
         $qb->where($qb->expr()->eq('inducks_issue.publicationcode', "'" . $publicationCode . "'"));
 
         $results = $qb->getQuery()->getResult();
-        $issueNumbers = [];
+        $issueNumbers = new stdClass();
         foreach($results as $result) {
-            $issueNumbers[$result['issuenumber']] = $result['title'];
+            $issueNumbers->{$result['issuenumber']} = $result['title'];
         }
         return new JsonResponse($issueNumbers);
     }

@@ -119,11 +119,19 @@ class CoaFixture extends Fixture implements FixtureGroupInterface
         );
 
         $coaEntityManager->persist(
+            (self::$testIssues['fr/DDD 0'] = new InducksIssue())
+                ->setPublicationcode('fr/DDD')
+                ->setIssuenumber('0')
+                ->setIssuecode('fr/DDD 0')
+                ->setTitle('Volume 0')
+        );
+
+        $coaEntityManager->persist(
             (self::$testIssues['fr/DDD 1'] = new InducksIssue())
                 ->setPublicationcode('fr/DDD')
                 ->setIssuenumber('1')
                 ->setIssuecode('fr/DDD 1')
-                ->setTitle('Volume 3')
+                ->setTitle('Volume 1')
         );
 
         $coaEntityManager->persist(
