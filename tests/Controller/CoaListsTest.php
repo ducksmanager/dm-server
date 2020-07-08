@@ -97,6 +97,16 @@ class CoaListsTest extends TestCommon
         $this->assertEquals('2', $arrayResponse[2]);
     }
 
+    public function testGetIssueListWithSpaces(): void
+    {
+        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issues/fr/CB', self::$dmUser)->call();
+
+        $arrayResponse = json_decode($this->getResponseContent($response));
+
+        $this->assertInternalType('array', $arrayResponse);
+        $this->assertEquals('PN 1', $arrayResponse[0]);
+    }
+
     public function testGetIssueListWithTitles(): void
     {
         $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issues/withTitle/fr/DDD', self::$dmUser)->call();

@@ -90,7 +90,7 @@ class CoaController extends AbstractController
         $results = $qb->getQuery()->getResult();
         $issueNumbers = array_map(
             function ($issue) {
-                return $issue['issuenumber'];
+                return preg_replace('#[ ]+#', ' ', $issue['issuenumber']);
             },
             $results
         );
@@ -117,7 +117,8 @@ class CoaController extends AbstractController
         $results = $qb->getQuery()->getResult();
         $issueNumbers = new stdClass();
         foreach($results as $result) {
-            $issueNumbers->{$result['issuenumber']} = $result['title'];
+            $issueNumber = preg_replace('#[ ]+#', ' ', $result['issuenumber']);
+            $issueNumbers->$issueNumber = $result['title'];
         }
         return new JsonResponse($issueNumbers);
     }
@@ -142,7 +143,10 @@ class CoaController extends AbstractController
 
         $qbIssueInfo->where($qbIssueInfo->expr()->in('inducks_issue.issuecode', $issuecodesList));
 
-        $resultsIssueInfo = $qbIssueInfo->getQuery()->getResult();
+        $resultsIssueInfo = array_map(function($issue) {
+            $issue['issuenumber'] = preg_replace('#[ ]+#', ' ', $issue['issuenumber']);
+            return $issue;
+        }, $qbIssueInfo->getQuery()->getResult());
 
         $issues = [];
 
