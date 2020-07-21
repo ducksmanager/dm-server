@@ -11,6 +11,7 @@ use App\Service\CoaService;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\Query\Expr\OrderBy;
 use Psr\Log\LoggerInterface;
+use stdClass;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -89,7 +90,7 @@ class CoaController extends AbstractController
         $results = $qb->getQuery()->getResult();
         $issueNumbers = array_map(
             function ($issue) {
-                return $issue['issuenumber'];
+                return preg_replace('#[ ]+#', ' ', $issue['issuenumber']);
             },
             $results
         );
@@ -114,9 +115,10 @@ class CoaController extends AbstractController
         $qb->where($qb->expr()->eq('inducks_issue.publicationcode', "'" . $publicationCode . "'"));
 
         $results = $qb->getQuery()->getResult();
-        $issueNumbers = [];
+        $issueNumbers = new stdClass();
         foreach($results as $result) {
-            $issueNumbers[$result['issuenumber']] = $result['title'];
+            $issueNumber = preg_replace('#[ ]+#', ' ', $result['issuenumber']);
+            $issueNumbers->$issueNumber = $result['title'];
         }
         return new JsonResponse($issueNumbers);
     }
@@ -141,7 +143,10 @@ class CoaController extends AbstractController
 
         $qbIssueInfo->where($qbIssueInfo->expr()->in('inducks_issue.issuecode', $issuecodesList));
 
-        $resultsIssueInfo = $qbIssueInfo->getQuery()->getResult();
+        $resultsIssueInfo = array_map(function($issue) {
+            $issue['issuenumber'] = preg_replace('#[ ]+#', ' ', $issue['issuenumber']);
+            return $issue;
+        }, $qbIssueInfo->getQuery()->getResult());
 
         $issues = [];
 
