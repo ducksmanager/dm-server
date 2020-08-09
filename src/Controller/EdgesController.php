@@ -15,7 +15,9 @@ class EdgesController extends AbstractController implements RequiresDmVersionCon
      * @Route(
      *     methods={"GET"},
      *     path="/edges/{publicationCode}/{issueNumbers}",
-     *     requirements={"publicationCode"="^(?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+)$"})
+     *     requirements={"publicationCode"="^(?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+)$"},
+     *     defaults={"issueNumbers"=""}
+     * )
      */
     public function getEdges(string $publicationCode, string $issueNumbers) : JsonResponse
     {
@@ -24,10 +26,13 @@ class EdgesController extends AbstractController implements RequiresDmVersionCon
             ->select('tranches_pretes')
             ->from(TranchesPretes::class, 'tranches_pretes')
             ->where($qbGetEdges->expr()->eq('tranches_pretes.publicationcode', ':publicationCode'))
-            ->setParameter('publicationCode', explode(',', $publicationCode))
-            ->andWhere($qbGetEdges->expr()->in('tranches_pretes.issuenumber', ':issueNumbers'))
-            ->setParameter('issueNumbers', explode(',', $issueNumbers));
+            ->setParameter('publicationCode', explode(',', $publicationCode));
 
+        if (!empty($issueNumbers)) {
+            $qbGetEdges
+                ->andWhere($qbGetEdges->expr()->in('tranches_pretes.issuenumber', ':issueNumbers'))
+                ->setParameter('issueNumbers', explode(',', $issueNumbers));
+        }
         $edgeResults = $qbGetEdges->getQuery()->getResult();
         return new JsonResponseFromObject($edgeResults);
     }
