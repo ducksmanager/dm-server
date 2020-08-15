@@ -109,15 +109,29 @@ class CoaListsTest extends TestCommon
 
         $this->assertInternalType('array', $arrayResponse);
         $this->assertEquals([
-            0 => 'Volume 0',
-            1 => 'Volume 1',
-            2 => NULL,
-            300 => NULL,
-            315 => NULL,
-            7 => NULL,
-            '1951-00' => NULL,
-            'PN 1' => NULL,
-            '' => NULL,
+            'fr/DDD' => [
+                0 => 'Volume 0',
+                1 => 'Volume 1',
+                2 => NULL
+            ],
+            'fr/MP' => [
+                300 => NULL,
+            ],
+            'fr/PM' => [
+                315 => NULL
+            ],
+            'us/CBL' => [
+                7 => NULL
+            ],
+            'de/MM' => [
+                '1951-00' => NULL
+            ],
+            'fr/CB' => [
+                'PN 1' => NULL
+            ],
+            '' => [
+                '' => NULL
+            ],
         ], $arrayResponse);
     }
 

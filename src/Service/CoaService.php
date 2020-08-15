@@ -125,7 +125,7 @@ class CoaService
     public function getIssueNumbersFromPublicationCode(?string $publicationCode = null) : stdClass
     {
         $qb = (self::$coaEm->createQueryBuilder())
-            ->select('inducks_issue.issuenumber, inducks_issue.title')
+            ->select('inducks_issue.publicationcode, inducks_issue.issuenumber, inducks_issue.title')
             ->from(InducksIssue::class, 'inducks_issue');
 
         if (!is_null($publicationCode)) {
@@ -136,7 +136,10 @@ class CoaService
         $issueNumbers = new stdClass();
         foreach($results as $result) {
             $issueNumber = preg_replace('#[ ]+#', ' ', $result['issuenumber']);
-            $issueNumbers->$issueNumber = $result['title'];
+            if (!isset($issueNumbers->{$result['publicationcode']})) {
+                $issueNumbers->{$result['publicationcode']} = new stdClass();
+            }
+            $issueNumbers->{$result['publicationcode']}->$issueNumber = $result['title'];
         }
         return $issueNumbers;
     }

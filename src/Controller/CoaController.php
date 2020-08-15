@@ -127,7 +127,7 @@ class CoaController extends AbstractController
      */
     public function listIssuesWithTitleFromPublicationCode(CoaService $coaService, string $publicationCode): Response
     {
-        return new JsonResponse($coaService->getIssueNumbersFromPublicationCode($publicationCode));
+        return new JsonResponse($coaService->getIssueNumbersFromPublicationCode($publicationCode)->$publicationCode);
     }
 
     /**
