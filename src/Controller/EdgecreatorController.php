@@ -682,12 +682,46 @@ CONCAT;
     }
 
     /**
+     * @Route(
+     *     methods={"PUT"},
+     *     path="/edgecreator/publish/{publicationCode}/{issueNumber}",
+     *     requirements={"publicationCode"="^(?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+)$"}
+     * )
+     * @throws ORMException
+     * @throws Exception
+     */
+    public function publishEdgeFromIssuenumber(Request $request, ContributionService $contributionService, string $publicationCode, string $issueNumber) {
+        $designers = $request->request->get('designers');
+        $photographers = $request->request->get('photographers');
+
+        $modelContributors = array_merge(
+            array_map(function($userId) {
+                return ['userId' => $userId, 'contribution' => 'createur'];
+            }, $this->getUserIdsByUsername($designers)),
+            array_map(function($userId) {
+                return ['userId' => $userId, 'contribution' => 'photographe'];
+            }, $this->getUserIdsByUsername($photographers))
+        );
+
+        ['edgeId' => $edgeId, 'contributors' => $contributors] =
+            $this->publishEdgeOnDm($contributionService, $modelContributors, $publicationCode, $issueNumber);
+
+        [$countryCode, $shortPublicationCode] = explode('/', $publicationCode);
+        return new JsonResponse([
+            'publicationCode' => $publicationCode,
+            'issueNumber' => $issueNumber,
+            'edgeId' => $edgeId,
+            'url' => "{$_ENV['EDGES_ROOT']}/$countryCode/gen/$shortPublicationCode.$issueNumber.png",
+            'contributors' => $contributors
+        ]);
+    }
+
+    /**
      * @Route(methods={"PUT"}, path="/edgecreator/publish/{modelId}")
      * @throws ORMException
      * @throws Exception
      */
-    public function publishEdge(Request $request, ContributionService $contributionService, string $modelId) : Response {
-        $dmEm = $this->getEm('dm');
+    public function publishEdgeFromModel(Request $request, ContributionService $contributionService, string $modelId) : Response {
         $ecEm = $this->getEm('edgecreator');
 
         /** @var TranchesEnCoursModeles $edgeModelToPublish */
@@ -700,42 +734,15 @@ CONCAT;
 
             $publicationCode = implode('/', [$edgeModelToPublish->getPays(), $edgeModelToPublish->getMagazine()]);
 
-            if (!is_null($existingEdge = $dmEm->getRepository(TranchesPretes::class)->findOneBy([
-                'publicationcode' => $publicationCode,
-                'issuenumber' => $edgeModelToPublish->getNumero()
-            ]))) {
-                $edgeToPublish = $existingEdge;
-            }
-            else {
-                $edgeToPublish = new TranchesPretes();
-            }
-            $dmEm->persist($edgeToPublish
-                ->setPublicationcode($publicationCode)
-                ->setIssuenumber($edgeModelToPublish->getNumero())
-                ->setDateajout(new DateTime('now'))
-            );
+            $modelContributors = array_map(function(TranchesEnCoursContributeurs $contributor) {
+                return [
+                    'userId' => $contributor->getIdUtilisateur(),
+                    'contribution' => $contributor->getContribution(),
+                ];
+            }, $edgeModelToPublish->getContributeurs());
 
-            [$countryCode, $shortPublicationCode] = explode('/', $edgeToPublish->getPublicationcode());
-            /** @var NumerosPopularite $popularity */
-            $issuePopularity = $dmEm->getRepository(NumerosPopularite::class)->findOneBy([
-                'pays' => $countryCode,
-                'magazine' => $shortPublicationCode,
-                'numero' => $edgeToPublish->getIssuenumber()
-            ]);
-            $popularity = is_null($issuePopularity) ? 0 : $issuePopularity->getPopularite();
-
-            $contributions = [];
-            foreach($edgeModelToPublish->getContributeurs() as $modelContributor) {
-                $contributions[]=$contributionService->persistContribution(
-                    $dmEm->getRepository(Users::class)->find($modelContributor->getIdUtilisateur()),
-                    $modelContributor->getContribution(),
-                    $popularity,
-                    $edgeToPublish
-                );
-            }
-
-            $dmEm->persist($edgeToPublish);
-            $dmEm->flush();
+            ['edgeId' => $edgeId, 'contributors' => $contributors] =
+                $this->publishEdgeOnDm($contributionService, $modelContributors, $publicationCode, $edgeModelToPublish->getNumero());
 
             $edgeModelToPublish->setActive(false);
             $ecEm->persist($edgeModelToPublish);
@@ -744,11 +751,9 @@ CONCAT;
             return new JsonResponse([
                 'publicationCode' => $publicationCode,
                 'issueNumber' => $edgeModelToPublish->getNumero(),
-                'edgeId' => $edgeToPublish->getId(),
+                'edgeId' => $edgeId,
                 'url' => "{$_ENV['EDGES_ROOT']}/{$edgeModelToPublish->getPays()}/gen/{$edgeModelToPublish->getMagazine()}.{$edgeModelToPublish->getNumero()}.png",
-                'contributors' => array_map(function(UsersContributions $contribution) {
-                    return $contribution->getUser()->getId();
-                }, $contributions)
+                'contributors' => $contributors
             ]);
         }
         return new Response("$modelId is not a non-published model", Response::HTTP_BAD_REQUEST);
@@ -758,18 +763,64 @@ CONCAT;
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    private function updateModelContributors(TranchesEnCoursModeles $modelId, array $designers, array $photographers) : void {
+    private function publishEdgeOnDm(ContributionService $contributionService, array $contributors, string $publicationCode, string $issueNumber) : array {
         $dmEm = $this->getEm('dm');
-        $ecEm = $this->getEm('edgecreator');
 
-        $contributorsUsernames = array_merge($designers ?? [], $photographers ?? []);
+        if (!is_null($existingEdge = $dmEm->getRepository(TranchesPretes::class)->findOneBy([
+            'publicationcode' => $publicationCode,
+            'issuenumber' => $issueNumber
+        ]))) {
+            $edgeToPublish = $existingEdge;
+        }
+        else {
+            $edgeToPublish = new TranchesPretes();
+        }
+        $dmEm->persist($edgeToPublish
+            ->setPublicationcode($publicationCode)
+            ->setIssuenumber($issueNumber)
+            ->setDateajout(new DateTime())
+        );
+
+        [$countryCode, $shortPublicationCode] = explode('/', $edgeToPublish->getPublicationcode());
+        /** @var NumerosPopularite $popularity */
+        $issuePopularity = $dmEm->getRepository(NumerosPopularite::class)->findOneBy([
+            'pays' => $countryCode,
+            'magazine' => $shortPublicationCode,
+            'numero' => $edgeToPublish->getIssuenumber()
+        ]);
+        $popularity = is_null($issuePopularity) ? 0 : $issuePopularity->getPopularite();
+
+        $contributions = [];
+        foreach($contributors as $contributor) {
+            $userId = $contributor['userId'];
+            $contribution = $contributor['contribution'];
+            $contributions[]=$contributionService->persistContribution(
+                $dmEm->getRepository(Users::class)->find($userId),
+                $contribution,
+                $popularity,
+                $edgeToPublish
+            );
+        }
+
+        $dmEm->persist($edgeToPublish);
+        $dmEm->flush();
+
+        return [
+            'edgeId' => $edgeToPublish->getId(),
+            'contributors' => array_map(function(UsersContributions $contribution) {
+                return $contribution->getUser()->getId();
+            }, $contributions)
+        ];
+    }
+
+    private function getUserIdsByUsername(array $usernames) : array {
+        $dmEm = $this->getEm('dm');
 
         $qb = $dmEm->createQueryBuilder();
         $qb->select('users.id, users.username')
             ->from(Users::class, 'users')
             ->andWhere('users.username in (:usernames)')
-            ->setParameter(':usernames', $contributorsUsernames)
-        ;
+            ->setParameter(':usernames', $usernames);
 
         $contributorsIdsResults = $qb->getQuery()->getResult();
 
@@ -777,6 +828,19 @@ CONCAT;
         array_walk($contributorsIdsResults, function($value) use (&$contributorsIds) {
             $contributorsIds[$value['username']] = $value['id'];
         });
+        return $contributorsIds;
+    }
+
+    /**
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    private function updateModelContributors(TranchesEnCoursModeles $modelId, array $designers, array $photographers) : void {
+        $ecEm = $this->getEm('edgecreator');
+
+        $contributorsIds = $this->getUserIdsByUsername(
+            array_merge($designers ?? [], $photographers ?? [])
+        );
 
         function addNewContributors($modelId, &$contributors, $newContributors, $contributorsIds, $contributionType) {
             if (!is_null($newContributors)) {
