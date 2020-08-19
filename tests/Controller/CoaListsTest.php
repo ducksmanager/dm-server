@@ -56,6 +56,20 @@ class CoaListsTest extends TestCommon
         $this->assertCount(2, (array)$objectResponse);
     }
 
+    public function testGetPublicationListAll(): void
+    {
+        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/publications', self::$dmUser)->call();
+
+        $objectResponse = json_decode($this->getResponseContent($response));
+
+        $this->assertInternalType('object', $objectResponse);
+        $this->assertCount(4, get_object_vars($objectResponse));
+        $this->assertEquals('Dynastie', $objectResponse->{'fr/DDD'});
+        $this->assertEquals('Parade', $objectResponse->{'fr/MP'});
+        $this->assertEquals('Picsou Magazine', $objectResponse->{'fr/PM'});
+        $this->assertEquals('Carl Barks Library', $objectResponse->{'us/CBL'});
+    }
+
     public function testGetPublicationListFromCountry(): void
     {
         $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/publications/fr', self::$dmUser)->call();
@@ -63,8 +77,10 @@ class CoaListsTest extends TestCommon
         $objectResponse = json_decode($this->getResponseContent($response));
 
         $this->assertInternalType('object', $objectResponse);
+        $this->assertCount(3, get_object_vars($objectResponse));
         $this->assertEquals('Dynastie', $objectResponse->{'fr/DDD'});
         $this->assertEquals('Parade', $objectResponse->{'fr/MP'});
+        $this->assertEquals('Picsou Magazine', $objectResponse->{'fr/PM'});
     }
 
     public function testGetPublicationListFromPublicationCodes(): void
@@ -87,14 +103,46 @@ class CoaListsTest extends TestCommon
 
     public function testGetIssueList(): void
     {
+        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issues', self::$dmUser)->call();
+
+        $arrayResponse = json_decode($this->getResponseContent($response), true);
+
+        $this->assertInternalType('array', $arrayResponse);
+        $this->assertEquals([
+            'fr/DDD' => [
+                0 => 'Volume 0',
+                1 => 'Volume 1',
+                2 => NULL
+            ],
+            'fr/MP' => [
+                300 => NULL,
+            ],
+            'fr/PM' => [
+                315 => NULL
+            ],
+            'us/CBL' => [
+                7 => NULL
+            ],
+            'de/MM' => [
+                '1951-00' => NULL
+            ],
+            'fr/CB' => [
+                'PN 1' => NULL
+            ],
+            '' => [
+                '' => NULL
+            ],
+        ], $arrayResponse);
+    }
+
+    public function testGetIssueListPerPublicationCode(): void
+    {
         $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issues/fr/DDD', self::$dmUser)->call();
 
         $arrayResponse = json_decode($this->getResponseContent($response));
 
         $this->assertInternalType('array', $arrayResponse);
-        $this->assertEquals('0', $arrayResponse[0]);
-        $this->assertEquals('1', $arrayResponse[1]);
-        $this->assertEquals('2', $arrayResponse[2]);
+        $this->assertEquals(['0', '1', '2'], $arrayResponse);
     }
 
     public function testGetIssueListWithSpaces(): void
@@ -151,7 +199,7 @@ class CoaListsTest extends TestCommon
 
     public function testGetIssueListByIssueCodesNoCoaIssue(): void
     {
-        $this->loadFixtures([ ], true, 'coverid');
+        $this->loadFixtures([ ], false, 'coverid');
         $coveridEm = $this->getEm('coverid');
         $coveridEm->persist(
             $cover = (new Covers())

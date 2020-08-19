@@ -11,7 +11,6 @@ use App\Service\CoaService;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\Query\Expr\OrderBy;
 use Psr\Log\LoggerInterface;
-use stdClass;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -52,6 +51,17 @@ class CoaController extends AbstractController
             }
         );
         return new JsonResponse($countryNames);
+    }
+
+    /**
+     * @Route(
+     *     methods={"GET"},
+     *     path="/coa/list/publications"
+     * )
+     */
+    public function listPublications(CoaService $coaService): Response
+    {
+        return new JsonResponse($coaService->getPublicationTitles());
     }
 
     /**
@@ -100,27 +110,24 @@ class CoaController extends AbstractController
     /**
      * @Route(
      *     methods={"GET"},
+     *     path="/coa/list/issues"
+     * )
+     */
+    public function listIssues(CoaService $coaService): Response
+    {
+        return new JsonResponse($coaService->getIssueNumbersFromPublicationCode());
+    }
+
+    /**
+     * @Route(
+     *     methods={"GET"},
      *     path="/coa/list/issues/withTitle/{publicationCode}",
      *     requirements={"publicationCode"="^(?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+)$"}
      * )
      */
-    public function listIssuesWithTitleFromPublicationCode(string $publicationCode): Response
+    public function listIssuesWithTitleFromPublicationCode(CoaService $coaService, string $publicationCode): Response
     {
-        $coaEm = $this->getEm('coa');
-        $qb = $coaEm->createQueryBuilder();
-        $qb
-            ->select('inducks_issue.issuenumber, inducks_issue.title')
-            ->from(InducksIssue::class, 'inducks_issue');
-
-        $qb->where($qb->expr()->eq('inducks_issue.publicationcode', "'" . $publicationCode . "'"));
-
-        $results = $qb->getQuery()->getResult();
-        $issueNumbers = new stdClass();
-        foreach($results as $result) {
-            $issueNumber = preg_replace('#[ ]+#', ' ', $result['issuenumber']);
-            $issueNumbers->$issueNumber = $result['title'];
-        }
-        return new JsonResponse($issueNumbers);
+        return new JsonResponse($coaService->getIssueNumbersFromPublicationCode($publicationCode)->$publicationCode);
     }
 
     /**

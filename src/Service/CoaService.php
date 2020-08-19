@@ -1,12 +1,14 @@
 <?php
 namespace App\Service;
 
+use App\Entity\Coa\InducksIssue;
 use App\Entity\Coa\InducksPerson;
 use App\Entity\Coa\InducksPublication;
 use App\Entity\Coa\InducksStory;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query\QueryException;
+use stdClass;
 
 class CoaService
 {
@@ -79,19 +81,18 @@ class CoaService
     }
 
     /**
-     * @param string[] $publicationCodes
+     * @param ?string[] $publicationCodes
      * @return array
      * @throws QueryException
      */
-    public function getPublicationTitles(array $publicationCodes) : array {
-        if (empty($publicationCodes)) {
-            return [];
-        }
-        $qb = (self::$coaEm->createQueryBuilder());
-        $qb
+    public function getPublicationTitles(?array $publicationCodes = null) : array {
+        $qb = (self::$coaEm->createQueryBuilder())
             ->select('inducks_publication.publicationcode, inducks_publication.title')
-            ->from(InducksPublication::class, 'inducks_publication')
-            ->where($qb->expr()->in('inducks_publication.publicationcode', $publicationCodes))
+            ->from(InducksPublication::class, 'inducks_publication');
+        if (!empty($publicationCodes)) {
+            $qb->where($qb->expr()->in('inducks_publication.publicationcode', $publicationCodes));
+        }
+        $qb
             ->orderBy('inducks_publication.title')
             ->indexBy('inducks_publication', 'inducks_publication.publicationcode');
 
@@ -119,5 +120,27 @@ class CoaService
         return array_map(function(array $person) {
             return $person['title'];
         }, $results);
+    }
+
+    public function getIssueNumbersFromPublicationCode(?string $publicationCode = null) : stdClass
+    {
+        $qb = (self::$coaEm->createQueryBuilder())
+            ->select('inducks_issue.publicationcode, inducks_issue.issuenumber, inducks_issue.title')
+            ->from(InducksIssue::class, 'inducks_issue');
+
+        if (!is_null($publicationCode)) {
+            $qb->where($qb->expr()->eq('inducks_issue.publicationcode', "'" . $publicationCode . "'"));
+        }
+
+        $results = $qb->getQuery()->getResult();
+        $issueNumbers = new stdClass();
+        foreach($results as $result) {
+            $issueNumber = preg_replace('#[ ]+#', ' ', $result['issuenumber']);
+            if (!isset($issueNumbers->{$result['publicationcode']})) {
+                $issueNumbers->{$result['publicationcode']} = new stdClass();
+            }
+            $issueNumbers->{$result['publicationcode']}->$issueNumber = $result['title'];
+        }
+        return $issueNumbers;
     }
 }
