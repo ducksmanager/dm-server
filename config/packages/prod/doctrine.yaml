@@ -11,6 +11,10 @@ doctrine:
             type: pool
             pool: doctrine.result_cache_pool
 
+parameters:
+    env(database_driver): 'pdo_mysql'
+    env(database_server_version): 'mariadb-10.2.16'
+
 framework:
     cache:
         pools:

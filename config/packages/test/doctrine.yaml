@@ -7,16 +7,21 @@ doctrine:
     connections:
       dm:
         path: "%env(DATABASE_DM_PATH)%"
+        driver: pdo_sqlite
         memory: true
       coa:
         path: "%env(DATABASE_COA_PATH)%"
+        driver: pdo_sqlite
         memory: true
       coverid:
         path: "%env(DATABASE_COVER_ID_PATH)%"
+        driver: pdo_sqlite
         memory: true
       dm_stats:
         path: "%env(DATABASE_DM_STATS_PATH)%"
+        driver: pdo_sqlite
         memory: true
       edgecreator:
         path: "%env(DATABASE_EDGECREATOR_PATH)%"
+        driver: pdo_sqlite
         memory: true

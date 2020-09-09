@@ -1,18 +1,15 @@
-parameters:
-    env(DATABASE_DRIVER): 'pdo_mysql'
-    env(DATABASE_SERVER_VERSION): 'mariadb-10.2.16'
-
 doctrine:
     dbal:
+        default_connection: default
         connections:
-            dm:
+            default:
                 dbname: '%env(DATABASE_DM_DB)%'
                 host: '%env(DATABASE_DM_HOST)%'
                 port: '%env(DATABASE_DM_PORT)%'
                 user: '%env(DATABASE_DM_USER)%'
                 password: '%env(DATABASE_DM_PASS)%'
-                driver: '%env(DATABASE_DRIVER)%'
-                server_version: '%env(DATABASE_SERVER_VERSION)%'
+                driver: '%env(database_driver)%'
+                server_version: '%env(database_server_version)%'
                 charset: utf8mb4
                 mapping_types:
                     enum: string
@@ -22,8 +19,8 @@ doctrine:
                 port: '%env(DATABASE_COA_PORT)%'
                 user: '%env(DATABASE_COA_USER)%'
                 password: '%env(DATABASE_COA_PASS)%'
-                driver: '%env(DATABASE_DRIVER)%'
-                server_version: '%env(DATABASE_SERVER_VERSION)%'
+                driver: '%env(database_driver)%'
+                server_version: '%env(database_server_version)%'
                 charset: utf8mb4
                 schema_filter: (inducks_countryname|inducks_entry|inducks_entryurl|inducks_issue|inducks_person|inducks_publication|inducks_story|inducks_storyversion)
                 mapping_types:
@@ -34,8 +31,8 @@ doctrine:
                 port: '%env(DATABASE_DM_COVER_ID_PORT)%'
                 user: '%env(DATABASE_DM_COVER_ID_USER)%'
                 password: '%env(DATABASE_DM_COVER_ID_PASS)%'
-                driver: '%env(DATABASE_DRIVER)%'
-                server_version: '%env(DATABASE_SERVER_VERSION)%'
+                driver: '%env(database_driver)%'
+                server_version: '%env(database_server_version)%'
                 charset: utf8mb4
                 mapping_types:
                     enum: string
@@ -45,8 +42,8 @@ doctrine:
                 port: '%env(DATABASE_DM_STATS_PORT)%'
                 user: '%env(DATABASE_DM_STATS_USER)%'
                 password: '%env(DATABASE_DM_STATS_PASS)%'
-                driver: '%env(DATABASE_DRIVER)%'
-                server_version: '%env(DATABASE_SERVER_VERSION)%'
+                driver: '%env(database_driver)%'
+                server_version: '%env(database_server_version)%'
                 charset: utf8mb4
                 mapping_types:
                     enum: string
@@ -56,8 +53,8 @@ doctrine:
                 port: '%env(DATABASE_EDGECREATOR_PORT)%'
                 user: '%env(DATABASE_EDGECREATOR_USER)%'
                 password: '%env(DATABASE_EDGECREATOR_PASS)%'
-                driver: '%env(DATABASE_DRIVER)%'
-                server_version: '%env(DATABASE_SERVER_VERSION)%'
+                driver: '%env(database_driver)%'
+                server_version: '%env(database_server_version)%'
                 charset: utf8mb4
                 mapping_types:
                     enum: string
@@ -66,7 +63,7 @@ doctrine:
         default_entity_manager: 'dm'
         entity_managers:
             dm:
-                connection: dm
+                connection: default
                 mappings:
                     App:
                         is_bundle: false
