@@ -1,5 +1,4 @@
 /.idea
-/current
 
 ###> symfony/framework-bundle ###
 /.env.local
@@ -9,15 +8,12 @@
 /var/
 /vendor/
 ###< symfony/framework-bundle ###
-
-###> symfony/web-server-bundle ###
-/.web-server-pid
-###< symfony/web-server-bundle ###
-
 ###> symfony/phpunit-bridge ###
 .phpunit
 ###< symfony/phpunit-bridge ###
 
+/test.jpg
+/sql/*.sql.gz
 build
 *.sqlite
 tests/Fixtures/*_willberemoved.jpg
