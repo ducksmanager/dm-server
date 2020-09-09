@@ -834,8 +834,16 @@ class EdgeCreatorTest extends TestCommon
     }
 
     public function testPublishEdge() {
-        EdgeCreatorFixture::createModelEcV2($this->getEm('edgecreator'), self::$edgecreatorUser, 'fr/PM', '1', [1 => ['functionName' => 'Image', 'options' => ['Source' => 'MP.Tete.1.png']]]);
-        $model = $this->getEm('edgecreator')->getRepository(TranchesEnCoursModeles::class)->findOneBy(['pays' => 'fr', 'magazine' => 'PM', 'numero'=> '1']);
+        EdgeCreatorFixture::createModelEcV2(
+            $this->getEm('edgecreator'),
+            self::$edgecreatorUser,
+            'fr/PM',
+            '1',
+            [1 => ['functionName' => 'Image', 'options' => ['Source' => 'MP.Tete.1.png']]]
+        );
+        $model = $this->getEm('edgecreator')->getRepository(TranchesEnCoursModeles::class)->findOneBy(
+            ['pays' => 'fr', 'magazine' => 'PM', 'numero'=> '1']
+        );
         $this->getEm('dm')->persist(
             (new NumerosPopularite())
                 ->setPays('fr')
@@ -892,12 +900,7 @@ class EdgeCreatorTest extends TestCommon
         $this->assertEquals($this->getUser(self::$defaultTestDmUserName), $userContributions[2]->getUser());
     }
 
-    /**
-     * @param TranchesEnCoursModeles $model
-     * @param string $photoName
-     * @param int $expectedContributorNumber
-     */
-    private function assertSetMainPhotoOK($model, $photoName, $expectedContributorNumber): void
+    private function assertSetMainPhotoOK(TranchesEnCoursModeles $model, string $photoName, int $expectedContributorNumber): void
     {
         $countryCode = $model->getPays();
         $publicationCode = $model->getMagazine();

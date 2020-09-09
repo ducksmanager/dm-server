@@ -739,7 +739,7 @@ CONCAT;
                     'userId' => $contributor->getIdUtilisateur(),
                     'contribution' => $contributor->getContribution(),
                 ];
-            }, $edgeModelToPublish->getContributeurs());
+            }, $edgeModelToPublish->getContributeurs()->toArray());
 
             ['edgeId' => $edgeId, 'contributors' => $contributors] =
                 $this->publishEdgeOnDm($contributionService, $modelContributors, $publicationCode, $edgeModelToPublish->getNumero());
