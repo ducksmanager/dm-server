@@ -4,7 +4,6 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
-    twig.controller.exception.class: App\Controller\ExceptionController
     debug: false
     locale: 'fr'
 
@@ -22,8 +21,15 @@ services:
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class
     App\Controller\:
-        resource: '../src/Controller'
+        resource: '../src/Controller/'
         tags: ['controller.service_arguments']
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    Symfony\Component\ErrorHandler\ErrorRenderer\ErrorRendererInterface:
+        tags: ['error_handler.error_renderer.html']
+
+    App\EventListener\:
+        resource: ../src/EventListener/*
+        tags: ['kernel.event_listener']
