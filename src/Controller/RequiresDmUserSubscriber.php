@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Dm\Users;
 use App\Entity\Dm\UsersPermissions;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -23,8 +24,8 @@ class RequiresDmUserSubscriber implements EventSubscriberInterface
      */
     private $logger;
 
-    public function __construct(EntityManagerInterface $dmEm, LoggerInterface $logger) {
-        $this->dmEm = $dmEm;
+    public function __construct(ManagerRegistry $registry, LoggerInterface $logger) {
+        $this->dmEm = $registry->getManager('dm');
         $this->logger = $logger;
     }
 
