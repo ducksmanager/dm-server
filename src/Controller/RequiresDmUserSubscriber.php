@@ -7,10 +7,9 @@ use App\Entity\Dm\UsersPermissions;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
-use Symfony\Component\HttpKernel\KernelEvents;
 
 class RequiresDmUserSubscriber implements EventSubscriberInterface
 {
@@ -29,7 +28,7 @@ class RequiresDmUserSubscriber implements EventSubscriberInterface
         $this->logger = $logger;
     }
 
-    public function onKernelController(FilterControllerEvent $event): void
+    public function onKernelRequest(ControllerEvent $event): void
     {
         $request = $event->getRequest();
         $controller = $event->getController();
@@ -72,7 +71,7 @@ class RequiresDmUserSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::CONTROLLER => ['onKernelController', 2],
+            ControllerEvent::class => 'onKernelRequest',
         ];
     }
 }

@@ -1,12 +1,12 @@
 <?php
 namespace App\Tests;
 
-use Symfony\Bundle\FrameworkBundle\Client;
+use Symfony\Component\BrowserKit\AbstractBrowser;
 use Symfony\Component\HttpFoundation\Response;
 
 class TestServiceCallCommon {
 
-    /** @var Client $client  */
+    /** @var AbstractBrowser $client  */
     private $client;
 
     private $path;
@@ -17,7 +17,7 @@ class TestServiceCallCommon {
     private $method;
     private $files = [];
 
-    public function __construct(Client $client)
+    public function __construct(AbstractBrowser $client)
     {
         $this->client = $client;
     }

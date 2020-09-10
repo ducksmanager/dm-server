@@ -2,6 +2,11 @@ services:
   App\Tests\Fixtures\:
     resource: '../../../tests/Fixtures'
     tags: ['doctrine.fixture.orm']
+
+parameters:
+  env(database_driver): pdo_sqlite
+  env(database_server_version): null
+
 doctrine:
   dbal:
     connections:

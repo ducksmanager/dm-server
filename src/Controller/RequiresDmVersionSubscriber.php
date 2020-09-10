@@ -4,13 +4,14 @@ namespace App\Controller;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 class RequiresDmVersionSubscriber implements EventSubscriberInterface
 {
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelController(ControllerEvent $event)
     {
         $controller = $event->getController();
 
@@ -25,7 +26,7 @@ class RequiresDmVersionSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::CONTROLLER => ['onKernelController', 1],
+            ControllerEvent::class => 'onKernelController',
         ];
     }
 }
