@@ -17,6 +17,11 @@ use Symfony\Component\HttpFoundation\Response;
 
 class DucksManagerTest extends TestCommon implements RequiresDmVersionController
 {
+    private function assertEmailEquals(string $expectedEmail, string $email): void
+    {
+        $this->assertEquals(str_replace(PHP_EOL, '<br />', $expectedEmail), preg_replace("#(\n|  )#", '', $email));
+    }
+
     protected function getEmNamesToCreate(): array
     {
         return ['dm'];
@@ -199,9 +204,8 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
             L'équipe DucksManager
             <img width="400" src="http://localhost:8000/logo_petit.png" />
             MESSAGE;
-        $this->assertEquals(str_replace(PHP_EOL, '<br />', $expectedEdgeEmailBody), $edgeEmail->getBody());
-
-        $this->assertEquals(str_replace(PHP_EOL, '<br />', $expectedEdgeEmailBody), $edgeEmailCopy->getBody());
+        $this->assertEmailEquals($expectedEdgeEmailBody, $edgeEmail->getBody());
+        $this->assertEmailEquals($expectedEdgeEmailBody, $edgeEmailCopy->getBody());
         $this->assertEquals($_ENV['SMTP_USERNAME'], array_keys($edgeEmailCopy->getTo())[0]);
 
         $expectedBookstoreEmailBody = <<<MESSAGE
@@ -216,9 +220,9 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
             L'équipe DucksManager
             <img width="400" src="http://localhost:8000/logo_petit.png" />
             MESSAGE;
-        $this->assertEquals(str_replace(PHP_EOL, '<br />', $expectedBookstoreEmailBody), $bookstoreEmail->getBody());
+        $this->assertEmailEquals($expectedBookstoreEmailBody, $bookstoreEmail->getBody());
+        $this->assertEmailEquals($expectedBookstoreEmailBody, $bookstoreEmailCopy->getBody());
 
-        $this->assertEquals(str_replace(PHP_EOL, '<br />', $expectedBookstoreEmailBody), $bookstoreEmailCopy->getBody());
         $this->assertEquals($_ENV['SMTP_USERNAME'], array_keys($bookstoreEmailCopy->getTo())[0]);
 
         $this->getEm('dm')->clear();
@@ -315,7 +319,7 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
             L'équipe DucksManager
             <img width="400" src="http://localhost:8000/logo_petit.png" />
             MESSAGE;
-        $this->assertEquals(str_replace(PHP_EOL, '<br />', $expectedMessageBody), $email->getBody());
+        $this->assertEmailEquals($expectedMessageBody, $email->getBody());
     }
 
     public function testInitResetPasswordMissingEmail(): void

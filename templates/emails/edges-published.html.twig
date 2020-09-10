@@ -1,0 +1,23 @@
+{{ 'EMAIL_HELLO' | trans({'%userName%': user.username}) }}<br />
+
+{% if extraEdges > 1 %}
+    {{ 'EMAIL_EDGES_PUBLISHED_INTRO' | trans({'%edgeNumber%': extraEdges}) }}
+{% else %}
+    {{ 'EMAIL_ONE_EDGE_PUBLISHED_INTRO' | trans }}
+{% endif %}
+<br />
+
+{% if newMedalLevel %}
+<p style="text-align: center">
+    <img width="100" src="{{ ASSETS_MEDALS_PICTURES_ROOT }}Photographe_{{ newMedalLevel }}_{{ locale }}.png" />
+    <br />
+    {{ 'EMAIL_EDGES_PUBLISHED_MEDAL' | trans({'%medalLevel%': ('MEDAL_' ~ newMedalLevel) | trans}) | raw }}
+</p>
+{% endif %}
+<br />
+{{ 'EMAIL_EDGES_PUBLISHED_POINTS' | trans({'%extraPhotographerPoints%': extraPhotographerPoints}) | raw }}
+<br />
+<br />
+<br />
+{{ 'EMAIL_SIGNATURE' | trans | raw }}<br />
+<img width="400" src="{{ WEBSITE_ROOT }}/logo_petit.png" />

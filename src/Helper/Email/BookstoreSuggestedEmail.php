@@ -1,13 +1,15 @@
 <?php
 namespace App\Helper\Email;
 
+use Twig\Environment;
+
 class BookstoreSuggestedEmail extends AbstractEmail {
 
-    protected function getFrom() : string {
+    public function getFrom() : string {
         return $this->user->getUsername(). '@' .$_ENV['SMTP_ORIGIN_EMAIL_DOMAIN_DUCKSMANAGER'];
     }
 
-    protected function getFromName() : string {
+    public function getFromName() : string {
         return $this->user->getUsername(). '@' .$_ENV['SMTP_ORIGIN_EMAIL_DOMAIN_DUCKSMANAGER'];
     }
 
@@ -15,7 +17,7 @@ class BookstoreSuggestedEmail extends AbstractEmail {
         return $_ENV['SMTP_USERNAME'];
     }
 
-    protected function getToName() : string {
+    public function getToName() : string {
         return $_ENV['SMTP_FRIENDLYNAME'];
     }
 
@@ -23,11 +25,11 @@ class BookstoreSuggestedEmail extends AbstractEmail {
         return 'Ajout de bouquinerie';
     }
 
-    protected function getTextBody() : string {
+    public function getTextBody() : string {
         return "Validation : {$_ENV['WEBSITE_ROOT']}/backend/bouquineries.php";
     }
 
-    protected function getHtmlBody() : string {
+    public function getHtmlBody(Environment $twig) : string {
         return '<a href="'.$_ENV['WEBSITE_ROOT'].'/backend/bouquineries.php">Validation</a>';
     }
 

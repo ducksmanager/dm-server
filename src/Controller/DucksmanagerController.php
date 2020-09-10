@@ -18,6 +18,7 @@ use App\Helper\JsonResponseFromObject;
 use App\Service\CollectionUpdateService;
 use App\Service\ContributionService;
 use App\Service\CsvService;
+use App\Service\EmailService;
 use DateTime;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
@@ -25,7 +26,6 @@ use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Query\Expr\OrderBy;
 use Exception;
 use Psr\Log\LoggerInterface;
-use Swift_Mailer;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -82,7 +82,7 @@ class DucksmanagerController extends AbstractController
      * @throws ORMException
      * @throws Exception
      */
-    public function resetPasswordInit(Request $request, LoggerInterface $logger, Swift_Mailer $mailer, TranslatorInterface $translator): Response
+    public function resetPasswordInit(Request $request, EmailService $emailService, LoggerInterface $logger, TranslatorInterface $translator): Response
     {
         $email = $request->request->get('email');
         $dmEm = $this->getEm('dm');
@@ -104,8 +104,7 @@ class DucksmanagerController extends AbstractController
         $dmEm->persist($passwordToken);
         $dmEm->flush();
 
-        $message = new ResetPasswordEmail($mailer, $translator, $logger, $user, $token);
-        $message->send();
+        $emailService->send(new ResetPasswordEmail($translator, $user, $token));
         return new Response();
     }
 
@@ -254,15 +253,11 @@ class DucksmanagerController extends AbstractController
 
     /**
      * @Route(methods={"POST"}, path="/ducksmanager/emails/pending")
-     * @param Request $request
-     * @param Swift_Mailer $mailer
-     * @param LoggerInterface $logger
-     * @param TranslatorInterface $translator
      * @return Response
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    public function sendPendingEmails(Request $request, Swift_Mailer $mailer, LoggerInterface $logger, TranslatorInterface $translator): Response
+    public function sendPendingEmails(Request $request, EmailService $emailService, TranslatorInterface $translator, LoggerInterface $logger): Response
     {
         $dmEm = $this->getEm('dm');
         static $medalLevels = [
@@ -313,18 +308,18 @@ class DucksmanagerController extends AbstractController
                     switch($contributionType) {
                         case 'duckhunter':
                             $message = new BookstoreApprovedEmail(
-                                $mailer, $translator, $logger, $request->getLocale(), $user, $medalReached
+                                $translator, $request->getLocale(), $user, $medalReached
                             );
                         break;
                         case 'photographe':
                             $message = new EdgesPublishedEmail(
-                                $mailer, $translator, $logger, $request->getLocale(), $user, count($pendingEmailContributionsForUser), $pointsEarned, $medalReached
+                                $translator, $request->getLocale(), $user, count($pendingEmailContributionsForUser), $pointsEarned, $medalReached
                             );
                             break;
                     }
                     if (isset($message)) {
                         $emailsSent []= $message;
-                        $message->send();
+                        $emailService->send($message);
                     }
                 }
             }
@@ -342,7 +337,7 @@ class DucksmanagerController extends AbstractController
     /**
      * @Route(methods={"POST"}, path="/ducksmanager/bookstore/suggest")
      */
-    public function suggestBookstore(Request $request, Swift_Mailer $mailer, LoggerInterface $logger): Response
+    public function suggestBookstore(Request $request, EmailService $emailService, TranslatorInterface $translator): Response
     {
         $dmEm = $this->getEm('dm');
         $userId = $request->request->get('userId');
@@ -354,8 +349,7 @@ class DucksmanagerController extends AbstractController
             $user = $dmEm->getRepository(Users::class)->find($userId);
         }
 
-        $message = new BookstoreSuggestedEmail($mailer, $user, $logger);
-        $message->send();
+        $emailService->send(new BookstoreSuggestedEmail($translator, $user));
 
         return new Response();
     }

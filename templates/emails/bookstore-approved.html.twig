@@ -1,0 +1,17 @@
+{{ 'EMAIL_HELLO' | trans({'%userName%': user.username}) }}<br />
+{{ 'EMAIL_BOOKSTORE_APPROVED_INTRO' | trans }}<br />
+{% if newMedalLevel %}
+<p style="text-align: center">
+    <img width="100" src="{{ ASSETS_MEDALS_PICTURES_ROOT }}Duckhunter_{{ newMedalLevel }}_{{ locale }}.png" />
+    <br />
+    {{ 'EMAIL_BOOKSTORE_APPROVED_MEDAL' | trans({'%medalLevel%': ('MEDAL_' ~ newMedalLevel) | trans}) | raw }}
+</p>
+
+{% endif %}
+<br />
+{{ 'EMAIL_BOOKSTORE_APPROVED_THANKS' | trans }}<br />
+<br />
+<br />
+
+{{ 'EMAIL_SIGNATURE' | trans | raw }}<br />
+<img width="400" src="{{ WEBSITE_ROOT }}/logo_petit.png" />
