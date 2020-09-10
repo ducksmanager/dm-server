@@ -13,7 +13,7 @@ doctrine:
 
 parameters:
     env(database_driver): 'pdo_mysql'
-    env(database_server_version): 'mariadb-10.2.16'
+    env(database_server_version): 'mariadb-10.4.8'
 
 framework:
     cache:
