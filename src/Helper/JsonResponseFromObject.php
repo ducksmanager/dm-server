@@ -19,7 +19,6 @@ class JsonResponseFromObject extends JsonResponse
         $defaultContext = [
             AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function ($object) {
                 if (get_class($object) === TranchesEnCoursModeles::class) {
-                    /** @var TranchesEnCoursModeles $object */
                     return $object->getId();
                 }
                 return null;

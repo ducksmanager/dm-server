@@ -1,5 +1,5 @@
 <?php
-namespace App\Tests;
+namespace App\Tests\Controller;
 
 use App\Controller\RequiresDmVersionController;
 use App\Entity\Dm\Achats;
@@ -8,6 +8,7 @@ use App\Entity\Dm\Numeros;
 use App\Entity\Dm\Users;
 use App\Entity\Dm\UsersContributions;
 use App\Entity\Dm\UsersPasswordTokens;
+use App\Tests\TestCommon;
 use Countable;
 use DateTime;
 use Swift_Message;

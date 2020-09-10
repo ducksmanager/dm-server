@@ -7,6 +7,7 @@ use App\Service\SimilarImagesService;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr\Func;
 use Doctrine\ORM\QueryBuilder;
+use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -17,8 +18,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class CoveridController extends AbstractController
 {
-    public static $uploadFileName = 'wtd_jpg';
-    public static $uploadDestination = '/tmp';
+    public static string $uploadFileName = 'wtd_jpg';
+    public static string $uploadDestination = '/tmp';
 
     /**
      * @param QueryBuilder $qb
@@ -84,6 +85,7 @@ class CoveridController extends AbstractController
     /**
      * @Route(methods={"POST"}, path="/cover-id/search")
      * @return Response
+     * @throws Exception
      */
     public function searchCover(Request $request, LoggerInterface $logger, SimilarImagesService $similarImagesService): Response
     {

@@ -6,7 +6,7 @@ use Cloudinary\Uploader;
 class SpriteService {
 
   /** @var array $mockedResults */
-  public static $mockedResults;
+    public static array $mockedResults;
 
     public function upload($file, $options = array()) {
         return self::$mockedResults['upload'] ?: Uploader::upload($file, $options);

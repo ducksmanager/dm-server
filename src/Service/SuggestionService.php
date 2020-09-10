@@ -22,10 +22,10 @@ class SuggestionService
     private static $dmStatsEm;
 
     /** @var CoaService */
-    private static $coaService;
+    private static CoaService $coaService;
 
     /** @var UsersOptionsService */
-    private static $usersOptionsService;
+    private static UsersOptionsService $usersOptionsService;
 
     public function __construct(ManagerRegistry $doctrineManagerRegistry, CoaService $coaService, UsersOptionsService $usersOptionsService)
     {

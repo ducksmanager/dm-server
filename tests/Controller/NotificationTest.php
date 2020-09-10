@@ -1,5 +1,5 @@
 <?php
-namespace App\Tests;
+namespace App\Tests\Controller;
 
 use App\Entity\Dm\Users;
 use App\Entity\Dm\UsersSuggestionsNotifications;
@@ -7,6 +7,7 @@ use App\Service\NotificationService;
 use App\Tests\Fixtures\CoaFixture;
 use App\Tests\Fixtures\DmCollectionFixture;
 use App\Tests\Fixtures\DmStatsFixture;
+use App\Tests\TestCommon;
 use DateTime;
 
 class NotificationTest extends TestCommon

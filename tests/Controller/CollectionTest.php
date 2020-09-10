@@ -157,7 +157,6 @@ class CollectionTest extends TestCommon
         $this->assertCount(4, $this->getUserIssues(self::$defaultTestDmUserName));
 
         $userIssues = $this->getUserIssues(self::$defaultTestDmUserName);
-        /** @var Numeros $lastIssue */
         $lastIssue = $userIssues[count($userIssues) -1];
         $this->assertEquals('fr', $lastIssue->getPays());
         $this->assertEquals('DDD', $lastIssue->getMagazine());

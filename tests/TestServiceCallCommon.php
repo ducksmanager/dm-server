@@ -7,15 +7,15 @@ use Symfony\Component\HttpFoundation\Response;
 class TestServiceCallCommon {
 
     /** @var AbstractBrowser $client  */
-    private $client;
+    private AbstractBrowser $client;
 
     private $path;
-    private $userCredentials;
-    private $parameters = [];
-    private $systemCredentials = [];
-    private $clientVersion;
-    private $method;
-    private $files = [];
+    private array $userCredentials;
+    private array $parameters = [];
+    private array $systemCredentials = [];
+    private string $clientVersion;
+    private string $method;
+    private array $files = [];
 
     public function __construct(AbstractBrowser $client)
     {
@@ -88,9 +88,10 @@ class TestServiceCallCommon {
     }
 
     /**
-     * @return Response
+     * @return object|Response
      */
-    public function call(): Response {
+    public function call()
+    {
         $path = $this->path;
         $headers = $this->systemCredentials;
         if (count($this->userCredentials) > 0) {

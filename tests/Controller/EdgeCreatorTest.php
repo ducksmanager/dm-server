@@ -1,5 +1,5 @@
 <?php
-namespace App\Tests;
+namespace App\Tests\Controller;
 
 use App\Entity\Dm\NumerosPopularite;
 use App\Entity\Dm\TranchesPretes;
@@ -14,6 +14,7 @@ use App\Entity\EdgeCreator\TranchesEnCoursModeles;
 use App\Entity\EdgeCreator\TranchesEnCoursModelesImages;
 use App\Entity\EdgeCreator\TranchesEnCoursValeurs;
 use App\Tests\Fixtures\EdgeCreatorFixture;
+use App\Tests\TestCommon;
 use Countable;
 use stdClass;
 use Swift_Message;
@@ -30,9 +31,9 @@ class EdgeCreatorTest extends TestCommon
      * @param string $countryCode
      * @param string $publicationCode
      * @param string $issueCode
-     * @return TranchesEnCoursModeles
+     * @return TranchesEnCoursModeles|object
      */
-    private function getV2Model($countryCode, $publicationCode, $issueCode): TranchesEnCoursModeles
+    private function getV2Model(string $countryCode, string $publicationCode, string $issueCode)
     {
         return $this->getEm('edgecreator')->getRepository(TranchesEnCoursModeles::class)->findOneBy([
             'pays' => $countryCode,

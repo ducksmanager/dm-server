@@ -12,13 +12,13 @@ use App\Entity\EdgeCreator\TranchesEnCoursModelesImages;
 use App\Entity\EdgeCreator\TranchesEnCoursValeurs;
 use DateTime;
 use Doctrine\Common\DataFixtures\FixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Exception;
 
 class EdgeCreatorFixture implements FixtureInterface
 {
     /** @var Users $user  */
-    public static $user;
+    public static Users $user;
 
     public static function createModelEcV1(ObjectManager $ecEm, string $userName, string $publicationCode, string $stepNumber, string $functionName, string $optionName, string $optionValue, string $firstIssueNumber, string $lastIssueNumber): void
     {
@@ -55,11 +55,6 @@ class EdgeCreatorFixture implements FixtureInterface
     }
 
     /**
-     * @param ObjectManager $ecEm
-     * @param string $userName
-     * @param string $publicationCode
-     * @param string $issueNumber
-     * @param array $steps
      * @return TranchesEnCoursModeles|null
      */
     public static function createModelEcV2(ObjectManager $ecEm, ?string $userName, string $publicationCode, string $issueNumber, array $steps): ?TranchesEnCoursModeles

@@ -2,7 +2,7 @@
 namespace App\EntityTransform;
 
 
-use App\Controller\GenericReturnObjectInterface;
+use App\Helper\GenericReturnObjectInterface;
 
 class UpdateCollectionResult implements GenericReturnObjectInterface
 {

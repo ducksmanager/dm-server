@@ -20,7 +20,7 @@ use App\Service\ContributionService;
 use DateTime;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
-use Doctrine\Common\Persistence\Mapping\MappingException;
+use Doctrine\Persistence\Mapping\MappingException;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\NonUniqueResultException;
@@ -374,7 +374,7 @@ CONCAT;
      *     path="/edgecreator/myfontspreview/{foregroundColor}/{backgroundColor}/{width}/font/{fontUrl}/text/{text}",
      *     requirements={"fontUrl"="^[-a-z0-9]+/[-a-z0-9]+(/[-a-z0-9]+)?$"})
      */
-    public function getMyFontsPreview(Request $request, string $foregroundColor, string $backgroundColor, string $width, string $text, string $fontUrl): Response
+    public function getMyFontsPreview(string $foregroundColor, string $backgroundColor, string $width, string $text, string $fontUrl): Response
     {
         $text=str_replace("'","\'",preg_replace('#[ ]+\.$#','',$text));
 
@@ -957,7 +957,7 @@ CONCAT;
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    public function createStepV2(int $modelId, int $stepNumber, $options, ?string $newFunctionName): array
+    public function createStepV2(int $modelId, int $stepNumber, array $options, ?string $newFunctionName): array
     {
         $ecEm = $this->getEm('edgecreator');
         $qb = $ecEm->createQueryBuilder();

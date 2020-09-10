@@ -3,7 +3,7 @@ namespace App\Service;
 
 class CsvService
 {
-    public static $csvRoot= __DIR__ . '/../DataFixtures/';
+    public static string $csvRoot = __DIR__ . '/../DataFixtures/';
 
     public function readCsv($fileName): array
     {

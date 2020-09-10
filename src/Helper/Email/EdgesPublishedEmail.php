@@ -8,12 +8,12 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class EdgesPublishedEmail extends AbstractEmail {
 
-    private $extraEdges;
-    private $extraPhotographerPoints;
+    private int $extraEdges;
+    private int $extraPhotographerPoints;
     /** @var TranslatorInterface $translator */
-    private $translator;
-    private $locale;
-    private $newMedalLevel;
+    private TranslatorInterface $translator;
+    private string $locale;
+    private ?int $newMedalLevel;
 
     public function __construct(Swift_Mailer $mailer, TranslatorInterface $translator, LoggerInterface $logger, string $locale, Users $user, int $extraEdges, int $extraPhotographerPoints, ?int $newMedalLevel = null) {
         parent::__construct($mailer, $user, $logger);

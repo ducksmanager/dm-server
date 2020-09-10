@@ -11,16 +11,13 @@ use App\Entity\DmStats\UtilisateursPublicationsManquantes;
 use App\Entity\DmStats\UtilisateursPublicationsSuggerees;
 use DateTime;
 use Doctrine\Common\DataFixtures\FixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 
 class DmStatsFixture implements FixtureInterface
 {
-    public static $userId;
+    public static ?int $userId;
 
-    /**
-     * @param int $userId
-     */
-    public function __construct(int $userId = null) {
+    public function __construct(?int $userId = null) {
         self::$userId = $userId;
     }
 

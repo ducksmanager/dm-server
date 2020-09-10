@@ -1,7 +1,8 @@
 <?php
-namespace App\Tests;
+namespace App\Tests\Controller;
 
 use App\Tests\Fixtures\DmCollectionFixture;
+use App\Tests\TestCommon;
 use Symfony\Component\HttpFoundation\Response;
 
 class RawSqlTest extends TestCommon

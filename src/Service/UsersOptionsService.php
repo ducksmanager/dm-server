@@ -5,10 +5,11 @@ use App\Entity\Dm\Users;
 use App\Entity\Dm\UsersOptions;
 use App\EntityTransform\UserWithOptionValue;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
 
 class UsersOptionsService {
 
-    private static $dmEm;
+    private static ObjectManager $dmEm;
     public const OPTION_NAME_SUGGESTION_NOTIFICATION_COUNTRY = 'suggestion_notification_country';
 
     public function __construct(ManagerRegistry $doctrineManagerRegistry)

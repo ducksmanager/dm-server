@@ -118,7 +118,8 @@ class CoaListsTest extends TestCommon
                 300 => NULL,
             ],
             'fr/PM' => [
-                315 => NULL
+                315 => NULL,
+                350 => NULL
             ],
             'us/CBL' => [
                 7 => NULL
@@ -128,9 +129,6 @@ class CoaListsTest extends TestCommon
             ],
             'fr/CB' => [
                 'PN 1' => NULL
-            ],
-            '' => [
-                '' => NULL
             ],
         ], $arrayResponse);
     }

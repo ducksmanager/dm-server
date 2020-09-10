@@ -1,10 +1,11 @@
 <?php
-namespace App\Tests;
+namespace App\Tests\Controller;
 
 use App\Entity\Dm\TranchesPretes;
 use App\Entity\Dm\TranchesPretesSprites;
 use App\Service\SpriteService;
 use App\Tests\Fixtures\EdgesFixture;
+use App\Tests\TestCommon;
 use DateTime;
 
 class EdgeSpritesTest extends TestCommon

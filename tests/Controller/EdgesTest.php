@@ -1,7 +1,8 @@
 <?php
-namespace App\Tests;
+namespace App\Tests\Controller;
 
 use App\Tests\Fixtures\EdgesFixture;
+use App\Tests\TestCommon;
 
 class EdgesTest extends TestCommon
 {

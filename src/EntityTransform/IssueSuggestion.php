@@ -1,6 +1,8 @@
 <?php
 namespace App\EntityTransform;
 
+use stdClass;
+
 class IssueSuggestion
 {
     /** @var string $issuecode */
@@ -46,7 +48,7 @@ class IssueSuggestion
         $this->stories[$personcode][] = $storycode;
     }
 
-    public function toSimpleObject(): \stdClass
+    public function toSimpleObject(): stdClass
     {
         return (object) [
             'issuecode' => $this->issuecode,

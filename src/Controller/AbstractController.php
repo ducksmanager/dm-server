@@ -2,9 +2,9 @@
 
 namespace App\Controller;
 
+use App\Helper\GenericReturnObjectInterface;
 use Doctrine\ORM\EntityManager;
 use RuntimeException;
-use stdClass;
 use Symfony\Component\HttpFoundation\Response;
 
 class AbstractController extends \Symfony\Bundle\FrameworkBundle\Controller\AbstractController
@@ -20,10 +20,10 @@ class AbstractController extends \Symfony\Bundle\FrameworkBundle\Controller\Abst
     }
 
     /**
-     * @param stdClass[] $objectArray
+     * @param object[] $objectArray
      * @return array
      */
-    protected static function getSimpleArray($objectArray): array
+    protected static function getSimpleArray(array $objectArray): array
     {
         return array_map(
             function(GenericReturnObjectInterface $object) : array {
@@ -64,8 +64,4 @@ class AbstractController extends \Symfony\Bundle\FrameworkBundle\Controller\Abst
 
         return json_decode($response->getContent())->$idKey;
     }
-}
-
-interface GenericReturnObjectInterface {
-    public function toArray();
 }

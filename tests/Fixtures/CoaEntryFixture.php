@@ -7,14 +7,14 @@ use App\Entity\Coa\InducksEntryurl;
 use App\Entity\Coa\InducksIssue;
 use App\Entity\Coa\InducksStoryversion;
 use Doctrine\Common\DataFixtures\FixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 
 class CoaEntryFixture implements FixtureInterface
 {
-    public static $storyCode;
-    public static $entryUrl;
-    public static $publicationCode;
-    public static $issueNumber;
+    public static string $storyCode = 'AR-102';
+    public static string $entryUrl = 'https://inducks.org';
+    public static string $publicationCode = 'fr/PM';
+    public static string $issueNumber = '350';
 
     public function load(ObjectManager $coaEntityManager) : void
     {

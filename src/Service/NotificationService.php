@@ -16,13 +16,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class NotificationService
 {
-    private static $client;
+    private static PushNotifications $client;
     /** @var EntityManager */
     private static $dmEm;
-    private static $logger;
-    private static $translator;
+    private static LoggerInterface $logger;
+    private static TranslatorInterface $translator;
 
-    public static $mockResultsStack = [];
+    public static array $mockResultsStack = [];
 
     public function __construct(TranslatorInterface $translator, LoggerInterface $logger, ManagerRegistry $doctrineManagerRegistry)
     {
@@ -109,7 +109,6 @@ class NotificationService
     public function filterUnNotifiedIssues(IssueSuggestionList $suggestedIssuesToNotify, int $userId): array
     {
         return array_filter($suggestedIssuesToNotify->getIssues(), function(IssueSuggestion $suggestedIssue) use ($userId) {
-            $suggestedIssueCountryCode = explode('/', $suggestedIssue->getPublicationcode())[0];
             $suggestedIssueCode = "{$suggestedIssue->getPublicationcode()} {$suggestedIssue->getIssuenumber()}";
 
             $alreadySentNotificationQb = self::$dmEm->createQueryBuilder();

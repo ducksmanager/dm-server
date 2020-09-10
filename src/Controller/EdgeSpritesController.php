@@ -13,8 +13,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class EdgeSpritesController extends AbstractController implements RequiresDmVersionController
 {
-    private static $SPRITE_SIZES = [ 10, 20, 50, 100, 'full'];
-    private static $MAX_SPRITE_SIZE = 100;
+    private static array $SPRITE_SIZES = [10, 20, 50, 100, 'full'];
+    private static int $MAX_SPRITE_SIZE = 100;
 
     /**
      * @Route(methods={"PUT"}, path="/edgesprites/{edgeID}")

@@ -4,11 +4,11 @@ namespace App\Tests\Fixtures;
 
 use App\Entity\Coverid\Covers;
 use Doctrine\Common\DataFixtures\FixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 
 class CoverIdFixture implements FixtureInterface
 {
-    public static $urls;
+    public static array $urls;
 
     public function load(ObjectManager $dmEm) : void
     {

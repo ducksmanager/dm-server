@@ -168,7 +168,6 @@ class CollectionController extends AbstractController implements RequiresDmVersi
      */
     public function postIssues(Request $request, LoggerInterface $logger, CollectionUpdateService $collectionUpdateService): JsonResponse
     {
-        $dmEm = $this->getEm('dm');
         $publication = $request->request->get('publicationCode');
         $issueNumbers = $request->request->get('issueNumbers');
         $condition = $request->request->get('condition');

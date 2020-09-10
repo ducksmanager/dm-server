@@ -1,8 +1,9 @@
 <?php
-namespace App\Tests;
+namespace App\Tests\Controller;
 
 use App\Tests\Fixtures\CoaEntryFixture;
 use App\Tests\Fixtures\CoaFixture;
+use App\Tests\TestCommon;
 use Symfony\Component\HttpFoundation\Response;
 
 class ServiceTest extends TestCommon

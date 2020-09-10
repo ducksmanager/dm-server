@@ -2,7 +2,7 @@
 
 namespace App\EntityTransform;
 
-use App\Controller\GenericReturnObjectInterface;
+use App\Helper\GenericReturnObjectInterface;
 
 class SimpleIssueWithCoverId implements GenericReturnObjectInterface
 {
@@ -106,7 +106,7 @@ class SimpleIssueWithCoverId implements GenericReturnObjectInterface
     /**
      * @param integer $coverid
      */
-    public function setCoverid($coverid)
+    public function setCoverid(int $coverid)
     {
         $this->coverid = $coverid;
     }

@@ -14,12 +14,12 @@ use function exif_imagetype;
 
 class CoverIdTest extends TestCommon
 {
-    public static $uploadDestination = '/var/www/html/test.jpg';
+    public static string $uploadDestination = '/var/www/html/test.jpg';
 
-    public static $exampleImageToUpload = 'cover_example_to_upload.jpg';
-    public static $imageToUpload = 'cover_example_to_upload_willberemoved.jpg';
+    public static string $exampleImageToUpload = 'cover_example_to_upload.jpg';
+    public static string $imageToUpload = 'cover_example_to_upload_willberemoved.jpg';
 
-    public static $coverSearchResultsSimple = [
+    public static array $coverSearchResultsSimple = [
         'bounding_rects' => [
             'height' => 846,
             'width' => 625,
@@ -32,15 +32,15 @@ class CoverIdTest extends TestCommon
         'type' => 'SEARCH_RESULTS'
     ];
 
-    public static $coverSearchResultsMany = [
+    public static array $coverSearchResultsMany = [
         'bounding_rects' => [
             'height' => 846,
             'width' => 625,
             'x' => 67,
             'y' => 44
         ],
-        'image_ids' => [1,2,3,4,5,6,7,8,9,10,11],
-        'scores' => [58.0,59.0,60.0,61.0,62.0,63.0,64.0,65.0,66.0,67.0,68.0],
+        'image_ids' => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+        'scores' => [58.0, 59.0, 60.0, 61.0, 62.0, 63.0, 64.0, 65.0, 66.0, 67.0, 68.0],
         'tags' => [''],
         'type' => 'SEARCH_RESULTS'
     ];

@@ -22,11 +22,10 @@ class NotificationController extends AbstractController implements RequiresDmVer
      */
     public function sendNotification(LoggerInterface $logger, SuggestionService $suggestionService, NotificationService $notificationService) : Response
     {
-        $issueNotificationsToSend = [];
         $suggestionsSince = new DateTime('-7 days midnight');
         $notificationsSent = 0;
         try {
-            [$suggestionsPerUser, $authors, $storyDetails, $publicationTitles] = $suggestionService->getSuggestions(
+            [$suggestionsPerUser, $authors, , $publicationTitles] = $suggestionService->getSuggestions(
                 $suggestionsSince,
                 SuggestionService::SUGGESTION_COUNTRIES_TO_NOTIFY
             );

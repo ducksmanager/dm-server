@@ -9,9 +9,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class BookstoreApprovedEmail extends AbstractEmail {
 
     /** @var TranslatorInterface $translator */
-    private $translator;
-    private $locale;
-    private $newMedalLevel;
+    private TranslatorInterface $translator;
+    private string $locale;
+    private ?int $newMedalLevel;
 
     public function __construct(Swift_Mailer $mailer, TranslatorInterface $translator, LoggerInterface $logger, string $locale, Users $user, ?int $newMedalLevel = null) {
         parent::__construct($mailer, $user, $logger);

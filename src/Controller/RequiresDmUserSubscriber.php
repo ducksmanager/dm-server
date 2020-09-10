@@ -22,7 +22,7 @@ class RequiresDmUserSubscriber implements EventSubscriberInterface
     /**
      * @var LoggerInterface
      */
-    private $logger;
+    private LoggerInterface $logger;
 
     public function __construct(ManagerRegistry $registry, LoggerInterface $logger) {
         $this->dmEm = $registry->getManager('dm');

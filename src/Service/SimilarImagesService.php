@@ -10,10 +10,10 @@ use Symfony\Component\HttpFoundation\File\File;
 class SimilarImagesService {
 
   /** @var string $mockedResults */
-  public static $mockedResults;
+    public static string $mockedResults;
 
   /** @var string $sampleCover */
-  public static $sampleCover = '/au/bp/001/au_bp_001a_001.jpg';
+    public static string $sampleCover = '/au/bp/001/au_bp_001a_001.jpg';
 
   /**
    * @throws InvalidArgumentException
@@ -73,7 +73,6 @@ class SimilarImagesService {
           $ch = curl_init();
           curl_setopt($ch, CURLOPT_URL, "$pastecUrl/searcher");
           curl_setopt($ch, CURLOPT_POST, 1);
-          curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1);
           curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
           curl_setopt($ch, CURLOPT_POSTFIELDS,
               file_get_contents($file->getPath() . DIRECTORY_SEPARATOR . $file->getFilename()));

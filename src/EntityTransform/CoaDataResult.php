@@ -1,7 +1,7 @@
 <?php
 namespace App\EntityTransform;
 
-use App\Controller\GenericReturnObjectInterface;
+use App\Helper\GenericReturnObjectInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 
 class CoaDataResult implements GenericReturnObjectInterface
@@ -37,7 +37,7 @@ class CoaDataResult implements GenericReturnObjectInterface
     /**
      * @param ArrayCollection $pays
      */
-    public function setPays($pays): void
+    public function setPays(ArrayCollection $pays): void
     {
         $this->pays = $pays;
     }
@@ -53,7 +53,7 @@ class CoaDataResult implements GenericReturnObjectInterface
     /**
      * @param ArrayCollection $magazines
      */
-    public function setMagazines($magazines): void
+    public function setMagazines(ArrayCollection $magazines): void
     {
         $this->magazines = $magazines;
     }
@@ -69,7 +69,7 @@ class CoaDataResult implements GenericReturnObjectInterface
     /**
      * @param ArrayCollection $numeros
      */
-    public function setNumeros($numeros): void
+    public function setNumeros(ArrayCollection $numeros): void
     {
         $this->numeros = $numeros;
     }

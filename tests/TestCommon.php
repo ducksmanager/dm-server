@@ -23,19 +23,19 @@ abstract class TestCommon extends WebTestCase {
     /** @var KernelBrowser $client  */
     protected static $client;
 
-    protected static $defaultTestDmUserName = 'dm_test_user';
-    public static $testDmUsers = [
+    protected static string $defaultTestDmUserName = 'dm_test_user';
+    public static array $testDmUsers = [
         'dm_test_user' => 'test'
     ];
-    protected static $dmUser = 'ducksmanager';
-    protected static $edgecreatorUser = 'edgecreator';
-    protected static $rawSqlUser = 'rawsql';
-    protected static $adminUser = 'admin';
-    protected static $uploadBase = '/tmp/dm-server';
+    protected static string $dmUser = 'ducksmanager';
+    protected static string $edgecreatorUser = 'edgecreator';
+    protected static string $rawSqlUser = 'rawsql';
+    protected static string $adminUser = 'admin';
+    protected static string $uploadBase = '/tmp/dm-server';
 
-    public static $exampleImage = 'cover_example.jpg';
+    public static string $exampleImage = 'cover_example.jpg';
 
-    private static $hasLoadedEdgeFixture = false;
+    private static bool $hasLoadedEdgeFixture = false;
 
     /**
      * @return array
@@ -46,7 +46,6 @@ abstract class TestCommon extends WebTestCase {
 
 
     protected function setUp() {
-        parent::setUp();
         self::$client = self::createClient();
         foreach($this->getEmNamesToCreate() as $emToCreate) {
             $this->loadFixtures([], false, $emToCreate, 'doctrine', ORMPurger::PURGE_MODE_TRUNCATE);

@@ -8,8 +8,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ResetPasswordEmail extends AbstractEmail {
 
-    private $translator;
-    private $token;
+    private TranslatorInterface $translator;
+    private string $token;
 
     public function __construct(Swift_Mailer $mailer, TranslatorInterface $translator, LoggerInterface $logger, Users $user, string $token)
     {

@@ -1,9 +1,10 @@
 <?php
-namespace App\Tests;
+namespace App\Tests\Controller;
 
 use App\Tests\Fixtures\CoaEntryFixture;
 use App\Tests\Fixtures\CoaFixture;
 use App\Tests\Fixtures\DmStatsFixture;
+use App\Tests\TestCommon;
 use DateTime;
 
 class StatsTest extends TestCommon

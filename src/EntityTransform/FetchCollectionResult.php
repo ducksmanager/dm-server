@@ -1,7 +1,7 @@
 <?php
 namespace App\EntityTransform;
 
-use App\Controller\GenericReturnObjectInterface;
+use App\Helper\GenericReturnObjectInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 
 class FetchCollectionResult implements GenericReturnObjectInterface
@@ -29,7 +29,7 @@ class FetchCollectionResult implements GenericReturnObjectInterface
     /**
      * @param ArrayCollection $numeros
      */
-    public function setNumeros($numeros): void
+    public function setNumeros(ArrayCollection $numeros): void
     {
         $this->numeros = $numeros;
     }

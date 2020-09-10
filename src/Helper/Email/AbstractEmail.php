@@ -9,13 +9,13 @@ use Swift_Message;
 abstract class AbstractEmail {
 
     /** @var Swift_Mailer $mailer */
-    private $mailer;
+    private Swift_Mailer $mailer;
 
     /** @var Users $user */
-    protected $user;
+    protected Users $user;
 
     /** @var LoggerInterface $logger */
-    protected $logger;
+    protected LoggerInterface $logger;
 
     public function __construct(Swift_Mailer $mailer, Users $user, LoggerInterface $logger)
     {

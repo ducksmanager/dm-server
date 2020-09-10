@@ -13,13 +13,13 @@ use App\Entity\Dm\UsersPermissions;
 use App\Tests\TestCommon;
 use DateTime;
 use Doctrine\Common\DataFixtures\FixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 
 class DmCollectionFixture implements FixtureInterface
 {
-    public static $username;
-    public static $roles = [];
-    public static $withPublicationSorts = true;
+    public static string $username;
+    public static array $roles = [];
+    public static bool $withPublicationSorts = true;
 
     /**
      * @param ObjectManager $dmEm

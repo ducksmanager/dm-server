@@ -12,31 +12,31 @@ use App\Entity\Coa\InducksStory;
 use App\Entity\Coa\InducksStoryversion;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 
 class CoaFixture extends Fixture implements FixtureGroupInterface
 {
 
     /** @var InducksCountryname[] $testCountries */
-    private static $testCountries = [];
+    private static array $testCountries = [];
 
     /** @var InducksPublication[] $testPublications */
-    private static $testPublications = [];
+    private static array $testPublications = [];
 
     /** @var InducksIssue[] $testIssues */
-    private static $testIssues = [];
+    private static array $testIssues = [];
 
     /** @var InducksStory[] $testStories */
-    private static $testStories = [];
+    private static array $testStories = [];
 
     /** @var InducksStoryversion[] $testStoryversions */
-    private static $testStoryversions = [];
+    private static array $testStoryversions = [];
 
     /** @var InducksEntry[] $testEntries */
-    private static $testEntries = [];
+    private static array $testEntries = [];
 
     /** @var InducksEntryurl[] $testEntryurls */
-    private static $testEntryurls = [];
+    private static array $testEntryurls = [];
 
     public function load(ObjectManager $coaEntityManager) : void
     {

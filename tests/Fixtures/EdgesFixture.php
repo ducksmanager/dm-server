@@ -6,11 +6,10 @@ use App\Entity\Dm\TranchesDoublons;
 use App\Entity\Dm\TranchesPretes;
 use DateTime;
 use Doctrine\Common\DataFixtures\FixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 
 class EdgesFixture implements FixtureInterface
 {
-
     public function load(ObjectManager $dmEm) : void
     {
         $dmEm->persist(

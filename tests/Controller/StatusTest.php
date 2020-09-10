@@ -1,13 +1,13 @@
 <?php
-namespace App\Tests;
+namespace App\Tests\Controller;
 
 use App\Service\SimilarImagesService;
-use App\Tests\Controller\CoverIdTest;
 use App\Tests\Fixtures\CoaEntryFixture;
 use App\Tests\Fixtures\CoaFixture;
 use App\Tests\Fixtures\CoverIdFixture;
 use App\Tests\Fixtures\DmStatsFixture;
 use App\Tests\Fixtures\EdgeCreatorFixture;
+use App\Tests\TestCommon;
 use Symfony\Component\HttpFoundation\Response;
 
 class StatusTest extends TestCommon

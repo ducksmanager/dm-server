@@ -9,10 +9,10 @@ use Psr\Log\LoggerInterface;
 
 class QueryHelperService {
     /** @var LoggerInterface $logger */
-    private static $logger;
+    private static LoggerInterface $logger;
 
     /** @var ManagerRegistry $emRegistry */
-    private static $emRegistry;
+    private static ManagerRegistry $emRegistry;
 
     public function __construct(ManagerRegistry $emRegistry, LoggerInterface $logger)
     {

@@ -5,11 +5,12 @@ use App\Entity\Dm\Numeros;
 use DateTime;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ObjectManager;
 use Exception;
 
 class CollectionUpdateService {
 
-    private static $dmEm;
+    private static ObjectManager $dmEm;
 
     public function __construct(ManagerRegistry $doctrineManagerRegistry)
     {
