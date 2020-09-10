@@ -74,8 +74,6 @@ class CollectionController extends AbstractController implements RequiresDmVersi
         $optionName = 'suggestion_notification_country';
 
         try {
-            $usersOptions = $currentUser->getOptions();
-
             $qbDeleteExistingValues = ($dmEm->createQueryBuilder())
                 ->delete(UsersOptions::class, 'options')
                 ->where('options.user = :user AND options.optionNom = :optionName')
@@ -92,7 +90,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
                         ->setOptionValeur($countryCode)
                 );
             }
-            $dmEm->flush($currentUser);
+            $dmEm->flush();
         } catch (ORMException $e) {
             return new Response('Error when updating user options', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
