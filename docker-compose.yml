@@ -146,6 +146,24 @@ services:
     networks:
     - db-network
 
+  subscription-runner:
+    container_name: subscriptions-runner
+    image: "library/debian:jessie-slim"
+    depends_on:
+      - db_coa
+      - db_dm
+    environment:
+      - MYSQL_COA_HOST=db_coa
+      - MYSQL_COA_DATABASE=coa
+      - MYSQL_DM_HOST=db_dm
+      - MYSQL_DM_DATABASE=dm
+      - MYSQL_PASSWORD=$MYSQL_ROOT_PASSWORD
+    networks:
+      - db-network
+    volumes:
+      - ./scripts:/home/scripts
+    command: "bash -c 'apt-get update && apt-get install -y mysql-client && sh /home/scripts/subscriptions/create-issues-from-subscriptions.sh'"
+
   db_dm_stats:
     container_name: db_dm_stats
     image: "mariadb:10.4"

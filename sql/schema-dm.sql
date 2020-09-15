@@ -1,3 +1,29 @@
+create table abonnements
+(
+    ID int auto_increment
+        primary key,
+    ID_Utilisateur int not null,
+    Pays varchar(3) not null,
+    Magazine varchar(6) not null,
+    Date_debut date not null,
+    Date_fin date not null,
+    constraint abonnements_unique
+        unique (Pays, Magazine, ID_Utilisateur, Date_debut, Date_fin),
+    constraint abonnements_users_ID_fk
+        foreign key (ID_Utilisateur) references users (ID)
+            on update cascade on delete cascade
+);
+
+create table abonnements_sorties
+(
+    Pays varchar(3) not null,
+    Magazine varchar(6) not null,
+    Numero varchar(8) not null,
+    Date_sortie date not null,
+    Numeros_ajoutes tinyint(1) default 0 not null,
+    primary key (Pays, Magazine, Numero)
+);
+
 CREATE TABLE `achats`
 (
     `ID_Acquisition` int(11)      NOT NULL AUTO_INCREMENT,
@@ -91,6 +117,7 @@ CREATE TABLE `numeros`
     `Etat`           enum ('mauvais','moyen','bon','indefini') COLLATE latin1_german2_ci NOT NULL DEFAULT 'indefini',
     `ID_Acquisition` int(11)                                                             NOT NULL DEFAULT -1,
     `AV`             tinyint(1)                                                          NOT NULL,
+    `Abonnement`     tinyint(1) DEFAULT 0                                                NOT NULL,
     `ID_Utilisateur` int(11)                                                             NOT NULL,
     `DateAjout`      timestamp                                                           NOT NULL DEFAULT current_timestamp(),
     PRIMARY KEY (`ID`),
