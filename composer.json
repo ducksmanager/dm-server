@@ -20,6 +20,7 @@
         "ext-exif": "*",
         "ext-json": "*",
         "ext-intl": "*",
+        "beberlei/doctrineextensions": "^1.2",
         "cloudinary/cloudinary_php": "^1.14",
         "pusher/pusher-push-notifications": "^1.1",
         "sensio/framework-extra-bundle": "^5.2",
