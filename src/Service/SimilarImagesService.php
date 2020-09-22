@@ -9,10 +9,8 @@ use Symfony\Component\HttpFoundation\File\File;
 
 class SimilarImagesService {
 
-  /** @var string $mockedResults */
-    public static string $mockedResults;
+    public static ?string $mockedResults = null;
 
-  /** @var string $sampleCover */
     public static string $sampleCover = '/au/bp/001/au_bp_001a_001.jpg';
 
   /**
@@ -38,7 +36,7 @@ class SimilarImagesService {
   public static function getIndexedImagesNumber(string $pastecHost): ?int
   {
       $pastecUrl = self::getPastecUrl($pastecHost);
-      if (!is_null(self::$mockedResults)) {
+      if (!empty(self::$mockedResults)) {
           $response = self::$mockedResults;
       }
       else {
@@ -65,7 +63,7 @@ class SimilarImagesService {
   public static function getSimilarImages(File $file, LoggerInterface $logger, string $pastecHost = 'pastec'): ?SimilarImagesResult
   {
       $pastecUrl = self::getPastecUrl($pastecHost);
-      if (!is_null(self::$mockedResults)) {
+      if (!empty(self::$mockedResults)) {
           $response = self::$mockedResults;
       }
       else {
