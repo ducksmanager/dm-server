@@ -170,4 +170,9 @@ abstract class TestCommon extends WebTestCase {
         $this->assertFalse($response->isSuccessful());
         $checkCallback($response);
     }
+
+    protected function assertEmailEquals(string $expectedEmail, string $email): void
+    {
+        $this->assertEquals(str_replace(PHP_EOL, '<br />', $expectedEmail), preg_replace("#(\n|  )#", '', $email));
+    }
 }

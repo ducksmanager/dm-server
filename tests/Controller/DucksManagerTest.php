@@ -16,13 +16,7 @@ use Symfony\Bundle\SwiftmailerBundle\DataCollector\MessageDataCollector;
 use Symfony\Component\HttpFoundation\Response;
 
 class DucksManagerTest extends TestCommon implements RequiresDmVersionController
-{
-    private function assertEmailEquals(string $expectedEmail, string $email): void
-    {
-        $this->assertEquals(str_replace(PHP_EOL, '<br />', $expectedEmail), preg_replace("#(\n|  )#", '', $email));
-    }
-
-    protected function getEmNamesToCreate(): array
+{    protected function getEmNamesToCreate(): array
     {
         return ['dm'];
     }

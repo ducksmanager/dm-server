@@ -11,8 +11,10 @@ use App\Entity\Dm\Users;
 use App\Entity\Dm\UsersOptions;
 use App\Entity\Dm\UsersPermissions;
 use App\EntityTransform\UpdateCollectionResult;
+use App\Helper\Email\FeedbackSentEmail;
 use App\Helper\JsonResponseFromObject;
 use App\Service\CollectionUpdateService;
+use App\Service\EmailService;
 use App\Service\UsersOptionsService;
 use DateTime;
 use Doctrine\ORM\OptimisticLockException;
@@ -422,6 +424,20 @@ class CollectionController extends AbstractController implements RequiresDmVersi
         $this->getEm('dm')->flush();
 
         return new Response('Created', Response::HTTP_CREATED);
+    }
+
+    /**
+     * @Route(methods={"POST"}, path="/collection/feedback")
+     */
+    public function sendFeedback(Request $request, EmailService $emailService, TranslatorInterface $translator): Response
+    {
+        $emailService->send(new FeedbackSentEmail(
+            $translator,
+            $this->getEm('dm')->getRepository(Users::class)->find($this->getSessionUser()['id']),
+            $request->request->get('message')
+        ));
+
+        return new Response();
     }
 
     private function getNonPossessedIssues(array $issues, int $userId): array

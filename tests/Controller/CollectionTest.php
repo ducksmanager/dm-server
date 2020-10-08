@@ -9,8 +9,11 @@ use App\Entity\Dm\UsersOptions;
 use App\Tests\Fixtures\CoaEntryFixture;
 use App\Tests\Fixtures\CoaFixture;
 use App\Tests\TestCommon;
+use Countable;
 use DateTime;
 use Exception;
+use Swift_Message;
+use Symfony\Bundle\SwiftmailerBundle\DataCollector\MessageDataCollector;
 use Symfony\Component\HttpFoundation\Response;
 
 class CollectionTest extends TestCommon
@@ -492,5 +495,24 @@ class CollectionTest extends TestCommon
         $this->assertEquals(['fr', 'se', 'us'], array_map(function(UsersOptions $option) {
             return $option->getOptionValeur();
         }, $updatedCountriesToNotify));
+    }
+
+    public function testSendFeedback() : void
+    {
+        self::$client->enableProfiler();
+        $response = $this->buildAuthenticatedServiceWithTestUser('/collection/feedback', self::$dmUser, 'POST', ['message' => 'DucksManager is great!'])->call();
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+
+        /** @var MessageDataCollector $mailCollector */
+        $mailCollector = self::$client->getProfile()->getCollector('swiftmailer');
+        /** @var Swift_Message[]|Countable $messages */
+        $messages = $mailCollector->getMessages();
+        $this->assertCount(2, $messages);
+        [$email,] = $messages;
+
+        $expectedMessageBody = <<<MESSAGE
+            DucksManager is great!
+            MESSAGE;
+        $this->assertEmailEquals($expectedMessageBody, $email->getBody());
     }
 }
