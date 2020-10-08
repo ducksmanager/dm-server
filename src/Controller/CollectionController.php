@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Coa\InducksIssue;
+use App\Entity\Dm\Abonnements;
 use App\Entity\Dm\Achats;
 use App\Entity\Dm\BibliothequeOrdreMagazines;
 use App\Entity\Dm\Numeros;
@@ -23,6 +24,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraints\Collection;
+use Symfony\Component\Validator\Constraints\Date;
+use Symfony\Component\Validator\Constraints\Regex;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CollectionController extends AbstractController implements RequiresDmVersionController, RequiresDmUserController
@@ -369,6 +374,54 @@ class CollectionController extends AbstractController implements RequiresDmVersi
         });
 
         return new JsonResponse($privilegesAssoc);
+    }
+
+    /**
+     * @Route(methods={"GET"}, path="/collection/subscriptions")
+     */
+    public function getUserSubscriptions(): JsonResponse
+    {
+        $subscriptions = $this->getEm('dm')->getRepository(Abonnements::class)->findBy([
+            'idUtilisateur' => $this->getSessionUser()['id']
+        ]);
+
+        return new JsonResponseFromObject(array_map(function(Abonnements $subscription) {
+            return [
+                'id' => $subscription->getId(),
+                'publicationCode' => $subscription->getPays().'/'.$subscription->getMagazine(),
+                'startDate' => $subscription->getDateDebut()->format('Y-m-d'),
+                'endDate' => $subscription->getDateFin()->format('Y-m-d')
+            ];
+        }, $subscriptions));
+    }
+
+    /**
+     * @Route(methods={"PUT"}, path="/collection/subscriptions")
+     */
+    public function createUserSubscription(Request $request, ValidatorInterface $validator, LoggerInterface $logger): Response
+    {
+        $validationResult = $validator->validate($request->request->all(), new Collection(array(
+            'publicationCode' => new Regex(['pattern' => '#^(?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+)$#']),
+            'startDate'  => new Date(),
+            'endDate'  => new Date(),
+        )));
+
+        if ($validationResult->count() > 0) {
+            return new JsonResponse($validationResult, Response::HTTP_BAD_REQUEST);
+        }
+
+        [$country, $magazine] = explode('/', $request->request->get('publicationCode'));
+        $subscription = (new Abonnements())
+            ->setIdUtilisateur($this->getEm('dm')->getRepository(Users::class)->find($this->getSessionUser()['id']))
+            ->setDateDebut(new DateTime($request->request->get('startDate')))
+            ->setDateFin(new DateTime($request->request->get('endDate')))
+            ->setPays($country)
+            ->setMagazine($magazine);
+
+        $this->getEm('dm')->persist($subscription);
+        $this->getEm('dm')->flush();
+
+        return new Response('Created', Response::HTTP_CREATED);
     }
 
     private function getNonPossessedIssues(array $issues, int $userId): array
