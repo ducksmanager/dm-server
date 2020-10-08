@@ -409,6 +409,18 @@ class DucksmanagerController extends AbstractController
         ]);
     }
 
+    /**
+     * @Route(methods={"GET"}, path="/ducksmanager/user/{username}")
+     * @throws Exception
+     */
+    public function getDmUser(string $username): Response
+    {
+        $user = $this->getEm('dm')->getRepository(Users::class)->findOneBy([
+            'username' => $username
+        ]);
+        return isset($user) ? new JsonResponseFromObject($user) : new Response('KO', 200);
+    }
+
     private function checkNewUser(TranslatorInterface $translator, ?string $username, string $password, string $password2) : ?string
     {
         if (isset($username)) {
