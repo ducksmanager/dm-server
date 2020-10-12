@@ -1,6 +1,6 @@
 version: '2.4'
 services:
-  web:
+  web-api:
     container_name: dm-server-web-dev
     image: "nginx:1.15"
     ports:
@@ -40,6 +40,7 @@ services:
   mailcatcher:
     container_name: mailcatcher
     image: yappabe/mailcatcher
+    restart: always
     ports:
       - 1080:1080
     networks:
