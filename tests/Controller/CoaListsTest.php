@@ -101,35 +101,20 @@ class CoaListsTest extends TestCommon
         $this->assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
     }
 
-    public function testGetIssueList(): void
+    public function testCountIssuesPerPublication(): void
     {
-        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issues', self::$dmUser)->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issues/count', self::$dmUser)->call();
 
         $arrayResponse = json_decode($this->getResponseContent($response), true);
 
         $this->assertInternalType('array', $arrayResponse);
         $this->assertEquals([
-            'fr/DDD' => [
-                0 => 'Volume 0',
-                1 => 'Volume 1',
-                2 => NULL
-            ],
-            'fr/MP' => [
-                300 => NULL,
-            ],
-            'fr/PM' => [
-                315 => NULL,
-                350 => NULL
-            ],
-            'us/CBL' => [
-                7 => NULL
-            ],
-            'de/MM' => [
-                '1951-00' => NULL
-            ],
-            'fr/CB' => [
-                'PN 1' => NULL
-            ],
+            'fr/DDD' => 3,
+            'fr/MP' => 1,
+            'fr/PM' => 2,
+            'us/CBL' => 1,
+            'de/MM' => 1,
+            'fr/CB' => 1,
         ], $arrayResponse);
     }
 

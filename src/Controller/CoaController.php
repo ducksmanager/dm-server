@@ -110,12 +110,12 @@ class CoaController extends AbstractController
     /**
      * @Route(
      *     methods={"GET"},
-     *     path="/coa/list/issues"
+     *     path="/coa/list/issues/count"
      * )
      */
-    public function listIssues(CoaService $coaService): Response
+    public function countIssuesPerPublicationCode(CoaService $coaService): Response
     {
-        return new JsonResponse($coaService->getIssueNumbersFromPublicationCode());
+        return new JsonResponse($coaService->getIssueCount());
     }
 
     /**

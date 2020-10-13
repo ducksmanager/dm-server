@@ -122,7 +122,20 @@ class CoaService
         }, $results);
     }
 
-    public function getIssueNumbersFromPublicationCode(?string $publicationCode = null) : stdClass
+    public function getIssueCount() : array
+    {
+        $qb = (self::$coaEm->createQueryBuilder())
+            ->select('inducks_issue.publicationcode, count(inducks_issue.issuenumber) AS count')
+            ->from(InducksIssue::class, 'inducks_issue')
+            ->groupBy('inducks_issue.publicationcode')
+            ->indexBy('inducks_issue', 'inducks_issue.publicationcode');
+
+        return array_map(function(array $result) {
+            return (int) $result['count'];
+        }, $qb->getQuery()->getResult());
+    }
+
+    public function getIssueNumbersFromPublicationCode(string $publicationCode) : stdClass
     {
         $qb = (self::$coaEm->createQueryBuilder())
             ->select('inducks_issue.publicationcode, inducks_issue.issuenumber, inducks_issue.title')
