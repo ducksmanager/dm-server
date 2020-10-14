@@ -213,4 +213,18 @@ class CoaController extends AbstractController
             array_unique($coaService->getStoryDetails(explode(',', $storyCodes)))
         );
     }
+
+    /**
+     * @Route(
+     *     methods={"POST"},
+     *     path="/coa/stories/search"
+     * )
+     */
+    public function listStoriesFromKeywords(CoaService $coaService, Request $request) : JsonResponse
+    {
+        $keywords = $request->request->get('keywords');
+        return new JsonResponse(
+            $coaService->getStoriesByKeywords(explode(' ', $keywords))
+        );
+    }
 }

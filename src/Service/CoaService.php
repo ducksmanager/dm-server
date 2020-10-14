@@ -8,6 +8,7 @@ use App\Entity\Coa\InducksStory;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query\QueryException;
+use Doctrine\ORM\Query\ResultSetMapping;
 use stdClass;
 
 class CoaService
@@ -155,5 +156,40 @@ class CoaService
             $issueNumbers->{$result['publicationcode']}->$issueNumber = $result['title'];
         }
         return $issueNumbers;
+    }
+
+    public function getStoriesByKeywords(array $keywords) : array
+    {
+        $condition = "MATCH(inducks_entry.title) AGAINST ('".implode(',', $keywords)."')";
+
+        $rsm = (new ResultSetMapping())
+            ->addScalarResult('storycode', 'storycode')
+            ->addScalarResult('title', 'title');
+
+        $query = self::$coaEm->createNativeQuery("
+            SELECT DISTINCT inducks_storyversion.storycode AS storycode, inducks_entry.title AS title, $condition AS score
+            FROM inducks_entry
+            INNER JOIN inducks_storyversion ON inducks_entry.storyversioncode = inducks_storyversion.storyversioncode
+            WHERE $condition
+            ORDER BY score DESC, title
+            LIMIT 11
+        ", $rsm);
+
+        $results = $query->getArrayResult();
+
+        $hasMore = false;
+        if (count($results) > 10) {
+            $results = array_slice($results, 0, 10);
+            $hasMore = true;
+        }
+        return [
+            'results' => array_map(function($result) {
+                return [
+                    'code' => $result['storycode'],
+                    'titre' => $result['title'],
+                ];
+            }, $results),
+            'hasmore' => $hasMore
+        ];
     }
 }
