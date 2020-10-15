@@ -227,4 +227,17 @@ class CoaController extends AbstractController
             $coaService->getStoriesByKeywords(explode(' ', $keywords))
         );
     }
+
+    /**
+     * @Route(
+     *     methods={"GET"},
+     *     path="/coa/list/issues/withStoryVersionCode/{storyVersionCode}"
+     * )
+     */
+    public function listIssuesFromStoryVersionCode(string $storyVersionCode, CoaService $coaService) : JsonResponse
+    {
+        return new JsonResponse(
+            $coaService->listIssuesFromStoryVersionCode($storyVersionCode)
+        );
+    }
 }

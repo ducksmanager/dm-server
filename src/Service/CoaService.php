@@ -1,12 +1,14 @@
 <?php
 namespace App\Service;
 
+use App\Entity\Coa\InducksEntry;
 use App\Entity\Coa\InducksIssue;
 use App\Entity\Coa\InducksPerson;
 use App\Entity\Coa\InducksPublication;
 use App\Entity\Coa\InducksStory;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\Query\QueryException;
 use Doctrine\ORM\Query\ResultSetMapping;
 use stdClass;
@@ -163,15 +165,16 @@ class CoaService
         $condition = "MATCH(inducks_entry.title) AGAINST ('".implode(',', $keywords)."')";
 
         $rsm = (new ResultSetMapping())
-            ->addScalarResult('storycode', 'storycode')
+            ->addScalarResult('storyversioncode', 'storyversioncode')
             ->addScalarResult('title', 'title');
 
         $query = self::$coaEm->createNativeQuery("
-            SELECT DISTINCT inducks_storyversion.storycode AS storycode, inducks_entry.title AS title, $condition AS score
+            SELECT inducks_storyversion.storyversioncode, inducks_entry.title AS title, $condition AS score
             FROM inducks_entry
             INNER JOIN inducks_storyversion ON inducks_entry.storyversioncode = inducks_storyversion.storyversioncode
             WHERE $condition
-            ORDER BY score DESC, title
+            GROUP BY inducks_storyversion.storycode
+            ORDER BY score DESC, inducks_entry.title
             LIMIT 11
         ", $rsm);
 
@@ -185,8 +188,38 @@ class CoaService
         return [
             'results' => array_map(function($result) {
                 return [
-                    'code' => $result['storycode'],
-                    'titre' => $result['title'],
+                    'code' => $result['storyversioncode'],
+                    'title' => $result['title'],
+                ];
+            }, $results),
+            'hasmore' => $hasMore
+        ];
+    }
+
+    public function listIssuesFromStoryVersionCode(string $storyVersionCode) : array
+    {
+        $qb = self::$coaEm->createQueryBuilder();
+        $qb
+            ->select('inducks_issue.issuecode, inducks_issue.publicationcode, inducks_issue.issuenumber')
+            ->from(InducksIssue::class, 'inducks_issue')
+            ->innerJoin(InducksEntry::class, 'inducks_entry', Join::WITH, 'inducks_issue.issuecode = inducks_entry.issuecode')
+            ->where($qb->expr()->eq('inducks_entry.storyversioncode', ':storyversioncode'))
+            ->setParameters(['storyversioncode' => $storyVersionCode])
+            ->orderBy('inducks_issue.publicationcode, inducks_issue.issuenumber');
+
+        $results = $qb->getQuery()->getArrayResult();
+
+        $hasMore = false;
+//        if (count($results) > 10) {
+//            $results = array_slice($results, 0, 10);
+//            $hasMore = true;
+//        }
+        return [
+            'results' => array_map(function($result) {
+                return [
+                    'code' => $result['issuecode'],
+                    'publicationcode' => $result['publicationcode'],
+                    'issuenumber' => $result['issuenumber'],
                 ];
             }, $results),
             'hasmore' => $hasMore
