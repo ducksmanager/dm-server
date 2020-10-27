@@ -79,7 +79,7 @@ class SuggestionService
             return [[], [], [], []];
         }
 
-        if ($countryCode !== self::SUGGESTION_ALL_COUNTRIES) {
+        if ($countryCode === self::SUGGESTION_COUNTRIES_TO_NOTIFY) {
             $countriesToNotifyPerUser = self::$usersOptionsService->getOptionValueAllUsers(UsersOptionsService::OPTION_NAME_SUGGESTION_NOTIFICATION_COUNTRY);
         }
 
