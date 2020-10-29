@@ -6,7 +6,7 @@ deploy() {
   && docker exec ${container_name} /bin/bash ${webdir}/scripts/deploy/backup-app.sh \
   && docker exec ${container_name} /bin/bash -c "rm -rf ${webdir}_new && mkdir -p ${webdir}_new" \
   \
-  && for f in bin config scripts src translations .env .htaccess composer.json composer.lock docker-compose.yml favicon.ico; \
+  && for f in bin config scripts src templates translations .env .htaccess composer.json composer.lock docker-compose.yml favicon.ico; \
   do \
     docker cp ${f} ${container_name}:${webdir}_new; \
   done \
