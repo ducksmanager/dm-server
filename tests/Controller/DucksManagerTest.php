@@ -16,7 +16,8 @@ use Symfony\Bundle\SwiftmailerBundle\DataCollector\MessageDataCollector;
 use Symfony\Component\HttpFoundation\Response;
 
 class DucksManagerTest extends TestCommon implements RequiresDmVersionController
-{    protected function getEmNamesToCreate(): array
+{
+    protected function getEmNamesToCreate(): array
     {
         return ['dm'];
     }
@@ -147,6 +148,8 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
 
     public function testSendPendingEmails(): void
     {
+        $emailSignature = self::getEmailSignature();
+
         $this->createUserCollection('demo');
 
         $demoUser = $this->getEm('dm')->getRepository(Users::class)->findOneBy([
@@ -191,12 +194,7 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
             La tranche dont vous nous avez envoyé la photo est maintenant visionnable dans votre bibliothèque DucksManager ainsi que dans les bibliothèques des autres utilisateurs possédant ce magazine.
             <p style="text-align: center"><img width="100" src="http://localhost:8000/images/medailles/Photographe_1_fr.png" />
             Vous avez remporté la médaille "Photographe DucksManager Débutant" grâce à vos contributions !</p>
-            <b>Votre contribution vous a rapporté 50 points "Photographe"</b>, bravo à vous et merci pour votre contribution : nous sommes heureux de vous compter parmi la communauté active de DucksManager !
-            
-            
-            A bientôt sur le site !
-            L'équipe DucksManager
-            <img width="400" src="http://localhost:8000/logo_petit.png" />
+            <b>Votre contribution vous a rapporté 50 points "Photographe"</b>, bravo à vous et merci pour votre contribution : nous sommes heureux de vous compter parmi la communauté active de DucksManager !$emailSignature
             MESSAGE;
         $this->assertEmailEquals($expectedEdgeEmailBody, $edgeEmail->getBody());
         $this->assertEmailEquals($expectedEdgeEmailBody, $edgeEmailCopy->getBody());
@@ -208,11 +206,7 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
             <p style="text-align: center"><img width="100" src="http://localhost:8000/images/medailles/Duckhunter_1_fr.png" />
             Vous avez remporté la médaille "Duckhunter Débutant" grâce à vos contributions !</p>
             Bravo à vous et merci pour votre contribution : nous sommes heureux de vous accueillir parmi la communauté active de DucksManager !
-            
-            
-            A bientôt sur le site !
-            L'équipe DucksManager
-            <img width="400" src="http://localhost:8000/logo_petit.png" />
+            $emailSignature
             MESSAGE;
         $this->assertEmailEquals($expectedBookstoreEmailBody, $bookstoreEmail->getBody());
         $this->assertEmailEquals($expectedBookstoreEmailBody, $bookstoreEmailCopy->getBody());
@@ -302,16 +296,13 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
 
         $this->assertNotNull($generatedToken);
 
+        $emailSignature = self::getEmailSignature();
+
         $expectedMessageBody = <<<MESSAGE
             Bonjour dm_test_user,
             Un visiteur a indiqué avoir oublié le mot de passe associé à l'adresse e-mail test@ducksmanager.net.
             Si c'est vous qui en êtes à l'origine, cliquez sur le lien suivant pour indiquer un nouveau mot de passe pour votre compte DucksManager :
-            <a href="http://localhost:8000/?action=reset_password&token={$generatedToken->getToken()}">Mettre à jour mon mot de passe</a>
-            
-            
-            A bientôt sur le site !
-            L'équipe DucksManager
-            <img width="400" src="http://localhost:8000/logo_petit.png" />
+            <a href="http://localhost:8000/?action=reset_password&token={$generatedToken->getToken()}">Mettre à jour mon mot de passe</a>$emailSignature
             MESSAGE;
         $this->assertEmailEquals($expectedMessageBody, $email->getBody());
     }
@@ -413,5 +404,17 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
         $objectResponse = json_decode($getResponse->getContent());
 
         $this->assertEquals(['fr/DDD', 'fr/JM', 'fr/MP'], $objectResponse);
+    }
+
+    private static function getEmailSignature() : string {
+        return <<<SIGNATURE
+
+
+A bientôt sur le site !
+L'équipe DucksManager
+<a href="https://ducksmanager.net"><img width="400" src="http://localhost:8000/logo_petit.png" /></a>
+Retrouvez-nous sur les réseaux sociaux :
+<a href="https://www.facebook.com/DucksManager"><img src="http://localhost:8000/images/icones/facebook.png" /></a>&nbsp;<a href="https://www.instagram.com/ducksmanager"><img src="http://localhost:8000/images/icones/instagram.png" /></a>&nbsp;<a href="https://discord.gg/aAqKyH"><img src="http://localhost:8000/images/icones/discord.png" /></a>&nbsp;<a href="https://www.youtube.com/user/ducksmanager"><img src="http://localhost:8000/images/icones/youtube.png" /></a>
+SIGNATURE;
     }
 }

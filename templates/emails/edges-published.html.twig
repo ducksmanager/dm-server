@@ -16,8 +16,5 @@
 {% endif %}
 <br />
 {{ 'EMAIL_EDGES_PUBLISHED_POINTS' | trans({'%extraPhotographerPoints%': extraPhotographerPoints}) | raw }}
-<br />
-<br />
-<br />
-{{ 'EMAIL_SIGNATURE' | trans | raw }}<br />
-<img width="400" src="{{ WEBSITE_ROOT }}/logo_petit.png" />
+
+{{ include('emails/footer.html.twig') }}
