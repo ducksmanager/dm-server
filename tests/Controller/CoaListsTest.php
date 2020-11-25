@@ -11,7 +11,7 @@ class CoaListsTest extends TestCommon
 {
     protected function getEmNamesToCreate(): array
     {
-        return ['coa'];
+        return ['dm', 'coa'];
     }
 
     public function setUp()

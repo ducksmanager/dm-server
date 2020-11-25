@@ -34,38 +34,38 @@ class RequiresDmUserSubscriber implements EventSubscriberInterface
         $request = $event->getRequest();
         $controller = $event->getController();
 
-        if (is_array($controller) && (
-            $controller[0] instanceof RequiresDmUserController
-         || $controller[0] instanceof RequiresAdminEdgeCreatorController)) {
-            $username = $event->getRequest()->headers->get('x-dm-user');
-            $password = $event->getRequest()->headers->get('x-dm-pass');
-            if (isset($username, $password)) {
-                $this->logger->info("Authenticating $username...");
-                $existingUser = $this->dmEm->getRepository(Users::class)->findOneBy([
-                    'username' => $username,
-                    'password' => $password
-                ]);
+        $username = $event->getRequest()->headers->get('x-dm-user');
+        $password = $event->getRequest()->headers->get('x-dm-pass');
+        if (!empty($username) && !empty($password)) {
+            $this->logger->info("Authenticating $username...");
+            $existingUser = $this->dmEm->getRepository(Users::class)->findOneBy([
+                'username' => $username,
+                'password' => $password
+            ]);
 
-                if (is_null($existingUser)) {
+            if (is_null($existingUser)) {
+                if (self::isUserRequired($controller)) {
                     throw new UnauthorizedHttpException('Invalid credentials!');
                 }
-
-                if ($controller[0] instanceof RequiresAdminEdgeCreatorController) {
-                    if (null === $this->dmEm->getRepository(UsersPermissions::class)->findOneBy([
+            }
+            else {
+                if (self::isAdminUserRequired($controller)
+                 && null === $this->dmEm->getRepository(UsersPermissions::class)->findOneBy([
                         'username' => $username,
                         'role' => 'EdgeCreator',
                         'privilege' => 'Admin'
                     ])) {
-                        throw new HttpException(403, 'You need admin rights!');
-                    }
+                    throw new HttpException(403, 'You need admin rights!');
                 }
-
-                $request->getSession()->set('user', ['username' => $existingUser->getUsername(), 'id' => $existingUser->getId()]);
+                $request->getSession()->set('user', [
+                    'username' => $existingUser->getUsername(),
+                    'id' => $existingUser->getId()
+                ]);
                 $this->logger->info("$username is logged in");
             }
-            else {
-                throw new UnauthorizedHttpException('Credentials are required!');
-            }
+        }
+        else if (self::isUserRequired($controller)) {
+            throw new UnauthorizedHttpException('Credentials are required!');
         }
     }
 
@@ -74,5 +74,16 @@ class RequiresDmUserSubscriber implements EventSubscriberInterface
         return [
             ControllerEvent::class => 'onKernelRequest',
         ];
+    }
+
+    private static function isUserRequired(callable $controller): bool {
+        return is_array($controller) && (
+                $controller[0] instanceof RequiresDmUserController
+                || $controller[0] instanceof RequiresAdminEdgeCreatorController);
+    }
+
+    private static function isAdminUserRequired(callable $controller): bool
+    {
+        return is_array($controller) && $controller[0] instanceof RequiresAdminEdgeCreatorController;
     }
 }

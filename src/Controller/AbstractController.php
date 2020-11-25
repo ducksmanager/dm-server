@@ -46,9 +46,15 @@ class AbstractController extends \Symfony\Bundle\FrameworkBundle\Controller\Abst
         return $this->container->get('doctrine')->getManager($name);
     }
 
-    protected function getSessionUser(): array
+    protected function getSessionUser(): ?array
     {
         return $this->get('session')->get('user');
+    }
+
+    protected function getSessionUsername(): ?string
+    {
+        $sessionUser = $this->getSessionUser();
+        return is_null($sessionUser) ? null : $sessionUser['username'];
     }
 
     /**

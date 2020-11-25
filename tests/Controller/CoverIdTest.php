@@ -47,7 +47,7 @@ class CoverIdTest extends TestCommon
 
     protected function getEmNamesToCreate(): array
     {
-        return ['coa','coverid'];
+        return ['dm', 'coa','coverid'];
     }
 
     public function setUp()
