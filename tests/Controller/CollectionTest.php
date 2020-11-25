@@ -115,6 +115,7 @@ class CollectionTest extends TestCommon
                 'issueNumber' => '1',
                 'condition' => 'indefini',
                 'purchaseId' => 1,
+                'creationDate' => (new DateTime())->format('Y-m-d')
             ],
             (object) [
                 'id' => 2,
@@ -123,6 +124,7 @@ class CollectionTest extends TestCommon
                 'issueNumber' => '300',
                 'condition' => 'bon',
                 'purchaseId' => -1,
+                'creationDate' => (new DateTime())->format('Y-m-d')
             ],
             (object) [
                 'id' => 3,
@@ -131,6 +133,7 @@ class CollectionTest extends TestCommon
                 'issueNumber' => '301',
                 'condition' => 'mauvais',
                 'purchaseId' => -1,
+                'creationDate' => (new DateTime())->format('Y-m-d')
             ],
         ], $objectResponse);
     }
@@ -282,21 +285,24 @@ class CollectionTest extends TestCommon
                 'magazine' => 'DDD',
                 'issueNumber' => '1',
                 'condition' => 'indefini',
-                'purchaseId' => 1
+                'purchaseId' => 1,
+                'creationDate' => (new DateTime())->format('Y-m-d'),
             ],
             ['id' => 2,
                 'country' => 'fr',
                 'magazine' => 'MP',
                 'issueNumber' => '300',
                 'condition' => 'bon',
-                'purchaseId' => -1
+                'purchaseId' => -1,
+                'creationDate' => (new DateTime())->format('Y-m-d'),
             ],
             ['id' => 3,
                 'country' => 'fr',
                 'magazine' => 'MP',
                 'issueNumber' => '301',
                 'condition' => 'mauvais',
-                'purchaseId' => -1
+                'purchaseId' => -1,
+                'creationDate' => (new DateTime())->format('Y-m-d'),
             ]
         ]));
     }

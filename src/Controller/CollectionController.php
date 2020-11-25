@@ -145,12 +145,17 @@ class CollectionController extends AbstractController implements RequiresDmVersi
     {
         $dmEm = $this->getEm('dm');
         $qb = $dmEm->createQueryBuilder();
-        $qb->select('issues.id, issues.pays AS country, issues.magazine, issues.numero AS issueNumber, issues.etat AS condition, issues.idAcquisition AS purchaseId')
+        $qb->select('issues.id, issues.pays AS country, issues.magazine, issues.numero AS issueNumber, issues.etat AS condition, issues.idAcquisition AS purchaseId, issues.dateajout AS creationDate')
             ->from(Numeros::class, 'issues')
             ->where($qb->expr()->eq('issues.idUtilisateur', $this->getSessionUser()['id']))
             ->orderBy('issues.pays, issues.magazine, issues.numero', 'ASC');
 
-        return new JsonResponseFromObject($qb->getQuery()->getArrayResult());
+        return new JsonResponseFromObject(
+            array_map(function ($result) {
+                $result['creationDate'] = $result['creationDate']->format('Y-m-d');
+                return $result;
+            }, $qb->getQuery()->getArrayResult()
+            ));
     }
 
     /**
