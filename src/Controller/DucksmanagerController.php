@@ -435,6 +435,79 @@ class DucksmanagerController extends AbstractController
         return isset($user) ? new JsonResponseFromObject($user) : new Response('KO', 200);
     }
 
+    /**
+     * @Route(methods={"DELETE"}, path="/ducksmanager/user/{username}")
+     * @throws Exception
+     */
+    public function deleteDmUser(string $username): Response
+    {
+        /** @var Users */
+        $user = $this->getEm('dm')->getRepository(Users::class)->findOneBy([
+            'username' => $username
+        ]);
+        $this->deleteUserData($user);
+        $this->getEm('dm')->remove($user);
+
+        return new Response('OK', Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * @Route(methods={"POST"}, path="/ducksmanager/user/{username}/empty")
+     * @throws Exception
+     */
+    public function emptyDmUserIssues(string $username): Response
+    {
+        $this->deleteUserData($this->getEm('dm')->getRepository(Users::class)->findOneBy([
+            'username' => $username
+        ]), true);
+        return new Response('OK', Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * @Route(methods={"POST"}, path="/ducksmanager/user/{username}")
+     * @throws Exception
+     */
+    public function updateDmUser(string $username, Request $request, LoggerInterface $logger): Response
+    {
+        $logger->info('Content : ' . print_r($request->request->all(), true));
+        $user = $this->getEm('dm')->getRepository(Users::class)->findOneBy([
+            'username' => $username
+        ]);
+        if (!empty($email = $request->request->get('email'))) {
+            $user->setEmail($email);
+        }
+        if (!empty($password = $request->request->get('password'))) {
+            $user->setPassword($password);
+        }
+        if ($request->request->has('isShareEnabled')) {
+            $user->setAccepterpartage($request->request->get('isShareEnabled'));
+        }
+        if ($request->request->has('isVideoShown')) {
+            $user->setAffichervideo($request->request->get('isVideoShown'));
+        }
+
+        $this->getEm('dm')->persist($user);
+        $this->getEm('dm')->flush();
+
+        return new Response('OK', Response::HTTP_OK);
+    }
+
+    /**
+     * @Route(methods={"GET"}, path="/ducksmanager/bookstore/list")
+     * @throws Exception
+     */
+    public function getActiveBookstores(): Response
+    {
+        /** @var QueryBuilder */
+        $qb = $this->getEm('dm')->createQueryBuilder();
+        $qb->select('bookstores.nom AS name, bookstores.adressecomplete AS address, bookstores.commentaire AS comment, bookstores.coordx AS coordX, bookstores.coordy AS coordY, bookstores.dateajout AS creationDate, users.username')
+            ->from(Bouquineries::class, 'bookstores')
+            ->leftJoin(Users::class, 'users', Join::WITH, 'bookstores.idUtilisateur = users.id')
+        ->where($qb->expr()->eq('bookstores.actif', $qb->expr()->literal('1')));
+
+        return new JsonResponseFromObject($qb->getQuery()->getArrayResult());
+    }
+
     private function checkNewUser(TranslatorInterface $translator, ?string $username, string $password, string $password2) : ?string
     {
         if (isset($username)) {
@@ -484,7 +557,7 @@ class DucksmanagerController extends AbstractController
         return true;
     }
 
-    private function deleteUserData(Users $user): bool
+    private function deleteUserData(Users $user, $issuesOnly = false): bool
     {
         $dmEm = $this->getEm('dm');
         $qb = $dmEm->createQueryBuilder();
@@ -494,10 +567,20 @@ class DucksmanagerController extends AbstractController
             ->setParameter(':userId', $user->getId());
         $qb->getQuery()->execute();
 
+        if ($issuesOnly) {
+            return true;
+        }
+
         $qb = $dmEm->createQueryBuilder();
         $qb->delete(Achats::class, 'purchases')
             ->where($qb->expr()->eq('purchases.idUser', ':userId'))
             ->setParameter(':userId', $user->getId());
+        $qb->getQuery()->execute();
+
+        $qb = $dmEm->createQueryBuilder();
+        $qb->delete(UsersOptions::class, 'usersOptions')
+            ->where($qb->expr()->eq('usersOptions.user', ':userId'))
+            ->setParameter(':userId', $user);
         $qb->getQuery()->execute();
 
         $qb = $dmEm->createQueryBuilder();
