@@ -146,6 +146,20 @@ class DucksmanagerController extends AbstractController
      */
     public function resetDemo(CollectionUpdateService $collectionUpdateService, CsvService $csvService) {
         $dmEm = $this->getEm('dm');
+        /** @var Demo $demoData */
+        $demoData = $dmEm->getRepository(Demo::class)->find(1);
+        $lastDemoInit = $demoData->getDatedernierinit();
+        if (!(
+            (int) $lastDemoInit->format('%H') < (int) (new DateTime())->format('%H')
+            || $lastDemoInit->getTimestamp() + 3600 < (new DateTime())->getTimestamp())
+        ) {
+            return new Response('', Response::HTTP_NO_CONTENT);
+        }
+
+        $demoData->setDatedernierinit(new DateTime());
+        $dmEm->persist($demoData);
+
+        /** @var Users $demoUser */
         $demoUser = $dmEm->getRepository(Users::class)->findOneBy([
             'username' => 'demo'
         ]);
