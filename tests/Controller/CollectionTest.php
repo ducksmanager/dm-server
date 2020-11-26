@@ -353,7 +353,7 @@ class CollectionTest extends TestCommon
             'fr/SPG', 'fr/DDD', 'se/KAP'
         ];
 
-        $getResponse = $this->buildAuthenticatedServiceWithTestUser('/collection/bookcase/sort', self::$dmUser, 'POST', ['sorts' => $newSorts])->call();
+        $getResponse = $this->buildAuthenticatedServiceWithTestUser('/bookcase/sort', self::$dmUser, 'POST', ['sorts' => $newSorts])->call();
         $objectResponse = json_decode($getResponse->getContent());
         $this->assertEquals(2, $objectResponse->max);
 

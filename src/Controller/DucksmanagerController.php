@@ -5,9 +5,11 @@ use App\Entity\Dm\Achats;
 use App\Entity\Dm\AuteursPseudos;
 use App\Entity\Dm\BibliothequeOrdreMagazines;
 use App\Entity\Dm\Bouquineries;
+use App\Entity\Dm\Demo;
 use App\Entity\Dm\Numeros;
 use App\Entity\Dm\Users;
 use App\Entity\Dm\UsersContributions;
+use App\Entity\Dm\UsersOptions;
 use App\Entity\Dm\UsersPasswordTokens;
 use App\Helper\Email\AbstractEmail;
 use App\Helper\Email\BookstoreApprovedEmail;
@@ -23,7 +25,8 @@ use DateTime;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
-use Doctrine\ORM\Query\Expr\OrderBy;
+use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -199,6 +202,7 @@ class DucksmanagerController extends AbstractController
 
                 $dmEm->persist($purchase);
             }
+
             $dmEm->flush();
         }
         else {
@@ -206,46 +210,6 @@ class DucksmanagerController extends AbstractController
         }
 
         return new JsonResponseFromObject($demoUser);
-    }
-
-    /**
-     * @Route(methods={"GET"}, path="/ducksmanager/bookcase/{userId}/sort")
-     * @throws ORMException
-     */
-    public function getBookcaseSorting(int $userId): JsonResponse
-    {
-        $maxSort = json_decode($this->getLastPublicationPosition($userId)->getContent())->max;
-
-        $dmEm = $this->getEm('dm');
-        $qbMissingSorts = $dmEm->createQueryBuilder();
-        $qbMissingSorts
-            ->select('distinct concat(issues.pays, \'/\', issues.magazine) AS missing_publication_code')
-            ->from(Numeros::class, 'issues')
-
-            ->andWhere('concat(issues.pays, \'/\', issues.magazine) not in (select sorts.publicationcode from '.BibliothequeOrdreMagazines::class.' sorts where sorts.idUtilisateur = :userId)')
-            ->andWhere('issues.idUtilisateur = :userId')
-            ->setParameter(':userId', $userId)
-
-            ->orderBy(new OrderBy('missing_publication_code', 'ASC'));
-
-        $missingSorts = $qbMissingSorts->getQuery()->getArrayResult();
-        foreach($missingSorts as $missingSort) {
-            $sort = new BibliothequeOrdreMagazines();
-            $sort->setPublicationcode($missingSort['missing_publication_code']);
-            $sort->setOrdre(++$maxSort);
-            $sort->setIdUtilisateur($userId);
-            $dmEm->persist($sort);
-        }
-        $dmEm->flush();
-
-        $sorts = $dmEm->getRepository(BibliothequeOrdreMagazines::class)->findBy(
-            ['idUtilisateur' => $userId],
-            ['ordre' => 'ASC']
-        );
-
-        return new JsonResponse(array_map(function(BibliothequeOrdreMagazines $sort) {
-            return $sort->getPublicationcode();
-        }, $sorts));
     }
 
     /**
@@ -577,8 +541,8 @@ class DucksmanagerController extends AbstractController
     private function deleteUserData(Users $user, $issuesOnly = false): bool
     {
         $dmEm = $this->getEm('dm');
-        $qb = $dmEm->createQueryBuilder();
 
+        $qb = $dmEm->createQueryBuilder();
         $qb->delete(Numeros::class, 'issues')
             ->where($qb->expr()->eq('issues.idUtilisateur', ':userId'))
             ->setParameter(':userId', $user->getId());
