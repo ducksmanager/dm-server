@@ -361,6 +361,18 @@ class DucksmanagerController extends AbstractController
         }
         else {
             $user = $dmEm->getRepository(Users::class)->find($userId);
+            if ($request->request->has('name')) {
+                $bookstore = (new Bouquineries())
+                    ->setIdUtilisateur($userId)
+                    ->setNom($request->request->get('name'))
+                    ->setAdressecomplete($request->request->get('address'))
+                    ->setCommentaire($request->request->get('comment'))
+                    ->setCoordx($request->request->get('coordX'))
+                    ->setCoordy($request->request->get('coordY'))
+                    ->setActif(false);
+                $dmEm->persist($bookstore);
+                $dmEm->flush();
+            }
         }
 
         $emailService->send(new BookstoreSuggestedEmail($translator, $user));
