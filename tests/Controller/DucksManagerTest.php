@@ -4,12 +4,14 @@ namespace App\Tests\Controller;
 use App\Controller\RequiresDmVersionController;
 use App\Entity\Dm\Achats;
 use App\Entity\Dm\Bouquineries;
+use App\Entity\Dm\Demo;
 use App\Entity\Dm\Numeros;
 use App\Entity\Dm\Users;
 use App\Entity\Dm\UsersContributions;
 use App\Entity\Dm\UsersPasswordTokens;
 use App\Tests\TestCommon;
 use Countable;
+use DateInterval;
 use DateTime;
 use Swift_Message;
 use Symfony\Bundle\SwiftmailerBundle\DataCollector\MessageDataCollector;
@@ -30,6 +32,12 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
 
     public function testResetDemoDataNoDemoUser(): void
     {
+        $demo = (new Demo())
+            ->setId(1)
+            ->setDatedernierinit((new DateTime())->sub(new DateInterval('PT2H'))
+            );
+        $this->getEm('dm')->persist($demo);
+
         $response = $this->buildAuthenticatedService('/ducksmanager/resetDemo', self::$adminUser, [])->call();
         $this->assertEquals(Response::HTTP_EXPECTATION_FAILED, $response->getStatusCode());
     }
@@ -37,6 +45,12 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
     public function testResetDemoData(): void
     {
         $this->createUserCollection('demo');
+
+        $demo = (new Demo())
+            ->setId(1)
+            ->setDatedernierinit((new DateTime())->sub(new DateInterval('PT2H'))
+        );
+        $this->getEm('dm')->persist($demo);
 
         $demoUser = $this->getEm('dm')->getRepository(Users::class)->findOneBy([
             'username' => 'demo'
@@ -400,7 +414,7 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
         /** @var Users $user */
         $user = $this->getEm('dm')->getRepository(Users::class)->findOneBy(['username' => self::$defaultTestDmUserName]);
 
-        $getResponse = $this->buildAuthenticatedServiceWithTestUser("/ducksmanager/bookcase/{$user->getId()}/sort", self::$dmUser)->call();
+        $getResponse = $this->buildAuthenticatedServiceWithTestUser("/ducksmanager/bookcase/{$user->getUsername()}/sort", self::$dmUser)->call();
         $objectResponse = json_decode($getResponse->getContent());
 
         $this->assertEquals(['fr/DDD', 'fr/JM', 'fr/MP'], $objectResponse);
