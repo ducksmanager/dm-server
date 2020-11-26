@@ -104,7 +104,12 @@ class DucksmanagerController extends AbstractController
         $dmEm->persist($passwordToken);
         $dmEm->flush();
 
-        $emailService->send(new ResetPasswordEmail($translator, $user, $token));
+        try {
+            $emailService->send(new ResetPasswordEmail($translator, $user, $token));
+        }
+        catch(Exception $e) {
+            return new Response('KO', Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
         return new Response();
     }
 
