@@ -46,6 +46,28 @@ class CoaService
     }
 
     /**
+     * @param string $partialAuthorName
+     * @return string[]
+     * @throws QueryException
+     */
+    public function getAuthorNamesFromPartialName(string $partialAuthorName) : object {
+        if (strlen($partialAuthorName) < 3) {
+            return new stdClass();
+        }
+        $qbAuthorsFullNames = self::$coaEm->createQueryBuilder();
+        $qbAuthorsFullNames
+            ->select('distinct p.personcode, p.fullname')
+            ->from(InducksPerson::class, 'p')
+            ->where($qbAuthorsFullNames->expr()->like('p.fullname', $qbAuthorsFullNames->expr()->literal("%$partialAuthorName%")))
+            ->indexBy('p', 'p.personcode');
+
+        $fullNamesResults = $qbAuthorsFullNames->getQuery()->getResult();
+        return (object) array_map(function(array $person) {
+            return $person['fullname'];
+        }, $fullNamesResults);
+    }
+
+    /**
      * @param string[] $storyCodes
      * @return array[]
      * @throws QueryException
@@ -162,7 +184,7 @@ class CoaService
 
     public function getStoriesByKeywords(array $keywords) : array
     {
-        $condition = "MATCH(inducks_entry.title) AGAINST ('".implode(',', $keywords)."')";
+        $condition = "MATCH(inducks_entry.title) AGAINST (:search)";
 
         $rsm = (new ResultSetMapping())
             ->addScalarResult('storyversioncode', 'storyversioncode')
@@ -177,6 +199,8 @@ class CoaService
             ORDER BY score DESC, inducks_entry.title
             LIMIT 11
         ", $rsm);
+
+        $query->setParameter(':search', implode(',', $keywords));
 
         $results = $query->getArrayResult();
 
@@ -209,11 +233,6 @@ class CoaService
 
         $results = $qb->getQuery()->getArrayResult();
 
-        $hasMore = false;
-//        if (count($results) > 10) {
-//            $results = array_slice($results, 0, 10);
-//            $hasMore = true;
-//        }
         return [
             'results' => array_map(function($result) {
                 return [
@@ -221,8 +240,37 @@ class CoaService
                     'publicationcode' => $result['publicationcode'],
                     'issuenumber' => $result['issuenumber'],
                 ];
-            }, $results),
-            'hasmore' => $hasMore
+            }, $results)
         ];
+    }
+
+    public function listUrlsFromIssue(string $publicationCode, string $issueNumber) : array
+    {
+        $rsm = (new ResultSetMapping())
+            ->addScalarResult('storycode', 'storycode')
+            ->addScalarResult('kind', 'kind')
+            ->addScalarResult('url', 'url')
+            ->addScalarResult('position', 'position')
+            ->addScalarResult('title', 'title');
+
+        $query = self::$coaEm->createNativeQuery("
+            SELECT
+                inducks_storyversion.storycode,
+                inducks_storyversion.kind,
+                inducks_entry.title,
+                CONCAT(IF(sitecode = 'thumbnails', 'webusers', sitecode), '/', url) AS url,
+                position
+            FROM inducks_issue
+            INNER JOIN inducks_entry ON inducks_issue.issuecode = inducks_entry.issuecode
+            INNER JOIN inducks_storyversion ON inducks_entry.storyversioncode = inducks_storyversion.storyversioncode
+            LEFT JOIN inducks_entryurl ON inducks_entry.entrycode = inducks_entryurl.entrycode
+            WHERE inducks_issue.publicationcode = :publicationCode
+              AND (REPLACE(issuenumber, ' ', '') = :issueNumber)
+            GROUP BY inducks_entry.entrycode, position
+            ORDER BY position
+        ", $rsm);
+
+        $query->setParameters(compact('publicationCode', 'issueNumber'));
+        return $query->getArrayResult();
     }
 }
