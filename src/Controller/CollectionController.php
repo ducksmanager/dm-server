@@ -5,20 +5,24 @@ namespace App\Controller;
 use App\Entity\Coa\InducksIssue;
 use App\Entity\Dm\Abonnements;
 use App\Entity\Dm\Achats;
-use App\Entity\Dm\BibliothequeOrdreMagazines;
+use App\Entity\Dm\AuteursPseudos;
 use App\Entity\Dm\Numeros;
+use App\Entity\Dm\TranchesPretes;
 use App\Entity\Dm\Users;
 use App\Entity\Dm\UsersOptions;
 use App\Entity\Dm\UsersPermissions;
 use App\EntityTransform\UpdateCollectionResult;
 use App\Helper\Email\FeedbackSentEmail;
 use App\Helper\JsonResponseFromObject;
+use App\Service\BookcaseService;
 use App\Service\CollectionUpdateService;
 use App\Service\EmailService;
 use App\Service\UsersOptionsService;
+use DateInterval;
 use DateTime;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Query\Expr\Join;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Pusher\PushNotifications\PushNotifications;
@@ -26,10 +30,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Constraints\Collection;
-use Symfony\Component\Validator\Constraints\Date;
-use Symfony\Component\Validator\Constraints\Regex;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CollectionController extends AbstractController implements RequiresDmVersionController, RequiresDmUserController
@@ -37,7 +37,8 @@ class CollectionController extends AbstractController implements RequiresDmVersi
     /**
      * @Route(methods={"GET"}, path="collection/notification_token")
      */
-    public function getNotificationToken(Request $request) : Response {
+    public function getNotificationToken(Request $request): Response
+    {
         $currentUsername = $this->getSessionUser()['username'];
         $passedUsername = $request->query->get('user_id');
 
@@ -59,7 +60,8 @@ class CollectionController extends AbstractController implements RequiresDmVersi
     /**
      * @Route(methods={"GET"}, path="collection/notifications/countries")
      */
-    public function getCountriesToNotify(UsersOptionsService $usersOptionsService) : Response {
+    public function getCountriesToNotify(UsersOptionsService $usersOptionsService): Response
+    {
         $currentUser = $this->getEm('dm')->getRepository(Users::class)->find($this->getSessionUser()['id']);
 
         return new JsonResponseFromObject($usersOptionsService->getOptionValueForUser(
@@ -72,7 +74,8 @@ class CollectionController extends AbstractController implements RequiresDmVersi
     /**
      * @Route(methods={"POST"}, path="collection/notifications/countries")
      */
-    public function updateCountriesToNotify(Request $request) : Response {
+    public function updateCountriesToNotify(Request $request): Response
+    {
         $countries = $request->request->get('countries');
 
         /** @var Users $currentUser */
@@ -89,7 +92,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
 
             $qbDeleteExistingValues->getQuery()->execute();
 
-            foreach($countries as $countryCode) {
+            foreach ($countries as $countryCode) {
                 $currentUser->getOptions()->add(
                     (new UsersOptions())
                         ->setUser($currentUser)
@@ -108,18 +111,17 @@ class CollectionController extends AbstractController implements RequiresDmVersi
     /**
      * @Route(methods={"POST"}, path="collection/lastvisit")
      */
-    public function updateLastVisit(LoggerInterface $logger) : Response {
+    public function updateLastVisit(LoggerInterface $logger): Response
+    {
         $dmEm = $this->getEm('dm');
         $existingUser = $dmEm->getRepository(Users::class)->find($this->getSessionUser()['id']);
 
-        if (is_null($existingUser->getDernieracces()) ) {
+        if (is_null($existingUser->getDernieracces())) {
             $logger->info("Initializing last access for user {$existingUser->getId()}");
-        }
-        else if ($existingUser->getDernieracces()->format('Y-m-d') < (new DateTime())->format('Y-m-d')) {
+        } else if ($existingUser->getDernieracces()->format('Y-m-d') < (new DateTime())->format('Y-m-d')) {
             $logger->info("Updating last access for user {$existingUser->getId()}");
             $existingUser->setPrecedentacces($existingUser->getDernieracces());
-        }
-        else {
+        } else {
             return new Response('OK', Response::HTTP_NO_CONTENT);
         }
 
@@ -133,7 +135,8 @@ class CollectionController extends AbstractController implements RequiresDmVersi
     /**
      * @Route(methods={"GET"}, path="/collection/user")
      */
-    public function getDmUser() {
+    public function getDmUser()
+    {
         $existingUser = $this->getEm('dm')->getRepository(Users::class)->find($this->getSessionUser()['id']);
         return new JsonResponseFromObject($existingUser);
     }
@@ -271,7 +274,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
         $issueNumbers = $request->request->get('issueNumbers');
         $condition = $request->request->get('condition');
 
-        if ($condition === 'non_possede') {
+        if (in_array($condition, ['non_possede', 'missing'])) {
             $nbRemoved = $this->deleteIssues($publication, $issueNumbers);
             return new JsonResponse(
                 self::getSimpleArray([new UpdateCollectionResult('DELETE', $nbRemoved)])
@@ -281,7 +284,9 @@ class CollectionController extends AbstractController implements RequiresDmVersi
         $isToSell = $request->request->get('istosell');
         $purchaseId = $request->request->get('purchaseId');
 
-        if (!$this->getUserPurchase($purchaseId)) {
+        if ($purchaseId === 'do_not_change') {
+            $purchaseId = -1;
+        } else if (!$this->getUserPurchase($purchaseId)) {
             $logger->warning("User {$this->getSessionUser()['id']} tried to use purchase ID $purchaseId which is owned by another user");
             $purchaseId = null;
         }
@@ -307,7 +312,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
         $dmEm = $this->getEm('dm');
 
         $purchaseDateStr = $request->request->get('date');
-        $purchaseDate = DateTime::createFromFormat('Y-m-d H:i:s', $purchaseDateStr.' 00:00:00');
+        $purchaseDate = DateTime::createFromFormat('Y-m-d H:i:s', $purchaseDateStr . ' 00:00:00');
         $purchaseDescription = $request->request->get('description');
         $idUser = $this->getSessionUser()['id'];
 
@@ -321,8 +326,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
                 return new Response($translator->trans('ERROR_PURCHASE_ALREADY_EXISTS'), Response::HTTP_CONFLICT);
             }
             $purchase = new Achats();
-        }
-        else {
+        } else {
             $purchase = $this->getUserPurchase($purchaseId);
             if (is_null($purchase)) {
                 return new Response($translator->trans('ERROR_PURCHASE_UPDATE_NOT_ALLOWED'), Response::HTTP_UNAUTHORIZED);
@@ -355,7 +359,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
             return new Response('No content', Response::HTTP_NO_CONTENT);
         }
         $matches = array_map(
-            function($match) {
+            function ($match) {
                 return str_replace('^', '/', $match[1]);
             }, array_unique($matches, SORT_REGULAR)
         );
@@ -366,13 +370,12 @@ class CollectionController extends AbstractController implements RequiresDmVersi
         $coaIssuesQb
             ->select('issues.issuecode', 'issues.publicationcode', 'issues.issuenumber')
             ->from(InducksIssue::class, 'issues')
-
-            ->andWhere($coaIssuesQb->expr()->in('issues.issuecode',':issuesToImport'))
+            ->andWhere($coaIssuesQb->expr()->in('issues.issuecode', ':issuesToImport'))
             ->setParameter(':issuesToImport', $matches);
 
         $issues = $coaIssuesQb->getQuery()->getArrayResult();
 
-        $nonFoundIssues = array_values(array_diff($matches, array_map(function($issue) {
+        $nonFoundIssues = array_values(array_diff($matches, array_map(function ($issue) {
             return $issue['issuecode'];
         }, $issues)));
 
@@ -399,7 +402,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
         $newIssues = $this->getNonPossessedIssues($issues, $this->getSessionUser()['id']);
         $dmEm = $this->getEm('dm');
 
-        foreach($newIssues as $issue) {
+        foreach ($newIssues as $issue) {
             [$country, $magazine] = explode('/', $issue['publicationcode']);
             $newIssue = new Numeros();
             $newIssue
@@ -431,7 +434,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
 
         $privilegesAssoc = [];
 
-        array_walk($privileges, function(UsersPermissions $value) use(&$privilegesAssoc) {
+        array_walk($privileges, function (UsersPermissions $value) use (&$privilegesAssoc) {
             $privilegesAssoc[$value->getRole()] = $value->getPrivilege();
         });
 
@@ -447,10 +450,10 @@ class CollectionController extends AbstractController implements RequiresDmVersi
             'idUtilisateur' => $this->getSessionUser()['id']
         ]);
 
-        return new JsonResponseFromObject(array_map(function(Abonnements $subscription) {
+        return new JsonResponseFromObject(array_map(function (Abonnements $subscription) {
             return [
                 'id' => $subscription->getId(),
-                'publicationCode' => $subscription->getPays().'/'.$subscription->getMagazine(),
+                'publicationCode' => $subscription->getPays() . '/' . $subscription->getMagazine(),
                 'startDate' => $subscription->getDateDebut()->format('Y-m-d'),
                 'endDate' => $subscription->getDateFin()->format('Y-m-d')
             ];
@@ -473,7 +476,47 @@ class CollectionController extends AbstractController implements RequiresDmVersi
         $this->getEm('dm')->persist($subscription);
         $this->getEm('dm')->flush();
 
-        return new Response('Created', Response::HTTP_CREATED);
+        return new Response('OK', Response::HTTP_CREATED);
+    }
+
+    /**
+     * @Route(methods={"DELETE"}, path="/collection/subscriptions/{subscriptionId}")
+     */
+    public function deleteUserSubscription(int $subscriptionId): Response
+    {
+        $qb = (self::getEm('dm')->createQueryBuilder())
+            ->delete(Abonnements::class, 'subscriptions')
+            ->andWhere('subscriptions.id = :subscriptionId')
+            ->setParameter('subscriptionId', $subscriptionId)
+            ->andWhere('subscriptions.idUtilisateur = :user')
+            ->setParameter('user', $this->getEm('dm')->getRepository(Users::class)->find($this->getSessionUser()['id']));
+
+        $qb->getQuery()->execute();
+
+        return new Response('OK', Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * @Route(methods={"GET"}, path="/collection/edges/lastPublished")
+     */
+    public function getLastPublishedEdges(LoggerInterface $logger): Response
+    {
+        $qb = (self::getEm('dm')->createQueryBuilder());
+        $qb
+            ->select('edges')
+            ->from(TranchesPretes::class, 'edges')
+            ->innerJoin(Numeros::class, 'issues', Join::WITH, $qb->expr()->eq(
+                $qb->expr()->concat('edges.publicationcode', $qb->expr()->literal('/'), 'edges.issuenumber'),
+                $qb->expr()->concat('issues.pays', $qb->expr()->literal('/'), 'issues.magazine', $qb->expr()->literal('/'), 'issues.numero')
+            ))
+            ->andWhere('issues.idUtilisateur = :userId')
+            ->setParameter('userId', $this->getSessionUser()['id'])
+            ->andWhere('edges.dateajout > :threeMonthsAgo')
+            ->setParameter('threeMonthsAgo', (new DateTime())->sub(new DateInterval('P3M')))
+            ->setMaxResults(5);
+
+        $logger->info($qb->getQuery()->getSQL());
+        return new JsonResponseFromObject($qb->getQuery()->getResult());
     }
 
     /**
@@ -496,11 +539,11 @@ class CollectionController extends AbstractController implements RequiresDmVersi
         $currentIssues = $dmEm->getRepository(Numeros::class)->findBy(['idUtilisateur' => $userId]);
 
         $currentIssuesByPublication = [];
-        foreach($currentIssues as $currentIssue) {
-            $currentIssuesByPublication[$currentIssue->getPays().'/'.$currentIssue->getMagazine()][] = $currentIssue->getNumero();
+        foreach ($currentIssues as $currentIssue) {
+            $currentIssuesByPublication[$currentIssue->getPays() . '/' . $currentIssue->getMagazine()][] = $currentIssue->getNumero();
         }
 
-        return array_values(array_filter($issues, function($issue) use ($currentIssuesByPublication) {
+        return array_values(array_filter($issues, function ($issue) use ($currentIssuesByPublication) {
             return (!(isset($currentIssuesByPublication[$issue['publicationcode']]) && in_array($issue['issuenumber'], $currentIssuesByPublication[$issue['publicationcode']], true)));
         }));
     }
@@ -511,20 +554,18 @@ class CollectionController extends AbstractController implements RequiresDmVersi
         $qb = $dmEm->createQueryBuilder();
         $qb
             ->delete(Numeros::class, 'issues')
-
-            ->andWhere($qb->expr()->eq($qb->expr()->concat('issues.pays',  $qb->expr()->literal('/'), 'issues.magazine'), ':publicationCode'))
+            ->andWhere($qb->expr()->eq($qb->expr()->concat('issues.pays', $qb->expr()->literal('/'), 'issues.magazine'), ':publicationCode'))
             ->setParameter(':publicationCode', $publicationCode)
-
             ->andWhere($qb->expr()->in('issues.numero', ':issueNumbers'))
             ->setParameter(':issueNumbers', $issueNumbers)
-
             ->andWhere($qb->expr()->in('issues.idUtilisateur', ':userId'))
             ->setParameter(':userId', $this->getSessionUser()['id']);
 
         return $qb->getQuery()->getResult();
     }
 
-    private function getUserPurchase(?int $purchaseId) : ?Achats {
+    private function getUserPurchase(?int $purchaseId): ?Achats
+    {
         return is_null($purchaseId)
             ? null
             : $this->getEm('dm')->getRepository(Achats::class)->findOneBy([
