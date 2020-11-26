@@ -174,6 +174,93 @@ class CollectionController extends AbstractController implements RequiresDmVersi
     }
 
     /**
+     * @Route(methods={"POST"}, path="/collection/authors/watched")
+     */
+    public function updateWatchedAuthor(Request $request): Response
+    {
+        $personCode = $request->request->get('personCode');
+        $notation = $request->request->get('notation');
+
+        $qb = $this->getEm('dm')->createQueryBuilder();
+        $qb->update(AuteursPseudos::class, 'auteurs_pseudos')
+            ->set('auteurs_pseudos.notation', ':notation')
+            ->setParameter('notation', $notation)
+            ->andWhere($qb->expr()->eq('auteurs_pseudos.idUser', ':idUser'))
+            ->setParameter('idUser', $this->getSessionUser()['id'])
+            ->andWhere($qb->expr()->eq('auteurs_pseudos.nomauteurabrege', ':personCode'))
+            ->setParameter('personCode', $personCode);
+        $qb->getQuery()->execute();
+
+        return new Response();
+    }
+
+    /**
+     * @Route(methods={"PUT"}, path="/collection/authors/watched")
+     */
+    public function createWatchedAuthor(Request $request): Response
+    {
+        $existingWatchedAuthors = $this->getEm('dm')->getRepository(AuteursPseudos::class)->findBy([
+            'idUser' => $this->getSessionUser()['id']
+        ]);
+        if (count($existingWatchedAuthors) >= 5) {
+            return new Response('At most 5 authors can be watched per user', Response::HTTP_FORBIDDEN);
+        }
+        $personCode = $request->request->get('personCode');
+
+        $author = (new AuteursPseudos())
+            ->setIdUser($this->getSessionUser()['id'])
+            ->setNomauteurabrege($personCode)
+            ->setNotation(5);
+        self::getEm('dm')->persist($author);
+        self::getEm('dm')->flush();
+
+        return new Response();
+    }
+
+    /**
+     * @Route(methods={"DELETE"}, path="/collection/authors/watched")
+     */
+    public function deleteWatchedAuthor(Request $request): Response
+    {
+        $personCode = $request->request->get('personCode');
+
+        $qb = $this->getEm('dm')->createQueryBuilder();
+        $qb->delete(AuteursPseudos::class, 'auteurs_pseudos')
+            ->andWhere($qb->expr()->eq('auteurs_pseudos.idUser', ':idUser'))
+            ->setParameter('idUser', $this->getSessionUser()['id'])
+            ->andWhere($qb->expr()->eq('auteurs_pseudos.nomauteurabrege', ':personCode'))
+            ->setParameter('personCode', $personCode);
+
+        $qb->getQuery()->execute();
+
+        return new Response();
+    }
+
+    /**
+     * @Route(methods={"GET"}, path="/collection/authors/watched")
+     */
+    public function getWatchedAuthors(): JsonResponse
+    {
+        return new JsonResponse(
+            array_map(function (AuteursPseudos $result) {
+                return [
+                    'personCode' => $result->getNomauteurabrege(),
+                    'notation' => $result->getNotation()
+                ];
+            }, $this->getEm('dm')->getRepository(AuteursPseudos::class)->findBy([
+                'idUser' => $this->getSessionUser()['id']
+            ])));
+    }
+
+    /**
+     * @Route(methods={"GET"}, path="/collection/popular")
+     */
+    public function getPopularIssuesInCollection(BookcaseService $bookcaseService): JsonResponse
+    {
+        return new JsonResponse($bookcaseService->getCollectionPopularIssues($this->getSessionUser()['id']));
+    }
+
+    /**
      * @Route(methods={"POST"}, path="/collection/issues")
      * @return JsonResponse
      * @throws Exception
@@ -250,38 +337,6 @@ class CollectionController extends AbstractController implements RequiresDmVersi
         $dmEm->flush();
 
         return new Response();
-    }
-
-    /**
-     * @Route(methods={"POST"}, path="/collection/bookcase/sort")
-     * @throws ORMException
-     * @throws OptimisticLockException
-     */
-    public function setBookcaseSorting(Request $request): Response
-    {
-        $sorts = $request->request->get('sorts');
-
-        if (is_array($sorts)) {
-            $dmEm = $this->getEm('dm');
-            $qbMissingSorts = $dmEm->createQueryBuilder();
-            $qbMissingSorts
-                ->delete(BibliothequeOrdreMagazines::class, 'sorts')
-                ->where('sorts.idUtilisateur = :userId')
-                ->setParameter(':userId', $this->getSessionUser()['id']);
-            $qbMissingSorts->getQuery()->execute();
-
-            $maxSort = -1;
-            foreach($sorts as $publicationCode) {
-                $sort = new BibliothequeOrdreMagazines();
-                $sort->setPublicationcode($publicationCode);
-                $sort->setOrdre(++$maxSort);
-                $sort->setIdUtilisateur($this->getSessionUser()['id']);
-                $dmEm->persist($sort);
-            }
-            $dmEm->flush();
-            return new JsonResponse(['max' => $maxSort]);
-        }
-        return new Response('Invalid sorts parameter',Response::HTTP_BAD_REQUEST);
     }
 
     /**
@@ -405,18 +460,8 @@ class CollectionController extends AbstractController implements RequiresDmVersi
     /**
      * @Route(methods={"PUT"}, path="/collection/subscriptions")
      */
-    public function createUserSubscription(Request $request, ValidatorInterface $validator, LoggerInterface $logger): Response
+    public function createUserSubscription(Request $request): Response
     {
-        $validationResult = $validator->validate($request->request->all(), new Collection(array(
-            'publicationCode' => new Regex(['pattern' => '#^(?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+)$#']),
-            'startDate'  => new Date(),
-            'endDate'  => new Date(),
-        )));
-
-        if ($validationResult->count() > 0) {
-            return new JsonResponse($validationResult, Response::HTTP_BAD_REQUEST);
-        }
-
         [$country, $magazine] = explode('/', $request->request->get('publicationCode'));
         $subscription = (new Abonnements())
             ->setIdUtilisateur($this->getEm('dm')->getRepository(Users::class)->find($this->getSessionUser()['id']))
