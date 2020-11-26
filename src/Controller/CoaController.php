@@ -201,6 +201,16 @@ class CoaController extends AbstractController
     }
 
     /**
+     * @Route(methods={"GET"}, path="/coa/authorsfullnames/search/{partialAuthorName}")
+     */
+    public function listAuthorsFromPartialName(string $partialAuthorName, CoaService $coaService): JsonResponse
+    {
+        return new JsonResponse(
+            $coaService->getAuthorNamesFromPartialName($partialAuthorName)
+        );
+    }
+
+    /**
      * @Route(
      *     methods={"GET"},
      *     path="/coa/storydetails/{storyCodes}",
