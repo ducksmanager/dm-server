@@ -30,7 +30,7 @@ class CollectionUpdateService {
      */
     public function addOrChangeIssues(int $userId, string $publicationCode, array $issueNumbers, ?string $condition, ?bool $istosell, ?int $purchaseId): array
     {
-        $conditionNewIssues = is_null($condition) ? 'possede' : $condition;
+        $conditionNewIssues = is_null($condition) ? 'indefini' : $condition;
         $istosellNewIssues = is_null($istosell) ? false : $istosell;
         $purchaseIdNewIssues = is_null($purchaseId) ? -2 : $purchaseId; // TODO allow NULL
 
