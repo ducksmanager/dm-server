@@ -506,8 +506,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
             ->select('edges')
             ->from(TranchesPretes::class, 'edges')
             ->innerJoin(Numeros::class, 'issues', Join::WITH, $qb->expr()->eq(
-                $qb->expr()->concat('edges.publicationcode', $qb->expr()->literal('/'), 'edges.issuenumber'),
-                $qb->expr()->concat('issues.pays', $qb->expr()->literal('/'), 'issues.magazine', $qb->expr()->literal('/'), 'issues.numero')
+                'edges.issuecode','issues.issuecode'
             ))
             ->andWhere('issues.idUtilisateur = :userId')
             ->setParameter('userId', $this->getSessionUser()['id'])

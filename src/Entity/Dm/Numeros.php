@@ -34,11 +34,18 @@ class Numeros
     private $numero;
 
     /**
-     * @var string|null
+     * @var string
      *
-     * @ORM\Column(name="Numero_nospace", type="string", length=8, nullable=true)
+     * @ORM\Column(name="Numero_nospace", type="string", length=8, nullable=false)
      */
     private $numeroNospace;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="issuecode", type="string", length=8, nullable=true)
+     */
+    private $issuecode;
 
     /**
      * @var string
@@ -120,16 +127,14 @@ class Numeros
         return $this;
     }
 
-    public function getNumeroNospace(): ?string
+    public function getNumeroNospace(): string
     {
         return $this->numeroNospace;
     }
 
-    public function setNumeroNospace(?string $numeroNospace): self
+    public function getIssuecode(): string
     {
-        $this->numeroNospace = $numeroNospace;
-
-        return $this;
+        return $this->issuecode;
     }
 
     public function getEtat(): ?string

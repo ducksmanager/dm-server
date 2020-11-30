@@ -36,6 +36,13 @@ class TranchesPretes
     private $issuenumber = '';
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="issuecode", type="string", length=8, nullable=true)
+     */
+    private $issuecode;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="dateajout", type="datetime", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
@@ -83,6 +90,11 @@ class TranchesPretes
         $this->issuenumber = $issuenumber;
 
         return $this;
+    }
+
+    public function getIssuecode(): ?string
+    {
+        return $this->issuecode;
     }
 
     public function getDateajout(): ?\DateTimeInterface
