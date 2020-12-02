@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 
-interface RequiresDmUserController
+interface InjectsDmUserController
 {
 
 }

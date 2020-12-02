@@ -12,7 +12,7 @@ use App\Service\SuggestionService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
-class StatsController extends AbstractController implements RequiresDmVersionController, RequiresDmUserController
+class StatsController extends AbstractController implements RequiresDmVersionController, InjectsDmUserController
 {
     /**
      * @Route(methods={"GET"}, path="/collection/stats/watchedauthorsstorycount")

@@ -20,13 +20,13 @@ use App\Service\ContributionService;
 use DateTime;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
-use Doctrine\Persistence\Mapping\MappingException;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Doctrine\Persistence\Mapping\MappingException;
 use Exception;
 use InvalidArgumentException;
 use RuntimeException;
@@ -37,7 +37,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class EdgecreatorController extends AbstractController implements RequiresDmVersionController, RequiresDmUserController
+class EdgecreatorController extends AbstractController implements RequiresDmVersionController, InjectsDmUserController
 {
 
     /**

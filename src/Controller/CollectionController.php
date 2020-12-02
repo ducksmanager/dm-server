@@ -32,7 +32,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class CollectionController extends AbstractController implements RequiresDmVersionController, RequiresDmUserController
+class CollectionController extends AbstractController implements RequiresDmVersionController, InjectsDmUserController
 {
     /**
      * @Route(methods={"GET"}, path="collection/notification_token")

@@ -1,0 +1,4 @@
+{{ 'EMAIL_HELLO' | trans({'%userName%': user.username}) }}<br />
+{{ 'EMAIL_SUBSCRIPTION_ISSUE_ADDED_DESCRIPTION' | trans({'%publicationName%': publicationName, '%issueNumber%': issueNumber}) }}<br />
+
+{{ include('emails/footer.html.twig') }}

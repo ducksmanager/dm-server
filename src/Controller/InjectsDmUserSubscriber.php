@@ -12,7 +12,7 @@ use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
-class RequiresDmUserSubscriber implements EventSubscriberInterface
+class InjectsDmUserSubscriber implements EventSubscriberInterface
 {
     /**
      * @var EntityManagerInterface $dmEm
@@ -78,8 +78,8 @@ class RequiresDmUserSubscriber implements EventSubscriberInterface
 
     private static function isUserRequired(callable $controller): bool {
         return is_array($controller) && (
-                $controller[0] instanceof RequiresDmUserController
-                || $controller[0] instanceof RequiresAdminEdgeCreatorController);
+                $controller[0] instanceof InjectsDmUserController
+             || $controller[0] instanceof RequiresAdminEdgeCreatorController);
     }
 
     private static function isAdminUserRequired(callable $controller): bool
