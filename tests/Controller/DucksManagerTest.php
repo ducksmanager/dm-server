@@ -415,7 +415,7 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
         /** @var Users $user */
         $user = $this->getEm('dm')->getRepository(Users::class)->findOneBy(['username' => self::$defaultTestDmUserName]);
 
-        $getResponse = $this->buildAuthenticatedServiceWithTestUser("/ducksmanager/bookcase/{$user->getUsername()}/sort", self::$dmUser)->call();
+        $getResponse = $this->buildAuthenticatedServiceWithTestUser("/bookcase/{$user->getUsername()}/sort", self::$dmUser)->call();
         $objectResponse = json_decode($getResponse->getContent());
 
         $this->assertEquals(['fr/DDD', 'fr/JM', 'fr/MP'], $objectResponse);
