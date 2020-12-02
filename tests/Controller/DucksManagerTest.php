@@ -9,6 +9,7 @@ use App\Entity\Dm\Numeros;
 use App\Entity\Dm\Users;
 use App\Entity\Dm\UsersContributions;
 use App\Entity\Dm\UsersPasswordTokens;
+use App\Tests\Fixtures\CoaFixture;
 use App\Tests\TestCommon;
 use Countable;
 use DateInterval;
@@ -420,15 +421,43 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
         $this->assertEquals(['fr/DDD', 'fr/JM', 'fr/MP'], $objectResponse);
     }
 
-    private static function getEmailSignature() : string {
-        return <<<SIGNATURE
+    public function testSendSubscriptionIssueAdded() : void
+    {
+        $this->createUserCollection(self::$defaultTestDmUserName);
+        $this->loadFixtures([ CoaFixture::class ], false, 'coa');
+        $dmEm = $this->getEm('dm');
 
+        /** @var Users $user */
+        $user = $dmEm->getRepository(Users::class)->findOneBy(['username'=>self::$defaultTestDmUserName]);
 
-A bientôt sur le site !
-L'équipe DucksManager
-<a href="https://ducksmanager.net"><img width="400" src="http://localhost:8000/logo_petit.png" /></a>
-Retrouvez-nous sur les réseaux sociaux :
-<a href="https://www.facebook.com/DucksManager"><img src="http://localhost:8000/images/icones/facebook.png" /></a>&nbsp;<a href="https://www.instagram.com/ducksmanager"><img src="http://localhost:8000/images/icones/instagram.png" /></a>&nbsp;<a href="https://discord.gg/aAqKyH"><img src="http://localhost:8000/images/icones/discord.png" /></a>&nbsp;<a href="https://www.youtube.com/user/ducksmanager"><img src="http://localhost:8000/images/icones/youtube.png" /></a>
-SIGNATURE;
+        $dmEm->persist((new Numeros())
+            ->setPays('fr')
+            ->setMagazine('MP')
+            ->setNumero('400')
+            ->setDateajout(new DateTime())
+            ->setIdUtilisateur($user->getId())
+            ->setAbonnement(true)
+        );
+        $dmEm->flush();
+
+        self::$client->enableProfiler();
+        $response = $this->buildAuthenticatedServiceWithTestUser('/ducksmanager/emails/subscription/release', self::$dmUser, 'POST')->call();
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+
+        /** @var MessageDataCollector $mailCollector */
+        $mailCollector = self::$client->getProfile()->getCollector('swiftmailer');
+        /** @var Swift_Message[]|Countable $messages */
+        $messages = $mailCollector->getMessages();
+        $this->assertCount(2, $messages);
+        [$email,] = $messages;
+
+        $emailSignature = self::getEmailSignature();
+        $expectedMessageBody = <<<MESSAGE
+            Bonjour dm_test_user,
+            Un magazine faisant partie de vos abonnements DucksManager est récemment sorti et a donc été ajouté automatiquement à votre collection : Parade 400.
+            $emailSignature
+            MESSAGE;
+        $this->assertEmailEquals($expectedMessageBody, $email->getBody());
     }
+
 }

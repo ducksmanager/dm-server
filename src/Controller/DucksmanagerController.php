@@ -1,6 +1,7 @@
 <?php
 namespace App\Controller;
 
+use App\Entity\Coa\InducksPublication;
 use App\Entity\Dm\Achats;
 use App\Entity\Dm\AuteursPseudos;
 use App\Entity\Dm\BibliothequeOrdreMagazines;
@@ -16,6 +17,7 @@ use App\Helper\Email\BookstoreApprovedEmail;
 use App\Helper\Email\BookstoreSuggestedEmail;
 use App\Helper\Email\EdgesPublishedEmail;
 use App\Helper\Email\ResetPasswordEmail;
+use App\Helper\Email\SubscriptionIssueAdded;
 use App\Helper\JsonResponseFromObject;
 use App\Service\CollectionUpdateService;
 use App\Service\ContributionService;
@@ -26,6 +28,7 @@ use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\Query\QueryException;
 use Doctrine\ORM\QueryBuilder;
 use Exception;
 use Psr\Log\LoggerInterface;
@@ -232,6 +235,56 @@ class DucksmanagerController extends AbstractController
         finally {
             return new JsonResponse(['max' => (int) $maxSort], is_null($maxSort) ? Response::HTTP_NO_CONTENT : Response::HTTP_OK);
         }
+    }
+
+    /**
+     * @Route(methods={"POST"}, path="/ducksmanager/emails/subscription/release")
+     * @return Response
+     * @throws QueryException
+     */
+    public function sendSubscriptionEmail(EmailService $emailService, TranslatorInterface $translator, LoggerInterface $logger): Response
+    {
+        $dmEm = $this->getEm('dm');
+        $qbIssuesReleasedThroughSubscriptionsToday = ($dmEm->createQueryBuilder())
+            ->select('CONCAT(issues.pays, \'/\', issues.magazine) AS publicationCode, issues.numero AS issueNumber, issues.idUtilisateur AS userId')
+            ->from(Numeros::class, 'issues')
+            ->andWhere('issues.dateajout LIKE :today')
+            ->setParameter('today', (new DateTime())->format('%Y-%m-%d').'%')
+            ->andWhere('issues.abonnement = 1');
+
+        $issuesReleasedThroughSubscriptionsToday = $qbIssuesReleasedThroughSubscriptionsToday->getQuery()->getArrayResult();
+
+        $userIdsList = implode(',', array_map(function($issue) {
+            return $issue['userId'];
+        }, $issuesReleasedThroughSubscriptionsToday));
+        $users = ($dmEm->createQueryBuilder())
+            ->select('users')
+            ->from(Users::class, 'users')
+            ->where("users.id IN ($userIdsList)")
+            ->indexBy('users', 'users.id')
+            ->getQuery()->getResult();
+
+        $publicationCodesList = implode(',', array_map(function($issue) {
+            return "'{$issue['publicationCode']}'";
+        }, $issuesReleasedThroughSubscriptionsToday));
+        $publicationNames = ($this->getEm('coa')->createQueryBuilder())
+            ->select('publications.publicationcode, publications.title')
+            ->from(InducksPublication::class, 'publications')
+            ->where("publications.publicationcode IN ($publicationCodesList)")
+            ->indexBy('publications', 'publications.publicationcode')
+            ->getQuery()->getArrayResult();
+
+        $logger->info(print_r($publicationNames, true));
+
+        foreach($issuesReleasedThroughSubscriptionsToday as $issue) {
+            ['userId' => $userId, 'publicationCode' => $publicationCode, 'issueNumber' => $issueNumber] = $issue;
+            [$issue['publicationCode'] => $publicationName] = $publicationNames;
+            $user = $users[$userId];
+            $logger->info("Sending email to user $userId as issue $publicationCode $issueNumber has been released");
+            $emailService->send(new SubscriptionIssueAdded($translator, $user, $publicationName['title'], $issueNumber));
+        }
+
+        return new Response('OK');
     }
 
     /**

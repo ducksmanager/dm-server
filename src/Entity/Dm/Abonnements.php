@@ -50,14 +50,14 @@ class Abonnements
     private $dateFin;
 
     /**
-     * @var \Users
+     * @var Users
      *
      * @ORM\ManyToOne(targetEntity="Users")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="ID_Utilisateur", referencedColumnName="ID")
      * })
      */
-    private $idUtilisateur;
+    private $user;
 
     public function getId(): ?int
     {
@@ -112,14 +112,14 @@ class Abonnements
         return $this;
     }
 
-    public function getIdUtilisateur(): ?Users
+    public function getUser(): Users
     {
-        return $this->idUtilisateur;
+        return $this->user;
     }
 
-    public function setIdUtilisateur(?Users $idUtilisateur): self
+    public function setUser(Users $user): self
     {
-        $this->idUtilisateur = $idUtilisateur;
+        $this->user = $user;
 
         return $this;
     }

@@ -1,3 +1,5 @@
+EMAIL_SUBSCRIPTION_ISSUE_ADDED: '%publicationName% %issueNumber% has been added to your collection!'
+EMAIL_SUBSCRIPTION_ISSUE_ADDED_DESCRIPTION: 'A publication that you are subscribed to has recently released an issue which has been automatically added to your DucksManager collection : %publicationName% %issueNumber%.'
 NOTIFICATION_TITLE: >-
   %flag% %issueTitle% is out!
 NOTIFICATION_BODY_ONE_STORY: • 1 new story from %author%

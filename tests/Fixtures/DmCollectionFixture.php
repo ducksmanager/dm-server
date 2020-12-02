@@ -2,6 +2,7 @@
 
 namespace App\Tests\Fixtures;
 
+use App\Entity\Dm\Abonnements;
 use App\Entity\Dm\Achats;
 use App\Entity\Dm\BibliothequeOrdreMagazines;
 use App\Entity\Dm\Numeros;
@@ -128,6 +129,15 @@ class DmCollectionFixture implements FixtureInterface
                 ->setUser($user)
                 ->setOptionNom('suggestion_notification_country')
                 ->setOptionValeur('fr')
+        );
+
+        $dmEm->persist(
+            (new Abonnements())
+                ->setUser($user)
+                ->setPays('fr')
+                ->setMagazine('MP')
+                ->setDateDebut((new DateTime())->sub(new \DateInterval('P3M')))
+                ->setDateFin((new DateTime())->add(new \DateInterval('P3M')))
         );
 
         if (self::$withPublicationSorts) {

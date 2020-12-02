@@ -36,7 +36,7 @@ class Numeros
     /**
      * @var string
      *
-     * @ORM\Column(name="Numero_nospace", type="string", length=8, nullable=false)
+     * @ORM\Column(name="Numero_nospace", type="string", length=8, nullable=true)
      */
     private $numeroNospace;
 
@@ -64,9 +64,16 @@ class Numeros
     /**
      * @var bool
      *
-     * @ORM\Column(name="AV", type="boolean", nullable=false)
+     * @ORM\Column(name="AV", type="boolean", nullable=false, options={"default"="false"})
      */
-    private $av;
+    private $av = false;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="abonnement", type="boolean", nullable=false, options={"default"="false"})
+     */
+    private $abonnement = false;
 
     /**
      * @var int
@@ -127,7 +134,7 @@ class Numeros
         return $this;
     }
 
-    public function getNumeroNospace(): string
+    public function getNumeroNospace(): ?string
     {
         return $this->numeroNospace;
     }
@@ -169,6 +176,18 @@ class Numeros
     public function setAv(bool $av): self
     {
         $this->av = $av;
+
+        return $this;
+    }
+
+    public function getAbonnement(): ?bool
+    {
+        return $this->abonnement;
+    }
+
+    public function setAbonnement(bool $abonnement): self
+    {
+        $this->abonnement = $abonnement;
 
         return $this;
     }
