@@ -50,7 +50,7 @@ class CollectionTest extends TestCommon
                 'existingLastVisit' => new DateTime(),
                 'newPreviousVisit' => null,
                 'newLastVisit' => (new DateTime())->format('Y-m-d'),
-                'expectedStatus' => Response::HTTP_NO_CONTENT
+                'expectedStatus' => Response::HTTP_ACCEPTED
             ],
             'should update previous visit from the previous day' => [
                 'existingPreviousVisit' => new DateTime('-2 days'),

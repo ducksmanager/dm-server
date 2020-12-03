@@ -114,6 +114,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
     public function updateLastVisit(LoggerInterface $logger): Response
     {
         $dmEm = $this->getEm('dm');
+        /** @var Users $existingUser */
         $existingUser = $dmEm->getRepository(Users::class)->find($this->getSessionUser()['id']);
 
         if (is_null($existingUser->getDernieracces())) {
@@ -122,14 +123,18 @@ class CollectionController extends AbstractController implements RequiresDmVersi
             $logger->info("Updating last access for user {$existingUser->getId()}");
             $existingUser->setPrecedentacces($existingUser->getDernieracces());
         } else {
-            return new Response('OK', Response::HTTP_NO_CONTENT);
+            return new JsonResponseFromObject([
+                'previousVisit' => ($existingUser->getPrecedentacces() ?? new DateTime())->format('Y-m-d')
+            ], Response::HTTP_ACCEPTED);
         }
 
         $existingUser->setDernieracces(new DateTime());
         $dmEm->persist($existingUser);
         $dmEm->flush();
 
-        return new Response('OK', Response::HTTP_ACCEPTED);
+        return new JsonResponseFromObject([
+            'previousVisit' => ($existingUser->getPrecedentacces() ?? new DateTime())->format('Y-m-d')
+        ], Response::HTTP_ACCEPTED);
     }
 
     /**
@@ -499,7 +504,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
     /**
      * @Route(methods={"GET"}, path="/collection/edges/lastPublished")
      */
-    public function getLastPublishedEdges(LoggerInterface $logger): Response
+    public function getLastPublishedEdges(): Response
     {
         $qb = (self::getEm('dm')->createQueryBuilder());
         $qb
@@ -513,9 +518,15 @@ class CollectionController extends AbstractController implements RequiresDmVersi
             ->andWhere('edges.dateajout > :threeMonthsAgo')
             ->setParameter('threeMonthsAgo', (new DateTime())->sub(new DateInterval('P3M')))
             ->setMaxResults(5);
+        $results = $qb->getQuery()->getResult();
 
-        $logger->info($qb->getQuery()->getSQL());
-        return new JsonResponseFromObject($qb->getQuery()->getResult());
+        return new JsonResponseFromObject(array_map(function(TranchesPretes $edge) {
+            return [
+                'publicationcode' => $edge->getPublicationcode(),
+                'issuenumber' => $edge->getIssuenumber(),
+                'creationDate' => $edge->getDateajout()->format('Y-m-d'),
+            ];
+        }, $results));
     }
 
     /**
