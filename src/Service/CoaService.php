@@ -244,19 +244,21 @@ class CoaService
         ];
     }
 
-    public function listUrlsFromIssue(string $publicationCode, string $issueNumber) : array
+    public function listEntriesFromIssue(string $publicationCode, string $issueNumber) : array
     {
         $rsm = (new ResultSetMapping())
             ->addScalarResult('storycode', 'storycode')
             ->addScalarResult('kind', 'kind')
+            ->addScalarResult('entirepages', 'entirepages')
             ->addScalarResult('url', 'url')
             ->addScalarResult('position', 'position')
             ->addScalarResult('title', 'title');
 
         $query = self::$coaEm->createNativeQuery("
             SELECT
-                inducks_storyversion.storycode,
-                inducks_storyversion.kind,
+                storycode,
+                kind,
+                entirepages,
                 inducks_entry.title,
                 CONCAT(IF(sitecode = 'thumbnails', 'webusers', sitecode), '/', url) AS url,
                 position

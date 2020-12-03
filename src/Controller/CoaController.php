@@ -261,7 +261,7 @@ class CoaController extends AbstractController
     public function listUrlsFromIssue(string $publicationCode, string $issueNumber, CoaService $coaService): JsonResponse
     {
         return new JsonResponse(
-            $coaService->listUrlsFromIssue($publicationCode, $issueNumber)
+            $coaService->listEntriesFromIssue($publicationCode, $issueNumber)
         );
     }
 }
