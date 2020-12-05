@@ -111,7 +111,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
     /**
      * @Route(methods={"POST"}, path="collection/lastvisit")
      */
-    public function updateLastVisit(LoggerInterface $logger): Response
+    public function updateLastVisit(LoggerInterface $logger): JsonResponseFromObject
     {
         $dmEm = $this->getEm('dm');
         /** @var Users $existingUser */
@@ -452,7 +452,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
     public function getUserSubscriptions(): JsonResponse
     {
         $subscriptions = $this->getEm('dm')->getRepository(Abonnements::class)->findBy([
-            'idUtilisateur' => $this->getSessionUser()['id']
+            'user' => $this->getSessionUser()['id']
         ]);
 
         return new JsonResponseFromObject(array_map(function (Abonnements $subscription) {
@@ -472,7 +472,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
     {
         [$country, $magazine] = explode('/', $request->request->get('publicationCode'));
         $subscription = (new Abonnements())
-            ->setIdUtilisateur($this->getEm('dm')->getRepository(Users::class)->find($this->getSessionUser()['id']))
+            ->setUser($this->getEm('dm')->getRepository(Users::class)->find($this->getSessionUser()['id']))
             ->setDateDebut(new DateTime($request->request->get('startDate')))
             ->setDateFin(new DateTime($request->request->get('endDate')))
             ->setPays($country)
@@ -493,7 +493,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
             ->delete(Abonnements::class, 'subscriptions')
             ->andWhere('subscriptions.id = :subscriptionId')
             ->setParameter('subscriptionId', $subscriptionId)
-            ->andWhere('subscriptions.idUtilisateur = :user')
+            ->andWhere('subscriptions.user = :user')
             ->setParameter('user', $this->getEm('dm')->getRepository(Users::class)->find($this->getSessionUser()['id']));
 
         $qb->getQuery()->execute();
