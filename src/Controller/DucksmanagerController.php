@@ -254,6 +254,10 @@ class DucksmanagerController extends AbstractController
 
         $issuesReleasedThroughSubscriptionsToday = $qbIssuesReleasedThroughSubscriptionsToday->getQuery()->getArrayResult();
 
+        if (empty($issuesReleasedThroughSubscriptionsToday)) {
+            return new Response('', Response::HTTP_NO_CONTENT);
+        }
+
         $userIdsList = implode(',', array_map(function($issue) {
             return $issue['userId'];
         }, $issuesReleasedThroughSubscriptionsToday));
@@ -273,8 +277,6 @@ class DucksmanagerController extends AbstractController
             ->where("publications.publicationcode IN ($publicationCodesList)")
             ->indexBy('publications', 'publications.publicationcode')
             ->getQuery()->getArrayResult();
-
-        $logger->info(print_r($publicationNames, true));
 
         foreach($issuesReleasedThroughSubscriptionsToday as $issue) {
             ['userId' => $userId, 'publicationCode' => $publicationCode, 'issueNumber' => $issueNumber] = $issue;

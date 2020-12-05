@@ -1,12 +1,12 @@
 #!/bin/bash
 
 mysql -h ${MYSQL_DM_HOST} -uroot -p${MYSQL_PASSWORD} dm -se \
-  "select min(Date_debut), least(current_date, max(Date_fin)), group_concat(CONCAT('\'', Pays, '/', Magazine, '\'')) from abonnements" -N | \
-  grep -Po '^[^\r]+' | while read -r min_issue_date max_issue_date publication_codes; do
+  "select greatest(Date_debut, subdate(current_date, 14)), least(current_date, Date_fin), CONCAT('\'', Pays, '/', Magazine, '\'') from abonnements" -N | \
+  grep -Po '^[^\r]+' | while read -r min_issue_date max_issue_date publication_code; do
 
     mysql -h ${MYSQL_COA_HOST} -uroot -p${MYSQL_PASSWORD} coa -se \
       "SELECT regexp_substr(publicationcode, '^[^/]+'), regexp_substr(publicationcode, '(?<=/).+'), issuenumber, filledoldestdate
-       FROM inducks_issue WHERE publicationcode IN ($publication_codes) AND filledoldestdate BETWEEN '$min_issue_date' AND '$max_issue_date'" -N | \
+       FROM inducks_issue WHERE publicationcode = $publication_code AND filledoldestdate BETWEEN '$min_issue_date' AND '$max_issue_date'" -N | \
       grep -Po '^[^\r]+' | while read -r country magazine issuenumber release_date; do
         echo "Released issue : $country/$magazine $issuenumber on $release_date"
         mysql -h ${MYSQL_DM_HOST} -uroot -p${MYSQL_PASSWORD} dm -se "
