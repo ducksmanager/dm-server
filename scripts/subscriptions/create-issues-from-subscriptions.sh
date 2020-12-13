@@ -19,7 +19,7 @@ mysql -h ${MYSQL_DM_HOST} -uroot -p${MYSQL_PASSWORD} dm -se \
          SELECT a.Pays, a.Magazine, sorties.Numero, 'bon', -1, 0, 1, a.ID_Utilisateur
          FROM abonnements a
          INNER JOIN abonnements_sorties sorties on sorties.Pays = a.Pays and sorties.Magazine = a.Magazine
-         WHERE Date_sortie BETWEEN a.Date_debut AND a.Date_fin
+         WHERE greatest(a.Date_debut, subdate(current_date, 14)), least(current_date, a.Date_fin)
            AND Numeros_ajoutes = 0;
        UPDATE abonnements_sorties SET Numeros_ajoutes=1;"
   done
