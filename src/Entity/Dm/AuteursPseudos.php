@@ -24,7 +24,7 @@ class AuteursPseudos
     /**
      * @var string
      *
-     * @ORM\Column(name="NomAuteurAbrege", type="string", length=30, nullable=false)
+     * @ORM\Column(name="NomAuteurAbrege", type="string", length=79, nullable=false)
      */
     private $nomauteurabrege;
 

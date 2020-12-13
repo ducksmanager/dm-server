@@ -37,7 +37,7 @@ CREATE TABLE `achats`
 
 CREATE TABLE `auteurs_pseudos`
 (
-    `NomAuteurAbrege` varchar(30) CHARACTER SET latin1 NOT NULL,
+    `NomAuteurAbrege` varchar(79) CHARACTER SET latin1 NOT NULL,
     `ID_user`         int(11)                          NOT NULL,
     `Notation`        int(4)                           NOT NULL DEFAULT -1,
     PRIMARY KEY (`NomAuteurAbrege`, `ID_user`)
