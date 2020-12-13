@@ -249,7 +249,7 @@ class DucksmanagerController extends AbstractController
             ->select('CONCAT(issues.pays, \'/\', issues.magazine) AS publicationCode, issues.numero AS issueNumber, issues.idUtilisateur AS userId')
             ->from(Numeros::class, 'issues')
             ->andWhere('issues.dateajout LIKE :today')
-            ->setParameter('today', (new DateTime())->format('%Y-%m-%d').'%')
+            ->setParameter('today', (new DateTime())->format('Y-m-d').'%')
             ->andWhere('issues.abonnement = 1');
 
         $issuesReleasedThroughSubscriptionsToday = $qbIssuesReleasedThroughSubscriptionsToday->getQuery()->getArrayResult();
