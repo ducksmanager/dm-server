@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Entity\Dm\BibliothequeOrdreMagazines;
+use App\Entity\Dm\Users;
 use App\Service\BookcaseService;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
@@ -17,9 +18,18 @@ class BookcaseController extends AbstractController
      */
     public function getBookcase(BookcaseService $bookcaseService, string $username): Response
     {
-        $isCurrentUser = $this->getSessionUsername() === $username;
-        $data = $bookcaseService->getUserBookcase($username, $isCurrentUser);
-        return is_null($data) ? new Response('KO', Response::HTTP_FORBIDDEN) : new JsonResponse($data);
+        /** @var Users $user */
+        $user = $this->getEm('dm')->getRepository(Users::class)->findOneBy(['username' => $username]);
+        if ($this->getSessionUsername() !== $username) {
+            if (!$user) {
+                return new Response('Not found', Response::HTTP_NOT_FOUND);
+            }
+            if (!$user->getAccepterpartage()) {
+                return new Response('Private bookcase', Response::HTTP_FORBIDDEN);
+            }
+        }
+
+        return new JsonResponse($bookcaseService->getUserBookcase($user));
     }
 
     /**

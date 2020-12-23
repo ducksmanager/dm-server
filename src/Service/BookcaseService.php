@@ -28,29 +28,8 @@ class BookcaseService
         self::$dmEm = $doctrineManagerRegistry->getManager('dm');
     }
 
-    public function getUserBookcase(string $username, bool $isCurrentUser) : ?array
+    public function getUserBookcase(Users $user) : array
     {
-        /** @var Users $user */
-        $user = self::$dmEm->getRepository(Users::class)->findOneBy(['username' => $username]);
-        if (!$isCurrentUser && (!$user || !$user->getAccepterpartage())) {
-            return null;
-        }
-
-//        $qb = (new QueryBuilder(self::$dmEm));
-//        $qb
-//            ->addSelect('issues.pays AS countryCode, issues.magazine AS magazineCode, issues.numero AS issueNumber')
-//            ->addSelect('coalesce(references.numeroreference, issues.numeroNospace) AS issueNumberReference')
-//            ->addSelect('edges.id, edges.dateajout AS creationDate')
-//            ->addSelect('case when '.$qb->expr()->isnull('edges.id').' then '.$qb->expr()->literal('').' else group_concat(case when '.$qb->expr()->isnull('sprites.spriteName').' then '.$qb->expr()->literal('').' else json_object('.$qb->expr()->literal('name').', sprites.spriteName, '.$qb->expr()->literal('version').', sprites.version, '.$qb->expr()->literal('size').', sprites.spriteSize) end order by sprites.spriteSize) end AS sprites')
-//            ->from(Numeros::class, 'issues')
-//            ->leftJoin(TranchesDoublons::class, 'references', Join::WITH, 'issues.pays = references.pays AND issues.magazine = references.magazine AND issues.numeroNospace = references.numero')
-//            ->leftJoin(TranchesPretes::class, 'edges', Join::WITH, $qb->expr()->concat('issues.pays', $qb->expr()->literal('/'), 'issues.magazine').' = edges.publicationcode AND coalesce(references.numeroreference, issues.numeroNospace) = edges.issuenumber')
-//            ->leftJoin(TranchesPretesSprites::class, 'sprites', Join::WITH, 'sprites.idTranche = edges.id')
-//            ->innerJoin(TranchesPretesSpritesUrls::class, 'spriteUrls', Join::WITH, 'sprites.spriteName = spriteUrls.spriteName')
-//            ->where('issues.idUtilisateur = :userId')
-//            ->setParameters(['userId' => $user->getId()])
-//            ->orderBy('issues.pays, issues.magazine, issues.numero');
-
         $query = "
             SELECT numeros.Pays AS countryCode,
                    numeros.Magazine AS magazineCode,
