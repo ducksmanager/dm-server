@@ -207,7 +207,7 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
         $expectedEdgeEmailBody = <<<MESSAGE
             Bonjour demo,
             La tranche dont vous nous avez envoyé la photo est maintenant visionnable dans votre bibliothèque DucksManager ainsi que dans les bibliothèques des autres utilisateurs possédant ce magazine.
-            <p style="text-align: center"><img width="100" src="http://localhost:8000/images/medailles/Photographe_1_fr.png" />
+            <p style="text-align: center"><img width="100" src="http://localhost:8001/build/images/medals/Photographe_1_fr.png" />
             Vous avez remporté la médaille "Photographe DucksManager Débutant" grâce à vos contributions !</p>
             <b>Votre contribution vous a rapporté 50 points "Photographe"</b>, bravo à vous et merci pour votre contribution : nous sommes heureux de vous compter parmi la communauté active de DucksManager !$emailSignature
             MESSAGE;
@@ -218,7 +218,7 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
         $expectedBookstoreEmailBody = <<<MESSAGE
             Bonjour demo,
             La bouquinerie que vous avez proposée est maintenant visible par tous les utilisateurs DucksManager.
-            <p style="text-align: center"><img width="100" src="http://localhost:8000/images/medailles/Duckhunter_1_fr.png" />
+            <p style="text-align: center"><img width="100" src="http://localhost:8001/build/images/medals/Duckhunter_1_fr.png" />
             Vous avez remporté la médaille "Duckhunter Débutant" grâce à vos contributions !</p>
             Bravo à vous et merci pour votre contribution : nous sommes heureux de vous accueillir parmi la communauté active de DucksManager !
             $emailSignature
@@ -317,7 +317,7 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
             Bonjour dm_test_user,
             Un visiteur a indiqué avoir oublié le mot de passe associé à l'adresse e-mail test@ducksmanager.net.
             Si c'est vous qui en êtes à l'origine, cliquez sur le lien suivant pour indiquer un nouveau mot de passe pour votre compte DucksManager :
-            <a href="http://localhost:8000/?action=reset_password&token={$generatedToken->getToken()}">Mettre à jour mon mot de passe</a>$emailSignature
+            <a href="http://localhost:8001/forgot/{$generatedToken->getToken()}">Mettre à jour mon mot de passe</a>$emailSignature
             MESSAGE;
         $this->assertEmailEquals($expectedMessageBody, $email->getBody());
     }
