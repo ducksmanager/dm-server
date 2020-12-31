@@ -695,12 +695,12 @@ CONCAT;
         $photographers = $request->request->get('photographers');
 
         $modelContributors = array_merge(
-            array_map(function($userId) {
+            array_values(array_map(function($userId) {
                 return ['userId' => $userId, 'contribution' => 'createur'];
-            }, $this->getUserIdsByUsername($designers)),
-            array_map(function($userId) {
+            }, $this->getUserIdsByUsername($designers))),
+            array_values(array_map(function($userId) {
                 return ['userId' => $userId, 'contribution' => 'photographe'];
-            }, $this->getUserIdsByUsername($photographers))
+            }, $this->getUserIdsByUsername($photographers)))
         );
 
         ['edgeId' => $edgeId, 'contributors' => $contributors] =
