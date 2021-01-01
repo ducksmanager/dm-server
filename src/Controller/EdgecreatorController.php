@@ -149,7 +149,8 @@ CONCAT;
     {
         return new JsonResponseFromObject(
             $this->getEm('edgecreator')->getRepository(TranchesEnCoursModeles::class)->findBy([
-                'username' => null
+                'username' => null,
+                'active' => false
             ]
         ));
     }
