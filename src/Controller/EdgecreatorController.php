@@ -707,6 +707,15 @@ CONCAT;
             $this->publishEdgeOnDm($contributionService, $modelContributors, $publicationCode, $issueNumber);
 
         [$countryCode, $shortPublicationCode] = explode('/', $publicationCode);
+        $model = $this->getEm('edgecreator')->getRepository(TranchesEnCoursModeles::class)->findOneBy([
+            'pays' => $countryCode,
+            'magazine' => $shortPublicationCode,
+            'numero' => $issueNumber
+        ]);
+        if (!is_null($model)) {
+            $this->deactivateModel($model->getId());
+        }
+
         return new JsonResponse([
             'publicationCode' => $publicationCode,
             'issueNumber' => $issueNumber,
