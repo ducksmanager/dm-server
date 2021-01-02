@@ -140,12 +140,12 @@ class CoaListsTest extends TestCommon
 
     public function testGetIssueListWithTitles(): void
     {
-        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issues/withTitle/fr/DDD', self::$dmUser)->call();
+        $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/issues/withTitle/asArray/fr/DDD', self::$dmUser)->call();
 
         $this->assertJsonStringEqualsJsonString(json_encode([
-            '0' => 'Volume 0',
-            '1' => 'Volume 1',
-            '2' => null
+            ['issueNumber' => '0', 'title' => 'Volume 0'],
+            ['issueNumber' => '1', 'title' => 'Volume 1'],
+            ['issueNumber' => '2', 'title' => null],
         ]), $this->getResponseContent($response));
     }
 

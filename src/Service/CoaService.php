@@ -163,22 +163,37 @@ class CoaService
     public function getIssueNumbersFromPublicationCode(string $publicationCode) : stdClass
     {
         $qb = (self::$coaEm->createQueryBuilder())
-            ->select('inducks_issue.publicationcode, inducks_issue.issuenumber, inducks_issue.title')
+            ->select('inducks_issue.issuenumber, inducks_issue.title')
             ->from(InducksIssue::class, 'inducks_issue');
 
         if (!is_null($publicationCode)) {
-            $qb->where($qb->expr()->eq('inducks_issue.publicationcode', "'" . $publicationCode . "'"));
+            $qb->where($qb->expr()->eq('inducks_issue.publicationcode', $qb->expr()->literal($publicationCode)));
         }
 
         $results = $qb->getQuery()->getResult();
         $issueNumbers = new stdClass();
         foreach($results as $result) {
             $issueNumber = preg_replace('#[ ]+#', ' ', $result['issuenumber']);
-            if (!isset($issueNumbers->{$result['publicationcode']})) {
-                $issueNumbers->{$result['publicationcode']} = new stdClass();
-            }
-            $issueNumbers->{$result['publicationcode']}->$issueNumber = $result['title'];
+            $issueNumbers->$issueNumber = $result['title'];
         }
+        return $issueNumbers;
+    }
+
+    public function getIssueNumbersFromPublicationCodeAsArray(string $publicationCode) : array
+    {
+        $qb = (self::$coaEm->createQueryBuilder())
+            ->select('inducks_issue.issuenumber, inducks_issue.title')
+            ->from(InducksIssue::class, 'inducks_issue');
+
+        if (!is_null($publicationCode)) {
+            $qb->where($qb->expr()->eq('inducks_issue.publicationcode', $qb->expr()->literal($publicationCode)));
+        }
+
+        $results = $qb->getQuery()->getResult();
+        $issueNumbers = array_map(function(array $result) {
+            $issueNumber = preg_replace('#[ ]+#', ' ', $result['issuenumber']);
+            return ['issueNumber' => $issueNumber, 'title' => $result['title']];
+        }, $results);
         return $issueNumbers;
     }
 
