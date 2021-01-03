@@ -6,6 +6,7 @@ use App\Entity\Coa\InducksIssue;
 use App\Entity\Coa\InducksPerson;
 use App\Entity\Coa\InducksPublication;
 use App\Entity\Coa\InducksStory;
+use App\Entity\Coa\InducksStoryversion;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query\Expr\Join;
@@ -69,27 +70,39 @@ class CoaService
 
     /**
      * @param string[] $storyCodes
+     * @param string[] $associatedPublicationCodes
+     * @param string[] $associatedIssueNumbers
      * @return array[]
      * @throws QueryException
      */
-    public function getStoryDetails(array $storyCodes) : array
+    public function getStoryDetails(array $storyCodes, array $associatedPublicationCodes, array $associatedIssueNumbers) : array
     {
         if (empty($storyCodes)) {
             return [];
         }
         $qbStoryDetails = self::$coaEm->createQueryBuilder();
         $qbStoryDetails
-            ->select('story')
+            ->select('story.storycode, story.storycomment, entry.title, story.title as originaltitle')
             ->from(InducksStory::class, 'story')
-            ->where($qbStoryDetails->expr()->in('story.storycode', $storyCodes))
-            ->indexBy('story', 'story.storycode');
+            ->join(InducksStoryversion::class, 'storyversion', Join::WITH, 'story.storycode = storyversion.storycode')
+            ->join(InducksEntry::class, 'entry', Join::WITH, 'storyversion.storyversioncode = entry.storyversioncode')
+            ->join(InducksIssue::class, 'issue', Join::WITH, 'entry.issuecode = issue.issuecode');
+
+        foreach($storyCodes as $idx => $storyCode) {
+            $qbStoryDetails->orWhere("story.storycode = :storycode$idx and issue.publicationcode = :publicationcode$idx and issue.issuenumber = :issuenumber$idx")
+                ->setParameter("storycode$idx", $storyCode)
+                ->setParameter("publicationcode$idx", $associatedPublicationCodes[$idx])
+                ->setParameter("issuenumber$idx", $associatedIssueNumbers[$idx]);
+        }
+        $qbStoryDetails->orderBy('story.storycode');
+        $qbStoryDetails->indexBy('story', 'story.storycode');
 
         $storyDetailsResults = $qbStoryDetails->getQuery()->getResult();
 
-        $storyDetails = array_map(function(InducksStory $story) {
+        $storyDetails = array_map(function(array $story) {
             return [
-                'storycomment' => $story->getStorycomment(),
-                'title' => $story->getTitle()
+                'storycomment' => $story['storycomment'],
+                'title' => $story['title'] ?? $story['originaltitle']
             ];
         }, $storyDetailsResults);
 

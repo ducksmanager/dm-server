@@ -123,9 +123,11 @@ class SuggestionService
             return $story['personcode'];
         }, $referencedStories));
 
-        $storyDetails = self::$coaService->getStoryDetails(array_map(function ($story) {
-            return $story['storycode'];
-        }, $referencedStories));
+        $storyDetails = self::$coaService->getStoryDetails(
+            array_map(fn($story) => $story['storycode'], $referencedStories),
+            array_map(fn($story) => $story['publicationcode'], $referencedStories),
+            array_map(fn($story) => $story['issuenumber'], $referencedStories)
+        );
 
         // Add author to story details
         foreach ($referencedStories as $referencedStory) {
