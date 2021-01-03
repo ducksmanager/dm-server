@@ -224,20 +224,6 @@ class CoaController extends AbstractController
 
     /**
      * @Route(
-     *     methods={"GET"},
-     *     path="/coa/storydetails/{storyCodes}",
-     *     requirements={"storyCodes"="^((?P<storycode_regex>[-/A-Za-z0-9 ?&]+),){0,49}[-/A-Za-z0-9 ?&]+$"}
-     * )
-     */
-    public function listStoryDetailsFromStoryCodes(string $storyCodes, CoaService $coaService): JsonResponse
-    {
-        return new JsonResponse(
-            array_unique($coaService->getStoryDetails(explode(',', $storyCodes)))
-        );
-    }
-
-    /**
-     * @Route(
      *     methods={"POST"},
      *     path="/coa/stories/search"
      * )
