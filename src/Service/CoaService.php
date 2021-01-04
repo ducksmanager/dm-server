@@ -48,7 +48,7 @@ class CoaService
 
     /**
      * @param string $partialAuthorName
-     * @return string[]
+     * @return object
      * @throws QueryException
      */
     public function getAuthorNamesFromPartialName(string $partialAuthorName) : object {
@@ -66,6 +66,23 @@ class CoaService
         return (object) array_map(function(array $person) {
             return $person['fullname'];
         }, $fullNamesResults);
+    }
+
+    /**
+     * @param string[] $issueCodes
+     * @return array
+     * @throws QueryException
+     */
+    public function decomposeIssueCodes(array $issueCodes) : array {
+        $qbIssueCodes = self::$coaEm->createQueryBuilder();
+        $qbIssueCodes
+            ->select('issue.issuecode, issue.publicationcode, issue.issuenumber')
+            ->from(InducksIssue::class, 'issue')
+            ->andWhere($qbIssueCodes->expr()->in('issue.issuecode', ':issueCodes'))
+            ->setParameter('issueCodes', $issueCodes)
+            ->indexBy('issue', 'issue.issuecode');
+
+        return $qbIssueCodes->getQuery()->getArrayResult();
     }
 
     /**

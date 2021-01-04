@@ -238,6 +238,19 @@ class CoaController extends AbstractController
 
     /**
      * @Route(
+     *     methods={"POST"},
+     *     path="/coa/issues/decompose"
+     * )
+     */
+    public function decomposeIssueCodes(CoaService $coaService, Request $request) : JsonResponse
+    {
+        return new JsonResponse(
+            $coaService->decomposeIssueCodes(explode(',', $request->request->get('issueCodes')))
+        );
+    }
+
+    /**
+     * @Route(
      *     methods={"GET"},
      *     path="/coa/list/issues/withStoryVersionCode/{storyVersionCode}",
      *     requirements={"storyVersionCode"="^(?P<storyversioncode_regex>[-/A-Za-z0-9 ?&]+)$"}
