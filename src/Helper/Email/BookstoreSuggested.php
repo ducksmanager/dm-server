@@ -3,7 +3,7 @@ namespace App\Helper\Email;
 
 use Twig\Environment;
 
-class BookstoreSuggestedEmail extends AbstractEmail {
+class BookstoreSuggested extends AbstractEmail {
 
     public function getFrom() : string {
         return $this->user->getUsername(). '@' .$_ENV['SMTP_ORIGIN_EMAIL_DOMAIN_DUCKSMANAGER'];

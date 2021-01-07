@@ -5,7 +5,7 @@ use App\Entity\Dm\Users;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
-class BookstoreApprovedEmail extends AbstractEmail {
+class BookstoreApproved extends AbstractEmail {
 
     private string $locale;
     private ?int $newMedalLevel;

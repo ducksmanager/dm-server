@@ -5,7 +5,7 @@ use App\Entity\Dm\Users;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
-class EdgesPublishedEmail extends AbstractEmail {
+class EdgesPublished extends AbstractEmail {
 
     private int $extraEdges;
     private int $extraPhotographerPoints;

@@ -13,10 +13,10 @@ use App\Entity\Dm\UsersContributions;
 use App\Entity\Dm\UsersOptions;
 use App\Entity\Dm\UsersPasswordTokens;
 use App\Helper\Email\AbstractEmail;
-use App\Helper\Email\BookstoreApprovedEmail;
-use App\Helper\Email\BookstoreSuggestedEmail;
-use App\Helper\Email\EdgesPublishedEmail;
-use App\Helper\Email\ResetPasswordEmail;
+use App\Helper\Email\BookstoreApproved;
+use App\Helper\Email\BookstoreSuggested;
+use App\Helper\Email\EdgesPublished;
+use App\Helper\Email\ResetPassword;
 use App\Helper\Email\SubscriptionIssueAdded;
 use App\Helper\JsonResponseFromObject;
 use App\Service\CollectionUpdateService;
@@ -111,7 +111,7 @@ class DucksmanagerController extends AbstractController
         $dmEm->flush();
 
         try {
-            $emailService->send(new ResetPasswordEmail($translator, $user, $token));
+            $emailService->send(new ResetPassword($translator, $user, $token));
         }
         catch(Exception $e) {
             return new Response('KO', Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -345,12 +345,12 @@ class DucksmanagerController extends AbstractController
 
                     switch($contributionType) {
                         case 'duckhunter':
-                            $message = new BookstoreApprovedEmail(
+                            $message = new BookstoreApproved(
                                 $translator, $request->getLocale(), $user, $medalReached
                             );
                         break;
                         case 'photographe':
-                            $message = new EdgesPublishedEmail(
+                            $message = new EdgesPublished(
                                 $translator, $request->getLocale(), $user, count($pendingEmailContributionsForUser), $pointsEarned, $medalReached
                             );
                             break;
@@ -399,7 +399,7 @@ class DucksmanagerController extends AbstractController
             }
         }
 
-        $emailService->send(new BookstoreSuggestedEmail($translator, $user));
+        $emailService->send(new BookstoreSuggested($translator, $user));
 
         return new Response();
     }

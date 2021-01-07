@@ -12,7 +12,7 @@ use App\Entity\Dm\Users;
 use App\Entity\Dm\UsersOptions;
 use App\Entity\Dm\UsersPermissions;
 use App\EntityTransform\UpdateCollectionResult;
-use App\Helper\Email\FeedbackSentEmail;
+use App\Helper\Email\FeedbackSent;
 use App\Helper\JsonResponseFromObject;
 use App\Service\BookcaseService;
 use App\Service\CollectionUpdateService;
@@ -534,7 +534,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
      */
     public function sendFeedback(Request $request, EmailService $emailService, TranslatorInterface $translator): Response
     {
-        $emailService->send(new FeedbackSentEmail(
+        $emailService->send(new FeedbackSent(
             $translator,
             $this->getEm('dm')->getRepository(Users::class)->find($this->getSessionUser()['id']),
             $request->request->get('message')

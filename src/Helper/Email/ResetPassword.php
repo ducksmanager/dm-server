@@ -5,7 +5,7 @@ use App\Entity\Dm\Users;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
-class ResetPasswordEmail extends AbstractEmail {
+class ResetPassword extends AbstractEmail {
 
     private string $token;
 

@@ -15,8 +15,11 @@ use App\Entity\EdgeCreator\TranchesEnCoursContributeurs;
 use App\Entity\EdgeCreator\TranchesEnCoursModeles;
 use App\Entity\EdgeCreator\TranchesEnCoursModelesImages;
 use App\Entity\EdgeCreator\TranchesEnCoursValeurs;
+use App\Helper\Email\EdgeModelReady;
+use App\Helper\Email\EdgePhotoSent;
 use App\Helper\JsonResponseFromObject;
 use App\Service\ContributionService;
+use App\Service\EmailService;
 use DateTime;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
@@ -36,6 +39,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class EdgecreatorController extends AbstractController implements RequiresDmVersionController, InjectsDmUserController
 {
@@ -624,6 +628,48 @@ CONCAT;
         }
 
         return new JsonResponse(['photo' => ['id' => $photo->getId()]]);
+    }
+
+    /**
+     * @Route(methods={"PUT"}, path="/edgecreator/multiple_edge_photo/v2")
+     */
+    public function createMultipleEdgePhotoV2(Request $request, EmailService $emailService, TranslatorInterface $translator): Response
+    {
+        $ecEm = $this->getEm('edgecreator');
+        $publicationCode = $request->request->get('publicationcode');
+        $issueNumber = $request->request->get('issuenumber');
+
+        $message = new EdgePhotoSent(
+            $translator,
+            $this->getEm('dm')->getRepository(Users::class)->find($this->getSessionUser()['id']),
+            $publicationCode,
+            $issueNumber
+        );
+        $edgeUrl = $message->getEcLink();
+        $emailService->send($message);
+
+        return new JsonResponse(['photo' => ['url' => $edgeUrl]]);
+    }
+
+    /**
+     * @Route(methods={"PUT"}, path="/edgecreator/submit")
+     */
+    public function submitEdgeModel(Request $request, EmailService $emailService, TranslatorInterface $translator): Response
+    {
+        $ecEm = $this->getEm('edgecreator');
+        $publicationCode = $request->request->get('publicationcode');
+        $issueNumber = $request->request->get('issuenumber');
+
+        $message = new EdgeModelReady(
+            $translator,
+            $this->getEm('dm')->getRepository(Users::class)->find($this->getSessionUser()['id']),
+            $publicationCode,
+            $issueNumber
+        );
+        $edgeUrl = $message->getEcLink();
+        $emailService->send($message);
+
+        return new JsonResponse(['photo' => ['url' => $edgeUrl]]);
     }
 
     /**
