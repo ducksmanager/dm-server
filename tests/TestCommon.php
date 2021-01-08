@@ -46,7 +46,7 @@ A bientôt sur le site !
 L'équipe DucksManager
 <a href="https://ducksmanager.net"><img width="400" src="http://localhost:8001/build/images/logo_small.png" /></a>
 Retrouvez-nous sur les réseaux sociaux :
-<a href="https://www.facebook.com/DucksManager"><img src="http://localhost:8001/build/images/icons/facebook.png" /></a>&nbsp;<a href="https://www.instagram.com/ducksmanager"><img src="http://localhost:8001/build/images/icons/instagram.png" /></a>&nbsp;<a href="https://discord.gg/aAqKyH"><img src="http://localhost:8001/build/images/icons/discord.png" /></a>&nbsp;<a href="https://www.youtube.com/user/ducksmanager"><img src="http://localhost:8001/build/images/icons/youtube.png" /></a>
+<a href="https://www.facebook.com/DucksManager"><img src="http://localhost:8001/build/images/icons/facebook.png" /></a>&nbsp;<a href="https://www.instagram.com/ducksmanager"><img src="http://localhost:8001/build/images/icons/instagram.png" /></a>&nbsp;<a href="https://discord.gg/z959xaejJm"><img src="http://localhost:8001/build/images/icons/discord.png" /></a>&nbsp;<a href="https://www.youtube.com/user/ducksmanager"><img src="http://localhost:8001/build/images/icons/youtube.png" /></a>
 SIGNATURE;
     }
 
