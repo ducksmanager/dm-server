@@ -320,4 +320,20 @@ class CoaService
         $query->setParameters(compact('publicationCode', 'issueNumber'));
         return $query->getArrayResult();
     }
+
+    public function getIssueReleaseDate(string $publicationCode, string $issueNumber) : ?string
+    {
+        $rsm = (new ResultSetMapping())
+            ->addScalarResult('oldestdate', 'oldestdate');
+
+        $releaseDateQuery = self::$coaEm->createNativeQuery("
+            SELECT issue.oldestdate
+            FROM inducks_issue issue
+            WHERE issue.publicationcode = :publicationcode
+              AND REPLACE(issue.issuenumber, '', '') = :issuenumber", $rsm)
+            ->setParameter('publicationcode', $publicationCode)
+            ->setParameter('issuenumber', $issueNumber);
+
+        return $releaseDateQuery->getSingleScalarResult();
+    }
 }
