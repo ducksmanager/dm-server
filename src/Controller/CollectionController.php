@@ -219,8 +219,8 @@ class CollectionController extends AbstractController implements RequiresDmVersi
             ->setIdUser($this->getSessionUser()['id'])
             ->setNomauteurabrege($personCode)
             ->setNotation(5);
-        self::getEm('dm')->persist($author);
-        self::getEm('dm')->flush();
+        $this->getEm('dm')->persist($author);
+        $this->getEm('dm')->flush();
 
         return new Response();
     }
@@ -489,7 +489,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
      */
     public function deleteUserSubscription(int $subscriptionId): Response
     {
-        $qb = (self::getEm('dm')->createQueryBuilder())
+        $qb = ($this->getEm('dm')->createQueryBuilder())
             ->delete(Abonnements::class, 'subscriptions')
             ->andWhere('subscriptions.id = :subscriptionId')
             ->setParameter('subscriptionId', $subscriptionId)
@@ -506,7 +506,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
      */
     public function getLastPublishedEdges(): Response
     {
-        $qb = (self::getEm('dm')->createQueryBuilder());
+        $qb = ($this->getEm('dm')->createQueryBuilder());
         $qb
             ->select('edges')
             ->from(TranchesPretes::class, 'edges')
