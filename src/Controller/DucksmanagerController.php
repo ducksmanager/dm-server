@@ -29,6 +29,7 @@ use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\Query\QueryException;
+use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\QueryBuilder;
 use Exception;
 use Psr\Log\LoggerInterface;
@@ -457,6 +458,43 @@ class DucksmanagerController extends AbstractController
                 ];
             }, $users)
         ]);
+    }
+
+    /**
+     * @Route(methods={"GET"}, path="/ducksmanager/users/count")
+     * @throws Exception
+     */
+    public function getUsernameCount(): Response
+    {
+        $dmEm = $this->getEm('dm');
+        return new JsonResponseFromObject([
+            'count' => $dmEm->getRepository(Users::class)->count([])
+        ]);
+    }
+
+    /**
+     * @Route(methods={"GET"}, path="/ducksmanager/users/collection/rarity")
+     */
+    public function getCollectionRarityScores() : JsonResponse {
+        $dmEm = $this->getEm('dm');
+        $rsm = (new ResultSetMapping())
+            ->addScalarResult('userId', 'userId', 'integer')
+            ->addScalarResult('averageRarity', 'averageRarity', 'integer');
+        $scoreQuery = $dmEm->createNativeQuery('
+            SELECT ID_Utilisateur AS userId, round(sum(rarity)) AS averageRarity
+            FROM numeros
+            LEFT JOIN
+                (
+                    select issuecode, pow(:userCount / count(*), 1.5) / 10000 as rarity
+                    from numeros n1
+                    group by issuecode
+                ) AS issues_rarity ON numeros.issuecode = issues_rarity.issuecode
+            GROUP BY ID_Utilisateur
+            ORDER BY averageRarity
+        ', $rsm);
+        $userCountResponse = json_decode($this->getUsernameCount()->getContent());
+        $scoreQuery->setParameter('userCount', $userCountResponse->count);
+        return new JsonResponseFromObject($scoreQuery->getArrayResult());
     }
 
     /**
