@@ -52,6 +52,8 @@ services:
   db_coa:
     container_name: db_coa
     image: "mariadb:10.4"
+    ports:
+     - "127.0.0.1:64000:3306"
     volumes:
      - $MYSQL_INIT_SCRIPT_COA:/docker-entrypoint-initdb.d/$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
      - data_db_coa:/var/lib/mysql
@@ -86,6 +88,8 @@ services:
   db_cover_id:
     container_name: db_cover_id
     image: "mariadb:10.4"
+    ports:
+      - "127.0.0.1:64009:3306"
     volumes:
      - $MYSQL_INIT_SCRIPT_COVER_INFO:/docker-entrypoint-initdb.d/$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
      - data_db_cover_id:/var/lib/mysql
@@ -107,6 +111,8 @@ services:
   db_dm:
     container_name: db_dm
     image: "mariadb:10.4"
+    ports:
+     - "127.0.0.1:64002:3306"
     volumes:
      - $MYSQL_INIT_SCRIPT_DM:/docker-entrypoint-initdb.d/$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
      - data_db_dm:/var/lib/mysql
@@ -119,6 +125,8 @@ services:
   db_edgecreator:
     container_name: db_edgecreator
     image: "mariadb:10.4"
+    ports:
+     - "127.0.0.1:64003:3306"
     volumes:
      - $MYSQL_INIT_SCRIPT_EDGECREATOR:/docker-entrypoint-initdb.d/$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
      - data_db_edgecreator:/var/lib/mysql
@@ -167,6 +175,8 @@ services:
   db_dm_stats:
     container_name: db_dm_stats
     image: "mariadb:10.4"
+    ports:
+      - "127.0.0.1:64010:3306"
     volumes:
      - $MYSQL_INIT_SCRIPT_DM_STATS:/docker-en
     environment:
