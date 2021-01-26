@@ -78,17 +78,12 @@ class StatsController extends AbstractController implements RequiresDmVersionCon
         /** @var IssueSuggestionList $suggestions */
         $suggestionsForUser = $suggestionsPerUser[$userId] ?? new IssueSuggestionList();
 
-        $sortedSuggestions = $suggestionsForUser->getIssues();
-        usort($sortedSuggestions, function(IssueSuggestion $issueSuggestion1, IssueSuggestion $issueSuggestion2) {
-            return $issueSuggestion2->getScore() <=> $issueSuggestion1->getScore();
-        });
-
         return new JsonResponse([
             'minScore' => $suggestionsForUser->getMinScore(),
             'maxScore' => $suggestionsForUser->getMaxScore(),
             'issues' => (object) array_map(function(IssueSuggestion $issue) {
                 return $issue->toSimpleObject();
-            }, $sortedSuggestions)
+            }, $suggestionsForUser->getIssues())
         ] + compact('authors', 'storyDetails', 'publicationTitles')
         );
     }
