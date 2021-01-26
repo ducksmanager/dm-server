@@ -1,28 +1,28 @@
-create table abonnements
+CREATE TABLE `abonnements`
 (
-    ID int auto_increment
-        primary key,
-    ID_Utilisateur int not null,
-    Pays varchar(3) not null,
-    Magazine varchar(6) not null,
-    Date_debut date not null,
-    Date_fin date not null,
-    constraint abonnements_unique
-        unique (Pays, Magazine, ID_Utilisateur, Date_debut, Date_fin),
-    constraint abonnements_users_ID_fk
-        foreign key (ID_Utilisateur) references users (ID)
-            on update cascade on delete cascade
-);
+    `ID`             int(11)    NOT NULL AUTO_INCREMENT,
+    `ID_Utilisateur` int(11)    NOT NULL,
+    `Pays`           varchar(3) NOT NULL,
+    `Magazine`       varchar(6) NOT NULL,
+    `Date_debut`     date       NOT NULL,
+    `Date_fin`       date       NOT NULL,
+    PRIMARY KEY (`ID`),
+    UNIQUE KEY `abonnements_unique` (`Pays`, `Magazine`, `ID_Utilisateur`, `Date_debut`, `Date_fin`),
+    KEY `abonnements_users_ID_fk` (`ID_Utilisateur`),
+    CONSTRAINT `abonnements_users_ID_fk` FOREIGN KEY (`ID_Utilisateur`) REFERENCES `users` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB
+  DEFAULT CHARSET = latin1;
 
-create table abonnements_sorties
+CREATE TABLE `abonnements_sorties`
 (
-    Pays varchar(3) not null,
-    Magazine varchar(6) not null,
-    Numero varchar(8) not null,
-    Date_sortie date not null,
-    Numeros_ajoutes tinyint(1) default 0 not null,
-    primary key (Pays, Magazine, Numero)
-);
+    `Pays`            varchar(3) NOT NULL,
+    `Magazine`        varchar(6) NOT NULL,
+    `Numero`          varchar(8) NOT NULL,
+    `Date_sortie`     date       NOT NULL,
+    `Numeros_ajoutes` tinyint(1) NOT NULL DEFAULT 0,
+    PRIMARY KEY (`Pays`, `Magazine`, `Numero`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = latin1;
 
 CREATE TABLE `achats`
 (
@@ -37,10 +37,12 @@ CREATE TABLE `achats`
 
 CREATE TABLE `auteurs_pseudos`
 (
+    `ID`              int(11)                          NOT NULL AUTO_INCREMENT,
     `NomAuteurAbrege` varchar(79) CHARACTER SET latin1 NOT NULL,
     `ID_user`         int(11)                          NOT NULL,
     `Notation`        int(4)                           NOT NULL DEFAULT -1,
-    PRIMARY KEY (`NomAuteurAbrege`, `ID_user`)
+    PRIMARY KEY (`ID`),
+    UNIQUE KEY `auteurs_pseudos_uindex` (`ID_user`, `NomAuteurAbrege`)
 ) ENGINE = MyISAM
   DEFAULT CHARSET = utf8
   COLLATE = utf8_bin
@@ -89,8 +91,9 @@ CREATE TABLE `bouquineries`
 
 CREATE TABLE `demo`
 (
+    `ID`              int(11)  NOT NULL DEFAULT 1,
     `DateDernierInit` datetime NOT NULL,
-    PRIMARY KEY (`DateDernierInit`)
+    PRIMARY KEY (`ID`)
 ) ENGINE = MyISAM
   DEFAULT CHARSET = latin1
   COLLATE = latin1_german2_ci;
@@ -117,15 +120,17 @@ CREATE TABLE `numeros`
     `Etat`           enum ('mauvais','moyen','bon','indefini') COLLATE latin1_german2_ci NOT NULL DEFAULT 'indefini',
     `ID_Acquisition` int(11)                                                             NOT NULL DEFAULT -1,
     `AV`             tinyint(1)                                                          NOT NULL,
-    `Abonnement`     tinyint(1) DEFAULT 0                                                NOT NULL,
+    `Abonnement`     tinyint(4)                                                          NOT NULL DEFAULT 0,
     `ID_Utilisateur` int(11)                                                             NOT NULL,
     `DateAjout`      timestamp                                                           NOT NULL DEFAULT current_timestamp(),
+    `issuecode`      varchar(23) GENERATED ALWAYS AS (concat(`Pays`, '/', `Magazine`, ' ', `Numero`)) VIRTUAL,
     PRIMARY KEY (`ID`),
     UNIQUE KEY `Numero_Utilisateur` (`Pays`, `Magazine`, `Numero`, `ID_Utilisateur`),
     KEY `Utilisateur` (`ID_Utilisateur`),
     KEY `Pays_Magazine_Numero` (`Pays`, `Magazine`, `Numero`),
     KEY `Pays_Magazine_Numero_DateAjout` (`DateAjout`, `Pays`, `Magazine`, `Numero`),
-    KEY `Numero_nospace_Utilisateur` (`Pays`, `Magazine`, `Numero_nospace`, `ID_Utilisateur`)
+    KEY `Numero_nospace_Utilisateur` (`Pays`, `Magazine`, `Numero_nospace`, `ID_Utilisateur`),
+    KEY `numeros_issuecode_index` (`issuecode`)
 ) ENGINE = MyISAM
   DEFAULT CHARSET = latin1
   COLLATE = latin1_german2_ci;
@@ -166,8 +171,10 @@ CREATE TABLE `tranches_pretes`
     `points`          int(11)                                        DEFAULT NULL,
     `slug`            varchar(30) GENERATED ALWAYS AS (concat('edges-', replace(`publicationcode`, '/', '-'), '-',
                                                               `issuenumber`)) VIRTUAL,
+    `issuecode`       varchar(23) GENERATED ALWAYS AS (concat(`publicationcode`, ' ', `issuenumber`)) VIRTUAL,
     PRIMARY KEY (`ID`),
     UNIQUE KEY `tranchespretes_unique` (`publicationcode`, `issuenumber`),
+    UNIQUE KEY `tranches_pretes_issuecode_uindex` (`issuecode`),
     KEY `tranches_pretes_dateajout_index` (`dateajout`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = latin1
@@ -280,7 +287,8 @@ CREATE TABLE `users_options`
     `Option_valeur` varchar(50)                              NOT NULL,
     PRIMARY KEY (`ID`),
     UNIQUE KEY `users_options__unique` (`ID_User`, `Option_nom`, `Option_valeur`),
-    KEY `users_options__user_option` (`ID_User`, `Option_nom`)
+    KEY `users_options__user_option` (`ID_User`, `Option_nom`),
+    CONSTRAINT `users_options_users_ID_fk` FOREIGN KEY (`ID_User`) REFERENCES `users` (`ID`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = latin1;
 
@@ -328,3 +336,4 @@ CREATE TABLE `users_suggestions_notifications`
     UNIQUE KEY `users_notifications__index_user_issue` (`ID_User`, `issuecode`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = latin1;
+

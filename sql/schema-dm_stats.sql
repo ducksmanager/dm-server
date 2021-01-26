@@ -1,87 +1,93 @@
-create table auteurs_histoires
+CREATE TABLE `auteurs_histoires`
 (
-	personcode varchar(22) not null,
-	storycode varchar(19) not null,
-	primary key (personcode, storycode)
-);
+    `ID`         int(11)     NOT NULL AUTO_INCREMENT,
+    `personcode` varchar(22) NOT NULL,
+    `storycode`  varchar(19) NOT NULL,
+    PRIMARY KEY (`ID`),
+    UNIQUE KEY `unique_index` (`personcode`, `storycode`),
+    KEY `index_storycode` (`storycode`)
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 32768
+  DEFAULT CHARSET = latin1;
 
-create index index_storycode
-	on auteurs_histoires (storycode);
-
-create table auteurs_pseudos
+CREATE TABLE `auteurs_pseudos`
 (
-	ID_User int not null,
-	NomAuteurAbrege varchar(79) not null,
-	Notation tinyint null,
-	primary key (ID_User, NomAuteurAbrege)
-);
+    `ID_User`         int(11)     NOT NULL,
+    `NomAuteurAbrege` varchar(79) NOT NULL,
+    `Notation`        tinyint(4) DEFAULT NULL,
+    PRIMARY KEY (`ID_User`, `NomAuteurAbrege`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = latin1;
 
-create table histoires_publications
+CREATE TABLE `histoires_publications`
 (
-	storycode varchar(19) not null,
-	publicationcode varchar(12) not null,
-	issuenumber varchar(12) not null,
-	primary key (publicationcode, issuenumber, storycode)
-);
+    `ID`              int(11)     NOT NULL AUTO_INCREMENT,
+    `storycode`       varchar(19) NOT NULL,
+    `publicationcode` varchar(12) NOT NULL,
+    `issuenumber`     varchar(12) NOT NULL,
+    `oldestdate`      date DEFAULT NULL,
+    PRIMARY KEY (`ID`),
+    UNIQUE KEY `unique_index` (`publicationcode`, `issuenumber`, `storycode`),
+    KEY `index_issue` (`publicationcode`, `issuenumber`) USING HASH,
+    KEY `index_story` (`storycode`) USING HASH,
+    KEY `index_oldestdate` (`oldestdate`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = latin1;
 
-create index index_issue
-	on histoires_publications (publicationcode, issuenumber);
-
-create index index_story
-	on histoires_publications (storycode);
-
-create table numeros_simple
+CREATE TABLE `numeros_simple`
 (
-	ID_Utilisateur int not null,
-	Publicationcode varchar(12) not null,
-	Numero varchar(12) not null,
-	primary key (ID_Utilisateur, Publicationcode, Numero),
-	constraint numeros_simple_auteurs_pseudos_ID_User_fk
-		foreign key (ID_Utilisateur) references auteurs_pseudos (ID_User)
-);
+    `ID_Utilisateur`  int(11)     NOT NULL,
+    `Publicationcode` varchar(12) NOT NULL,
+    `Numero`          varchar(12) NOT NULL,
+    PRIMARY KEY (`ID_Utilisateur`, `Publicationcode`, `Numero`),
+    KEY `ID_Utilisateur` (`ID_Utilisateur`),
+    KEY `user_issue` (`Publicationcode`, `Numero`),
+    CONSTRAINT `numeros_simple_auteurs_pseudos_ID_User_fk` FOREIGN KEY (`ID_Utilisateur`) REFERENCES `auteurs_pseudos` (`ID_User`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = latin1;
 
-create index ID_Utilisateur
-	on numeros_simple (ID_Utilisateur);
-
-create index issue
-	on numeros_simple (Publicationcode, Numero);
-
-create table utilisateurs_histoires_manquantes
+CREATE TABLE `utilisateurs_histoires_manquantes`
 (
-	ID_User int not null,
-	personcode varchar(22) not null,
-	storycode varchar(19) not null,
-	primary key (ID_User, personcode, storycode)
-);
+    `ID`         int(11)     NOT NULL AUTO_INCREMENT,
+    `ID_User`    int(11)     NOT NULL,
+    `personcode` varchar(22) NOT NULL,
+    `storycode`  varchar(19) NOT NULL,
+    PRIMARY KEY (`ID`),
+    UNIQUE KEY `missing_issue_for_user` (`ID_User`, `personcode`, `storycode`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = latin1;
 
-create table utilisateurs_publications_manquantes
+CREATE TABLE `utilisateurs_publications_manquantes`
 (
-	ID_User int not null,
-	personcode varchar(22) not null,
-	storycode varchar(19) not null,
-	publicationcode varchar(12) not null,
-	issuenumber varchar(12) not null,
-	Notation tinyint unsigned not null,
-	primary key (ID_User, personcode, storycode, publicationcode, issuenumber)
-);
+    `ID`              int(11)             NOT NULL AUTO_INCREMENT,
+    `ID_User`         int(11)             NOT NULL,
+    `personcode`      varchar(22)         NOT NULL,
+    `storycode`       varchar(19)         NOT NULL,
+    `publicationcode` varchar(12)         NOT NULL,
+    `issuenumber`     varchar(12)         NOT NULL,
+    `oldestdate`      date DEFAULT NULL,
+    `Notation`        tinyint(3) unsigned NOT NULL,
+    PRIMARY KEY (`ID`),
+    UNIQUE KEY `unique_index` (`ID_User`, `personcode`, `storycode`, `publicationcode`, `issuenumber`),
+    KEY `missing_user_issue` (`ID_User`, `publicationcode`, `issuenumber`),
+    KEY `user_stories` (`ID_User`, `personcode`, `storycode`),
+    KEY `suggested` (`ID_User`, `publicationcode`, `issuenumber`, `oldestdate`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = latin1;
 
-create index issue
-	on utilisateurs_publications_manquantes (ID_User, publicationcode, issuenumber);
-
-create index user_stories
-	on utilisateurs_publications_manquantes (ID_User, personcode, storycode);
-
-create table utilisateurs_publications_suggerees
+CREATE TABLE `utilisateurs_publications_suggerees`
 (
-	ID_User int not null,
-	publicationcode varchar(12) not null,
-	issuenumber varchar(12) not null,
-	Score int not null,
-	primary key (ID_User, publicationcode, issuenumber),
-	constraint utilisateurs_publications_suggerees_pseudos_fk
-		foreign key (ID_User) references auteurs_pseudos (ID_User)
-);
-
-create index user
-	on utilisateurs_publications_suggerees (ID_User);
+    `ID`              int(11)     NOT NULL AUTO_INCREMENT,
+    `ID_User`         int(11)     NOT NULL,
+    `publicationcode` varchar(12) NOT NULL,
+    `issuenumber`     varchar(12) NOT NULL,
+    `oldestdate`      date DEFAULT NULL,
+    `Score`           int(11)     NOT NULL,
+    PRIMARY KEY (`ID`),
+    UNIQUE KEY `suggested_issue_for_user` (`ID_User`, `publicationcode`, `issuenumber`),
+    KEY `suggested_issue_user` (`ID_User`),
+    KEY `suggested_issue_oldestdate` (`oldestdate`),
+    CONSTRAINT `utilisateurs_publications_suggerees_pseudos_fk` FOREIGN KEY (`ID_User`) REFERENCES `auteurs_pseudos` (`ID_User`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = latin1;
 
