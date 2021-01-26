@@ -38,13 +38,17 @@ class SuggestionService
     /**
      * @param DateTime|null $since
      * @param string $countryCode
+     * @param string $sort
      * @param int|null $singleUserId
      * @param int|null $limit
      * @return UtilisateursPublicationsSuggerees[]
      * @throws Exception
      */
-    public function getSuggestions(?DateTime $since, string $countryCode, ?int $singleUserId = null, ?int $limit = null) : array
+    public function getSuggestions(?DateTime $since, string $countryCode, string $sort = 'Score', ?int $singleUserId = null, ?int $limit = null) : array
     {
+        if (!in_array($sort, ['score', 'oldestdate'])) {
+            return [[], [], [], []];
+        }
         $singleCountry = in_array($countryCode, [self::SUGGESTION_ALL_COUNTRIES, self::SUGGESTION_COUNTRIES_TO_NOTIFY], true) ? null : $countryCode;
 
         $dateFilter = isset($since) ? ' AND suggested.oldestdate > :sinceDate ' : '';
@@ -66,9 +70,9 @@ class SuggestionService
                   $dateFilter
                   $userFilter
                   $countryFilter
-            ORDER BY ID_User, Score DESC, publicationcode, issuenumber";
+            ORDER BY ID_User, $sort DESC, publicationcode, issuenumber";
 
-        $suggestions = self::$dmStatsEm->getConnection()->fetchAll($sql,
+        $suggestions = self::$dmStatsEm->getConnection()->fetchAllAssociative($sql,
            [ ':untilDate' => (new DateTime())->format('Y-m-d')] +
            (empty($dateFilter) ? [] : [ ':sinceDate' => $since->format('Y-m-d')]) +
            (empty($userFilter) ? [] : [ ':userId' => $singleUserId]) +

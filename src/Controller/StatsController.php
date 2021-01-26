@@ -43,12 +43,12 @@ class StatsController extends AbstractController implements RequiresDmVersionCon
     /**
      * @Route(
      *     methods={"GET"},
-     *     path="/collection/stats/suggestedissues/{countryCode}/{sincePreviousVisit}/{limit}",
+     *     path="/collection/stats/suggestedissues/{countryCode}/{sincePreviousVisit}/{sort}/{limit}",
      *     requirements={"countryCode"="^(?P<countrycode_regex>[a-z]+)|ALL|countries_to_notify", "sincePreviousVisit"="^since_previous_visit|_$"},
-     *     defaults={"countryCode"="ALL", "sincePreviousVisit"="_", "limit"=20}
+     *     defaults={"countryCode"="ALL", "sincePreviousVisit"="_", "sort"="score", "limit"=20}
      * )
      */
-    public function getSuggestedIssuesWithDetails(?string $countryCode, string $sincePreviousVisit, SuggestionService $suggestionService, ?int $limit) {
+    public function getSuggestedIssuesWithDetails(?string $countryCode, string $sincePreviousVisit, string $sort, SuggestionService $suggestionService, ?int $limit) {
         $userId = $this->getSessionUser()['id'];
 
         switch ($countryCode) {
@@ -71,6 +71,7 @@ class StatsController extends AbstractController implements RequiresDmVersionCon
         [$suggestionsPerUser, $authors, $storyDetails, $publicationTitles] = $suggestionService->getSuggestions(
             $since ?? null,
             $countryCode,
+            $sort,
             $userId,
             $limit
         );
