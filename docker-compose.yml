@@ -216,3 +216,4 @@ volumes:
   data_db_dm:
   data_db_edgecreator:
   data_db_dm_stats:
+  duck_estimator_cache:
