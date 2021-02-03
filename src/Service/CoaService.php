@@ -3,6 +3,7 @@ namespace App\Service;
 
 use App\Entity\Coa\InducksEntry;
 use App\Entity\Coa\InducksIssue;
+use App\Entity\Coa\InducksIssuequotation;
 use App\Entity\Coa\InducksPerson;
 use App\Entity\Coa\InducksPublication;
 use App\Entity\Coa\InducksStory;
@@ -335,5 +336,19 @@ class CoaService
             ->setParameter('issuenumber', $issueNumber);
 
         return $releaseDateQuery->getSingleScalarResult();
+    }
+
+    /**
+     * @param string[] $publicationCodes
+     * @return InducksIssuequotation[]
+     */
+    public function getQuotations(array $publicationCodes) : array
+    {
+        $qb = self::$coaEm->createQueryBuilder();
+        $qb->select('quotation')
+            ->from(InducksIssuequotation::class, 'quotation')
+            ->where($qb->expr()->in('quotation.publicationcode', $publicationCodes))
+            ->andWhere('quotation.estimationmin IS NOT NULL');
+        return $qb->getQuery()->getArrayResult();
     }
 }

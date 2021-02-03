@@ -185,6 +185,21 @@ services:
     networks:
      - db-network
 
+  duck-estimator:
+    container_name: duck-estimator
+    image: "node:10"
+    depends_on:
+     - db_coa
+    environment:
+      MYSQL_COA_HOST: db_coa
+      MYSQL_COA_DATABASE: coa
+      MYSQL_PASSWORD: $MYSQL_ROOT_PASSWORD
+    networks:
+     - db-network
+    volumes:
+     - duck_estimator_cache:/home/cache
+    command: "bash -c 'git clone --depth 1 --single-branch https://github.com/bperel/duck-estimator && cd duck-estimator && npm install && node duck-estimator.js --cache-dir=/home/cache'"
+
 networks:
   front-network:
     driver: bridge

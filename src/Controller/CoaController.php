@@ -278,4 +278,17 @@ class CoaController extends AbstractController
             ]
         );
     }
+
+    /**
+     * @Route(
+     *     methods={"GET"},
+     *     path="/coa/quotations/{publicationCodes}",
+     *     requirements={"publicationCodes"="^((?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+),){0,9}[a-z]+/[-A-Z0-9]+$"})"
+     * )
+     */
+    public function listQuotations(CoaService $coaService, string $publicationCodes): JsonResponse
+    {
+        $quotations = $coaService->getQuotations(explode(',', $publicationCodes));
+        return new JsonResponse($quotations);
+    }
 }
