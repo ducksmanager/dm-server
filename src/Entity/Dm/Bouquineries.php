@@ -96,7 +96,7 @@ class Bouquineries
      *
      * @ORM\Column(name="DateAjout", type="datetime", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
      */
-    private $dateajout = 'CURRENT_TIMESTAMP';
+    private $dateajout;
 
     /**
      * @var bool

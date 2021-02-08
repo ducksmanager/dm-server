@@ -379,25 +379,25 @@ class DucksmanagerController extends AbstractController
     public function suggestBookstore(Request $request, EmailService $emailService, TranslatorInterface $translator): Response
     {
         $dmEm = $this->getEm('dm');
-        $userId = $request->request->get('userId');
+        $userId = $this->getSessionUser()['id'];
         if (is_null($userId)) {
-            $user = new Users();
-            $user->setUsername('anonymous');
+            $user = (new Users())
+                ->setUsername('anonymous');
         }
         else {
             $user = $dmEm->getRepository(Users::class)->find($userId);
-            if ($request->request->has('name')) {
-                $bookstore = (new Bouquineries())
-                    ->setIdUtilisateur($userId)
-                    ->setNom($request->request->get('name'))
-                    ->setAdressecomplete($request->request->get('address'))
-                    ->setCommentaire($request->request->get('comment'))
-                    ->setCoordx($request->request->get('coordX'))
-                    ->setCoordy($request->request->get('coordY'))
-                    ->setActif(false);
-                $dmEm->persist($bookstore);
-                $dmEm->flush();
-            }
+        }
+        if ($request->request->has('name')) {
+            $bookstore = (new Bouquineries())
+                ->setIdUtilisateur($userId)
+                ->setNom($request->request->get('name'))
+                ->setAdressecomplete($request->request->get('address'))
+                ->setCommentaire($request->request->get('comment'))
+                ->setCoordx($request->request->get('coordX'))
+                ->setCoordy($request->request->get('coordY'))
+                ->setActif(false);
+            $dmEm->persist($bookstore);
+            $dmEm->flush();
         }
 
         $emailService->send(new BookstoreSuggested($translator, $user));
