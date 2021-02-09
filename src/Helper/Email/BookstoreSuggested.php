@@ -26,11 +26,11 @@ class BookstoreSuggested extends AbstractEmail {
     }
 
     public function getTextBody() : string {
-        return "Validation : {$_ENV['WEBSITE_ROOT']}/backend/bouquineries.php";
+         return "Validation : {$_ENV['WEBSITE_ROOT']}/admin/bookstores";
     }
 
     public function getHtmlBody(Environment $twig) : string {
-        return '<a href="'.$_ENV['WEBSITE_ROOT'].'/backend/bouquineries.php">Validation</a>';
+        return '<a href="'.$_ENV['WEBSITE_ROOT'].'/admin/bookstores">Validation</a>';
     }
 
     public function __toString() : string {
