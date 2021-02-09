@@ -414,7 +414,6 @@ class DucksmanagerController extends AbstractController
     {
         $dmEm = $this->getEm('dm');
         $bookstoreId = $request->request->get('id');
-        [$coordX, $coordY] = $request->request->get('coordinates');
         /** @var Bouquineries $bookstore */
         $bookstore = $dmEm->getRepository(Bouquineries::class)->find($bookstoreId);
 
@@ -422,8 +421,6 @@ class DucksmanagerController extends AbstractController
         $user = $dmEm->getRepository(Users::class)->find($bookstore->getIdUtilisateur());
 
         $bookstore
-            ->setCoordx($coordX)
-            ->setCoordy($coordY)
             ->setActif(true)
             ->setDateajout(new DateTime());
 
@@ -567,19 +564,32 @@ class DucksmanagerController extends AbstractController
     }
 
     /**
-     * @Route(methods={"GET"}, path="/ducksmanager/bookstore/list")
+     * @Route(
+     *     methods={"GET"},
+     *     path="/ducksmanager/bookstore/list/{filter}",
+     *     defaults={"filter"="all"}
+     * )
      * @throws Exception
      */
-    public function getActiveBookstores(): Response
+    public function getActiveBookstores(string $filter): Response
     {
         /** @var QueryBuilder */
         $qb = $this->getEm('dm')->createQueryBuilder();
-        $qb->select('bookstores.nom AS name, bookstores.adressecomplete AS address, bookstores.commentaire AS comment, bookstores.coordx AS coordX, bookstores.coordy AS coordY, bookstores.dateajout AS creationDate, users.username')
+        $qb->select('bookstores.id, bookstores.nom AS name, bookstores.adressecomplete AS address, bookstores.commentaire AS comment, bookstores.coordx AS coordX, bookstores.coordy AS coordY, bookstores.dateajout AS creationDate, bookstores.actif AS active, users.username')
             ->from(Bouquineries::class, 'bookstores')
-            ->leftJoin(Users::class, 'users', Join::WITH, 'bookstores.idUtilisateur = users.id')
-        ->where($qb->expr()->eq('bookstores.actif', $qb->expr()->literal('1')));
+            ->leftJoin(Users::class, 'users', Join::WITH, 'bookstores.idUtilisateur = users.id');
 
-        return new JsonResponseFromObject($qb->getQuery()->getArrayResult());
+        if ($filter === 'active') {
+            $qb->where($qb->expr()->eq('bookstores.actif', $qb->expr()->literal('1')));
+        }
+
+        return new JsonResponseFromObject(array_map(
+            function (array $result) {
+                $result['creationDate'] = $result['creationDate']->format('Y-m-d');
+                return $result;
+            },
+            $qb->getQuery()->getArrayResult()
+        ));
     }
 
     private function checkNewUser(TranslatorInterface $translator, ?string $username, string $password, string $password2) : ?string
