@@ -63,6 +63,18 @@ services:
      - db-network
      - cover-id-network
 
+  coa-updater:
+    container_name: coa-updater
+    build:
+      context: ../coa-updater
+    depends_on:
+      - db_coa
+    volumes:
+      - db_coa:/var/lib/mysql_live
+    environment:
+      MYSQL_DATABASE: coa
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+
   db_cover_id:
     container_name: db_cover_id
     image: "mariadb:10.4"
@@ -158,6 +170,7 @@ networks:
 
 volumes:
   db_coa:
+    driver: local
   db_cover_id:
   db_dm:
   db_edgecreator:
