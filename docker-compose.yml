@@ -43,7 +43,7 @@ services:
     depends_on:
       - db_coa
     volumes:
-      - db_coa:/var/lib/mysql_live
+      - data_db_coa:/var/lib/mysql_live
     environment:
       MYSQL_DATABASE: coa
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
