@@ -42,12 +42,13 @@ services:
     image: "bperel/coa-updater"
     depends_on:
       - db_coa
-    volumes:
-      - data_db_coa:/var/lib/mysql_live
-    command: [ 'mysqld', '--character-set-server=latin1', '--collation-server=latin1_swedish_ci' ]
     environment:
+      MYSQL_HOST: db_coa
       MYSQL_DATABASE: coa
+      MYSQL_DATABASE_NEW: coa_new
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+    networks:
+      - db-network
 
   db_coa:
     container_name: db_coa
