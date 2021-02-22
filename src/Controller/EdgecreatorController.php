@@ -600,7 +600,7 @@ CONCAT;
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    public function createMultipleEdgePhoto(Request $request, Swift_Mailer $mailer): Response
+    public function createMultipleEdgePhoto(Request $request): Response
     {
         $ecEm = $this->getEm('edgecreator');
         $hash = $request->request->get('hash');
@@ -614,18 +614,6 @@ CONCAT;
         $photo->setIdUtilisateur($user['id']);
         $ecEm->persist($photo);
         $ecEm->flush();
-
-        $message = new Swift_Message();
-        $message
-            ->setSubject('Nouvelle photo de tranche')
-            ->setFrom([$user['username']. '@' .$_ENV['SMTP_ORIGIN_EMAIL_DOMAIN_EDGECREATOR']])
-            ->setTo([$_ENV['SMTP_USERNAME']])
-            ->setBody($_ENV['IMAGE_UPLOAD_ROOT'].$fileName);
-
-        $failures = [];
-        if (!$mailer->send($message, $failures)) {
-            throw new RuntimeException("Can't send e-mail '$message': failed with ".print_r($failures, true));
-        }
 
         return new JsonResponse(['photo' => ['id' => $photo->getId()]]);
     }
@@ -703,7 +691,7 @@ CONCAT;
             Types::STRING,
             Types::STRING,
             Types::STRING,
-        ])->fetchAll();
+        ])->fetchAllAssociative();
 
         $matches = array_filter($templatedValues, function($match) use ($nameSubString) {
             $string_chunks = preg_split('/\[[^]]+]/', $match['Option_valeur']);
