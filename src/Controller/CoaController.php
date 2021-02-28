@@ -167,6 +167,7 @@ class CoaController extends AbstractController
             return $issue;
         }, $qbIssueInfo->getQuery()->getResult());
 
+        /** @var SimpleIssueWithCoverId[] $issues */
         $issues = [];
 
         array_walk(
@@ -199,13 +200,18 @@ class CoaController extends AbstractController
             }
         );
 
-        $quotations = array_map(function ($quotationData) use ($issues) {
+        $longIssueCodes = array_keys($issues);
+        $quotations = array_map(function ($quotationData) use ($longIssueCodes, $logger, $issues) {
+            $logger->info(print_r($quotationData, true));
             $issueCode = $quotationData['issuecode'];
-            if (array_key_exists($issueCode, $issues)) {
-                $issues[$issueCode]['quotation'] = [
-                    'min' => $quotationData['estimationmin'],
-                    'max' => $quotationData['estimationmax']
-                ];
+            foreach($longIssueCodes as $longIssueCode) {
+                $issueCode = preg_replace('#[ ]+#', ' ', $longIssueCode);
+                if ($issueCode === $quotationData['issuecode']) {
+                    $issues[$longIssueCode]->setQuotation([
+                        'min' => $quotationData['estimationmin'],
+                        'max' => $quotationData['estimationmax']
+                    ]);
+                }
             }
         }, $coaService->getIssueQuotations($issueCodesList));
 

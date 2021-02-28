@@ -6,14 +6,15 @@ use App\Helper\GenericReturnObjectInterface;
 
 class SimpleIssueWithCoverId implements GenericReturnObjectInterface
 {
-    private $countrycode;
-    private $publicationcode;
-    private $publicationtitle;
-    private $issuenumber;
-    private $coverid;
-    private $coverurl;
+    private string $countrycode;
+    private string $publicationcode;
+    private string $publicationtitle;
+    private string $issuenumber;
+    private int $coverid;
+    private string $coverurl;
+    private array $quotation;
 
-    public static function buildWithoutCoverId($countrycode, $publicationcode, $publicationtitle, $issuenumber)
+    public static function buildWithoutCoverId($countrycode, $publicationcode, $publicationtitle, $issuenumber): SimpleIssueWithCoverId
     {
         $o = new self();
         $o->countrycode = $countrycode;
@@ -24,116 +25,50 @@ class SimpleIssueWithCoverId implements GenericReturnObjectInterface
         return $o;
     }
 
-    /**
-     * SimpleIssue constructor.
-     */
-    public function __construct()
-    {
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCountrycode()
-    {
-        return $this->countrycode;
-    }
-
-    /**
-     * @param mixed $countrycode
-     */
-    public function setCountrycode($countrycode)
+    public function setCountrycode(string $countrycode)
     {
         $this->countrycode = $countrycode;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getPublicationcode()
-    {
-        return $this->publicationcode;
-    }
-
-    /**
-     * @param mixed $publicationcode
-     */
-    public function setPublicationcode($publicationcode)
+    public function setPublicationcode(string $publicationcode)
     {
         $this->publicationcode = $publicationcode;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getPublicationtitle()
-    {
-        return $this->publicationtitle;
-    }
-
-    /**
-     * @param mixed $publicationtitle
-     */
-    public function setPublicationtitle($publicationtitle)
+    public function setPublicationtitle(string $publicationtitle)
     {
         $this->publicationtitle = $publicationtitle;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getIssuenumber()
-    {
-        return $this->issuenumber;
-    }
-
-    /**
-     * @param mixed $issuenumber
-     */
-    public function setIssuenumber($issuenumber)
+    public function setIssuenumber(string $issuenumber)
     {
         $this->issuenumber = $issuenumber;
     }
 
-    /**
-     * @return integer
-     */
-    public function getCoverid()
-    {
-        return $this->coverid;
-    }
-
-    /**
-     * @param integer $coverid
-     */
     public function setCoverid(int $coverid)
     {
         $this->coverid = $coverid;
     }
 
-    public function getCoverurl() : string
-    {
-        return $this->coverurl;
-    }
-
-    /**
-     * @param string $coverurl
-     */
     public function setCoverurl(string $coverurl): void
     {
         $this->coverurl = $coverurl;
     }
 
-
+    public function setQuotation(array $quotation): void
+    {
+        $this->quotation = $quotation;
+    }
 
     public function toArray() {
         return [
-            'countrycode' => $this->getCountrycode(),
-            'publicationcode' => $this->getPublicationcode(),
-            'publicationtitle' => $this->getPublicationtitle(),
-            'issuenumber' => $this->getIssuenumber(),
-            'coverid' => $this->getCoverid(),
-            'coverurl' => $this->getCoverurl()
+            'countrycode' => $this->countrycode,
+            'publicationcode' => $this->publicationcode,
+            'publicationtitle' => $this->publicationtitle,
+            'issuenumber' => $this->issuenumber,
+            'coverid' => $this->coverid,
+            'coverurl' => $this->coverurl,
+            'quotation' => $this->quotation
         ];
     }
 }
