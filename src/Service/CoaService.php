@@ -351,4 +351,14 @@ class CoaService
             ->andWhere('quotation.estimationmin IS NOT NULL');
         return $qb->getQuery()->getArrayResult();
     }
+
+    public function getIssueQuotations(array $issueCodes) : array
+    {
+        $qb = self::$coaEm->createQueryBuilder();
+        $qb->select('quotation')
+            ->from(InducksIssuequotation::class, 'quotation')
+            ->where($qb->expr()->in('quotation.issuecode', $issueCodes))
+            ->andWhere('quotation.estimationmin IS NOT NULL');
+        return $qb->getQuery()->getArrayResult();
+    }
 }

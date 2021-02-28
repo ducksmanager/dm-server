@@ -291,4 +291,16 @@ class CoaController extends AbstractController
         $quotations = $coaService->getQuotations(explode(',', $publicationCodes));
         return new JsonResponse($quotations);
     }
+
+    /**
+     * @Route(
+     *     methods={"GET"},
+     *     path="/coa/quotations/{issueCodes}",
+     *     requirements={"issueCodes"="^((?P<issuecode_regex>[a-z]+/[-A-Z0-9 ]+),){0,3}[a-z]+/[-A-Z0-9 ]+$"}
+     * )
+     */
+    public function getIssueQuotation(CoaService $coaService, string $issueCodes): JsonResponse
+    {
+        return new JsonResponse($coaService->getIssueQuotations(explode(',', $issueCodes)));
+    }
 }
