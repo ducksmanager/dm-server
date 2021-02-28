@@ -149,10 +149,10 @@ class CoaController extends AbstractController
      *     requirements={"issueCodes"="^((?P<issuecode_regex>[a-z]+/[-A-Z0-9 ]+),){0,3}[a-z]+/[-A-Z0-9 ]+$"}
      * )
      */
-    public function listIssuesFromIssueCodes(string $issueCodes, LoggerInterface $logger): Response
+    public function listIssuesFromIssueCodes(string $issueCodes, LoggerInterface $logger, CoaService $coaService): Response
     {
         $coaEm = $this->getEm('coa');
-        $issuecodesList = explode(',', $issueCodes);
+        $issueCodesList = explode(',', $issueCodes);
 
         $qbIssueInfo = $coaEm->createQueryBuilder();
         $qbIssueInfo
@@ -160,7 +160,7 @@ class CoaController extends AbstractController
             ->from(InducksIssue::class, 'inducks_issue')
             ->join(InducksPublication::class, 'inducks_publication', Join::WITH, 'inducks_issue.publicationcode = inducks_publication.publicationcode');
 
-        $qbIssueInfo->where($qbIssueInfo->expr()->in('inducks_issue.issuecode', $issuecodesList));
+        $qbIssueInfo->where($qbIssueInfo->expr()->in('inducks_issue.issuecode', $issueCodesList));
 
         $resultsIssueInfo = array_map(function($issue) {
             $issue['issuenumber'] = preg_replace('#[ ]+#', ' ', $issue['issuenumber']);
@@ -182,7 +182,7 @@ class CoaController extends AbstractController
             ->select('covers.id AS coverid, covers.issuecode, '.CoveridController::getFullUrlFunc($qbCoverInfo).' as coverurl')
             ->from(Covers::class, 'covers');
 
-        $qbCoverInfo->where($qbCoverInfo->expr()->in('covers.issuecode', $issuecodesList));
+        $qbCoverInfo->where($qbCoverInfo->expr()->in('covers.issuecode', $issueCodesList));
 
         $resultsCoverInfo = $qbCoverInfo->getQuery()->getResult();
 
@@ -198,6 +198,16 @@ class CoaController extends AbstractController
                 }
             }
         );
+
+        $quotations = array_map(function ($quotationData) use ($issues) {
+            $issueCode = $quotationData['issuecode'];
+            if (array_key_exists($issueCode, $issues)) {
+                $issues[$issueCode]['quotation'] = [
+                    'min' => $quotationData['estimationmin'],
+                    'max' => $quotationData['estimationmax']
+                ];
+            }
+        }, $coaService->getIssueQuotations($issueCodesList));
 
         return new JsonResponse(self::getSimpleArray($issues));
     }
@@ -299,7 +309,7 @@ class CoaController extends AbstractController
      *     requirements={"issueCodes"="^((?P<issuecode_regex>[a-z]+/[-A-Z0-9 ]+),){0,3}[a-z]+/[-A-Z0-9 ]+$"}
      * )
      */
-    public function getIssueQuotation(CoaService $coaService, string $issueCodes): JsonResponse
+    public function getIssueQuotations(CoaService $coaService, string $issueCodes): JsonResponse
     {
         return new JsonResponse($coaService->getIssueQuotations(explode(',', $issueCodes)));
     }
