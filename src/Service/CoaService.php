@@ -354,6 +354,9 @@ class CoaService
 
     public function getIssueQuotations(array $issueCodes) : array
     {
+        $issueCodes = array_map(function(string $issuecode) {
+            return preg_replace('#[ ]+#', ' ', $issuecode);
+        }, $issueCodes);
         $qb = self::$coaEm->createQueryBuilder();
         $qb->select('quotation')
             ->from(InducksIssuequotation::class, 'quotation')
