@@ -12,7 +12,7 @@ class SimpleIssueWithCoverId implements GenericReturnObjectInterface
     private string $issuenumber;
     private int $coverid;
     private string $coverurl;
-    private array $quotation;
+    private ?array $quotation = null;
 
     public static function buildWithoutCoverId($countrycode, $publicationcode, $publicationtitle, $issuenumber): SimpleIssueWithCoverId
     {
