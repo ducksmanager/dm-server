@@ -4,8 +4,9 @@ namespace App\Controller;
 
 use App\Entity\Dm\Users;
 use App\Entity\Dm\UsersPermissions;
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
@@ -14,14 +15,7 @@ use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 class InjectsDmUserSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var EntityManagerInterface $dmEm
-     */
-    private $dmEm;
-
-    /**
-     * @var LoggerInterface
-     */
+    private ObjectManager $dmEm;
     private LoggerInterface $logger;
 
     public function __construct(ManagerRegistry $registry, LoggerInterface $logger) {

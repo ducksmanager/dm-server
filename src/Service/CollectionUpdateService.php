@@ -3,7 +3,7 @@ namespace App\Service;
 
 use App\Entity\Dm\Numeros;
 use DateTime;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ObjectManager;
 use Exception;

@@ -7,7 +7,7 @@ use App\Entity\Dm\UsersSuggestionsNotifications;
 use App\EntityTransform\IssueSuggestion;
 use App\EntityTransform\IssueSuggestionList;
 use DateTime;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Exception;
 use Psr\Log\LoggerInterface;

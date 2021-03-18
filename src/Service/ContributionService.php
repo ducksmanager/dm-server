@@ -6,7 +6,7 @@ use App\Entity\Dm\TranchesPretes;
 use App\Entity\Dm\Users;
 use App\Entity\Dm\UsersContributions;
 use DateTime;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ObjectManager;
 use Exception;

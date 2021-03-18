@@ -1,7 +1,7 @@
 <?php
 namespace App\Service;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Driver\ResultStatement;
@@ -31,7 +31,7 @@ class QueryHelperService {
         /** @var Connection $connection */
         $connection = self::$emRegistry->getManager($emName)->getConnection();
         if (stripos(trim($query), 'SELECT') === 0) {
-            $results = $connection->fetchAll($query, $parameters);
+            $results = $connection->fetchAllAssociative($query, $parameters);
         }
         else {
             $results = $connection->executeQuery($query, $parameters);

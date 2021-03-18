@@ -8,11 +8,11 @@ use App\Entity\Coa\InducksPerson;
 use App\Entity\Coa\InducksPublication;
 use App\Entity\Coa\InducksStory;
 use App\Entity\Coa\InducksStoryversion;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\Query\QueryException;
 use Doctrine\ORM\Query\ResultSetMapping;
+use Doctrine\Persistence\ManagerRegistry;
 use stdClass;
 
 class CoaService

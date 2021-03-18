@@ -4,7 +4,7 @@ namespace App\Service;
 use App\Entity\Dm\Users;
 use App\Entity\Dm\UsersOptions;
 use App\EntityTransform\UserWithOptionValue;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 
 class UsersOptionsService {

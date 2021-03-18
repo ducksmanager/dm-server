@@ -5,7 +5,7 @@ use App\Entity\Dm\BibliothequeOrdreMagazines;
 use App\Entity\Dm\Numeros;
 use App\Entity\Dm\NumerosPopularite;
 use App\Entity\Dm\Users;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr\Join;
