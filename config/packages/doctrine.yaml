@@ -22,7 +22,7 @@ doctrine:
                 driver: '%env(database_driver)%'
                 server_version: '%env(database_server_version)%'
                 charset: utf8mb4
-                schema_filter: (inducks_countryname|inducks_entry|inducks_entryurl|inducks_issue|inducks_person|inducks_publication|inducks_story|inducks_storyversion)
+                schema_filter: (inducks_countryname|inducks_entry|inducks_entryurl|inducks_issue|inducks_issuequotation|inducks_person|inducks_publication|inducks_story|inducks_storyversion)
                 mapping_types:
                     enum: string
             coverid:
