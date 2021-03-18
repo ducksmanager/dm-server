@@ -4,8 +4,10 @@ namespace App\Controller;
 
 use App\Entity\Dm\TranchesDoublons;
 use App\Entity\Dm\TranchesPretes;
+use App\Entity\EdgeCreator\TranchesEnCoursModeles;
 use App\Helper\JsonResponseFromObject;
 use Doctrine\ORM\Query;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -19,22 +21,43 @@ class EdgesController extends AbstractController implements RequiresDmVersionCon
      *     defaults={"issueNumbers"=""}
      * )
      */
-    public function getEdges(string $publicationCode, string $issueNumbers) : JsonResponse
+    public function getEdges(string $publicationCode, string $issueNumbers, LoggerInterface $logger) : JsonResponse
     {
         $qbGetEdges = $this->getEm('dm')->createQueryBuilder();
         $qbGetEdges
-            ->select('tranches_pretes')
-            ->from(TranchesPretes::class, 'tranches_pretes')
-            ->where($qbGetEdges->expr()->eq('tranches_pretes.publicationcode', ':publicationCode'))
-            ->setParameter('publicationCode', explode(',', $publicationCode));
+            ->select('published_edges')
+            ->from(TranchesPretes::class, 'published_edges')
+            ->where($qbGetEdges->expr()->eq('published_edges.publicationcode', ':publicationCode'))
+            ->setParameter('publicationCode', $publicationCode)
+            ->indexBy('published_edges', 'published_edges.issuenumber');
+
+        [$countryCode, $magazineCode] = explode('/', $publicationCode);
+        $qbGetEditableEdges = $this->getEm('edgecreator')->createQueryBuilder();
+        $qbGetEditableEdges
+            ->select('editable_edges.numero')
+            ->from(TranchesEnCoursModeles::class, 'editable_edges')
+            ->andWhere($qbGetEdges->expr()->eq('editable_edges.pays', ':countryCode'))
+            ->setParameter('countryCode', $countryCode)
+            ->andWhere($qbGetEdges->expr()->eq('editable_edges.active', $qbGetEdges->expr()->literal(false)))
+            ->andWhere($qbGetEdges->expr()->eq('editable_edges.magazine', ':magazineCode'))
+            ->setParameter('magazineCode', $magazineCode)
+            ->indexBy('editable_edges', 'editable_edges.numero');
 
         if (!empty($issueNumbers)) {
             $qbGetEdges
-                ->andWhere($qbGetEdges->expr()->in('tranches_pretes.issuenumber', ':issueNumbers'))
+                ->andWhere($qbGetEdges->expr()->in('published_edges.issuenumber', ':issueNumbers'))
+                ->setParameter('issueNumbers', explode(',', $issueNumbers));
+            $qbGetEditableEdges
+                ->andWhere($qbGetEditableEdges->expr()->in('editable_edges.numero', ':issueNumbers'))
                 ->setParameter('issueNumbers', explode(',', $issueNumbers));
         }
-        $edgeResults = $qbGetEdges->getQuery()->getResult();
-        return new JsonResponseFromObject($edgeResults);
+        $publishedEdgesResults = (array) $qbGetEdges->getQuery()->getArrayResult();
+        $editableEdgesResults = $qbGetEditableEdges->getQuery()->getResult();
+
+        foreach (array_keys($editableEdgesResults) as $editableIssueNumber) {
+            $publishedEdgesResults[$editableIssueNumber]['editable'] = true;
+        }
+        return new JsonResponseFromObject(array_values($publishedEdgesResults));
     }
 
     /**
