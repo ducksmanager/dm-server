@@ -349,6 +349,39 @@ class CollectionController extends AbstractController implements RequiresDmVersi
     }
 
     /**
+     * @Route(
+     *     methods={"DELETE"},
+     *     path="/collection/purchases/{purchaseId}"
+     * )
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function deletePurchase(TranslatorInterface $translator, ?string $purchaseId): ?Response
+    {
+        $dmEm = $this->getEm('dm');
+        $idUser = $this->getSessionUser()['id'];
+
+        $purchase = $this->getUserPurchase($purchaseId);
+        if (is_null($purchase)) {
+            return new Response($translator->trans('ERROR_PURCHASE_DELETE_NOT_ALLOWED'), Response::HTTP_UNAUTHORIZED);
+        }
+
+        $qb = $this->getEm('dm')->createQueryBuilder();
+        $qb->update(Numeros::class, 'issues')
+            ->set('issues.idAcquisition', '-1')
+            ->andWhere($qb->expr()->eq('issues.idUtilisateur', ':idUser'))
+            ->setParameter('idUser', $this->getSessionUser()['id'])
+            ->andWhere($qb->expr()->eq('issues.idAcquisition', ':purchaseId'))
+            ->setParameter('purchaseId', $purchaseId);
+        $qb->getQuery()->execute();
+
+        $dmEm->remove($purchase);
+        $dmEm->flush();
+
+        return new Response();
+    }
+
+    /**
      * @Route(methods={"POST"}, path="/collection/inducks/import/init")
      */
     public function importFromInducksInit(Request $request): Response

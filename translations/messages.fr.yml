@@ -22,6 +22,7 @@ EMAIL_SOCIAL_NETWORKS: 'Retrouvez-nous sur les réseaux sociaux :'
 EMAIL_SUBSCRIPTION_ISSUE_ADDED: '%publicationName% %issueNumber% a été ajouté à votre collection !'
 EMAIL_SUBSCRIPTION_ISSUE_ADDED_DESCRIPTION: 'Un magazine faisant partie de vos abonnements DucksManager est récemment sorti et a donc été ajouté automatiquement à votre collection : %publicationName% %issueNumber%.'
 ERROR_PURCHASE_ALREADY_EXISTS: Un achat avec cette date et cette description existe déjà !
+ERROR_PURCHASE_DELETE_NOT_ALLOWED: Vous ne pouvez pas supprimer cet achat.
 ERROR_PURCHASE_UPDATE_NOT_ALLOWED: Vous ne pouvez pas modifier cet achat.
 MEDAL_1: Débutant
 MEDAL_2: Intermédiaire
