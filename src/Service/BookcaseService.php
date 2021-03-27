@@ -17,21 +17,17 @@ class BookcaseService
 {
     /** @var EntityManager */
     private static $dmEm;
-    /**
-     * @var LoggerInterface
-     */
-    private LoggerInterface $logger;
 
-    public function __construct(ManagerRegistry $doctrineManagerRegistry, LoggerInterface $logger)
+    public function __construct(ManagerRegistry $doctrineManagerRegistry)
     {
-        $this->logger = $logger;
         self::$dmEm = $doctrineManagerRegistry->getManager('dm');
     }
 
     public function getUserBookcase(Users $user) : array
     {
         $query = "
-            SELECT numeros.Pays AS countryCode,
+            SELECT numeros.ID AS id,
+                   numeros.Pays AS countryCode,
                    numeros.Magazine AS magazineCode,
                    numeros.Numero AS issueNumber,
                    IFNULL(reference.NumeroReference, numeros.Numero_nospace) AS issueNumberReference,
@@ -57,8 +53,14 @@ class BookcaseService
                     ON sprites.Sprite_name = sprite_urls.Sprite_name
             ) AS sprites
                 ON sprites.ID_Tranche = tp.ID
-            WHERE ID_Utilisateur = ?
-            GROUP BY numeros.Pays, numeros.Magazine, numeros.Numero";
+            WHERE ID_Utilisateur = ?";
+
+        if ($user->getBibliothequeAfficherdoubles()) {
+            $query.=' GROUP BY numeros.ID';
+        }
+        else {
+            $query.=' GROUP BY numeros.Pays, numeros.Magazine, numeros.Numero';
+        }
 
         return self::$dmEm->getConnection()->fetchAllAssociative($query, [$user->getId()]);
     }

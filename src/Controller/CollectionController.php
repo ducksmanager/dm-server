@@ -575,6 +575,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
 
         return new JsonResponseFromObject(array_map(function(TranchesPretes $edge) {
             return [
+                'id' => $edge->getId(),
                 'publicationcode' => $edge->getPublicationcode(),
                 'issuenumber' => $edge->getIssuenumber(),
                 'creationDate' => $edge->getDateajout()->format('Y-m-d'),
