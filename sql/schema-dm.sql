@@ -125,7 +125,7 @@ CREATE TABLE `numeros`
     `DateAjout`      timestamp                                                           NOT NULL DEFAULT current_timestamp(),
     `issuecode`      varchar(23) GENERATED ALWAYS AS (concat(`Pays`, '/', `Magazine`, ' ', `Numero`)) VIRTUAL,
     PRIMARY KEY (`ID`),
-    UNIQUE KEY `Numero_Utilisateur` (`Pays`, `Magazine`, `Numero`, `ID_Utilisateur`),
+    KEY `Numero_Utilisateur` (`Pays`, `Magazine`, `Numero`, `ID_Utilisateur`),
     KEY `Utilisateur` (`ID_Utilisateur`),
     KEY `Pays_Magazine_Numero` (`Pays`, `Magazine`, `Numero`),
     KEY `Pays_Magazine_Numero_DateAjout` (`DateAjout`, `Pays`, `Magazine`, `Numero`),

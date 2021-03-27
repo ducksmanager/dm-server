@@ -270,17 +270,22 @@ class CollectionController extends AbstractController implements RequiresDmVersi
 
     /**
      * @Route(methods={"POST"}, path="/collection/issues")
-     * @return JsonResponse
+     * @return Response
      * @throws Exception
      */
-    public function postIssues(Request $request, LoggerInterface $logger, CollectionUpdateService $collectionUpdateService): JsonResponse
+    public function postIssues(Request $request, LoggerInterface $logger, CollectionUpdateService $collectionUpdateService): Response
     {
         $publication = $request->request->get('publicationCode');
         $issueNumbers = $request->request->get('issueNumbers');
         $condition = $request->request->get('condition');
+        $userId = $this->getSessionUser()['id'];
+
+        if (is_array($condition) && count($issueNumbers) > 1) {
+            return new Response("Can't update copies of multiple issues at once", Response::HTTP_BAD_REQUEST);
+        }
 
         if (in_array($condition, ['non_possede', 'missing'])) {
-            $nbRemoved = $this->deleteIssues($publication, $issueNumbers);
+            $nbRemoved = $this->deleteIssues($userId, $publication, $issueNumbers);
             return new JsonResponse(
                 self::getSimpleArray([new UpdateCollectionResult('DELETE', $nbRemoved)])
             );
@@ -289,19 +294,34 @@ class CollectionController extends AbstractController implements RequiresDmVersi
         $isToSell = $request->request->get('istosell');
         $purchaseId = $request->request->get('purchaseId');
 
-        if ($purchaseId === 'do_not_change') {
-            $purchaseId = -1;
-        } else if (!$this->getUserPurchase($purchaseId)) {
-            $logger->warning("User {$this->getSessionUser()['id']} tried to use purchase ID $purchaseId which is owned by another user");
-            $purchaseId = null;
+        $purchaseIds = is_array($purchaseId) ? $purchaseId : [$purchaseId];
+        $this->checkPurchaseIdsBelongToUser($logger, $purchaseIds);
+
+        if (is_array($condition)) {
+            [$nbUpdated, $nbCreated] = $collectionUpdateService->addOrChangeCopies(
+                $userId, $publication, $issueNumbers[0], $condition ?? [], $isToSell ?? [], $purchaseIds ?? []
+            );
         }
-        [$nbUpdated, $nbCreated] = $collectionUpdateService->addOrChangeIssues(
-            $this->getSessionUser()['id'], $publication, $issueNumbers, $condition, $isToSell, $purchaseId
-        );
+        else {
+            [$nbUpdated, $nbCreated] = $collectionUpdateService->addOrChangeIssues(
+                $userId, $publication, $issueNumbers, $condition, $isToSell, $purchaseIds[0]
+            );
+        }
         return new JsonResponse(self::getSimpleArray([
             new UpdateCollectionResult('UPDATE', $nbUpdated),
             new UpdateCollectionResult('CREATE', $nbCreated)
         ]));
+    }
+
+    private function checkPurchaseIdsBelongToUser(LoggerInterface $logger, &$purchaseIds) {
+        foreach($purchaseIds as &$purchaseId) {
+            if ($purchaseId === 'do_not_change') {
+                $purchaseId = -1;
+            } else if (!$this->getUserPurchase($purchaseId)) {
+                $logger->warning("User {$this->getSessionUser()['id']} tried to use purchase ID $purchaseId which is owned by another user");
+                $purchaseId = null;
+            }
+        }
     }
 
     /**
@@ -591,20 +611,10 @@ class CollectionController extends AbstractController implements RequiresDmVersi
         }));
     }
 
-    private function deleteIssues(string $publicationCode, array $issueNumbers): int
+    private function deleteIssues(CollectionUpdateService $collectionUpdateService, string $publicationCode, array $issueNumbers): Response
     {
-        $dmEm = $this->getEm('dm');
-        $qb = $dmEm->createQueryBuilder();
-        $qb
-            ->delete(Numeros::class, 'issues')
-            ->andWhere($qb->expr()->eq($qb->expr()->concat('issues.pays', $qb->expr()->literal('/'), 'issues.magazine'), ':publicationCode'))
-            ->setParameter(':publicationCode', $publicationCode)
-            ->andWhere($qb->expr()->in('issues.numero', ':issueNumbers'))
-            ->setParameter(':issueNumbers', $issueNumbers)
-            ->andWhere($qb->expr()->in('issues.idUtilisateur', ':userId'))
-            ->setParameter(':userId', $this->getSessionUser()['id']);
-
-        return $qb->getQuery()->getResult();
+        $collectionUpdateService->deleteIssues($this->getSessionUser()['id'], $publicationCode, $issueNumbers);
+        return new Response();
     }
 
     private function getUserPurchase(?int $purchaseId): ?Achats
