@@ -80,6 +80,13 @@ class Users
     private $affichervideo = '1';
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="Bibliotheque_AfficherDoubles", type="boolean", nullable=false, options={"default"="1"})
+     */
+    private $bibliothequeAfficherdoubles = '1';
+
+    /**
      * @var string
      *
      * @ORM\Column(name="Bibliotheque_Texture1", type="string", length=20, nullable=false, options={"default"="bois"})
@@ -225,6 +232,18 @@ class Users
     public function setAffichervideo(bool $affichervideo): self
     {
         $this->affichervideo = $affichervideo;
+
+        return $this;
+    }
+
+    public function getBibliothequeAfficherdoubles(): ?bool
+    {
+        return $this->bibliothequeAfficherdoubles;
+    }
+
+    public function setBibliothequeAfficherdoubles(bool $bibliothequeAfficherdoubles): self
+    {
+        $this->bibliothequeAfficherdoubles = $bibliothequeAfficherdoubles;
 
         return $this;
     }

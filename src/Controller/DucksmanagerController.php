@@ -688,6 +688,7 @@ class DucksmanagerController extends AbstractController
         $user->setBibliothequeSousTexture1('HONDURAS MAHOGANY');
         $user->setBibliothequeTexture2('bois');
         $user->setBibliothequeSousTexture2('KNOTTY PINE');
+        $user->setBibliothequeAfficherdoubles(true);
 
         $dmEm->persist($user);
         $dmEm->flush();

@@ -80,6 +80,7 @@ class BookcaseController extends AbstractController
     }
 
     /**
+     * @deprecated
      * @Route(methods={"GET"}, path="/bookcase/{username}/textures")
      */
     public function getBookcaseTextures(BookcaseService $bookcaseService, string $username): JsonResponse
@@ -88,6 +89,15 @@ class BookcaseController extends AbstractController
     }
 
     /**
+     * @Route(methods={"GET"}, path="/bookcase/{username}/options")
+     */
+    public function getBookcaseOptions(BookcaseService $bookcaseService, string $username): JsonResponse
+    {
+        return new JsonResponse($bookcaseService->getBookcaseOptions($username));
+    }
+
+    /**
+     * @deprecated
      * @Route(methods={"POST"}, path="/bookcase/textures")
      */
     public function updateBookcaseTextures(Request $request, BookcaseService $bookcaseService): Response
@@ -96,7 +106,21 @@ class BookcaseController extends AbstractController
         if (empty($sessionUsername)) {
             return new Response('KO', Response::HTTP_UNAUTHORIZED);
         }
-        $bookcaseService->updateBookcaseTextures($sessionUsername, $request->request->all());
+        $bookcaseService->updateBookcaseOptions($sessionUsername, $request->request->all());
+
+        return new Response('OK', Response::HTTP_OK);
+    }
+
+    /**
+     * @Route(methods={"POST"}, path="/bookcase/options")
+     */
+    public function updateBookcaseOptions(Request $request, BookcaseService $bookcaseService): Response
+    {
+        $sessionUsername = $this->getSessionUsername();
+        if (empty($sessionUsername)) {
+            return new Response('KO', Response::HTTP_UNAUTHORIZED);
+        }
+        $bookcaseService->updateBookcaseOptions($sessionUsername, $request->request->all());
 
         return new Response('OK', Response::HTTP_OK);
     }

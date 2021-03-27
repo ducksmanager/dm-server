@@ -120,6 +120,9 @@ class BookcaseService
         }, $sorts);
     }
 
+    /**
+     * @deprecated
+     */
     function getBookcaseTextures(string $username) : array {
         /** @var Users $user */
         $user = self::$dmEm->getRepository(Users::class)->findOneBy(['username' => $username]);
@@ -129,6 +132,21 @@ class BookcaseService
         ];
     }
 
+    function getBookcaseOptions(string $username) : array {
+        /** @var Users $user */
+        $user = self::$dmEm->getRepository(Users::class)->findOneBy(['username' => $username]);
+        return [
+            'textures' => [
+                'bookcase' => "{$user->getBibliothequeTexture1()}/{$user->getBibliothequeSousTexture1()}",
+                'bookshelf' => "{$user->getBibliothequeTexture2()}/{$user->getBibliothequeSousTexture2()}"
+            ],
+            'showAllCopies' => $user->getBibliothequeAfficherdoubles(),
+        ];
+    }
+
+    /**
+     * @deprecated
+     */
     function updateBookcaseTextures(string $username, array $textures) : void {
         /** @var Users $user */
         $user = self::$dmEm->getRepository(Users::class)->findOneBy(['username' => $username]);
@@ -136,6 +154,20 @@ class BookcaseService
         [, $bookshelfTexture] = explode('/', $textures['bookshelf']);
         $user->setBibliothequeSousTexture1($bookcaseTexture);
         $user->setBibliothequeSousTexture2($bookshelfTexture);
+
+        self::$dmEm->persist($user);
+        self::$dmEm->flush();
+    }
+
+    function updateBookcaseOptions(string $username, array $options) : void {
+        /** @var Users $user */
+        $user = self::$dmEm->getRepository(Users::class)->findOneBy(['username' => $username]);
+        [, $bookcaseTexture] = explode('/', $options['textures']['bookcase']);
+        [, $bookshelfTexture] = explode('/', $options['textures']['bookshelf']);
+        $showAllCopies = $options['showAllCopies'] ?? true;
+        $user->setBibliothequeSousTexture1($bookcaseTexture);
+        $user->setBibliothequeSousTexture2($bookshelfTexture);
+        $user->setBibliothequeAfficherdoubles($showAllCopies);
 
         self::$dmEm->persist($user);
         self::$dmEm->flush();
