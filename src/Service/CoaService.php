@@ -302,7 +302,7 @@ class CoaService
 
         $query = self::$coaEm->createNativeQuery("
             SELECT
-                storycode,
+                inducks_storyversion.storycode,
                 kind,
                 entirepages,
                 inducks_entry.title,
