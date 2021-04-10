@@ -297,9 +297,9 @@ class CollectionController extends AbstractController implements RequiresDmVersi
         }
         else {
             if (in_array($condition, ['non_possede', 'missing'])) {
-                $nbRemoved = $this->deleteIssues($userId, $publication, $issueNumbers);
+                $collectionUpdateService->deleteIssues($userId, $publication, $issueNumbers);
                 return new JsonResponse(
-                    self::getSimpleArray([new UpdateCollectionResult('DELETE', $nbRemoved)])
+                    self::getSimpleArray([])
                 );
             }
             [$nbUpdated, $nbCreated] = $collectionUpdateService->addOrChangeIssues(
@@ -618,12 +618,6 @@ class CollectionController extends AbstractController implements RequiresDmVersi
         return array_values(array_filter($issues, function ($issue) use ($currentIssuesByPublication) {
             return (!(isset($currentIssuesByPublication[$issue['publicationcode']]) && in_array($issue['issuenumber'], $currentIssuesByPublication[$issue['publicationcode']], true)));
         }));
-    }
-
-    private function deleteIssues(CollectionUpdateService $collectionUpdateService, string $publicationCode, array $issueNumbers): Response
-    {
-        $collectionUpdateService->deleteIssues($this->getSessionUser()['id'], $publicationCode, $issueNumbers);
-        return new Response();
     }
 
     private function getUserPurchase(?int $purchaseId): ?Achats
