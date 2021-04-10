@@ -583,6 +583,15 @@ class CollectionController extends AbstractController implements RequiresDmVersi
     }
 
     /**
+     * @Route(methods={"GET"}, path="/collection/points")
+     */
+    public function getMedalPoints(ContributionService $contributionService) {
+        $medalStats = $contributionService->getMedalPoints([$this->getSessionUser()['id']]);
+
+        return new JsonResponse($medalStats);
+    }
+
+    /**
      * @Route(methods={"POST"}, path="/collection/feedback")
      */
     public function sendFeedback(Request $request, EmailService $emailService, TranslatorInterface $translator): Response
