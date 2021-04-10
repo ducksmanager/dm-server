@@ -284,13 +284,6 @@ class CollectionController extends AbstractController implements RequiresDmVersi
             return new Response("Can't update copies of multiple issues at once", Response::HTTP_BAD_REQUEST);
         }
 
-        if (in_array($condition, ['non_possede', 'missing'])) {
-            $nbRemoved = $this->deleteIssues($userId, $publication, $issueNumbers);
-            return new JsonResponse(
-                self::getSimpleArray([new UpdateCollectionResult('DELETE', $nbRemoved)])
-            );
-        }
-
         $isToSell = $request->request->get('istosell');
         $purchaseId = $request->request->get('purchaseId');
 
@@ -303,6 +296,12 @@ class CollectionController extends AbstractController implements RequiresDmVersi
             );
         }
         else {
+            if (in_array($condition, ['non_possede', 'missing'])) {
+                $nbRemoved = $this->deleteIssues($userId, $publication, $issueNumbers);
+                return new JsonResponse(
+                    self::getSimpleArray([new UpdateCollectionResult('DELETE', $nbRemoved)])
+                );
+            }
             [$nbUpdated, $nbCreated] = $collectionUpdateService->addOrChangeIssues(
                 $userId, $publication, $issueNumbers, $condition, $isToSell, $purchaseIds[0]
             );

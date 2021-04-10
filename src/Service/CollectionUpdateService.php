@@ -97,6 +97,9 @@ class CollectionUpdateService {
         $this->deleteIssues($userId, $publicationCode, [$issueNumber]);
         [$countryCode, $magazineCode] = explode('/', $publicationCode);
         foreach(array_keys($conditions) as $copyNumber) {
+            if (in_array($conditions[$copyNumber], ['missing', 'non_possede'])) {
+                continue;
+            }
             $condition = $conditions[$copyNumber] ?? 'indefini';
             $isToSell = $areToSell[$copyNumber] ?? false;
             $purchaseId = empty($purchaseIds[$copyNumber]) ? -2 : $purchaseIds[$copyNumber]; // TODO allow NULL
