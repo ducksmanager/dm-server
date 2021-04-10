@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Numeros
  *
- * @ORM\Table(name="numeros", uniqueConstraints={@ORM\UniqueConstraint(name="Numero_Utilisateur", columns={"Pays", "Magazine", "Numero", "ID_Utilisateur"})}, indexes={@ORM\Index(name="Numero_nospace_Utilisateur", columns={"Pays", "Magazine", "Numero_nospace", "ID_Utilisateur"}), @ORM\Index(name="Utilisateur", columns={"ID_Utilisateur"}), @ORM\Index(name="Pays_Magazine_Numero_DateAjout", columns={"DateAjout", "Pays", "Magazine", "Numero"}), @ORM\Index(name="Pays_Magazine_Numero", columns={"Pays", "Magazine", "Numero"})})
+ * @ORM\Table(name="numeros", indexes={@ORM\Index(name="Numero_Utilisateur", columns={"Pays", "Magazine", "Numero", "ID_Utilisateur"}), @ORM\Index(name="Numero_nospace_Utilisateur", columns={"Pays", "Magazine", "Numero_nospace", "ID_Utilisateur"}), @ORM\Index(name="Utilisateur", columns={"ID_Utilisateur"}), @ORM\Index(name="Pays_Magazine_Numero_DateAjout", columns={"DateAjout", "Pays", "Magazine", "Numero"}), @ORM\Index(name="Pays_Magazine_Numero", columns={"Pays", "Magazine", "Numero"})})
  * @ORM\Entity
  */
 class Numeros
