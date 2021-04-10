@@ -6,17 +6,14 @@ use App\EntityTransform\IssueSuggestion;
 use App\EntityTransform\IssueSuggestionList;
 use App\EntityTransform\UserWithOptionValue;
 use DateTime;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 
 class SuggestionService
 {
     public const SUGGESTION_ALL_COUNTRIES = 'ALL';
     public const SUGGESTION_COUNTRIES_TO_NOTIFY = 'countries_to_notify';
-
-    /** @var EntityManager */
-    private static $dmEm;
 
     /** @var EntityManager */
     private static $dmStatsEm;
@@ -29,7 +26,6 @@ class SuggestionService
 
     public function __construct(ManagerRegistry $doctrineManagerRegistry, CoaService $coaService, UsersOptionsService $usersOptionsService)
     {
-        self::$dmEm = $doctrineManagerRegistry->getManager('dm');
         self::$dmStatsEm = $doctrineManagerRegistry->getManager('dm_stats');
         self::$coaService = $coaService;
         self::$usersOptionsService = $usersOptionsService;

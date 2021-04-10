@@ -16,6 +16,7 @@ use App\Helper\Email\FeedbackSent;
 use App\Helper\JsonResponseFromObject;
 use App\Service\BookcaseService;
 use App\Service\CollectionUpdateService;
+use App\Service\ContributionService;
 use App\Service\EmailService;
 use App\Service\UsersOptionsService;
 use DateInterval;
