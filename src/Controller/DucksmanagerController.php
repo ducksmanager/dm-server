@@ -585,7 +585,7 @@ class DucksmanagerController extends AbstractController
 
         return new JsonResponseFromObject(array_map(
             function (array $result) {
-                $result['creationDate'] = $result['creationDate']->format('Y-m-d');
+                $result['creationDate'] = is_null($result['creationDate']) ? null : $result['creationDate']->format('Y-m-d');
                 return $result;
             },
             $qb->getQuery()->getArrayResult()

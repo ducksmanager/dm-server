@@ -94,7 +94,7 @@ class Bouquineries
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="DateAjout", type="datetime", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
+     * @ORM\Column(name="DateAjout", type="datetime", nullable=true, options={"default"="CURRENT_TIMESTAMP"})
      */
     private $dateajout;
 

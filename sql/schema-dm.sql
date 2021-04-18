@@ -83,7 +83,7 @@ CREATE TABLE `bouquineries`
     `ID_Utilisateur`  int(11)                                   DEFAULT NULL,
     `CoordX`          double                           NOT NULL,
     `CoordY`          double                           NOT NULL,
-    `DateAjout`       timestamp                        NOT NULL DEFAULT current_timestamp(),
+    `DateAjout`       timestamp                        NULL     DEFAULT current_timestamp(),
     `Actif`           tinyint(1)                       NOT NULL DEFAULT 0,
     PRIMARY KEY (`ID`)
 ) ENGINE = InnoDB
