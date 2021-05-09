@@ -193,12 +193,17 @@ services:
      - db_coa
     environment:
       MYSQL_COA_HOST: db_coa
+      MYSQL_COA_PORT: 3306
       MYSQL_COA_DATABASE: coa
       MYSQL_PASSWORD: $MYSQL_ROOT_PASSWORD
+      GITHUB_TOKEN: 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
+      GITHUB_NAME: Admin
+      GITHUB_EMAIL: admin@ducksmanager.net
     networks:
      - db-network
     volumes:
      - duck_estimator_cache:/home/cache
+     - node_cache:/root/.cache
     command: "bash -c 'git clone --depth 1 --single-branch https://github.com/bperel/duck-estimator && cd duck-estimator && npm install && node duck-estimator.js --cache-dir=/home/cache'"
 
 networks:
@@ -218,3 +223,4 @@ volumes:
   data_db_edgecreator:
   data_db_dm_stats:
   duck_estimator_cache:
+  node_cache:
