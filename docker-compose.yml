@@ -52,6 +52,7 @@ services:
 
   db_coa:
     container_name: db_coa
+    restart: always
     image: "mariadb:10.4"
     ports:
      - "127.0.0.1:64000:3306"
@@ -68,6 +69,7 @@ services:
 
   cover-updater:
     container_name: cover-updater
+    restart: always
     image: "bperel/duck-cover-id-updater"
     depends_on:
      - db_cover_id
@@ -88,6 +90,7 @@ services:
 
   db_cover_id:
     container_name: db_cover_id
+    restart: always
     image: "mariadb:10.4"
     ports:
       - "127.0.0.1:64009:3306"
@@ -102,6 +105,7 @@ services:
 
   pastec:
     container_name: pastec-ubuntu-1704-timestamps
+    restart: always
     image: "bperel/pastec-ubuntu-1704-timestamps"
     volumes:
      - $PASTEC_INIT_INDEX:/pastec-index-last.dat:ro
@@ -111,6 +115,7 @@ services:
 
   db_dm:
     container_name: db_dm
+    restart: always
     image: "mariadb:10.4"
     ports:
      - "127.0.0.1:64002:3306"
@@ -125,6 +130,7 @@ services:
 
   db_edgecreator:
     container_name: db_edgecreator
+    restart: always
     image: "mariadb:10.4"
     ports:
      - "127.0.0.1:64003:3306"
@@ -175,6 +181,7 @@ services:
 
   db_dm_stats:
     container_name: db_dm_stats
+    restart: always
     image: "mariadb:10.4"
     ports:
       - "127.0.0.1:64010:3306"
