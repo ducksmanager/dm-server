@@ -188,7 +188,7 @@ services:
 
   duck-estimator:
     container_name: duck-estimator
-    image: "node:10"
+    image: "mcr.microsoft.com/playwright:focal"
     depends_on:
      - db_coa
     environment:
