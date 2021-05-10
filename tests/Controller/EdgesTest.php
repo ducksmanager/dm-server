@@ -11,7 +11,7 @@ class EdgesTest extends TestCommon
         return ['dm'];
     }
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
         $this->loadFixtures([ EdgesFixture::class ], true, 'dm');

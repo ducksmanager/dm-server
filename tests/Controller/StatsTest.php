@@ -14,7 +14,7 @@ class StatsTest extends TestCommon
         return ['dm', 'coa', 'dm_stats'];
     }
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
         $this->createUserCollection(self::$defaultTestDmUserName);
@@ -52,7 +52,7 @@ class StatsTest extends TestCommon
             'maxScore' => 6,
             'minScore' => 2,
             'issues' => (object)[
-                (object)[
+                'fr/PM 315' => (object)[
                     'stories' => (object)[
                         'CB' => ['W WDC 130-02'],
                         'DR' => ['AR 201'],
@@ -63,7 +63,7 @@ class StatsTest extends TestCommon
                     'issuecode' => 'fr/PM 315',
                     'oldestdate' => (new DateTime())->format('Y-m-d')
                 ],
-                (object)[
+                'us/CBL 7' => (object)[
                     'stories' => (object)[
                         'CB' => [
                             'ARC CBL 5B',
@@ -76,7 +76,7 @@ class StatsTest extends TestCommon
                     'issuecode' => 'us/CBL 7',
                     'oldestdate' => (new DateTime('-5 days midnight'))->format('Y-m-d')
                 ],
-                (object)[
+                'fr/DDD 1' => (object)[
                     'stories' => (object)[
                         'CB' => ['W WDC  32-02'],
                     ],
@@ -119,7 +119,7 @@ class StatsTest extends TestCommon
                 ],
             ],
         ], $objectResponse);
-        $this->assertInternalType('object', $objectResponse);
+        $this->assertIsObject($objectResponse);
     }
 
     public function testGetSuggestionsWithLimit(): void
@@ -163,7 +163,7 @@ class StatsTest extends TestCommon
                 ],
             ],
         ], $objectResponse);
-        $this->assertInternalType('object', $objectResponse);
+        $this->assertIsObject($objectResponse);
     }
 
     public function testGetSuggestionsByCountry(): void

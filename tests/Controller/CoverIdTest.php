@@ -50,7 +50,7 @@ class CoverIdTest extends TestCommon
         return ['dm', 'coa','coverid'];
     }
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
         $this->loadFixtures([ CoaFixture::class, CoaEntryFixture::class ], true, 'coa');
@@ -140,7 +140,8 @@ class CoverIdTest extends TestCommon
                     'publicationtitle' => 'Dynastie',
                     'issuenumber' => '1',
                     'coverid' => 1,
-                    'coverurl' => '/var/www/html/tests/Fixtures/webusers/webusers/cover_example.jpg'
+                    'coverurl' => '/var/www/html/tests/Fixtures/webusers/webusers/cover_example.jpg',
+                    "quotation" => null
                 ]
             ],
             'imageIds' => [1]
@@ -176,6 +177,7 @@ class CoverIdTest extends TestCommon
                         'issuenumber' => '1',
                         'coverid' => 1,
                         'coverurl' => '/var/www/html/tests/Fixtures/webusers/webusers/cover_example.jpg',
+                        'quotation' => null,
                     ],
                     'fr/DDD 2' => (object)[
                         'countrycode' => 'fr',
@@ -184,6 +186,7 @@ class CoverIdTest extends TestCommon
                         'issuenumber' => '2',
                         'coverid' => 2,
                         'coverurl' => '/var/www/html/tests/Fixtures/webusers/webusers/cover_example_2.jpg',
+                        'quotation' => null,
                     ],
                     'fr/MP 300' => (object)[
                         'countrycode' => 'fr',
@@ -192,6 +195,7 @@ class CoverIdTest extends TestCommon
                         'issuenumber' => '300',
                         'coverid' => 3,
                         'coverurl' => '/var/www/html/tests/Fixtures/webusers/webusers/cover_example_3.jpg',
+                        'quotation' => null,
                     ],
                 ],
                 'imageIds' => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]

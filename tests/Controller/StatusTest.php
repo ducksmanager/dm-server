@@ -140,7 +140,7 @@ class StatusTest extends TestCommon
         $response = $this->buildAuthenticatedService('/status/db', self::$dmUser, [], [], 'GET')->call();
 
         $this->assertUnsuccessfulResponse($response, function(Response $response) {
-            $this->assertContains('Error for coa : received response []', $response->getContent());
+            $this->assertStringContainsString('Error for coa : received response []', $response->getContent());
         });
     }
 }

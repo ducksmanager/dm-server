@@ -23,7 +23,7 @@ class CollectionTest extends TestCommon
         return ['dm', 'coa'];
     }
 
-    protected function setUp(){
+    protected function setUp() : void {
         parent::setUp();
         $this->createUserCollection(self::$defaultTestDmUserName);
     }
@@ -225,8 +225,7 @@ class CollectionTest extends TestCommon
         $responseObject = json_decode($this->getResponseContent($response));
         $this->assertNotNull($responseObject);
 
-        $this->assertEquals('DELETE', $responseObject[0]->action);
-        $this->assertEquals(1, $responseObject[0]->numberOfIssues);
+        $this->assertEquals([], $responseObject);
     }
 
     public function testUpdateCollectionCreateAndUpdateIssue(): void
@@ -513,8 +512,8 @@ class CollectionTest extends TestCommon
         $mailCollector = self::$client->getProfile()->getCollector('swiftmailer');
         /** @var Swift_Message[]|Countable $messages */
         $messages = $mailCollector->getMessages();
-        $this->assertCount(2, $messages);
-        [$email,] = $messages;
+        $this->assertCount(1, $messages);
+        [$email] = $messages;
 
         $expectedMessageBody = <<<MESSAGE
             DucksManager is great!

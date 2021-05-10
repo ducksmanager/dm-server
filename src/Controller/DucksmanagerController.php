@@ -379,7 +379,7 @@ class DucksmanagerController extends AbstractController
     public function suggestBookstore(Request $request, EmailService $emailService, TranslatorInterface $translator): Response
     {
         $dmEm = $this->getEm('dm');
-        $userId = $this->getSessionUser()['id'];
+        $userId = empty($this->getSessionUser()) ? null : $this->getSessionUser()['id'];
         if (is_null($userId)) {
             $user = (new Users())
                 ->setUsername('anonymous');

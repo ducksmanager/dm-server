@@ -13,7 +13,7 @@ class ServiceTest extends TestCommon
         return ['coa'];
     }
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
         $this->loadFixtures([ CoaFixture::class, CoaEntryFixture::class ], true, 'coa');

@@ -41,7 +41,6 @@ class EmailService
         }
 
         if ($email->getTo() !== $_ENV['SMTP_USERNAME']) {
-
             $message->setSubject("[Sent to $to] {$message->getSubject()}");
             $message->setTo($_ENV['SMTP_USERNAME']);
             $this->logger->info('Sending email of type ' .get_class($email). ' to ' .$_ENV['SMTP_USERNAME']);

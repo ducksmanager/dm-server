@@ -42,7 +42,7 @@ class EdgeCreatorTest extends TestCommon
         ]);
     }
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
         $this->createUserCollection(self::$defaultTestDmUserName);
@@ -100,7 +100,7 @@ class EdgeCreatorTest extends TestCommon
 
         $this->assertUnsuccessfulResponse($response, function(Response $response) {
             $this->assertEquals(Response::HTTP_INTERNAL_SERVER_ERROR, $response->getStatusCode());
-            $this->assertContains('UNIQUE constraint failed', $response->getContent());
+            $this->assertStringContainsString('UNIQUE constraint failed', $response->getContent());
         });
     }
 
@@ -132,21 +132,6 @@ class EdgeCreatorTest extends TestCommon
 
         $this->assertCount(1, $responseObjects);
         $this->assertEquals('1', $responseObjects[0]->est_editeur);
-    }
-
-    public function testLoadV2UnassignedModels(): void
-    {
-        $response = $this->buildAuthenticatedServiceWithTestUser('/edgecreator/v2/model/unassigned/all', self::$edgecreatorUser)->call();
-
-        $objectResponse = json_decode($this->getResponseContent($response));
-
-        $this->assertCount(3, $objectResponse);
-        /** @var stdClass $model1 */
-        $model1 = $objectResponse[0];
-        $this->assertEquals('fr', $model1->pays);
-        $this->assertEquals('PM', $model1->magazine);
-        $this->assertEquals('503', $model1->numero);
-        $this->assertNull($model1->username);
     }
 
     public function testGetModel(): void
@@ -734,7 +719,7 @@ class EdgeCreatorTest extends TestCommon
 
         $this->assertCount(1, $messages);
         [$message] = $messages;
-        $this->assertContains("/tmp/uploaded_edges/$photoFileName", $message->getBody());
+        $this->assertStringContainsString("/tmp/uploaded_edges/$photoFileName", $message->getBody());
     }
 
     public function testAddMultipleEdgePhotoInvalidEmail(): void
@@ -747,7 +732,7 @@ class EdgeCreatorTest extends TestCommon
         ])->call();
 
         $this->assertUnsuccessfulResponse($response, function(Response $response) {
-            $this->assertContains('does not comply with RFC', $response->getContent());
+            $this->assertStringContainsString('does not comply with RFC', $response->getContent());
         });
     }
 

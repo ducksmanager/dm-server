@@ -17,7 +17,7 @@ class NotificationTest extends TestCommon
         return ['dm', 'dm_stats', 'coa'];
     }
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
         DmCollectionFixture::$username = self::$defaultTestDmUserName;

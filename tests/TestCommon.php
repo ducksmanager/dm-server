@@ -57,8 +57,7 @@ SIGNATURE;
         return [];
     }
 
-
-    protected function setUp() {
+    protected function setUp() : void {
         self::$client = self::createClient();
         foreach($this->getEmNamesToCreate() as $emToCreate) {
             $this->loadFixtures([], false, $emToCreate, 'doctrine', ORMPurger::PURGE_MODE_TRUNCATE);

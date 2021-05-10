@@ -1,13 +1,11 @@
 <?php
 namespace App\Tests;
 
-use Symfony\Component\BrowserKit\AbstractBrowser;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 
 class TestServiceCallCommon {
 
-    /** @var AbstractBrowser $client  */
-    private AbstractBrowser $client;
+    private KernelBrowser $client;
 
     private $path;
     private array $userCredentials;
@@ -17,7 +15,7 @@ class TestServiceCallCommon {
     private string $method;
     private array $files = [];
 
-    public function __construct(AbstractBrowser $client)
+    public function __construct(KernelBrowser $client)
     {
         $this->client = $client;
     }
@@ -87,12 +85,8 @@ class TestServiceCallCommon {
         $this->files = $files;
     }
 
-    /**
-     * @return object|Response
-     */
-    public function call()
+    public function call(): object
     {
-        $path = $this->path;
         $headers = $this->systemCredentials;
         if (count($this->userCredentials) > 0) {
             $headers = array_merge($headers, [
@@ -102,7 +96,7 @@ class TestServiceCallCommon {
         }
         $this->client->request(
             $this->method,
-            $path,
+            $this->path,
             $this->parameters,
             $this->files,
             $headers

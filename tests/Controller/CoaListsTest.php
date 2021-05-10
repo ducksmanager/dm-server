@@ -14,7 +14,7 @@ class CoaListsTest extends TestCommon
         return ['dm', 'coa'];
     }
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
         $this->loadFixtures([ CoaFixture::class, CoaEntryFixture::class ], true, 'coa');
@@ -25,7 +25,7 @@ class CoaListsTest extends TestCommon
         $response = $this->buildAuthenticatedServiceWithTestUser('/coa/list/countries/fr', self::$dmUser)->call();
 
         $objectResponse = json_decode($this->getResponseContent($response));
-        $this->assertInternalType('object', $objectResponse);
+        $this->assertIsObject($objectResponse);
         $this->assertEquals('France', $objectResponse->fr);
         $this->assertEquals('Espagne', $objectResponse->es);
         $this->assertEquals('USA', $objectResponse->us);
@@ -38,7 +38,7 @@ class CoaListsTest extends TestCommon
 
         $objectResponse = json_decode($this->getResponseContent($response));
 
-        $this->assertInternalType('object', $objectResponse);
+        $this->assertIsObject($objectResponse);
         $this->assertEquals('France', $objectResponse->fr);
         $this->assertEquals('USA', $objectResponse->us);
         $this->assertCount(2, (array)$objectResponse);
@@ -50,7 +50,7 @@ class CoaListsTest extends TestCommon
 
         $objectResponse = json_decode($this->getResponseContent($response));
 
-        $this->assertInternalType('object', $objectResponse);
+        $this->assertIsObject($objectResponse);
         $this->assertEquals('Francia', $objectResponse->fr);
         $this->assertEquals('EE.UU.', $objectResponse->us);
         $this->assertCount(2, (array)$objectResponse);
@@ -62,7 +62,7 @@ class CoaListsTest extends TestCommon
 
         $objectResponse = json_decode($this->getResponseContent($response));
 
-        $this->assertInternalType('object', $objectResponse);
+        $this->assertIsObject($objectResponse);
         $this->assertCount(4, get_object_vars($objectResponse));
         $this->assertEquals('Dynastie', $objectResponse->{'fr/DDD'});
         $this->assertEquals('Parade', $objectResponse->{'fr/MP'});
@@ -76,7 +76,7 @@ class CoaListsTest extends TestCommon
 
         $objectResponse = json_decode($this->getResponseContent($response));
 
-        $this->assertInternalType('object', $objectResponse);
+        $this->assertIsObject($objectResponse);
         $this->assertCount(3, get_object_vars($objectResponse));
         $this->assertEquals('Dynastie', $objectResponse->{'fr/DDD'});
         $this->assertEquals('Parade', $objectResponse->{'fr/MP'});
@@ -89,7 +89,7 @@ class CoaListsTest extends TestCommon
 
         $objectResponse = json_decode($this->getResponseContent($response));
 
-        $this->assertInternalType('object', $objectResponse);
+        $this->assertIsObject($objectResponse);
         $this->assertEquals('Dynastie', $objectResponse->{'fr/DDD'});
         $this->assertEquals('Carl Barks Library', $objectResponse->{'us/CBL'});
     }
@@ -107,7 +107,7 @@ class CoaListsTest extends TestCommon
 
         $arrayResponse = json_decode($this->getResponseContent($response), true);
 
-        $this->assertInternalType('array', $arrayResponse);
+        $this->assertIsArray($arrayResponse);
         $this->assertEquals([
             'fr/DDD' => 3,
             'fr/MP' => 1,
@@ -124,7 +124,7 @@ class CoaListsTest extends TestCommon
 
         $arrayResponse = json_decode($this->getResponseContent($response));
 
-        $this->assertInternalType('array', $arrayResponse);
+        $this->assertIsArray($arrayResponse);
         $this->assertEquals(['0', '1', '2'], $arrayResponse);
     }
 
@@ -134,7 +134,7 @@ class CoaListsTest extends TestCommon
 
         $arrayResponse = json_decode($this->getResponseContent($response));
 
-        $this->assertInternalType('array', $arrayResponse);
+        $this->assertIsArray($arrayResponse);
         $this->assertEquals('PN 1', $arrayResponse[0]);
     }
 
@@ -155,7 +155,7 @@ class CoaListsTest extends TestCommon
 
         $arrayResponse = json_decode($this->getResponseContent($response));
 
-        $this->assertInternalType('array', $arrayResponse);
+        $this->assertIsArray($arrayResponse);
         $this->assertCount(0, $arrayResponse);
     }
 
@@ -172,9 +172,9 @@ class CoaListsTest extends TestCommon
 
         $arrayResponse = json_decode($this->getResponseContent($response));
 
-        $this->assertInternalType('object', $arrayResponse);
+        $this->assertIsObject($arrayResponse);
 
-        $this->assertInternalType('object', $arrayResponse->{'fr/DDD 1'});
+        $this->assertIsObject($arrayResponse->{'fr/DDD 1'});
         $this->assertEquals('fr', $arrayResponse->{'fr/DDD 1'}->countrycode);
         $this->assertEquals('Dynastie', $arrayResponse->{'fr/DDD 1'}->publicationtitle);
         $this->assertEquals('1', $arrayResponse->{'fr/DDD 1'}->issuenumber);

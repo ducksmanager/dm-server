@@ -123,14 +123,11 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
         $mailCollector = self::$client->getProfile()->getCollector('swiftmailer');
         /** @var Swift_Message[]|Countable $messages */
         $messages = $mailCollector->getMessages();
-        $this->assertCount(2, $messages);
-        [$message, $messageCopy] = $messages;
+        $this->assertCount(1, $messages);
+        [$message] = $messages;
 
-        $this->assertContains('Ajout de bouquinerie', $message->getSubject());
-        $this->assertContains('Validation', $message->getBody());
-
-        $this->assertContains('[Sent to '.$_ENV['SMTP_USERNAME'].'] Ajout de bouquinerie', $messageCopy->getSubject());
-        $this->assertContains('Validation', $messageCopy->getBody());
+        $this->assertStringContainsString('Ajout de bouquinerie', $message->getSubject());
+        $this->assertStringContainsString('Validation', $message->getBody());
     }
 
     public function testSuggestBookstoreWithUser(): void
@@ -151,14 +148,11 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
         $mailCollector = self::$client->getProfile()->getCollector('swiftmailer');
         /** @var Swift_Message[]|Countable $messages */
         $messages = $mailCollector->getMessages();
-        $this->assertCount(2, $messages);
-        [$message, $messageCopy] = $messages;
+        $this->assertCount(1, $messages);
+        [$message] = $messages;
 
-        $this->assertContains('Ajout de bouquinerie', $message->getSubject());
-        $this->assertContains('Validation', $message->getBody());
-
-        $this->assertContains('[Sent to '.$_ENV['SMTP_USERNAME'].'] Ajout de bouquinerie', $messageCopy->getSubject());
-        $this->assertContains('Validation', $messageCopy->getBody());
+        $this->assertStringContainsString('Ajout de bouquinerie', $message->getSubject());
+        $this->assertStringContainsString('Validation', $message->getBody());
     }
 
     public function testSendPendingEmails(): void
@@ -267,16 +261,13 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
         );
         $this->getEm('dm')->flush();
 
-        $response = $this->buildAuthenticatedService('/ducksmanager/bookstore/approve', self::$dmUser, [], [
-            'id' => $bookstore->getId(),
-            'coordinates' => [1, 2]
+        $response = $this->buildAuthenticatedServiceWithTestUser('/ducksmanager/bookstore/approve', self::$dmUser, 'POST', [
+            'id' => $bookstore->getId()
         ])->call();
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
 
         $this->getEm('dm')->clear();
         $updatedBookstore = $this->getEm('dm')->getRepository(Bouquineries::class)->find($bookstore->getId());
-        $this->assertEquals(1, $updatedBookstore->getCoordx());
-        $this->assertEquals(2, $updatedBookstore->getCoordy());
         $this->assertEquals(true, $updatedBookstore->getActif());
 
         $userContribution = $this->getEm('dm')->getRepository(UsersContributions::class)->findOneBy([
@@ -395,7 +386,7 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
         $getResponse = $this->buildAuthenticatedServiceWithTestUser("/ducksmanager/bookcase/{$user->getId()}/sort/max", self::$dmUser)->call();
         $objectResponse = json_decode($getResponse->getContent());
 
-        $this->assertInternalType('int', $objectResponse->max);
+        $this->assertIsInt($objectResponse->max);
         $this->assertEquals(2, $objectResponse->max);
     }
 
