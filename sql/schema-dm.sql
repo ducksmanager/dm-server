@@ -115,8 +115,8 @@ CREATE TABLE `numeros`
     `ID`             int(11)                                                             NOT NULL AUTO_INCREMENT,
     `Pays`           varchar(3) COLLATE latin1_german2_ci                                NOT NULL,
     `Magazine`       varchar(6) COLLATE latin1_german2_ci                                NOT NULL,
-    `Numero`         varchar(8) CHARACTER SET utf8 COLLATE utf8_bin                      NOT NULL,
-    `Numero_nospace` varchar(8) GENERATED ALWAYS AS (replace(`Numero`, ' ', '')) VIRTUAL,
+    `Numero`         varchar(12) CHARACTER SET utf8 COLLATE utf8_bin                     NOT NULL,
+    `Numero_nospace` varchar(12) GENERATED ALWAYS AS (replace(`Numero`, ' ', '')) VIRTUAL,
     `Etat`           enum ('mauvais','moyen','bon','indefini') COLLATE latin1_german2_ci NOT NULL DEFAULT 'indefini',
     `ID_Acquisition` int(11)                                                             NOT NULL DEFAULT -1,
     `AV`             tinyint(1)                                                          NOT NULL,
@@ -125,23 +125,23 @@ CREATE TABLE `numeros`
     `DateAjout`      timestamp                                                           NOT NULL DEFAULT current_timestamp(),
     `issuecode`      varchar(23) GENERATED ALWAYS AS (concat(`Pays`, '/', `Magazine`, ' ', `Numero`)) VIRTUAL,
     PRIMARY KEY (`ID`),
-    KEY `Numero_Utilisateur` (`Pays`, `Magazine`, `Numero`, `ID_Utilisateur`),
     KEY `Utilisateur` (`ID_Utilisateur`),
     KEY `Pays_Magazine_Numero` (`Pays`, `Magazine`, `Numero`),
     KEY `Pays_Magazine_Numero_DateAjout` (`DateAjout`, `Pays`, `Magazine`, `Numero`),
     KEY `Numero_nospace_Utilisateur` (`Pays`, `Magazine`, `Numero_nospace`, `ID_Utilisateur`),
-    KEY `numeros_issuecode_index` (`issuecode`)
+    KEY `numeros_issuecode_index` (`issuecode`),
+    KEY `Numero_Utilisateur` (`Pays`, `Magazine`, `Numero`, `ID_Utilisateur`)
 ) ENGINE = MyISAM
   DEFAULT CHARSET = latin1
   COLLATE = latin1_german2_ci;
 
 CREATE TABLE `numeros_popularite`
 (
-    `Pays`       varchar(3) NOT NULL,
-    `Magazine`   varchar(6) NOT NULL,
-    `Numero`     varchar(8) NOT NULL,
-    `Popularite` int(11)    NOT NULL,
-    `ID`         int(11)    NOT NULL AUTO_INCREMENT,
+    `Pays`       varchar(3)  NOT NULL,
+    `Magazine`   varchar(6)  NOT NULL,
+    `Numero`     varchar(12) NOT NULL,
+    `Popularite` int(11)     NOT NULL,
+    `ID`         int(11)     NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (`ID`),
     UNIQUE KEY `numeros_popularite_unique` (`Pays`, `Magazine`, `Numero`)
 ) ENGINE = MyISAM
@@ -149,11 +149,11 @@ CREATE TABLE `numeros_popularite`
 
 CREATE TABLE `tranches_doublons`
 (
-    `ID`               int(11)                              NOT NULL AUTO_INCREMENT,
-    `Pays`             varchar(3) COLLATE latin1_german2_ci NOT NULL,
-    `Magazine`         varchar(6) COLLATE latin1_german2_ci NOT NULL,
-    `Numero`           varchar(8) COLLATE latin1_german2_ci NOT NULL,
-    `NumeroReference`  varchar(8) COLLATE latin1_german2_ci NOT NULL,
+    `ID`               int(11)                               NOT NULL AUTO_INCREMENT,
+    `Pays`             varchar(3) COLLATE latin1_german2_ci  NOT NULL,
+    `Magazine`         varchar(6) COLLATE latin1_german2_ci  NOT NULL,
+    `Numero`           varchar(12) COLLATE latin1_german2_ci NOT NULL,
+    `NumeroReference`  varchar(12) COLLATE latin1_german2_ci NOT NULL,
     `TrancheReference` int(11) DEFAULT NULL,
     PRIMARY KEY (`ID`),
     UNIQUE KEY `tranches_doublons_Pays_Magazine_Numero_uindex` (`Pays`, `Magazine`, `Numero`),
@@ -166,7 +166,7 @@ CREATE TABLE `tranches_pretes`
 (
     `ID`              int(11)                               NOT NULL AUTO_INCREMENT,
     `publicationcode` varchar(12) COLLATE latin1_german2_ci NOT NULL,
-    `issuenumber`     varchar(10) COLLATE latin1_german2_ci NOT NULL,
+    `issuenumber`     varchar(12) COLLATE latin1_german2_ci NOT NULL,
     `dateajout`       timestamp                             NOT NULL DEFAULT current_timestamp(),
     `points`          int(11)                                        DEFAULT NULL,
     `slug`            varchar(30) GENERATED ALWAYS AS (concat('edges-', replace(`publicationcode`, '/', '-'), '-',
@@ -236,21 +236,22 @@ CREATE TABLE `tranches_pretes_sprites_urls`
 
 CREATE TABLE `users`
 (
-    `ID`                         int(11)                                         NOT NULL AUTO_INCREMENT,
-    `username`                   varchar(25) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
-    `password`                   varchar(40) CHARACTER SET latin1                NOT NULL,
-    `AccepterPartage`            tinyint(1)                                      NOT NULL DEFAULT 1,
-    `DateInscription`            date                                            NOT NULL,
-    `EMail`                      varchar(50) CHARACTER SET latin1                NOT NULL,
-    `RecommandationsListeMags`   tinyint(1)                                      NOT NULL DEFAULT 1,
-    `BetaUser`                   tinyint(1)                                      NOT NULL DEFAULT 0,
-    `AfficherVideo`              tinyint(1)                                      NOT NULL DEFAULT 1,
-    `Bibliotheque_Texture1`      varchar(20) CHARACTER SET latin1                NOT NULL DEFAULT 'bois',
-    `Bibliotheque_Sous_Texture1` varchar(50) CHARACTER SET latin1                NOT NULL DEFAULT 'HONDURAS MAHOGANY',
-    `Bibliotheque_Texture2`      varchar(20) CHARACTER SET latin1                NOT NULL DEFAULT 'bois',
-    `Bibliotheque_Sous_Texture2` varchar(50) CHARACTER SET latin1                NOT NULL DEFAULT 'KNOTTY PINE',
-    `DernierAcces`               datetime                                                 DEFAULT NULL,
-    `PrecedentAcces`             datetime                                                 DEFAULT NULL,
+    `ID`                           int(11)                                         NOT NULL AUTO_INCREMENT,
+    `username`                     varchar(25) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+    `password`                     varchar(40) CHARACTER SET latin1                NOT NULL,
+    `AccepterPartage`              tinyint(1)                                      NOT NULL DEFAULT 1,
+    `DateInscription`              date                                            NOT NULL,
+    `EMail`                        varchar(50) CHARACTER SET latin1                NOT NULL,
+    `RecommandationsListeMags`     tinyint(1)                                      NOT NULL DEFAULT 1,
+    `BetaUser`                     tinyint(1)                                      NOT NULL DEFAULT 0,
+    `AfficherVideo`                tinyint(1)                                      NOT NULL DEFAULT 1,
+    `Bibliotheque_AfficherDoubles` tinyint(4)                                               DEFAULT 1,
+    `Bibliotheque_Texture1`        varchar(20) CHARACTER SET latin1                NOT NULL DEFAULT 'bois',
+    `Bibliotheque_Sous_Texture1`   varchar(50) CHARACTER SET latin1                NOT NULL DEFAULT 'HONDURAS MAHOGANY',
+    `Bibliotheque_Texture2`        varchar(20) CHARACTER SET latin1                NOT NULL DEFAULT 'bois',
+    `Bibliotheque_Sous_Texture2`   varchar(50) CHARACTER SET latin1                NOT NULL DEFAULT 'KNOTTY PINE',
+    `DernierAcces`                 datetime                                                 DEFAULT NULL,
+    `PrecedentAcces`               datetime                                                 DEFAULT NULL,
     PRIMARY KEY (`ID`),
     UNIQUE KEY `username` (`username`)
 ) ENGINE = InnoDB
