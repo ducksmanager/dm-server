@@ -331,9 +331,9 @@ class CoaService
             SELECT issue.oldestdate
             FROM inducks_issue issue
             WHERE issue.publicationcode = :publicationcode
-              AND REPLACE(issue.issuenumber, '', '') = :issuenumber", $rsm)
+              AND REPLACE(issue.issuenumber, ' ', '') = :issuenumber", $rsm)
             ->setParameter('publicationcode', $publicationCode)
-            ->setParameter('issuenumber', $issueNumber);
+            ->setParameter('issuenumber', str_replace(' ', '', $issueNumber));
 
         return $releaseDateQuery->getSingleScalarResult();
     }
