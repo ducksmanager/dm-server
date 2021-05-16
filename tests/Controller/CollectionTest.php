@@ -497,9 +497,7 @@ class CollectionTest extends TestCommon
             'user' => $user
         ]);
         $this->assertCount(3, $updatedCountriesToNotify);
-        $this->assertEquals(['fr', 'se', 'us'], array_map(function(UsersOptions $option) {
-            return $option->getOptionValeur();
-        }, $updatedCountriesToNotify));
+        $this->assertEquals(['fr', 'se', 'us'], array_map(fn(UsersOptions $option) => $option->getOptionValeur(), $updatedCountriesToNotify));
     }
 
     public function testSendFeedback() : void

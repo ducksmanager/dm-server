@@ -45,9 +45,10 @@ class NotificationController extends AbstractController implements RequiresDmVer
 
                 foreach($suggestedIssuesForUserNotAlreadySent as $suggestedIssue) {
                     $issueTitle = $publicationTitles[$suggestedIssue->getPublicationcode()].' '.$suggestedIssue->getIssuenumber();
-                    $storyCountPerPersonCode = array_map(function(array $storycodes) : int {
-                        return count($storycodes);
-                    }, $suggestedIssue->getStories());
+                    $storyCountPerPersonCode = array_map(
+                        fn(array $storycodes) : int => count($storycodes),
+                        $suggestedIssue->getStories()
+                    );
                     $storyCountPerAuthor = [];
                     foreach($storyCountPerPersonCode as $personcode => $storyCount) {
                         $storyCountPerAuthor[$authors[$personcode]] = $storyCount;

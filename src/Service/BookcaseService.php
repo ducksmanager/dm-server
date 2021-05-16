@@ -117,9 +117,7 @@ class BookcaseService
             ['ordre' => 'ASC']
         );
 
-        return array_map(function(BibliothequeOrdreMagazines $sort) {
-            return $sort->getPublicationcode();
-        }, $sorts);
+        return array_map(fn(BibliothequeOrdreMagazines $sort) => $sort->getPublicationcode(), $sorts);
     }
 
     /**

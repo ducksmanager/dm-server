@@ -61,16 +61,18 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
             'idUser' => $demoUser->getId()
         ]);
 
-        $this->assertCount(1, array_filter($purchasesOfDemoUser, function(Achats $purchase) {
-            return $purchase->getDate()->format('Y-m-d') === '2010-01-01' && $purchase->getDescription() === 'Purchase';
-        }));
+        $this->assertCount(1, array_filter(
+            $purchasesOfDemoUser,
+            fn(Achats $purchase) => $purchase->getDate()->format('Y-m-d') === '2010-01-01' && $purchase->getDescription() === 'Purchase')
+        );
 
         $issuesOfDemoUser = $this->getEm('dm')->getRepository(Numeros::class)->findBy([
             'idUtilisateur' => $demoUser->getId()
         ]);
-        $this->assertCount(1, array_filter($issuesOfDemoUser, function(Numeros $issue) {
-            return $issue->getPays() === 'fr' && $issue->getMagazine() === 'MP' && $issue->getNumero() === '300';
-        }));
+        $this->assertCount(1, array_filter(
+            $issuesOfDemoUser,
+            fn(Numeros $issue) => $issue->getPays() === 'fr' && $issue->getMagazine() === 'MP' && $issue->getNumero() === '300')
+        );
 
         $demoUser->setBibliothequeTexture1('A');
         $demoUser->setBibliothequeSousTexture1('B');
@@ -100,18 +102,20 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
         ]);
 
         $this->assertCount(35, $issuesOfDemoUser);
-        $this->assertCount(0, array_filter($issuesOfDemoUser, function(Numeros $issue) {
-            return $issue->getPays() === 'fr' && $issue->getMagazine() === 'MP' && $issue->getNumero() === '300';
-        })); // Previous issue has been reset
+        $this->assertCount(0, array_filter(
+            $issuesOfDemoUser,
+            fn(Numeros $issue) => $issue->getPays() === 'fr' && $issue->getMagazine() === 'MP' && $issue->getNumero() === '300')
+        ); // Previous issue has been reset
 
         $purchasesOfDemoUser = $this->getEm('dm')->getRepository(Achats::class)->findBy([
             'idUser' => $demoUser->getId()
         ]);
 
         $this->assertCount(4, $purchasesOfDemoUser);
-        $this->assertCount(0, array_filter($purchasesOfDemoUser, function(Achats $purchase) {
-            return $purchase->getDate()->format('Y-m-d') === '2010-01-01' && $purchase->getDescription() === 'Purchase';
-        })); // Previous issue has been reset
+        $this->assertCount(0, array_filter(
+            $purchasesOfDemoUser,
+            fn(Achats $purchase) => $purchase->getDate()->format('Y-m-d') === '2010-01-01' && $purchase->getDescription() === 'Purchase')
+        ); // Previous issue has been reset
     }
 
     public function testSendBookcaseEmail(): void

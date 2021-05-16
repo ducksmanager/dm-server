@@ -99,9 +99,7 @@ class CoaController extends AbstractController
 
         $results = $qb->getQuery()->getResult();
         $issueNumbers = array_map(
-            function ($issue) {
-                return preg_replace('#[ ]+#', ' ', $issue['issuenumber']);
-            },
+            fn($issue) => preg_replace('#[ ]+#', ' ', $issue['issuenumber']),
             $results
         );
         return new JsonResponse($issueNumbers);

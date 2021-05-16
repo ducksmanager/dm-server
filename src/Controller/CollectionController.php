@@ -251,12 +251,10 @@ class CollectionController extends AbstractController implements RequiresDmVersi
     public function getWatchedAuthors(): JsonResponse
     {
         return new JsonResponse(
-            array_map(function (AuteursPseudos $result) {
-                return [
-                    'personCode' => $result->getNomauteurabrege(),
-                    'notation' => $result->getNotation()
-                ];
-            }, $this->getEm('dm')->getRepository(AuteursPseudos::class)->findBy([
+            array_map(fn(AuteursPseudos $result) => [
+                'personCode' => $result->getNomauteurabrege(),
+                'notation' => $result->getNotation()
+            ], $this->getEm('dm')->getRepository(AuteursPseudos::class)->findBy([
                 'idUser' => $this->getSessionUser()['id']
             ])));
     }
@@ -417,9 +415,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
             return new Response('No content', Response::HTTP_NO_CONTENT);
         }
         $matches = array_map(
-            function ($match) {
-                return str_replace('^', '/', $match[1]);
-            }, array_unique($matches, SORT_REGULAR)
+            fn($match) => str_replace('^', '/', $match[1]), array_unique($matches, SORT_REGULAR)
         );
 
         $coaEm = $this->getEm('coa');
@@ -433,9 +429,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
 
         $issues = $coaIssuesQb->getQuery()->getArrayResult();
 
-        $nonFoundIssues = array_values(array_diff($matches, array_map(function ($issue) {
-            return $issue['issuecode'];
-        }, $issues)));
+        $nonFoundIssues = array_values(array_diff($matches, array_map(fn($issue) => $issue['issuecode'], $issues)));
 
         $newIssues = $this->getNonPossessedIssues($issues, $this->getSessionUser()['id']);
 
@@ -508,14 +502,12 @@ class CollectionController extends AbstractController implements RequiresDmVersi
             'user' => $this->getSessionUser()['id']
         ]);
 
-        return new JsonResponseFromObject(array_map(function (Abonnements $subscription) {
-            return [
-                'id' => $subscription->getId(),
-                'publicationCode' => $subscription->getPays() . '/' . $subscription->getMagazine(),
-                'startDate' => $subscription->getDateDebut()->format('Y-m-d'),
-                'endDate' => $subscription->getDateFin()->format('Y-m-d')
-            ];
-        }, $subscriptions));
+        return new JsonResponseFromObject(array_map(fn(Abonnements $subscription) => [
+            'id' => $subscription->getId(),
+            'publicationCode' => $subscription->getPays() . '/' . $subscription->getMagazine(),
+            'startDate' => $subscription->getDateDebut()->format('Y-m-d'),
+            'endDate' => $subscription->getDateFin()->format('Y-m-d')
+        ], $subscriptions));
     }
 
     /**
@@ -573,14 +565,12 @@ class CollectionController extends AbstractController implements RequiresDmVersi
             ->setMaxResults(5);
         $results = $qb->getQuery()->getResult();
 
-        return new JsonResponseFromObject(array_map(function(TranchesPretes $edge) {
-            return [
-                'id' => $edge->getId(),
-                'publicationcode' => $edge->getPublicationcode(),
-                'issuenumber' => $edge->getIssuenumber(),
-                'creationDate' => $edge->getDateajout()->format('Y-m-d'),
-            ];
-        }, $results));
+        return new JsonResponseFromObject(array_map(fn(TranchesPretes $edge) => [
+            'id' => $edge->getId(),
+            'publicationcode' => $edge->getPublicationcode(),
+            'issuenumber' => $edge->getIssuenumber(),
+            'creationDate' => $edge->getDateajout()->format('Y-m-d'),
+        ], $results));
     }
 
     /**
@@ -616,9 +606,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
             $currentIssuesByPublication[$currentIssue->getPays() . '/' . $currentIssue->getMagazine()][] = $currentIssue->getNumero();
         }
 
-        return array_values(array_filter($issues, function ($issue) use ($currentIssuesByPublication) {
-            return (!(isset($currentIssuesByPublication[$issue['publicationcode']]) && in_array($issue['issuenumber'], $currentIssuesByPublication[$issue['publicationcode']], true)));
-        }));
+        return array_values(array_filter($issues, fn($issue) => (!(isset($currentIssuesByPublication[$issue['publicationcode']]) && in_array($issue['issuenumber'], $currentIssuesByPublication[$issue['publicationcode']], true)))));
     }
 
     private function getUserPurchase(?int $purchaseId): ?Achats

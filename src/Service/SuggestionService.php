@@ -119,9 +119,7 @@ class SuggestionService
             }
         }
 
-        $authors = self::$coaService->getAuthorNames(array_map(function ($story) {
-            return $story['personcode'];
-        }, $referencedStories));
+        $authors = self::$coaService->getAuthorNames(array_map(fn($story) => $story['personcode'], $referencedStories));
 
         $storyDetails = self::$coaService->getStoryDetails(
             array_map(fn($story) => $story['storycode'], $referencedStories),
@@ -134,9 +132,7 @@ class SuggestionService
             $storyDetails[$referencedStory['storycode']]['personcode'] = $referencedStory['personcode'];
         }
 
-        $publicationTitles = self::$coaService->getPublicationTitles(array_map(function (IssueSuggestion $issueSuggestion) {
-            return $issueSuggestion->getPublicationcode();
-        }, $referencedIssues));
+        $publicationTitles = self::$coaService->getPublicationTitles(array_map(fn(IssueSuggestion $issueSuggestion) => $issueSuggestion->getPublicationcode(), $referencedIssues));
 
         return [$suggestionsPerUser, $authors, $storyDetails, $publicationTitles];
     }

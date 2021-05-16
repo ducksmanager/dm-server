@@ -42,9 +42,7 @@ class CoaService
             ->indexBy('p', 'p.personcode');
 
         $fullNamesResults = $qbAuthorsFullNames->getQuery()->getResult();
-        return array_map(function(array $person) {
-            return $person['fullname'];
-        }, $fullNamesResults);
+        return array_map(fn(array $person) => $person['fullname'], $fullNamesResults);
     }
 
     /**
@@ -64,9 +62,7 @@ class CoaService
             ->indexBy('p', 'p.personcode');
 
         $fullNamesResults = $qbAuthorsFullNames->getQuery()->getResult();
-        return (object) array_map(function(array $person) {
-            return $person['fullname'];
-        }, $fullNamesResults);
+        return (object) array_map(fn(array $person) => $person['fullname'], $fullNamesResults);
     }
 
     /**
@@ -117,12 +113,10 @@ class CoaService
 
         $storyDetailsResults = $qbStoryDetails->getQuery()->getResult();
 
-        $storyDetails = array_map(function(array $story) {
-            return [
-                'storycomment' => $story['storycomment'],
-                'title' => $story['title'] ?? $story['originaltitle']
-            ];
-        }, $storyDetailsResults);
+        $storyDetails = array_map(fn(array $story) => [
+            'storycomment' => $story['storycomment'],
+            'title' => $story['title'] ?? $story['originaltitle']
+        ], $storyDetailsResults);
 
         // Empty properties if the story couldn't be found
         foreach($storyCodes as $storyCode) {
@@ -153,9 +147,7 @@ class CoaService
             ->indexBy('inducks_publication', 'inducks_publication.publicationcode');
 
         $results = $qb->getQuery()->getArrayResult();
-        return array_map(function(array $person) {
-            return $person['title'];
-        }, $results);
+        return array_map(fn(array $person) => $person['title'], $results);
     }
 
     /**
@@ -173,9 +165,7 @@ class CoaService
             ->indexBy('inducks_publication', 'inducks_publication.publicationcode');
 
         $results = $qb->getQuery()->getArrayResult();
-        return array_map(function(array $person) {
-            return $person['title'];
-        }, $results);
+        return array_map(fn(array $person) => $person['title'], $results);
     }
 
     public function getIssueCount() : array
@@ -186,9 +176,7 @@ class CoaService
             ->groupBy('inducks_issue.publicationcode')
             ->indexBy('inducks_issue', 'inducks_issue.publicationcode');
 
-        return array_map(function(array $result) {
-            return (int) $result['count'];
-        }, $qb->getQuery()->getResult());
+        return array_map(fn(array $result) => (int) $result['count'], $qb->getQuery()->getResult());
     }
 
     public function getIssueNumbersFromPublicationCode(string $publicationCode) : stdClass
@@ -256,12 +244,10 @@ class CoaService
             $hasMore = true;
         }
         return [
-            'results' => array_map(function($result) {
-                return [
-                    'code' => $result['storyversioncode'],
-                    'title' => $result['title'],
-                ];
-            }, $results),
+            'results' => array_map(fn($result) => [
+                'code' => $result['storyversioncode'],
+                'title' => $result['title'],
+            ], $results),
             'hasmore' => $hasMore
         ];
     }
@@ -280,13 +266,11 @@ class CoaService
         $results = $qb->getQuery()->getArrayResult();
 
         return [
-            'results' => array_map(function($result) {
-                return [
-                    'code' => $result['issuecode'],
-                    'publicationcode' => $result['publicationcode'],
-                    'issuenumber' => $result['issuenumber'],
-                ];
-            }, $results)
+            'results' => array_map(fn($result) => [
+                'code' => $result['issuecode'],
+                'publicationcode' => $result['publicationcode'],
+                'issuenumber' => $result['issuenumber'],
+            ], $results)
         ];
     }
 
@@ -354,9 +338,7 @@ class CoaService
 
     public function getIssueQuotations(array $issueCodes) : array
     {
-        $issueCodes = array_map(function(string $issuecode) {
-            return preg_replace('#[ ]+#', ' ', $issuecode);
-        }, $issueCodes);
+        $issueCodes = array_map(fn(string $issuecode) => preg_replace('#[ ]+#', ' ', $issuecode), $issueCodes);
         $qb = self::$coaEm->createQueryBuilder();
         $qb->select('quotation')
             ->from(InducksIssuequotation::class, 'quotation')

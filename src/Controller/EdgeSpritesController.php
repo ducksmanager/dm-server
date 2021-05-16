@@ -158,9 +158,7 @@ class EdgeSpritesController extends AbstractController implements RequiresDmVers
             );
             $dmEm->flush();
         }
-        return new JsonResponse(array_map(function($spriteWithNoUrl) {
-            return $spriteWithNoUrl['spriteName'];
-        }, $spritesWithNoUrl));
+        return new JsonResponse(array_map(fn($spriteWithNoUrl) => $spriteWithNoUrl['spriteName'], $spritesWithNoUrl));
     }
 
     private static function getSpriteRange(string $issueNumber, int $rangeWidth): string

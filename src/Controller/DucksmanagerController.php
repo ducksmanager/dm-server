@@ -259,9 +259,7 @@ class DucksmanagerController extends AbstractController
             return new Response('', Response::HTTP_NO_CONTENT);
         }
 
-        $userIdsList = implode(',', array_map(function($issue) {
-            return $issue['userId'];
-        }, $issuesReleasedThroughSubscriptionsToday));
+        $userIdsList = implode(',', array_map(fn($issue) => $issue['userId'], $issuesReleasedThroughSubscriptionsToday));
         $users = ($dmEm->createQueryBuilder())
             ->select('users')
             ->from(Users::class, 'users')
@@ -269,9 +267,7 @@ class DucksmanagerController extends AbstractController
             ->indexBy('users', 'users.id')
             ->getQuery()->getResult();
 
-        $publicationCodesList = implode(',', array_map(function($issue) {
-            return "'{$issue['publicationCode']}'";
-        }, $issuesReleasedThroughSubscriptionsToday));
+        $publicationCodesList = implode(',', array_map(fn($issue) => "'{$issue['publicationCode']}'", $issuesReleasedThroughSubscriptionsToday));
         $publicationNames = ($this->getEm('coa')->createQueryBuilder())
             ->select('publications.publicationcode, publications.title')
             ->from(InducksPublication::class, 'publications')
@@ -364,12 +360,10 @@ class DucksmanagerController extends AbstractController
             }
         }
         return new JsonResponse([
-            'emails_sent' => array_map(function(AbstractEmail $emailHelper) {
-                return [
-                    'to' => $emailHelper->getTo(),
-                    'subject' => $emailHelper->getSubject()
-                ];
-            }, $emailsSent)
+            'emails_sent' => array_map(fn(AbstractEmail $emailHelper) => [
+                'to' => $emailHelper->getTo(),
+                'subject' => $emailHelper->getSubject()
+            ], $emailsSent)
         ]);
     }
 
@@ -448,12 +442,10 @@ class DucksmanagerController extends AbstractController
         $users = $dmEm->getRepository(Users::class)->findAll();
 
         return new JsonResponseFromObject([
-            'users' => array_map(function(Users $user) {
-                return [
-                    'id' => $user->getId(),
-                    'username' => $user->getUsername()
-                ];
-            }, $users)
+            'users' => array_map(fn(Users $user) => [
+                'id' => $user->getId(),
+                'username' => $user->getUsername()
+            ], $users)
         ]);
     }
 

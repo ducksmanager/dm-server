@@ -70,9 +70,7 @@ class QueryHelperService {
         $connection = self::$emRegistry->getManager($emName)->getConnection();
         $emTables = $connection->getSchemaManager()->listTableNames();
 
-        $tableCounts = implode(' UNION ', array_map(function ($tableName) {
-            return "SELECT '$tableName' AS table_name, COUNT(*) AS cpt FROM $tableName";
-        }, $emTables));
+        $tableCounts = implode(' UNION ', array_map(fn($tableName) => "SELECT '$tableName' AS table_name, COUNT(*) AS cpt FROM $tableName", $emTables));
         return
             "SELECT * FROM (
               SELECT count(*) AS counter FROM ($tableCounts) db_tables 

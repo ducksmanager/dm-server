@@ -785,9 +785,7 @@ class EdgeCreatorTest extends TestCommon
         $objectResponse = json_decode($this->getResponseContent($response));
         $this->assertEquals(
             ['MP.Tete.1.png', 'MP.Tete.[Numero].png', 'MP.Tete.1.png', 'MP.[Numero].png'],
-            array_map(function($element) {
-                return $element->Option_valeur;
-            }, $objectResponse)
+            array_map(fn($element) => $element->Option_valeur, $objectResponse)
         );
     }
 

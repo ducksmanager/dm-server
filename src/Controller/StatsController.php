@@ -81,9 +81,7 @@ class StatsController extends AbstractController implements RequiresDmVersionCon
         return new JsonResponse([
             'minScore' => $suggestionsForUser->getMinScore(),
             'maxScore' => $suggestionsForUser->getMaxScore(),
-            'issues' => (object) array_map(function(IssueSuggestion $issue) {
-                return $issue->toSimpleObject();
-            }, $suggestionsForUser->getIssues())
+            'issues' => (object) array_map(fn(IssueSuggestion $issue) => $issue->toSimpleObject(), $suggestionsForUser->getIssues())
         ] + compact('authors', 'storyDetails', 'publicationTitles')
         );
     }

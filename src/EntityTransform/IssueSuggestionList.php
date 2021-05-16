@@ -26,9 +26,7 @@ class IssueSuggestionList
 
     private function recalculateMinMaxScore(): void
     {
-        $scores = array_values(array_map(function (IssueSuggestion $issue) {
-            return $issue->getScore();
-        }, $this->issues));
+        $scores = array_values(array_map(fn(IssueSuggestion $issue) => $issue->getScore(), $this->issues));
 
         $this->minScore = min($scores);
         $this->maxScore = max($scores);

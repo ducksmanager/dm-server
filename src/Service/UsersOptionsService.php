@@ -26,9 +26,7 @@ class UsersOptionsService {
         return new UserWithOptionValue(
             $user,
             array_map(
-                function (UsersOptions $option) {
-                    return $option->getOptionValeur();
-                }, self::$dmEm->getRepository(UsersOptions::class)->findBy([
+                fn(UsersOptions $option) => $option->getOptionValeur(), self::$dmEm->getRepository(UsersOptions::class)->findBy([
                     'user' => $user,
                     'optionNom' => $optionKey
                 ])

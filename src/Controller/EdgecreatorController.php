@@ -493,9 +493,7 @@ CONCAT;
         ]);
 
         $currentUserId = $this->getSessionUser()['id'];
-        if (count(array_filter($helperUsers, function(TranchesEnCoursContributeurs $helperUser) use ($currentUserId) {
-                return $helperUser->getIdUtilisateur() === $currentUserId;
-            })) === 0) {
+        if (count(array_filter($helperUsers, fn(TranchesEnCoursContributeurs $helperUser) => $helperUser->getIdUtilisateur() === $currentUserId)) === 0) {
             $photographer = new TranchesEnCoursContributeurs();
             $photographer->setIdModele($model);
             $photographer->setContribution('photographe');
@@ -730,26 +728,14 @@ CONCAT;
         $photographers = $request->request->get('photographers');
 
         $modelContributors = array_merge(
-            array_values(array_map(function($userId) {
-                return ['userId' => $userId, 'contribution' => 'createur'];
-            }, $this->getUserIdsByUsername($designers))),
-            array_values(array_map(function($userId) {
-                return ['userId' => $userId, 'contribution' => 'photographe'];
-            }, $this->getUserIdsByUsername($photographers)))
+            array_values(array_map(fn($userId) => ['userId' => $userId, 'contribution' => 'createur'], $this->getUserIdsByUsername($designers))),
+            array_values(array_map(fn($userId) => ['userId' => $userId, 'contribution' => 'photographe'], $this->getUserIdsByUsername($photographers)))
         );
 
         ['edgeId' => $edgeId, 'contributors' => $contributors] =
             $this->publishEdgeOnDm($contributionService, $modelContributors, $publicationCode, $issueNumber);
 
         [$countryCode, $shortPublicationCode] = explode('/', $publicationCode);
-        $model = $this->getEm('edgecreator')->getRepository(TranchesEnCoursModeles::class)->findOneBy([
-            'pays' => $countryCode,
-            'magazine' => $shortPublicationCode,
-            'numero' => $issueNumber
-        ]);
-        if (!is_null($model)) {
-            $this->deactivateModel($model->getId());
-        }
 
         return new JsonResponse([
             'publicationCode' => $publicationCode,
@@ -778,12 +764,10 @@ CONCAT;
 
             $publicationCode = implode('/', [$edgeModelToPublish->getPays(), $edgeModelToPublish->getMagazine()]);
 
-            $modelContributors = array_map(function(TranchesEnCoursContributeurs $contributor) {
-                return [
-                    'userId' => $contributor->getIdUtilisateur(),
-                    'contribution' => $contributor->getContribution(),
-                ];
-            }, $edgeModelToPublish->getContributeurs()->toArray());
+            $modelContributors = array_map(fn(TranchesEnCoursContributeurs $contributor) => [
+                'userId' => $contributor->getIdUtilisateur(),
+                'contribution' => $contributor->getContribution(),
+            ], $edgeModelToPublish->getContributeurs()->toArray());
 
             ['edgeId' => $edgeId, 'contributors' => $contributors] =
                 $this->publishEdgeOnDm($contributionService, $modelContributors, $publicationCode, $edgeModelToPublish->getNumero());
@@ -851,9 +835,7 @@ CONCAT;
 
         return [
             'edgeId' => $edgeToPublish->getId(),
-            'contributors' => array_map(function(UsersContributions $contribution) {
-                return $contribution->getUser()->getId();
-            }, $contributions)
+            'contributors' => array_map(fn(UsersContributions $contribution) => $contribution->getUser()->getId(), $contributions)
         ];
     }
 
@@ -890,10 +872,13 @@ CONCAT;
             if (!is_null($newContributors)) {
                 foreach ($newContributors as $newContributorUsername) {
                     $contributorId = $contributorsIds[$newContributorUsername];
-                    $contributorExists = count(array_filter($contributors, function(TranchesEnCoursContributeurs $existingContributor) use ($contributionType, $contributorId) {
-                        return $existingContributor->getIdUtilisateur() === $contributorId
-                            && $existingContributor->getContribution() === $contributionType;
-                    })) > 0;
+                    $contributorExists = !empty(
+                        array_filter(
+                            $contributors,
+                            fn(TranchesEnCoursContributeurs $existingContributor) => $existingContributor->getIdUtilisateur() === $contributorId
+                                && $existingContributor->getContribution() === $contributionType
+                        )
+                    );
                     if (!$contributorExists) {
                         $newContributor = new TranchesEnCoursContributeurs();
                         $contributors[] = $newContributor

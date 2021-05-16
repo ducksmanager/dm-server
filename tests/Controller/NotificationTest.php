@@ -76,9 +76,10 @@ $notificationsSentToUser = $this->getEm('dm')->getRepository(UsersSuggestionsNot
 
         $this->assertCount(2, $notificationsSentToUser);
 
-        $newNotifications = array_values(array_filter($notificationsSentToUser, function(UsersSuggestionsNotifications $notification) {
-            return $notification->getDate()->format('Y-m-d') === (new DateTime())->format('Y-m-d');
-        }));
+        $newNotifications = array_values(array_filter(
+            $notificationsSentToUser,
+            fn(UsersSuggestionsNotifications $notification) => $notification->getDate()->format('Y-m-d') === (new DateTime())->format('Y-m-d')
+        ));
         $this->assertCount(1, $newNotifications);
         $this->assertEquals('fr/PM 315', $newNotifications[0]->getIssuecode());
         $this->assertEquals('Picsou Magazine 315', $newNotifications[0]->getText());
