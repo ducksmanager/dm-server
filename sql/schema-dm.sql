@@ -72,19 +72,19 @@ CREATE TABLE `bibliotheque_ordre_magazines`
 
 CREATE TABLE `bouquineries`
 (
-    `ID`              int(11)                          NOT NULL AUTO_INCREMENT,
-    `Nom`             varchar(25) CHARACTER SET latin1 NOT NULL,
-    `Adresse`         text CHARACTER SET latin1                 DEFAULT NULL,
-    `AdresseComplete` text                             NOT NULL,
-    `CodePostal`      int(11)                                   DEFAULT NULL,
-    `Ville`           varchar(20) CHARACTER SET latin1          DEFAULT NULL,
-    `Pays`            varchar(20) CHARACTER SET latin1          DEFAULT 'France',
-    `Commentaire`     text CHARACTER SET latin1        NOT NULL,
-    `ID_Utilisateur`  int(11)                                   DEFAULT NULL,
-    `CoordX`          double                           NOT NULL,
-    `CoordY`          double                           NOT NULL,
-    `DateAjout`       timestamp                        NULL     DEFAULT current_timestamp(),
-    `Actif`           tinyint(1)                       NOT NULL DEFAULT 0,
+    `ID`              int(11)                                               NOT NULL AUTO_INCREMENT,
+    `Nom`             varchar(25) CHARACTER SET latin1                      NOT NULL,
+    `Adresse`         text CHARACTER SET latin1                                      DEFAULT NULL,
+    `AdresseComplete` text                                                  NOT NULL,
+    `CodePostal`      int(11)                                                        DEFAULT NULL,
+    `Ville`           varchar(20) CHARACTER SET latin1                               DEFAULT NULL,
+    `Pays`            varchar(20) CHARACTER SET latin1                               DEFAULT 'France',
+    `Commentaire`     text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    `ID_Utilisateur`  int(11)                                                        DEFAULT NULL,
+    `CoordX`          double                                                NOT NULL,
+    `CoordY`          double                                                NOT NULL,
+    `DateAjout`       timestamp                                             NULL     DEFAULT current_timestamp(),
+    `Actif`           tinyint(1)                                            NOT NULL DEFAULT 0,
     PRIMARY KEY (`ID`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
