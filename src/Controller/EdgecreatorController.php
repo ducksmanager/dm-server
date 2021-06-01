@@ -174,7 +174,12 @@ CONCAT;
             'numero' => $issueNumber
         ]);
 
-        if (is_null($model)) {
+        $modelIsPublished = $this->getEm('dm')->getRepository(TranchesPretes::class)->findOneBy([
+            'publicationcode' => $publicationCode,
+            'issuenumber' => $issueNumber
+        ]);
+
+        if (is_null($model) || is_null($modelIsPublished)) {
             return new Response('', Response::HTTP_NO_CONTENT);
         }
         return new JsonResponseFromObject($model);
