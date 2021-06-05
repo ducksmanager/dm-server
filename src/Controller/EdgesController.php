@@ -27,7 +27,7 @@ class EdgesController extends AbstractController implements RequiresDmVersionCon
 
         $qbGetEdges = $this->getEm('dm')->createQueryBuilder();
         $qbGetEdges
-            ->select('published_edges.id, published_edges.publicationcode, published_edges.issuecode')
+            ->select('published_edges.id, published_edges.publicationcode, published_edges.issuenumber')
             ->from(TranchesPretes::class, 'published_edges')
             ->where($qbGetEdges->expr()->eq('published_edges.publicationcode', ':publicationCode'))
             ->setParameter('publicationCode', $publicationCode)
