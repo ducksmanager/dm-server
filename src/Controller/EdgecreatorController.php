@@ -100,9 +100,12 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
     }
 
     /**
-     * @Route(methods={"GET"}, path="/edgecreator/v2/model/{modelId}/steps")
+     * @Route(
+     *     methods={"GET"},
+     *     path="/edgecreator/v2/model/{modelIds}/steps"
+     * )
      */
-    public function getSteps(int $modelId): JsonResponse
+    public function getSteps(string $modelIds): JsonResponse
     {
         $ecEm = $this->getEm('edgecreator');
         $qb = $ecEm->createQueryBuilder();
@@ -110,18 +113,27 @@ class EdgecreatorController extends AbstractController implements RequiresDmVers
         $options = <<<'CONCAT'
 concat('{', group_concat(concat('"', values.optionNom, '": ', '"', values.optionValeur, '"')), '}')
 CONCAT;
-        $qb->select("values.ordre, values.nomFonction, $options AS options")
-            ->from(TranchesEnCoursValeurs::class, 'values')
-            ->andWhere('values.idModele = :modelId')
-            ->setParameter(':modelId', $modelId)
-            ->groupBy('values.ordre')
-            ->orderBy('values.ordre')
-        ;
 
-        return new JsonResponse(array_map(function(array $result) {
-            $result['options'] = json_decode($result['options'], true);
-            return $result;
-        }, $qb->getQuery()->getArrayResult()));
+        $qb->select("model.numero AS issuenumber, values.ordre AS stepNumber, values.nomFonction AS functionName, $options AS options")
+            ->from(TranchesEnCoursValeurs::class, 'values')
+            ->join('values.idModele', 'model')
+            ->andWhere("model.id IN ($modelIds)")
+            ->groupBy('model.numero, values.ordre')
+            ->orderBy('values.ordre');
+
+        return new JsonResponse(
+            array_reduce(
+                $qb->getQuery()->getArrayResult(),
+                function (array $acc, array $result) {
+                    if (!array_key_exists($result['issuenumber'], $acc)) {
+                        $acc[$result['issuenumber']] = [];
+                    }
+                    $acc[$result['issuenumber']][$result['stepNumber']]
+                        = array_merge($result, ['options' => json_decode($result['options'], true)]);
+                    return $acc;
+                }
+                , [])
+        );
     }
 
     /**
@@ -153,10 +165,10 @@ CONCAT;
     {
         return new JsonResponseFromObject(
             $this->getEm('edgecreator')->getRepository(TranchesEnCoursModeles::class)->findBy([
-                'username' => null,
-                'active' => false
-            ]
-        ));
+                    'username' => null,
+                    'active' => false
+                ]
+            ));
     }
 
     /**
@@ -689,12 +701,12 @@ CONCAT;
                 'optionValueTemplate' => '%[Numero]%',
                 'optionValueExtension' => '%.png',
             ], [
-            Types::STRING,
-            Types::STRING,
-            Types::STRING,
-            Types::STRING,
-            Types::STRING,
-        ])->fetchAllAssociative();
+                Types::STRING,
+                Types::STRING,
+                Types::STRING,
+                Types::STRING,
+                Types::STRING,
+            ])->fetchAllAssociative();
 
         $matches = array_filter($templatedValues, function($match) use ($nameSubString) {
             $string_chunks = preg_split('/\[[^]]+]/', $match['Option_valeur']);
@@ -878,11 +890,11 @@ CONCAT;
                 foreach ($newContributors as $newContributorUsername) {
                     $contributorId = $contributorsIds[$newContributorUsername];
                     $contributorExists = !empty(
-                        array_filter(
-                            $contributors,
-                            fn(TranchesEnCoursContributeurs $existingContributor) => $existingContributor->getIdUtilisateur() === $contributorId
-                                && $existingContributor->getContribution() === $contributionType
-                        )
+                    array_filter(
+                        $contributors,
+                        fn(TranchesEnCoursContributeurs $existingContributor) => $existingContributor->getIdUtilisateur() === $contributorId
+                            && $existingContributor->getContribution() === $contributionType
+                    )
                     );
                     if (!$contributorExists) {
                         $newContributor = new TranchesEnCoursContributeurs();
