@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -16,8 +17,6 @@ class GlobalStatsService
 
     public function getUsersQuickStats(array $userIds): array
     {
-        $userIdsList = implode(',', $userIds);
-
         $userQuickStatsQuery = "
             select
                u.ID AS userId,
@@ -27,7 +26,7 @@ class GlobalStatsService
                count(*) as numberOfIssues
             from users u
             inner join numeros on numeros.ID_Utilisateur = u.ID
-            where u.ID IN (:userIds)
+            where u.ID IN (?)
             group by u.ID";
 
         return array_map(fn(array $result) => array_merge($result, [
@@ -35,14 +34,12 @@ class GlobalStatsService
             'numberOfCountries' => (int)$result['numberOfCountries'],
             'numberOfPublications' => (int)$result['numberOfPublications'],
             'numberOfIssues' => (int)$result['numberOfIssues']
-        ]), self::$dmEm->getConnection()->fetchAllAssociative($userQuickStatsQuery, ['userIds' => $userIdsList]));
+        ]), self::$dmEm->getConnection()->fetchAllAssociative($userQuickStatsQuery, [$userIds], [Connection::PARAM_INT_ARRAY]));
 
     }
 
     public function getUsersPoints(array $userIds): array
     {
-        $userIdsList = implode(',', $userIds);
-
         $userPointsQuery = "
             select type_contribution.contribution, ids_users.ID_User, ifnull(contributions_utilisateur.points_total, 0) as points_total
             from (
@@ -53,7 +50,7 @@ class GlobalStatsService
             join (
                 SELECT ID AS ID_User
                 FROM users
-                WHERE ID IN (:userIds)
+                WHERE ID IN (?)
             ) AS ids_users
             left join (
                 SELECT uc.ID_User, uc.contribution, sum(points_new) as points_total
@@ -66,7 +63,7 @@ class GlobalStatsService
         return array_map(fn(array $result) => array_merge($result, [
             'points_total' => (int)$result['points_total'],
             'ID_User' => (int)$result['ID_User']
-        ]), self::$dmEm->getConnection()->fetchAllAssociative($userPointsQuery, ['userIds' => $userIdsList]));
+        ]), self::$dmEm->getConnection()->fetchAllAssociative($userPointsQuery, [$userIds], [Connection::PARAM_INT_ARRAY]));
 
     }
 }
