@@ -5,7 +5,7 @@ use App\Entity\Dm\Users;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
-class FeedbackSent extends AbstractEmail {
+class PresentationSentenceUpdateRequested extends AbstractEmail {
 
     private string $sentence;
 
@@ -16,11 +16,11 @@ class FeedbackSent extends AbstractEmail {
     }
 
     public function getFrom() : string {
-        return $this->user->getUsername(). '@' .$_ENV['SMTP_ORIGIN_EMAIL_DOMAIN_DUCKSMANAGER'];
+        return "{$this->user->getUsername()}@{$_ENV['SMTP_ORIGIN_EMAIL_DOMAIN_DUCKSMANAGER']}";
     }
 
     public function getFromName() : string {
-        return $this->user->getUsername(). '@' .$_ENV['SMTP_ORIGIN_EMAIL_DOMAIN_DUCKSMANAGER'];
+        return "{$this->user->getUsername()}@{$_ENV['SMTP_ORIGIN_EMAIL_DOMAIN_DUCKSMANAGER']}";
     }
 
     public function getTo() : string {
@@ -32,18 +32,22 @@ class FeedbackSent extends AbstractEmail {
     }
 
     public function getSubject() : string {
-        return 'Feedback utilisateur';
+        return 'Presentation sentence update request';
     }
 
     public function getTextBody() : string {
-        return $this->sentence;
+         return '';
     }
 
     public function getHtmlBody(Environment $twig) : string {
-        return $this->sentence;
+        return implode(' ', array_map(fn(string $choice) => sprintf(
+            "<a href=\"{$_ENV['WEBSITE_ROOT']}/admin/presentationSentence/$choice/?userId=%s&sentence=%s\">".ucfirst($choice)."</a>",
+            $this->user->getId(),
+            $this->sentence
+        ), ['approve', 'refuse']));
     }
 
     public function __toString() : string {
-        return "user {$this->user->getUsername()} sent a feedback";
+        return "user {$this->user->getUsername()} wants to update the presentation sentence";
     }
 }

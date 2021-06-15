@@ -16,6 +16,9 @@ use App\Helper\Email\AbstractEmail;
 use App\Helper\Email\BookstoreApproved;
 use App\Helper\Email\BookstoreSuggested;
 use App\Helper\Email\EdgesPublished;
+use App\Helper\Email\PresentationSentenceApproved;
+use App\Helper\Email\PresentationSentenceRefused;
+use App\Helper\Email\PresentationSentenceUpdateRequested;
 use App\Helper\Email\ResetPassword;
 use App\Helper\Email\SubscriptionIssueAdded;
 use App\Helper\JsonResponseFromObject;
@@ -288,7 +291,6 @@ class DucksmanagerController extends AbstractController
 
     /**
      * @Route(methods={"POST"}, path="/ducksmanager/emails/pending")
-     * @return Response
      * @throws ORMException
      * @throws OptimisticLockException
      */
@@ -433,6 +435,36 @@ class DucksmanagerController extends AbstractController
     }
 
     /**
+     * @Route(methods={"POST"}, path="/ducksmanager/presentationSentence/{choice}")
+     * @throws ORMException
+     * @throws Exception
+     */
+    public function validatePresentationSentence(string $choice, Request $request, EmailService $emailService, TranslatorInterface $translator): Response
+    {
+        $userId = $request->request->get('userId');
+        $dmEm = $this->getEm('dm');
+        /** @var Users $user */
+        $user = $dmEm->getRepository(Users::class)->find($userId);
+
+        switch($choice) {
+            case 'refuse':
+                $emailService->send(new PresentationSentenceRefused($translator, $user));
+            break;
+            case 'approve':
+                $user->setPresentationSentence($request->request->get('sentence'));
+
+                $this->getEm('dm')->persist($user);
+                $this->getEm('dm')->flush();
+                $emailService->send(new PresentationSentenceApproved($translator, $user));
+            break;
+            default:
+                return new Response('Choice can only be "approve" or "refuse"', Response::HTTP_BAD_REQUEST);
+        }
+
+        return new Response('OK', Response::HTTP_OK);
+    }
+
+    /**
      * @Route(methods={"GET"}, path="/ducksmanager/users")
      * @throws Exception
      */
@@ -530,9 +562,8 @@ class DucksmanagerController extends AbstractController
      * @Route(methods={"POST"}, path="/ducksmanager/user/{username}")
      * @throws Exception
      */
-    public function updateDmUser(string $username, Request $request, LoggerInterface $logger): Response
+    public function updateDmUser(string $username, Request $request, EmailService $emailService, TranslatorInterface $translator): Response
     {
-        $logger->info('Content : ' . print_r($request->request->all(), true));
         $user = $this->getEm('dm')->getRepository(Users::class)->findOneBy([
             'username' => $username
         ]);
@@ -547,6 +578,13 @@ class DucksmanagerController extends AbstractController
         }
         if ($request->request->has('isVideoShown')) {
             $user->setAffichervideo($request->request->get('isVideoShown'));
+        }
+        if ($request->request->has('presentationSentenceRequest')) {
+            $emailService->send(new PresentationSentenceUpdateRequested(
+                $translator,
+                $user,
+                $request->request->get('presentationSentenceRequest')
+            ));
         }
 
         $this->getEm('dm')->persist($user);

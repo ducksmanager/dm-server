@@ -21,6 +21,7 @@ class GlobalStatsService
             select
                u.ID AS userId,
                u.username,
+               u.TextePresentation as presentationSentence,
                count(distinct Pays) AS numberOfCountries,
                count(distinct concat(Pays, '/', Magazine)) as numberOfPublications,
                count(*) as numberOfIssues

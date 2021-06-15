@@ -22,7 +22,7 @@ class BookstoreSuggested extends AbstractEmail {
     }
 
     public function getSubject() : string {
-        return 'Ajout de bouquinerie';
+        return 'Bookstore suggestion';
     }
 
     public function getTextBody() : string {

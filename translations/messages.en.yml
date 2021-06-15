@@ -1,3 +1,7 @@
+EMAIL_PRESENTATION_SENTENCE_APPROVED_MESSAGE: The presentation message that you submitted on DucksManager has been approved. Visitors on DucksManager will see it when checking your profile in the "Recently on DucksManager..." section.
+EMAIL_PRESENTATION_SENTENCE_APPROVED_SUBJECT: Your presentation sentence has been approved!
+EMAIL_PRESENTATION_SENTENCE_REFUSED_MESSAGE: The presentation message that you submitted on DucksManager has been refused. Presentation sentences that include a political or illegal content are not allowed. If you think that the rejection of your message is a mistake, please respond to this email.
+EMAIL_PRESENTATION_SENTENCE_REFUSED_SUBJECT: Votre phrase de présentation a été refusée.
 EMAIL_SUBSCRIPTION_ISSUE_ADDED: '%publicationName% %issueNumber% has been added to your collection!'
 EMAIL_SUBSCRIPTION_ISSUE_ADDED_DESCRIPTION: 'A publication that you are subscribed to has recently released an issue which has been automatically added to your DucksManager collection : %publicationName% %issueNumber%.'
 NOTIFICATION_TITLE: >-

@@ -115,6 +115,13 @@ class Users
     private $bibliothequeSousTexture2 = 'KNOTTY PINE';
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="TextePresentation", type="string", length=100, nullable=true)
+     */
+    private $presentationSentence = null;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="PrecedentAcces", type="datetime", nullable=true)
@@ -292,6 +299,18 @@ class Users
     public function setBibliothequeSousTexture2(string $bibliothequeSousTexture2): self
     {
         $this->bibliothequeSousTexture2 = $bibliothequeSousTexture2;
+
+        return $this;
+    }
+
+    public function getPresentationSentence(): ?string
+    {
+        return $this->presentationSentence;
+    }
+
+    public function setPresentationSentence(?string $presentationSentence): self
+    {
+        $this->presentationSentence = $presentationSentence;
 
         return $this;
     }

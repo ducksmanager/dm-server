@@ -13,6 +13,10 @@ EMAIL_EDGES_PUBLISHED_SUBJECT: Vos tranches ont été publiées sur DucksManager
 EMAIL_HELLO: Bonjour %userName%,
 EMAIL_ONE_EDGE_PUBLISHED_INTRO: La tranche dont vous nous avez envoyé la photo est maintenant visionnable dans votre bibliothèque DucksManager ainsi que dans les bibliothèques des autres utilisateurs possédant ce magazine.
 EMAIL_ONE_EDGE_PUBLISHED_SUBJECT: Votre tranche a été publiée sur DucksManager !
+EMAIL_PRESENTATION_SENTENCE_APPROVED_MESSAGE: La phrase de présentation que vous avez proposé pour votre profil DucksManager a été acceptée. Les visiteurs de DucksManager la verront lorsqu'ils consulteront votre profil dans l'encart "Récemment sur DucksManager".
+EMAIL_PRESENTATION_SENTENCE_APPROVED_SUBJECT: Votre phrase de présentation a été acceptée !
+EMAIL_PRESENTATION_SENTENCE_REFUSED_MESSAGE: La phrase de présentation que vous avez proposé pour votre profil DucksManager a été refusée. Les messages à caractère politique ou contraires à la loi ne sont pas autorisés. Si vous pensez que le refus de votre phrase de présentation est une erreur, merci de répondre à cet e-mail.
+EMAIL_PRESENTATION_SENTENCE_REFUSED_SUBJECT: Votre phrase de présentation a été refusée.
 EMAIL_RESET_PASSWORD_SUBJECT: Vous avez oublié votre mot de passe sur DucksManager ?
 EMAIL_RESET_PASSWORD_BODY: >-
   Un visiteur a indiqué avoir oublié le mot de passe associé à l'adresse e-mail %email%.<br />Si c'est vous qui en êtes à l'origine, cliquez sur le lien suivant pour indiquer un nouveau mot de passe pour votre compte DucksManager :

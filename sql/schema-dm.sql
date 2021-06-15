@@ -250,6 +250,7 @@ CREATE TABLE `users`
     `Bibliotheque_Sous_Texture1`   varchar(50) CHARACTER SET latin1                NOT NULL DEFAULT 'HONDURAS MAHOGANY',
     `Bibliotheque_Texture2`        varchar(20) CHARACTER SET latin1                NOT NULL DEFAULT 'bois',
     `Bibliotheque_Sous_Texture2`   varchar(50) CHARACTER SET latin1                NOT NULL DEFAULT 'KNOTTY PINE',
+    `TextePresentation`            varchar(100) COLLATE latin1_german2_ci                   DEFAULT NULL,
     `DernierAcces`                 datetime                                                 DEFAULT NULL,
     `PrecedentAcces`               datetime                                                 DEFAULT NULL,
     PRIMARY KEY (`ID`),
