@@ -7,7 +7,8 @@ use App\Entity\Dm\TranchesPretes;
 use App\Entity\EdgeCreator\TranchesEnCoursModeles;
 use App\Helper\JsonResponseFromObject;
 use Doctrine\ORM\Query;
-use Psr\Log\LoggerInterface;
+use Doctrine\ORM\Query\ResultSetMapping;
+use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -86,5 +87,34 @@ class EdgesController extends AbstractController implements RequiresDmVersionCon
 
         $edgeResults = $qbGetReferenceEdges->getQuery()->getResult(Query::HYDRATE_OBJECT);
         return new JsonResponseFromObject($edgeResults);
+    }
+
+    /**
+     * @Route(
+     *     methods={"GET"},
+     *     path="/edges/wanted"
+     * )
+     * @throws Exception
+     */
+    public function getMostWantedEdges() : JsonResponse {
+        $rsm = (new ResultSetMapping())
+            ->addScalarResult('numberOfIssues', 'numberOfIssues', 'integer')
+            ->addScalarResult('publicationcode', 'publicationcode')
+            ->addScalarResult('issuenumber', 'issuenumber');
+
+        $mostWantedQuery = "
+            SELECT Count(Numero) as numberOfIssues, CONCAT(Pays,'/',Magazine) AS publicationcode, Numero AS issuenumber
+            FROM numeros
+            WHERE NOT EXISTS(
+                SELECT 1
+                FROM tranches_pretes
+                WHERE CONCAT(numeros.Pays, '/', numeros.Magazine) = tranches_pretes.publicationcode
+                  AND numeros.Numero_nospace = tranches_pretes.issuenumber
+            )
+            GROUP BY Pays,Magazine,Numero
+            ORDER BY numberOfIssues DESC, Pays, Magazine, Numero
+            LIMIT 20
+        ";
+        return new JsonResponse($this->getEm('dm')->createNativeQuery($mostWantedQuery, $rsm)->getArrayResult());
     }
 }
