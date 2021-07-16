@@ -38,8 +38,8 @@ class EdgesPublishedWithPhotographer extends AbstractEmail {
 
     public function getSubject() : string {
         return $this->extraEdges > 1
-            ? $this->translator->trans('EMAIL_EDGES_PUBLISHED_WITH_CREATOR_SUBJECT')
-            : $this->translator->trans('EMAIL_EDGE_PUBLISHED_WITH_CREATOR_SUBJECT');
+            ? $this->translator->trans('EMAIL_EDGES_PUBLISHED_WITH_PHOTOGRAPHER_SUBJECT')
+            : $this->translator->trans('EMAIL_EDGE_PUBLISHED_WITH_PHOTOGRAPHER_SUBJECT');
     }
 
     public function getTextBody() : string {
