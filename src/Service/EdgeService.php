@@ -32,6 +32,7 @@ class EdgeService
      */
     public function publishEdgeOnDm(array $contributors, string $publicationCode, string $issueNumber): array
     {
+        /** @var TranchesPretes $edgeToPublish */
         $edgeToPublish = $this->dmEm->getRepository(TranchesPretes::class)->findOneBy([
             'publicationcode' => $publicationCode,
             'issuenumber' => $issueNumber

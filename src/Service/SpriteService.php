@@ -56,7 +56,7 @@ class SpriteService
         $qbDeleteExistingSpriteNames = $this->dmEm->createQueryBuilder();
         $qbDeleteExistingSpriteNames
             ->delete(TranchesPretesSprites::class, 'sprite')
-            ->andWhere($qbDeleteExistingSpriteNames->expr()->eq('sprite.idTranche', $edge));
+            ->andWhere($qbDeleteExistingSpriteNames->expr()->eq('sprite.idTranche', $edge->getId()));
         $qbDeleteExistingSpriteNames->getQuery()->execute();
 
         $spriteNames = [];
