@@ -15,7 +15,8 @@ use App\Entity\Dm\UsersPasswordTokens;
 use App\Helper\Email\AbstractEmail;
 use App\Helper\Email\BookstoreApproved;
 use App\Helper\Email\BookstoreSuggested;
-use App\Helper\Email\EdgesPublished;
+use App\Helper\Email\EdgesPublishedWithCreator;
+use App\Helper\Email\EdgesPublishedWithPhotographer;
 use App\Helper\Email\PresentationSentenceApproved;
 use App\Helper\Email\PresentationSentenceRefused;
 use App\Helper\Email\PresentationSentenceUpdateRequested;
@@ -349,7 +350,12 @@ class DucksmanagerController extends AbstractController
                             );
                         break;
                         case 'photographe':
-                            $message = new EdgesPublished(
+                            $message = new EdgesPublishedWithPhotographer(
+                                $translator, $request->getLocale(), $user, count($pendingEmailContributionsForUser), $pointsEarned, $medalReached
+                            );
+                            break;
+                        case 'createur':
+                            $message = new EdgesPublishedWithCreator(
                                 $translator, $request->getLocale(), $user, count($pendingEmailContributionsForUser), $pointsEarned, $medalReached
                             );
                             break;

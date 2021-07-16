@@ -5,18 +5,18 @@ use App\Entity\Dm\Users;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
-class EdgesPublished extends AbstractEmail {
+class EdgesPublishedWithCreator extends AbstractEmail {
 
     private int $extraEdges;
-    private int $extraPhotographerPoints;
+    private int $extraCreatorPoints;
     private string $locale;
     private ?int $newMedalLevel;
 
-    public function __construct(TranslatorInterface $translator, string $locale, Users $user, int $extraEdges, int $extraPhotographerPoints, ?int $newMedalLevel = null) {
+    public function __construct(TranslatorInterface $translator, string $locale, Users $user, int $extraEdges, int $extraCreatorPoints, ?int $newMedalLevel = null) {
         parent::__construct($translator, $user);
         $this->locale = $locale;
         $this->extraEdges = $extraEdges;
-        $this->extraPhotographerPoints = $extraPhotographerPoints;
+        $this->extraCreatorPoints = $extraCreatorPoints;
         $this->newMedalLevel = $newMedalLevel;
     }
 
@@ -38,8 +38,8 @@ class EdgesPublished extends AbstractEmail {
 
     public function getSubject() : string {
         return $this->extraEdges > 1
-            ? $this->translator->trans('EMAIL_EDGES_PUBLISHED_SUBJECT')
-            : $this->translator->trans('EMAIL_ONE_EDGE_PUBLISHED_SUBJECT');
+            ? $this->translator->trans('EMAIL_EDGES_PUBLISHED_WITH_CREATOR_SUBJECT')
+            : $this->translator->trans('EMAIL_EDGE_PUBLISHED_WITH_CREATOR_SUBJECT');
     }
 
     public function getTextBody() : string {
@@ -47,11 +47,11 @@ class EdgesPublished extends AbstractEmail {
     }
 
     public function getHtmlBody(Environment $twig) : string {
-        return $twig->render('emails/edges-published.html.twig', [
+        return $twig->render('edges-published-with-photographer.html.twig', [
             'user' => $this->user,
             'newMedalLevel' => $this->newMedalLevel,
             'extraEdges' => $this->extraEdges,
-            'extraPhotographerPoints' => $this->extraPhotographerPoints,
+            'extraPhotographerPoints' => $this->extraCreatorPoints,
             'locale' => $this->locale,
         ] + $_ENV);
     }

@@ -3,16 +3,24 @@ EMAIL_BOOKSTORE_APPROVED_MEDAL: Vous avez remporté la médaille "Duckhunter %me
 EMAIL_BOOKSTORE_APPROVED_SUBJECT: Votre suggestion de bouquinerie a été approuvée !
 EMAIL_BOOKSTORE_APPROVED_THANKS: >-
   Bravo à vous et merci pour votre contribution : nous sommes heureux de vous accueillir parmi la communauté active de DucksManager !
-EMAIL_EDGES_PUBLISHED_INTRO: Les %edgeNumber% tranches dont vous nous avez envoyé les photos sont maintenant visionnables dans votre bibliothèque DucksManager ainsi que dans les bibliothèques des autres utilisateurs possédant ces magazines.
-EMAIL_EDGES_PUBLISHED_MEDAL: Vous avez remporté la médaille "Photographe DucksManager %medalLevel%" grâce à vos contributions !
-EMAIL_EDGES_PUBLISHED_POINTS: >-
+EMAIL_EDGE_PUBLISHED_WITH_PHOTOGRAPHER_INTRO: La tranche dont vous nous avez envoyé la photo est maintenant visionnable dans votre bibliothèque DucksManager ainsi que dans les bibliothèques des autres utilisateurs possédant ce magazine.
+EMAIL_EDGE_PUBLISHED_WITH_PHOTOGRAPHER_SUBJECT: Votre tranche a été publiée sur DucksManager !
+EMAIL_EDGE_PUBLISHED_WITH_CREATOR_INTRO: La tranche que vous avez aidé à créer sur EdgeCreator est maintenant visionnable dans votre bibliothèque DucksManager ainsi que dans les bibliothèques des autres utilisateurs possédant ce magazine.
+EMAIL_EDGE_PUBLISHED_WITH_CREATOR_SUBJECT: La tranche que vous avez aidé à créer a été publiée sur DucksManager !
+EMAIL_EDGES_PUBLISHED_SIGNATURE: A bientôt sur le site !<br />L'équipe DucksManager
+EMAIL_EDGES_PUBLISHED_WITH_PHOTOGRAPHER_INTRO: Les %edgeNumber% tranches dont vous nous avez envoyé les photos sont maintenant visionnables dans votre bibliothèque DucksManager ainsi que dans les bibliothèques des autres utilisateurs possédant ces magazines.
+EMAIL_EDGES_PUBLISHED_WITH_PHOTOGRAPHER_MEDAL: Vous avez remporté la médaille "Photographe DucksManager %medalLevel%" grâce à vos contributions !
+EMAIL_EDGES_PUBLISHED_WITH_PHOTOGRAPHER_POINTS: >-
   <b>Votre contribution vous a rapporté %extraPhotographerPoints% points "Photographe"</b>,
   bravo à vous et merci pour votre contribution : nous sommes heureux de vous compter parmi la communauté active de DucksManager !
-EMAIL_EDGES_PUBLISHED_SIGNATURE: A bientôt sur le site !<br />L'équipe DucksManager
-EMAIL_EDGES_PUBLISHED_SUBJECT: Vos tranches ont été publiées sur DucksManager !
+EMAIL_EDGES_PUBLISHED_WITH_PHOTOGRAPHER_SUBJECT: Vos tranches ont été publiées sur DucksManager !
+EMAIL_EDGES_PUBLISHED_WITH_CREATOR_INTRO: Les %edgeNumber% tranches que vous avez aidé à créer sur EdgeCreator sont maintenant visionnables dans votre bibliothèque DucksManager ainsi que dans les bibliothèques des autres utilisateurs possédant ces magazines.
+EMAIL_EDGES_PUBLISHED_WITH_CREATOR_MEDAL: Vous avez remporté la médaille "Créateur DucksManager %medalLevel%" grâce à vos contributions !
+EMAIL_EDGES_PUBLISHED_WITH_CREATOR_POINTS: >-
+  <b>Votre contribution vous a rapporté %extraCreatorPoints% points "Créateur"</b>,
+  bravo à vous et merci pour votre contribution : nous sommes heureux de vous compter parmi la communauté active de DucksManager !
+EMAIL_EDGES_PUBLISHED_WITH_CREATOR_SUBJECT: Les tranches que vous avez aidé à créer ont été publiées sur DucksManager !
 EMAIL_HELLO: Bonjour %userName%,
-EMAIL_ONE_EDGE_PUBLISHED_INTRO: La tranche dont vous nous avez envoyé la photo est maintenant visionnable dans votre bibliothèque DucksManager ainsi que dans les bibliothèques des autres utilisateurs possédant ce magazine.
-EMAIL_ONE_EDGE_PUBLISHED_SUBJECT: Votre tranche a été publiée sur DucksManager !
 EMAIL_PRESENTATION_SENTENCE_APPROVED_MESSAGE: La phrase de présentation que vous avez proposé pour votre profil DucksManager a été acceptée. Les visiteurs de DucksManager la verront lorsqu'ils consulteront votre profil dans l'encart "Récemment sur DucksManager".
 EMAIL_PRESENTATION_SENTENCE_APPROVED_SUBJECT: Votre phrase de présentation a été acceptée !
 EMAIL_PRESENTATION_SENTENCE_REFUSED_MESSAGE: La phrase de présentation que vous avez proposé pour votre profil DucksManager a été refusée. Les messages à caractère politique ou contraires à la loi ne sont pas autorisés. Si vous pensez que le refus de votre phrase de présentation est une erreur, merci de répondre à cet e-mail.
