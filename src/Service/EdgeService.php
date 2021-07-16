@@ -10,16 +10,19 @@ use DateTime;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 class EdgeService
 {
     private ObjectManager $dmEm;
+    private KernelInterface $kernel;
     private ContributionService $contributionService;
     private SpriteService $spriteService;
 
-    public function __construct(ManagerRegistry $doctrineManagerRegistry, ContributionService $contributionService, SpriteService $spriteService)
+    public function __construct(ManagerRegistry $doctrineManagerRegistry, KernelInterface $kernel, ContributionService $contributionService, SpriteService $spriteService)
     {
         $this->dmEm = $doctrineManagerRegistry->getManager('dm');
+        $this->kernel = $kernel;
         $this->contributionService = $contributionService;
         $this->spriteService = $spriteService;
     }
@@ -77,7 +80,7 @@ class EdgeService
         }
         $this->dmEm->flush();
 
-        if (getenv('APP_ENV') === 'prod') {
+        if ($this->kernel->getEnvironment() === 'prod') {
             $this->spriteService->uploadEdgesAndGenerateSprites($edgeToPublish->getId());
         }
 
