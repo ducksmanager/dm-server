@@ -105,7 +105,7 @@ class SpriteService
             $spriteNames[$spriteName] = (object)['size' => $spriteSize];
         }
 
-        return new $spriteNames;
+        return $spriteNames;
     }
 
     private function generateSprites(TranchesPretes $edge): array
