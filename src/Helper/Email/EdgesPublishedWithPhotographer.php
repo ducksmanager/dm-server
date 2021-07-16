@@ -47,7 +47,7 @@ class EdgesPublishedWithPhotographer extends AbstractEmail {
     }
 
     public function getHtmlBody(Environment $twig) : string {
-        return $twig->render('edges-published-with-photographer.html.twig', [
+        return $twig->render('emails/edges-published-with-photographer.html.twig', [
             'user' => $this->user,
             'newMedalLevel' => $this->newMedalLevel,
             'extraEdges' => $this->extraEdges,
