@@ -6,6 +6,8 @@ use App\Entity\Dm\TranchesPretes;
 use App\Entity\Dm\Users;
 use App\Entity\Dm\UsersContributions;
 use DateTime;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\QueryBuilder;
@@ -28,7 +30,8 @@ class ContributionService {
      * @param TranchesPretes|null $edgeToPublish
      * @param Bouquineries|null $bookStoreToPublish
      * @return UsersContributions
-     * @throws Exception
+     * @throws NoResultException
+     * @throws NonUniqueResultException
      */
     public function persistContribution(Users $user, string $contributionType, int $newPoints, ?TranchesPretes $edgeToPublish = null, ?Bouquineries $bookStoreToPublish = null): UsersContributions
     {

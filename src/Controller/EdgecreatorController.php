@@ -19,7 +19,9 @@ use App\Helper\Email\EdgeModelReady;
 use App\Helper\Email\EdgePhotoSent;
 use App\Helper\JsonResponseFromObject;
 use App\Service\ContributionService;
+use App\Service\EdgeService;
 use App\Service\EmailService;
+use App\Service\SpriteService;
 use DateTime;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
@@ -32,6 +34,7 @@ use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\Mapping\MappingException;
 use Exception;
 use InvalidArgumentException;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Swift_Mailer;
 use Swift_Message;
@@ -740,7 +743,7 @@ CONCAT;
      * @throws ORMException
      * @throws Exception
      */
-    public function publishEdgeFromIssuenumber(Request $request, ContributionService $contributionService, string $publicationCode, string $issueNumber) {
+    public function publishEdgeFromIssuenumber(Request $request, EdgeService $edgeService, string $publicationCode, string $issueNumber) {
         $designers = $request->request->get('designers');
         $photographers = $request->request->get('photographers');
 
@@ -750,17 +753,15 @@ CONCAT;
         );
 
         ['edgeId' => $edgeId, 'contributors' => $contributors] =
-            $this->publishEdgeOnDm($contributionService, $modelContributors, $publicationCode, $issueNumber);
+            $edgeService->publishEdgeOnDm($modelContributors, $publicationCode, $issueNumber);
 
         [$countryCode, $shortPublicationCode] = explode('/', $publicationCode);
 
-        return new JsonResponse([
-            'publicationCode' => $publicationCode,
-            'issueNumber' => $issueNumber,
-            'edgeId' => $edgeId,
-            'url' => "{$_ENV['EDGES_ROOT']}/$countryCode/gen/$shortPublicationCode.$issueNumber.png",
-            'contributors' => $contributors
-        ]);
+        return new JsonResponse(
+            compact('publicationCode', 'issueNumber', 'edgeId', 'contributors')
+            + [
+                'url' => "{$_ENV['EDGES_ROOT']}/$countryCode/gen/$shortPublicationCode.$issueNumber.png",
+            ]);
     }
 
     /**
@@ -768,7 +769,7 @@ CONCAT;
      * @throws ORMException
      * @throws Exception
      */
-    public function publishEdgeFromModel(Request $request, ContributionService $contributionService, string $modelId) : Response {
+    public function publishEdgeFromModel(Request $request, EdgeService $edgeService, string $modelId) : Response {
         $ecEm = $this->getEm('edgecreator');
 
         /** @var TranchesEnCoursModeles $edgeModelToPublish */
@@ -787,7 +788,7 @@ CONCAT;
             ], $edgeModelToPublish->getContributeurs()->toArray());
 
             ['edgeId' => $edgeId, 'contributors' => $contributors] =
-                $this->publishEdgeOnDm($contributionService, $modelContributors, $publicationCode, $edgeModelToPublish->getNumero());
+                $edgeService->publishEdgeOnDm($modelContributors, $publicationCode, $edgeModelToPublish->getNumero());
 
             $edgeModelToPublish->setActive(false);
             $ecEm->persist($edgeModelToPublish);
@@ -802,58 +803,6 @@ CONCAT;
             ]);
         }
         return new Response("$modelId is not a non-published model", Response::HTTP_BAD_REQUEST);
-    }
-
-    /**
-     * @throws ORMException
-     * @throws OptimisticLockException
-     */
-    private function publishEdgeOnDm(ContributionService $contributionService, array $contributors, string $publicationCode, string $issueNumber) : array {
-        $dmEm = $this->getEm('dm');
-
-        if (!is_null($existingEdge = $dmEm->getRepository(TranchesPretes::class)->findOneBy([
-            'publicationcode' => $publicationCode,
-            'issuenumber' => $issueNumber
-        ]))) {
-            $edgeToPublish = $existingEdge;
-        }
-        else {
-            $edgeToPublish = new TranchesPretes();
-        }
-        $dmEm->persist($edgeToPublish
-            ->setPublicationcode($publicationCode)
-            ->setIssuenumber($issueNumber)
-            ->setDateajout(new DateTime())
-        );
-
-        [$countryCode, $shortPublicationCode] = explode('/', $edgeToPublish->getPublicationcode());
-        /** @var NumerosPopularite $popularity */
-        $issuePopularity = $dmEm->getRepository(NumerosPopularite::class)->findOneBy([
-            'pays' => $countryCode,
-            'magazine' => $shortPublicationCode,
-            'numero' => $edgeToPublish->getIssuenumber()
-        ]);
-        $popularity = is_null($issuePopularity) ? 0 : $issuePopularity->getPopularite();
-
-        $contributions = [];
-        foreach($contributors as $contributor) {
-            $userId = $contributor['userId'];
-            $contribution = $contributor['contribution'];
-            $contributions[]=$contributionService->persistContribution(
-                $dmEm->getRepository(Users::class)->find($userId),
-                $contribution,
-                $popularity,
-                $edgeToPublish
-            );
-        }
-
-        $dmEm->persist($edgeToPublish);
-        $dmEm->flush();
-
-        return [
-            'edgeId' => $edgeToPublish->getId(),
-            'contributors' => array_map(fn(UsersContributions $contribution) => $contribution->getUser()->getId(), $contributions)
-        ];
     }
 
     private function getUserIdsByUsername(array $usernames) : array {
