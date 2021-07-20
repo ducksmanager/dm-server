@@ -276,6 +276,7 @@ class CoaService
 
     public function listEntriesFromIssue(string $publicationCode, string $issueNumber) : array
     {
+        $issueNumber = str_replace(' ', '', $issueNumber);
         $rsm = (new ResultSetMapping())
             ->addScalarResult('storycode', 'storycode')
             ->addScalarResult('kind', 'kind')
