@@ -125,6 +125,7 @@ class CoveridController extends AbstractController
 
         $coverIds = implode(',', $engineResponse->getImageIds());
         $logger->info("Cover ID search: matched cover IDs $coverIds");
+        $logger->info('Cover ID search: scores='.json_encode($engineResponse->getScores()));
         $coverInfos = $this->getIssuesCodesFromCoverIds(explode(',', $coverIds));
 
         $foundIssueCodes = array_map(fn($coverInfo) => $coverInfo['issuecode'], $coverInfos);

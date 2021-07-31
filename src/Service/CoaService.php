@@ -198,6 +198,31 @@ class CoaService
         return $issueNumbers;
     }
 
+    public function getIssueNumbersWithDetailsFromPublicationCode(string $publicationCode) : array
+    {
+        $rsm = (new ResultSetMapping())
+            ->addScalarResult('issuenumber', 'issuenumber')
+            ->addScalarResult('title', 'title')
+            ->addScalarResult('cover_url', 'cover_url');
+
+        $query = self::$coaEm->createNativeQuery("
+            SELECT
+                inducks_issue.publicationcode,
+                REGEXP_REPLACE(inducks_issue.issuenumber, '[ ]+', ' ') AS issuenumber,
+                inducks_issue.title,
+                CONCAT(IF(sitecode = 'thumbnails', 'webusers', sitecode), '/', url) AS cover_url
+            FROM inducks_issue
+            INNER JOIN inducks_entry ON inducks_issue.issuecode = inducks_entry.issuecode
+            LEFT JOIN inducks_entryurl ON inducks_entry.entrycode = inducks_entryurl.entrycode
+            WHERE inducks_issue.publicationcode = :publicationCode
+              AND SUBSTR(inducks_entry.position, 0, 1) <> 'p'
+            GROUP BY inducks_issue.issuenumber
+        ", $rsm);
+
+        $query->setParameters(compact('publicationCode'));
+        return $query->getArrayResult();
+    }
+
     public function getIssueNumbersFromPublicationCodeAsArray(string $publicationCode) : array
     {
         $qb = (self::$coaEm->createQueryBuilder())

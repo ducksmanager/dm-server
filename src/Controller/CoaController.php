@@ -131,6 +131,18 @@ class CoaController extends AbstractController
     /**
      * @Route(
      *     methods={"GET"},
+     *     path="/coa/list/issues/withDetails/{publicationCode}",
+     *     requirements={"publicationCode"="^(?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+)$"}
+     * )
+     */
+    public function listIssuesWithDetailsFromPublicationCode(CoaService $coaService, string $publicationCode): Response
+    {
+        return new JsonResponse($coaService->getIssueNumbersWithDetailsFromPublicationCode($publicationCode));
+    }
+
+    /**
+     * @Route(
+     *     methods={"GET"},
      *     path="/coa/list/issues/withTitle/asArray/{publicationCode}",
      *     requirements={"publicationCode"="^(?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+)$"}
      * )
