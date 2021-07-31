@@ -135,7 +135,8 @@ class CoveridController extends AbstractController
         $issueCodes = implode(',', array_unique($foundIssueCodes));
 
         $issues = json_decode(
-            $this->callService(CoaController::class, 'listIssuesFromIssueCodes', compact('issueCodes'))->getContent()
+            $this->callService(CoaController::class, 'listIssuesFromIssueCodes', compact('issueCodes'))->getContent(),
+            true
         );
         $logger->info('Cover ID search: matched ' . count($coverInfos) . ' issues');
 
@@ -144,7 +145,7 @@ class CoveridController extends AbstractController
             array_search($issue2['coverid'], $coverIdsList, false)
         );
         return new JsonResponse([
-            'issues' => $issues,
+            'issues' => (object) $issues,
             'imageIds' => $engineResponse->getImageIds()
         ]);
     }
