@@ -123,21 +123,28 @@ class CoveridController extends AbstractController
             ]);
         }
 
-        $coverIds = implode(',', $engineResponse->getImageIds());
+        $coverIdsList = $engineResponse->getImageIds();
+        $coverIds = implode(',', $coverIdsList);
         $logger->info("Cover ID search: matched cover IDs $coverIds");
         $logger->info('Cover ID search: scores='.json_encode($engineResponse->getScores()));
-        $coverInfos = $this->getIssuesCodesFromCoverIds(explode(',', $coverIds));
+        $coverInfos = $this->getIssuesCodesFromCoverIds($coverIdsList);
 
         $foundIssueCodes = array_map(fn($coverInfo) => $coverInfo['issuecode'], $coverInfos);
         $logger->info('Cover ID search: matched issue codes ' . implode(',', $foundIssueCodes));
 
         $issueCodes = implode(',', array_unique($foundIssueCodes));
 
-        $issues = $this->callService(CoaController::class, 'listIssuesFromIssueCodes', compact('issueCodes'))->getContent();
+        $issues = json_decode(
+            $this->callService(CoaController::class, 'listIssuesFromIssueCodes', compact('issueCodes'))->getContent()
+        );
         $logger->info('Cover ID search: matched ' . count($coverInfos) . ' issues');
 
+        usort($issues, fn($issue1, $issue2) =>
+            array_search($issue1['coverid'], $coverIdsList, false) <=>
+            array_search($issue2['coverid'], $coverIdsList, false)
+        );
         return new JsonResponse([
-            'issues' => json_decode($issues),
+            'issues' => $issues,
             'imageIds' => $engineResponse->getImageIds()
         ]);
     }
