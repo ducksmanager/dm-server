@@ -84,7 +84,6 @@ class CoveridController extends AbstractController
 
     /**
      * @Route(methods={"POST"}, path="/cover-id/search")
-     * @return Response
      * @throws Exception
      */
     public function searchCover(Request $request, LoggerInterface $logger, SimilarImagesService $similarImagesService): Response
@@ -150,7 +149,7 @@ class CoveridController extends AbstractController
             array_search($issuecode2, $foundIssueCodes, false)
         );
         return new JsonResponse([
-            'issues' => (object) $issues,
+            'issues' => (object) array_values($issues),
             'imageIds' => $engineResponse->getImageIds()
         ]);
     }
@@ -161,7 +160,7 @@ class CoveridController extends AbstractController
 
         $qb = $coverEm->createQueryBuilder();
         $qb
-            ->select('covers.issuecode, covers.url')
+            ->select('covers.issuecode, covers.url, covers.id AS coverid')
             ->from(Covers::class, 'covers');
 
         $qb
