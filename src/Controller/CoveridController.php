@@ -127,9 +127,14 @@ class CoveridController extends AbstractController
         $coverIds = implode(',', $coverIdsList);
         $logger->info("Cover ID search: matched cover IDs $coverIds");
         $logger->info('Cover ID search: scores='.json_encode($engineResponse->getScores()));
-        $coverInfos = $this->getIssuesCodesFromCoverIds($coverIdsList);
 
-        $foundIssueCodes = array_map(fn($coverInfo) => $coverInfo['issuecode'], $coverInfos);
+        $coverInfos = $this->getIssuesCodesFromCoverIds($coverIdsList);
+        uksort($coverInfos, fn(string $issuecode1, string $issuecode2) =>
+            array_search($coverInfos[$issuecode1]['coverid'], $coverIdsList, false) <=>
+            array_search($coverInfos[$issuecode2]['coverid'], $coverIdsList, false)
+        );
+
+        $foundIssueCodes = array_keys($coverInfos);
         $logger->info('Cover ID search: matched issue codes ' . implode(',', $foundIssueCodes));
 
         $issueCodes = implode(',', array_unique($foundIssueCodes));
@@ -140,24 +145,14 @@ class CoveridController extends AbstractController
         );
         $logger->info('Cover ID search: matched ' . count($coverInfos) . ' issues');
 
-        usort($issues, fn($issue1, $issue2) =>
-            array_search($issue1['coverid'], $coverIdsList, false) <=>
-            array_search($issue2['coverid'], $coverIdsList, false)
+        uksort($issues, fn(string $issuecode1, string $issuecode2) =>
+            array_search($issuecode1, $foundIssueCodes, false) <=>
+            array_search($issuecode2, $foundIssueCodes, false)
         );
         return new JsonResponse([
             'issues' => (object) $issues,
             'imageIds' => $engineResponse->getImageIds()
         ]);
-    }
-
-    /**
-     * @Route(methods={"GET"}, path="/cover-id/issuecodes/{coverIds}")
-     */
-    public function getCoverList(string $coverIds): Response
-    {
-        return new JsonResponse(
-            $this->getIssuesCodesFromCoverIds(explode(',', $coverIds))
-        );
     }
 
     private function getIssuesCodesFromCoverIds(array $coverIds): array
@@ -169,17 +164,10 @@ class CoveridController extends AbstractController
             ->select('covers.issuecode, covers.url')
             ->from(Covers::class, 'covers');
 
-        $qb->where($qb->expr()->in('covers.id', $coverIds));
+        $qb
+            ->where($qb->expr()->in('covers.id', $coverIds))
+            ->indexBy('covers', 'covers.issuecode');
 
-        $results = $qb->getQuery()->getResult();
-
-        array_walk(
-            $results,
-            function ($cover, $i) use ($coverIds, &$coverInfos) {
-                $coverInfos[$coverIds[$i]] = $cover;
-            }
-        );
-
-        return $coverInfos;
+        return $qb->getQuery()->getResult();
     }
 }
