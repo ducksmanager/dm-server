@@ -42,6 +42,16 @@ class UsersContributions
     private $bookstore;
 
     /**
+     * @var BouquineriesCommentaires|null
+     *
+     * @ORM\ManyToOne(fetch="EAGER", targetEntity="BouquineriesCommentaires")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="ID_bookstore_comment", referencedColumnName="ID")
+     * })
+     */
+    private $bookstoreComment;
+
+    /**
      * @var Users
      *
      * @ORM\ManyToOne(targetEntity="Users")
@@ -108,9 +118,9 @@ class UsersContributions
         return $this->bookstore;
     }
 
-    public function setBookstore(?Bouquineries $bookstore): self
+    public function setBookstoreComment(?BouquineriesCommentaires $bookstoreComment): self
     {
-        $this->bookstore = $bookstore;
+        $this->bookstoreComment = $bookstoreComment;
 
         return $this;
     }

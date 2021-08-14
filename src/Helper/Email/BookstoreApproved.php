@@ -49,6 +49,6 @@ class BookstoreApproved extends AbstractEmail {
     }
 
     public function __toString() : string {
-        return "user {$this->user->getUsername()} suggested a bookcase";
+        return "user {$this->user->getUsername()} suggested a bookstore";
     }
 }

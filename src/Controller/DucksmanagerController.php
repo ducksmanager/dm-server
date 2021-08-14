@@ -6,6 +6,7 @@ use App\Entity\Dm\Achats;
 use App\Entity\Dm\AuteursPseudos;
 use App\Entity\Dm\BibliothequeOrdreMagazines;
 use App\Entity\Dm\Bouquineries;
+use App\Entity\Dm\BouquineriesCommentaires;
 use App\Entity\Dm\Demo;
 use App\Entity\Dm\Numeros;
 use App\Entity\Dm\Users;
@@ -31,10 +32,8 @@ use DateTime;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
-use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\Query\QueryException;
 use Doctrine\ORM\Query\ResultSetMapping;
-use Doctrine\ORM\QueryBuilder;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -376,10 +375,13 @@ class DucksmanagerController extends AbstractController
     }
 
     /**
-     * @Route(methods={"POST"}, path="/ducksmanager/bookstore/suggest")
+     * @Route(methods={"POST"}, path="/ducksmanager/bookstoreComment/suggest")
      */
     public function suggestBookstore(Request $request, EmailService $emailService, TranslatorInterface $translator): Response
     {
+        if (!$request->request->has('id') && !$request->request->has('name')) {
+            return new Response('No bookstore ID or name was provided', Response::HTTP_BAD_REQUEST);
+        }
         $dmEm = $this->getEm('dm');
         $userId = empty($this->getSessionUser()) ? null : $this->getSessionUser()['id'];
         if (is_null($userId)) {
@@ -389,18 +391,26 @@ class DucksmanagerController extends AbstractController
         else {
             $user = $dmEm->getRepository(Users::class)->find($userId);
         }
-        if ($request->request->has('name')) {
-            $bookstore = (new Bouquineries())
-                ->setIdUtilisateur($userId)
-                ->setNom($request->request->get('name'))
-                ->setAdressecomplete($request->request->get('address'))
-                ->setCommentaire($request->request->get('comment'))
-                ->setCoordx($request->request->get('coordX'))
-                ->setCoordy($request->request->get('coordY'))
-                ->setActif(false);
-            $dmEm->persist($bookstore);
-            $dmEm->flush();
+        if ($request->request->has('id')) {
+            $bookstore= $this->getEm('dm')->getRepository(Bouquineries::class)->find($request->request->get('id'));
         }
+        else {
+            $bookstore = (new Bouquineries())
+                ->setName($request->request->get('name'))
+                ->setAddress($request->request->get('address'))
+                ->setCoordX($request->request->get('coordX'))
+                ->setCoordY($request->request->get('coordY'));
+        }
+
+        $bookstore->addComment(
+            (new BouquineriesCommentaires())
+                ->setBookstore($bookstore)
+                ->setActive(false)
+                ->setUser($user)
+                ->setComment($request->request->get('comment'))
+        );
+        $dmEm->persist($bookstore);
+        $dmEm->flush();
 
         $emailService->send(new BookstoreSuggested($translator, $user));
 
@@ -408,33 +418,33 @@ class DucksmanagerController extends AbstractController
     }
 
     /**
-     * @Route(methods={"POST"}, path="/ducksmanager/bookstore/approve")
+     * @Route(methods={"POST"}, path="/ducksmanager/bookstoreComment/approve")
      * @throws ORMException
      * @throws Exception
      */
     public function approveBookstore(Request $request, ContributionService $contributionService): Response
     {
         $dmEm = $this->getEm('dm');
-        $bookstoreId = $request->request->get('id');
-        /** @var Bouquineries $bookstore */
-        $bookstore = $dmEm->getRepository(Bouquineries::class)->find($bookstoreId);
+        $bookstoreCommentId = $request->request->get('id');
+        /** @var BouquineriesCommentaires $comment */
+        $comment = $dmEm->getRepository(BouquineriesCommentaires::class)->find($bookstoreCommentId);
 
         /** @var Users $user */
-        $user = $dmEm->getRepository(Users::class)->find($bookstore->getIdUtilisateur());
+        $user = $dmEm->getRepository(Users::class)->find($comment->getUser());
 
-        $bookstore
-            ->setActif(true)
-            ->setDateajout(new DateTime());
+        $comment
+            ->setActive(true)
+            ->setCreationDate(new DateTime());
 
         $contributionService->persistContribution(
             $user,
             'duckhunter',
             1,
             null,
-            $bookstore
+            $comment
         );
 
-        $dmEm->persist($bookstore);
+        $dmEm->persist($comment);
         $dmEm->flush();
 
         return new Response();
@@ -602,30 +612,41 @@ class DucksmanagerController extends AbstractController
     /**
      * @Route(
      *     methods={"GET"},
-     *     path="/ducksmanager/bookstore/list/{filter}",
+     *     path="/ducksmanager/bookstoreComment/list/{filter}",
      *     defaults={"filter"="all"}
      * )
      * @throws Exception
      */
-    public function getActiveBookstores(string $filter): Response
+    public function getBookstores(string $filter): Response
     {
-        /** @var QueryBuilder */
-        $qb = $this->getEm('dm')->createQueryBuilder();
-        $qb->select('bookstores.id, bookstores.nom AS name, bookstores.adressecomplete AS address, bookstores.commentaire AS comment, bookstores.coordx AS coordX, bookstores.coordy AS coordY, bookstores.dateajout AS creationDate, bookstores.actif AS active, users.username')
-            ->from(Bouquineries::class, 'bookstores')
-            ->leftJoin(Users::class, 'users', Join::WITH, 'bookstores.idUtilisateur = users.id');
+        $bookstores = $this->getEm('dm')->getRepository(Bouquineries::class)->findAll();
 
-        if ($filter === 'active') {
-            $qb->where($qb->expr()->eq('bookstores.actif', $qb->expr()->literal('1')));
-        }
-
-        return new JsonResponseFromObject(array_map(
-            function (array $result) {
-                $result['creationDate'] = is_null($result['creationDate']) ? null : $result['creationDate']->format('Y-m-d');
-                return $result;
-            },
-            $qb->getQuery()->getArrayResult()
-        ));
+        return new JsonResponseFromObject(array_map(fn(Bouquineries $bookstore) => [
+            'id' => $bookstore->getId(),
+            'name' => $bookstore->getName(),
+            'address' => $bookstore->getAddress(),
+            'coordX' => $bookstore->getCoordX(),
+            'coordY' => $bookstore->getCoordY(),
+            'comments' => array_map(
+                fn(BouquineriesCommentaires $comment) => [
+                    'id' => $comment->getId(),
+                    'active' => $comment->getActive(),
+                    'comment' => $comment->getComment(),
+                    'username' => is_null($comment->getUser()) ? null : $comment->getUser()->getUsername(),
+                    'creationDate' => is_null($comment->getCreationDate()) ? null : $comment->getCreationDate()->format('Y-m-d')
+                ],
+                array_filter(
+                    $bookstore->getComments()->toArray(),
+                    fn(BouquineriesCommentaires $comment) => $filter !== 'active' || $comment->getActive()
+                )
+            )
+        ], array_values(array_filter(
+            $bookstores,
+            fn(Bouquineries $bookstore) => !empty(array_values(array_filter(
+                $bookstore->getComments()->toArray(),
+                fn(BouquineriesCommentaires $comment) => $comment->getActive()
+            )))
+        ))));
     }
 
     private function checkNewUser(TranslatorInterface $translator, ?string $username, string $password, string $password2) : ?string

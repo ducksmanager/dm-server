@@ -121,7 +121,7 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
     public function testSendBookcaseEmail(): void
     {
         self::$client->enableProfiler();
-        $response = $this->buildAuthenticatedService('/ducksmanager/bookstore/suggest', self::$dmUser, [])->call();
+        $response = $this->buildAuthenticatedService('/ducksmanager/bookstoreComment/suggest', self::$dmUser, [])->call();
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
         /** @var MessageDataCollector $mailCollector */
         $mailCollector = self::$client->getProfile()->getCollector('swiftmailer');
@@ -143,7 +143,7 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
         ]);
 
         self::$client->enableProfiler();
-        $response = $this->buildAuthenticatedService('/ducksmanager/bookstore/suggest', self::$dmUser, [], [
+        $response = $this->buildAuthenticatedService('/ducksmanager/bookstoreComment/suggest', self::$dmUser, [], [
             'userid' => $demoUser->getId()
         ])->call();
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
@@ -170,13 +170,13 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
         ]);
 
         $bookstore = (new Bouquineries())
-            ->setActif(true)
-            ->setNom('Bookstore')
+            ->setActive(true)
+            ->setName('Bookstore')
             ->setCommentaire('Comment')
-            ->setCoordx(0)
-            ->setCoordy(0)
-            ->setAdressecomplete('1 street A')
-            ->setIdUtilisateur($demoUser->getId())
+            ->setCoordX(0)
+            ->setCoordY(0)
+            ->setAddress('1 street A')
+            ->setUtilisateur($demoUser->getId())
             ->setDateajout(new DateTime());
 
         $bookstoreContribution = (new UsersContributions())
@@ -240,13 +240,13 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
         ]);
 
         $existingBookstore = (new Bouquineries())
-            ->setActif(false)
-            ->setNom('Bookstore')
+            ->setActive(false)
+            ->setName('Bookstore')
             ->setCommentaire('Comment')
-            ->setCoordx(0)
-            ->setCoordy(0)
-            ->setAdressecomplete('1 street A')
-            ->setIdUtilisateur($demoUser->getId())
+            ->setCoordX(0)
+            ->setCoordY(0)
+            ->setAddress('1 street A')
+            ->setUtilisateur($demoUser->getId())
             ->setDateajout(new DateTime());
 
         $bookstore = (clone $existingBookstore)
@@ -265,7 +265,7 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
         );
         $this->getEm('dm')->flush();
 
-        $response = $this->buildAuthenticatedServiceWithTestUser('/ducksmanager/bookstore/approve', self::$dmUser, 'POST', [
+        $response = $this->buildAuthenticatedServiceWithTestUser('/ducksmanager/bookstoreComment/approve', self::$dmUser, 'POST', [
             'id' => $bookstore->getId()
         ])->call();
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());

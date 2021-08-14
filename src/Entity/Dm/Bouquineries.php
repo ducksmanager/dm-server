@@ -2,7 +2,12 @@
 
 namespace App\Entity\Dm;
 
+use App\Entity\EdgeCreator\TranchesEnCoursModelesImages;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\PersistentCollection;
 
 /**
  * Bouquineries
@@ -26,7 +31,7 @@ class Bouquineries
      *
      * @ORM\Column(name="Nom", type="string", length=25, nullable=false)
      */
-    private $nom;
+    private $name;
 
     /**
      * @var string|null
@@ -40,7 +45,7 @@ class Bouquineries
      *
      * @ORM\Column(name="AdresseComplete", type="text", length=65535, nullable=false)
      */
-    private $adressecomplete;
+    private $address;
 
     /**
      * @var int|null
@@ -64,60 +69,43 @@ class Bouquineries
     private $pays = 'France';
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="Commentaire", type="text", length=65535, nullable=false)
-     */
-    private $commentaire;
-
-    /**
-     * @var int|null
-     *
-     * @ORM\Column(name="ID_Utilisateur", type="integer", nullable=true)
-     */
-    private $idUtilisateur;
-
-    /**
      * @var float
      *
      * @ORM\Column(name="CoordX", type="float", precision=10, scale=0, nullable=false)
      */
-    private $coordx = 0;
+    private $coordX = 0;
 
     /**
      * @var float
      *
      * @ORM\Column(name="CoordY", type="float", precision=10, scale=0, nullable=false)
      */
-    private $coordy = 0;
+    private $coordY = 0;
 
     /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="DateAjout", type="datetime", nullable=true, options={"default"="CURRENT_TIMESTAMP"})
+     * @OneToMany(fetch="EAGER", targetEntity="BouquineriesCommentaires", cascade={"persist", "remove"}, mappedBy="bookstore")
      */
-    private $dateajout;
+    private Collection $comments;
 
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="Actif", type="boolean", nullable=false, options={"default"=0})
-     */
-    private $actif = false;
+    public function __construct()
+    {
+        $this->comments = new ArrayCollection();
+    }
+
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getNom(): ?string
+    public function getName(): ?string
     {
-        return $this->nom;
+        return $this->name;
     }
 
-    public function setNom(string $nom): self
+    public function setName(string $name): self
     {
-        $this->nom = $nom;
+        $this->name = $name;
 
         return $this;
     }
@@ -134,14 +122,14 @@ class Bouquineries
         return $this;
     }
 
-    public function getAdressecomplete(): ?string
+    public function getAddress(): ?string
     {
-        return $this->adressecomplete;
+        return $this->address;
     }
 
-    public function setAdressecomplete(string $adressecomplete): self
+    public function setAddress(string $address): self
     {
-        $this->adressecomplete = $adressecomplete;
+        $this->address = $address;
 
         return $this;
     }
@@ -182,77 +170,39 @@ class Bouquineries
         return $this;
     }
 
-    public function getCommentaire(): ?string
+    public function getCoordX(): ?float
     {
-        return $this->commentaire;
+        return $this->coordX;
     }
 
-    public function setCommentaire(string $commentaire): self
+    public function setCoordX(float $coordX): self
     {
-        $this->commentaire = $commentaire;
+        $this->coordX = $coordX;
 
         return $this;
     }
 
-    public function getIdUtilisateur(): ?int
+    public function getCoordY(): ?float
     {
-        return $this->idUtilisateur;
+        return $this->coordY;
     }
 
-    public function setIdUtilisateur(?int $idUtilisateur): self
+    public function setCoordY(float $coordY): self
     {
-        $this->idUtilisateur = $idUtilisateur;
+        $this->coordY = $coordY;
 
         return $this;
     }
 
-    public function getCoordx(): ?float
+    public function getComments(): Collection
     {
-        return $this->coordx;
+        return $this->comments;
     }
 
-    public function setCoordx(float $coordx): self
+    public function addComment(BouquineriesCommentaires $comment): self
     {
-        $this->coordx = $coordx;
+        $this->comments->add($comment);
 
         return $this;
     }
-
-    public function getCoordy(): ?float
-    {
-        return $this->coordy;
-    }
-
-    public function setCoordy(float $coordy): self
-    {
-        $this->coordy = $coordy;
-
-        return $this;
-    }
-
-    public function getDateajout(): ?\DateTimeInterface
-    {
-        return $this->dateajout;
-    }
-
-    public function setDateajout(\DateTimeInterface $dateajout): self
-    {
-        $this->dateajout = $dateajout;
-
-        return $this;
-    }
-
-    public function getActif(): ?bool
-    {
-        return $this->actif;
-    }
-
-    public function setActif(bool $actif): self
-    {
-        $this->actif = $actif;
-
-        return $this;
-    }
-
-
 }

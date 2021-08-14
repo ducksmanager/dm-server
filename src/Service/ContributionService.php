@@ -2,6 +2,7 @@
 namespace App\Service;
 
 use App\Entity\Dm\Bouquineries;
+use App\Entity\Dm\BouquineriesCommentaires;
 use App\Entity\Dm\TranchesPretes;
 use App\Entity\Dm\Users;
 use App\Entity\Dm\UsersContributions;
@@ -28,12 +29,12 @@ class ContributionService {
      * @param string $contributionType
      * @param int $newPoints
      * @param TranchesPretes|null $edgeToPublish
-     * @param Bouquineries|null $bookStoreToPublish
+     * @param BouquineriesCommentaires|null $bookstoreCommentToPublish
      * @return UsersContributions
      * @throws NoResultException
      * @throws NonUniqueResultException
      */
-    public function persistContribution(Users $user, string $contributionType, int $newPoints, ?TranchesPretes $edgeToPublish = null, ?Bouquineries $bookStoreToPublish = null): UsersContributions
+    public function persistContribution(Users $user, string $contributionType, int $newPoints, ?TranchesPretes $edgeToPublish = null, ?BouquineriesCommentaires $bookstoreCommentToPublish = null): UsersContributions
     {
         /** @var QueryBuilder $qb */
         $qb = self::$dmEm->createQueryBuilder();
@@ -55,8 +56,8 @@ class ContributionService {
         if (!is_null($edgeToPublish)) {
             $contribution->setTranche($edgeToPublish);
         }
-        if (!is_null($bookStoreToPublish)) {
-            $contribution->setBookstore($bookStoreToPublish);
+        if (!is_null($bookstoreCommentToPublish)) {
+            $contribution->setBookstoreComment($bookstoreCommentToPublish);
         }
         self::$dmEm->persist($contribution);
         return $contribution;
