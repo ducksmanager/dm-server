@@ -385,8 +385,7 @@ class DucksmanagerController extends AbstractController
         $dmEm = $this->getEm('dm');
         $userId = empty($this->getSessionUser()) ? null : $this->getSessionUser()['id'];
         if (is_null($userId)) {
-            $user = (new Users())
-                ->setUsername('anonymous');
+            $user = null;
         }
         else {
             $user = $dmEm->getRepository(Users::class)->find($userId);
@@ -412,7 +411,9 @@ class DucksmanagerController extends AbstractController
         $dmEm->persist($bookstore);
         $dmEm->flush();
 
-        $emailService->send(new BookstoreSuggested($translator, $user));
+        if (!is_null($user)) {
+            $emailService->send(new BookstoreSuggested($translator, $user));
+        }
 
         return new Response();
     }
