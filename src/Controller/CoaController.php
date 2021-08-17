@@ -6,7 +6,8 @@ use App\Entity\Coa\InducksCountryname;
 use App\Entity\Coa\InducksIssue;
 use App\Entity\Coa\InducksPublication;
 use App\Entity\Coverid\Covers;
-use App\EntityTransform\SimpleIssueWithCoverId;
+use App\Entity\Dm\Numeros;
+use App\EntityTransform\IssueWithCoverIdAndPopularity;
 use App\Service\CoaService;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\Query\Expr\OrderBy;
@@ -177,13 +178,13 @@ class CoaController extends AbstractController
             return $issue;
         }, $qbIssueInfo->getQuery()->getResult());
 
-        /** @var SimpleIssueWithCoverId[] $issues */
+        /** @var IssueWithCoverIdAndPopularity[] $issues */
         $issues = [];
 
         array_walk(
             $resultsIssueInfo,
             function ($issue) use (&$issues) {
-                $issues[$issue['issuecode']] = SimpleIssueWithCoverId::buildWithoutCoverId($issue['countrycode'], $issue['publicationcode'], $issue['title'], $issue['issuenumber']);
+                $issues[$issue['issuecode']] = IssueWithCoverIdAndPopularity::buildWithoutCoverId($issue['countrycode'], $issue['publicationcode'], $issue['title'], $issue['issuenumber']);
             }
         );
 
@@ -211,12 +212,17 @@ class CoaController extends AbstractController
         );
 
         $longIssueCodes = array_keys($issues);
-        $quotations = array_map(function ($quotationData) use ($longIssueCodes, $logger, $issues) {
-            $logger->info(print_r($quotationData, true));
+        $shortIssueCodes = array_combine(
+            $longIssueCodes,
+            array_map(
+                fn(string $longIssueCode) => preg_replace('#[ ]+#', ' ', $longIssueCode),
+                $longIssueCodes
+            )
+        );
+        $quotations = array_map(function ($quotationData) use ($shortIssueCodes, $longIssueCodes, $issues) {
             $issueCode = $quotationData['issuecode'];
             foreach($longIssueCodes as $longIssueCode) {
-                $issueCode = preg_replace('#[ ]+#', ' ', $longIssueCode);
-                if ($issueCode === $quotationData['issuecode']) {
+                if ($shortIssueCodes[$longIssueCode] === $quotationData['issuecode']) {
                     $issues[$longIssueCode]->setQuotation([
                         'min' => $quotationData['estimationmin'],
                         'max' => $quotationData['estimationmax']
@@ -224,6 +230,21 @@ class CoaController extends AbstractController
                 }
             }
         }, $coaService->getIssueQuotations($issueCodesList));
+        $logger->info(print_r($shortIssueCodes, true));
+
+        $dmEm = $this->getEm('dm');
+        $qb = $dmEm->createQueryBuilder();
+        $qb->select('issues.issuecode, COUNT(DISTINCT issues.idUtilisateur) AS popularity')
+            ->from(Numeros::class, 'issues')
+            ->andWhere('issues.issuecode in (:issuecodes)')
+            ->setParameter(':issuecodes', array_values($shortIssueCodes))
+            ->groupBy('issues.issuecode')
+            ->indexBy('issues', 'issues.issuecode');
+
+        $popularityResults = $qb->getQuery()->getResult();
+        foreach($popularityResults as $shortIssueCode => $popularityResult) {
+            $issues[array_search($shortIssueCode, $shortIssueCodes, true)]->setPopularity($popularityResult['popularity']);
+        }
 
         return new JsonResponse(self::getSimpleArray($issues));
     }

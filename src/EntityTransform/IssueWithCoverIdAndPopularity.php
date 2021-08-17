@@ -4,7 +4,7 @@ namespace App\EntityTransform;
 
 use App\Helper\GenericReturnObjectInterface;
 
-class SimpleIssueWithCoverId implements GenericReturnObjectInterface
+class IssueWithCoverIdAndPopularity implements GenericReturnObjectInterface
 {
     private string $countrycode;
     private string $publicationcode;
@@ -13,8 +13,9 @@ class SimpleIssueWithCoverId implements GenericReturnObjectInterface
     private int $coverid;
     private string $coverurl;
     private ?array $quotation = null;
+    private int $popularity = 0;
 
-    public static function buildWithoutCoverId($countrycode, $publicationcode, $publicationtitle, $issuenumber): SimpleIssueWithCoverId
+    public static function buildWithoutCoverId($countrycode, $publicationcode, $publicationtitle, $issuenumber): IssueWithCoverIdAndPopularity
     {
         $o = new self();
         $o->countrycode = $countrycode;
@@ -60,6 +61,11 @@ class SimpleIssueWithCoverId implements GenericReturnObjectInterface
         $this->quotation = $quotation;
     }
 
+    public function setPopularity(int $popularity): void
+    {
+        $this->popularity = $popularity;
+    }
+
     public function toArray() {
         return [
             'countrycode' => $this->countrycode,
@@ -68,7 +74,8 @@ class SimpleIssueWithCoverId implements GenericReturnObjectInterface
             'issuenumber' => $this->issuenumber,
             'coverid' => $this->coverid,
             'coverurl' => $this->coverurl,
-            'quotation' => $this->quotation
+            'quotation' => $this->quotation,
+            'popularity' => $this->popularity
         ];
     }
 }
