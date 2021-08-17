@@ -95,6 +95,7 @@ services:
     container_name: pastec
     image: "bperel/pastec-ubuntu-1704-timestamps"
     restart: always
+    command: "./pastec -p 4212 -i /pastec-index-last.dat /pastec/data/visualWordsORB.dat"
     networks:
      - cover-id-network
     volumes:
