@@ -299,14 +299,14 @@ class CoaController extends AbstractController
     /**
      * @Route(
      *     methods={"GET"},
-     *     path="/coa/list/issues/withStoryVersionCode/{storyVersionCode}",
-     *     requirements={"storyVersionCode"="^(?P<storyversioncode_regex>[-/A-Za-z0-9 ?&]+)$"}
+     *     path="/coa/list/issues/withStoryVersionCode/{storyCode}",
+     *     requirements={"storyCode"="^(?P<storyversioncode_regex>[-/A-Za-z0-9 ?&]+)$"}
      * )
      */
-    public function listIssuesFromStoryVersionCode(string $storyVersionCode, CoaService $coaService) : JsonResponse
+    public function listIssuesFromStoryCode(string $storyCode, CoaService $coaService) : JsonResponse
     {
         return new JsonResponse(
-            $coaService->listIssuesFromStoryVersionCode($storyVersionCode)
+            $coaService->listIssuesFromStoryCode($storyCode)
         );
     }
 

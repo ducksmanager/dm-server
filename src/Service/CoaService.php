@@ -246,11 +246,11 @@ class CoaService
         $condition = "MATCH(inducks_entry.title) AGAINST (:search)";
 
         $rsm = (new ResultSetMapping())
-            ->addScalarResult('storyversioncode', 'storyversioncode')
+            ->addScalarResult('storycode', 'storycode')
             ->addScalarResult('title', 'title');
 
         $query = self::$coaEm->createNativeQuery("
-            SELECT inducks_storyversion.storyversioncode, inducks_entry.title AS title, $condition AS score
+            SELECT inducks_storyversion.storycode, inducks_entry.title AS title, $condition AS score
             FROM inducks_entry
             INNER JOIN inducks_storyversion ON inducks_entry.storyversioncode = inducks_storyversion.storyversioncode
             WHERE $condition
@@ -270,23 +270,25 @@ class CoaService
         }
         return [
             'results' => array_map(fn($result) => [
-                'code' => $result['storyversioncode'],
+                'code' => $result['storycode'],
                 'title' => $result['title'],
             ], $results),
             'hasmore' => $hasMore
         ];
     }
 
-    public function listIssuesFromStoryVersionCode(string $storyVersionCode) : array
+    public function listIssuesFromStoryCode(string $storyCode) : array
     {
         $qb = self::$coaEm->createQueryBuilder();
         $qb
             ->select('inducks_issue.issuecode, inducks_issue.publicationcode, inducks_issue.issuenumber')
             ->from(InducksIssue::class, 'inducks_issue')
             ->innerJoin(InducksEntry::class, 'inducks_entry', Join::WITH, 'inducks_issue.issuecode = inducks_entry.issuecode')
-            ->where($qb->expr()->eq('inducks_entry.storyversioncode', ':storyversioncode'))
-            ->setParameters(['storyversioncode' => $storyVersionCode])
-            ->orderBy('inducks_issue.publicationcode, inducks_issue.issuenumber');
+            ->innerJoin(InducksStoryversion::class, 'inducks_storyversion', Join::WITH, 'inducks_entry.storyversioncode = inducks_storyversion.storyversioncode')
+            ->where($qb->expr()->eq('inducks_storyversion.storycode', ':storycode'))
+            ->setParameters(['storycode' => $storyCode])
+            ->orderBy('inducks_issue.publicationcode, inducks_issue.issuenumber')
+            ->groupBy('inducks_issue.publicationcode, inducks_issue.issuenumber');
 
         $results = $qb->getQuery()->getArrayResult();
 
