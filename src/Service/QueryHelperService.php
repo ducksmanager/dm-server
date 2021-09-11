@@ -20,37 +20,9 @@ class QueryHelperService {
         self::$emRegistry = $emRegistry;
     }
 
-    /**
-     * @param string $query
-     * @param string $emName
-     * @param array  $parameters
-     * @return ResultStatement|mixed[]
-     * @throws DBALException
-     */
-    public static function runQueryNoCheck(string $query, string $emName, array $parameters) {
-        /** @var Connection $connection */
-        $connection = self::$emRegistry->getManager($emName)->getConnection();
-        if (stripos(trim($query), 'SELECT') === 0) {
-            $results = $connection->fetchAllAssociative($query, $parameters);
-        }
-        else {
-            $results = $connection->executeQuery($query, $parameters);
-        }
-
-        if (!is_null(self::$logger)) {
-            self::$logger->info("Raw sql sent: $query with ".print_r($parameters, true));
-        }
-        return $results;
-    }
-
-    /**
-     * @param string          $query
-     * @param string          $dbName
-     * @return bool|string
-     * @throws DBALException
-     */
     public static function checkDatabase(string $query, string $dbName) {
-        $results = self::runQueryNoCheck($query, $dbName, []);
+        $connection = self::$emRegistry->getManager($dbName)->getConnection();
+        $results = $connection->fetchAllAssociative($query, []);
         if (is_array($results) && count($results) > 0) {
             self::$logger->info("DB check for $dbName was successful");
             return true;
