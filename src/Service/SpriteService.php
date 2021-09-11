@@ -28,10 +28,12 @@ class SpriteService
     public function uploadEdgesAndGenerateSprites(string $edgeID): array
     {
         $edge = $this->uploadEdge($edgeID);
+        $spriteNames = $this->updateTags($edge);
+        $createdSprites = $this->generateSprites($edge);
         return [
             'edgesToUpload' => $edge,
-            'spriteNames' => $this->updateTags($edge),
-            'createdSprites' => $this->generateSprites($edge),
+            'spriteNames' => $spriteNames,
+            'createdSprites' => $createdSprites,
         ];
     }
 
