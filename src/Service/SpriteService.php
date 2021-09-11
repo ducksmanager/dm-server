@@ -44,7 +44,7 @@ class SpriteService
 
         [$country, $magazine] = explode('/', $edgeToUpload->getPublicationcode());
 
-        $this->logger->info("Uploading {$edgeToUpload->getSlug()}...");
+        $this->logger->info("Uploading edge with ID {$edgeID} and slug {$edgeToUpload->getSlug()}...");
         $this->upload(
             "{$_ENV['EDGES_ROOT']}/$country/gen/$magazine.{$edgeToUpload->getIssuenumber()}.png", [
             'public_id' => $edgeToUpload->getSlug()
