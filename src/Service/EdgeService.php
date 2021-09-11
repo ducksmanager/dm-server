@@ -39,11 +39,14 @@ class EdgeService
         ]);
         $isNew = is_null($edgeToPublish);
         if ($isNew) {
-            $this->dmEm->persist($edgeToPublish = (new TranchesPretes())
+            $edgeToPublish = (new TranchesPretes())
                 ->setPublicationcode($publicationCode)
                 ->setIssuenumber($issueNumber)
-                ->setDateajout(new DateTime())
-            );
+                ->setDateajout(new DateTime());
+
+            $this->dmEm->persist($edgeToPublish);
+            $this->dmEm->clear($edgeToPublish);
+
             $contributions = [];
         } else {
             $contributions = $this->dmEm->getRepository(UsersContributions::class)->findBy([
