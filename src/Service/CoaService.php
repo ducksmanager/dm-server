@@ -17,8 +17,7 @@ use stdClass;
 
 class CoaService
 {
-    /**@var EntityManager */
-    private static $coaEm;
+    private static EntityManager $coaEm;
 
     public function __construct(ManagerRegistry $doctrineManagerRegistry)
     {
@@ -373,5 +372,20 @@ class CoaService
             ->where($qb->expr()->in('quotation.issuecode', $issueCodes))
             ->andWhere('quotation.estimationmin IS NOT NULL');
         return $qb->getQuery()->getArrayResult();
+    }
+
+    public function listIssuesFromPublicationCodes(array $publicationCodes): array
+    {
+        $qb = self::$coaEm->createQueryBuilder();
+        $qb
+            ->select('inducks_issue.publicationcode, inducks_issue.issuenumber')
+            ->from(InducksIssue::class, 'inducks_issue')
+            ->where($qb->expr()->in('inducks_issue.publicationcode', $publicationCodes));
+
+        $results = $qb->getQuery()->getResult();
+        return array_reduce($results, function (array $acc, array $issue) {
+            $acc[$issue['publicationcode']][] = preg_replace('#[ ]+#', ' ', $issue['issuenumber']);
+            return $acc;
+        }, array_fill_keys($publicationCodes, []));
     }
 }

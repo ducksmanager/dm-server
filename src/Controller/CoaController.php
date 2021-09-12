@@ -69,7 +69,7 @@ class CoaController extends AbstractController
      * @Route(
      *     methods={"GET"},
      *     path="/coa/list/publications/{publicationCodesOrCountry}",
-     *     requirements={"publicationCodesOrCountry"="^([a-z]+|((?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+),){0,9}[a-z]+/[-A-Z0-9]+)$"}
+     *     requirements={"publicationCodesOrCountry"="^([a-z]+|((?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+),){0,19}[a-z]+/[-A-Z0-9]+)$"}
      * )
      */
     public function listPublicationsFromPublicationCodes(string $publicationCodesOrCountry, CoaService $coaService): Response
@@ -88,22 +88,22 @@ class CoaController extends AbstractController
      *     requirements={"publicationCode"="^(?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+)$"}
      * )
      */
-    public function listIssuesFromPublicationCode(string $publicationCode): Response
+    public function listIssuesFromPublicationCode(CoaService $coaService, string $publicationCode): Response
     {
-        $coaEm = $this->getEm('coa');
-        $qb = $coaEm->createQueryBuilder();
-        $qb
-            ->select('inducks_issue.issuenumber')
-            ->from(InducksIssue::class, 'inducks_issue');
+        $issueNumbers = $coaService->listIssuesFromPublicationCodes([$publicationCode]);
+        return new JsonResponse($issueNumbers[$publicationCode] ?? []);
+    }
 
-        $qb->where($qb->expr()->eq('inducks_issue.publicationcode', "'" . $publicationCode . "'"));
-
-        $results = $qb->getQuery()->getResult();
-        $issueNumbers = array_map(
-            fn($issue) => preg_replace('#[ ]+#', ' ', $issue['issuenumber']),
-            $results
-        );
-        return new JsonResponse($issueNumbers);
+    /**
+     * @Route(
+     *     methods={"GET"},
+     *     path="/coa/list/issues/multiple/{publicationCodes}",
+     *     requirements={"publicationCodes"="^((?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+),){0,9}[a-z]+/[-A-Z0-9]+$"})"
+     * )
+     */
+    public function listIssuesFromPublicationCodes(CoaService $coaService, string $publicationCodes): Response
+    {
+        return new JsonResponse($coaService->listIssuesFromPublicationCodes(explode(',', $publicationCodes)));
     }
 
     /**
