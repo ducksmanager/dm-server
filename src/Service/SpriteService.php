@@ -25,9 +25,9 @@ class SpriteService
         $this->logger = $logger;
     }
 
-    public function uploadEdgesAndGenerateSprites(string $edgeID): array
+    public function uploadEdgesAndGenerateSprites(TranchesPretes $edge): array
     {
-        $edge = $this->uploadEdge($edgeID);
+        $this->uploadEdge($edge);
         $spriteNames = $this->updateTags($edge);
         $createdSprites = $this->generateSprites($edge);
         return [
@@ -37,20 +37,15 @@ class SpriteService
         ];
     }
 
-    private function uploadEdge(string $edgeID) : TranchesPretes
+    private function uploadEdge(TranchesPretes $edgeToUpload) : void
     {
-        /** @var TranchesPretes $edgeToUpload */
-        $edgeToUpload = $this->dmEm->getRepository(TranchesPretes::class)->find($edgeID);
-
         [$country, $magazine] = explode('/', $edgeToUpload->getPublicationcode());
 
-        $this->logger->info("Uploading edge with ID {$edgeID} and slug {$edgeToUpload->getSlug()}...");
+        $this->logger->info("Uploading edge with ID {$edgeToUpload->getId()} and slug {$edgeToUpload->getSlug()}...");
         $this->upload(
             "{$_ENV['EDGES_ROOT']}/$country/gen/$magazine.{$edgeToUpload->getIssuenumber()}.png", [
             'public_id' => $edgeToUpload->getSlug()
         ]);
-
-        return $edgeToUpload;
     }
 
     private function updateTags(TranchesPretes $edge): array

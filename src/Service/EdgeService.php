@@ -45,7 +45,6 @@ class EdgeService
                 ->setDateajout(new DateTime());
 
             $this->dmEm->persist($edgeToPublish);
-            $this->dmEm->clear(TranchesPretes::class);
 
             $contributions = [];
         } else {
@@ -83,9 +82,12 @@ class EdgeService
             }
         }
         $this->dmEm->flush();
+        $edgeId = $edgeToPublish->getId();
+        $this->dmEm->clear(TranchesPretes::class);
 
         if ($this->kernel->getEnvironment() === 'prod') {
-            $this->spriteService->uploadEdgesAndGenerateSprites($edgeToPublish->getId());
+            $edgeToUpload = $this->dmEm->getRepository(TranchesPretes::class)->find($edgeId);
+            $this->spriteService->uploadEdgesAndGenerateSprites($edgeToUpload);
         }
 
         return [
