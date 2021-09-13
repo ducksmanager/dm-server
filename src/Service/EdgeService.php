@@ -83,7 +83,7 @@ class EdgeService
         }
         $this->dmEm->flush();
         $edgeId = $edgeToPublish->getId();
-        $this->dmEm->clear(TranchesPretes::class);
+        $this->dmEm->clear();
 
         if ($this->kernel->getEnvironment() === 'prod') {
             $edgeToUpload = $this->dmEm->getRepository(TranchesPretes::class)->find($edgeId);
