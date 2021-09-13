@@ -45,7 +45,7 @@ class EdgeService
                 ->setDateajout(new DateTime());
 
             $this->dmEm->persist($edgeToPublish);
-            $this->dmEm->clear($edgeToPublish);
+            $this->dmEm->clear(TranchesPretes::class);
 
             $contributions = [];
         } else {
