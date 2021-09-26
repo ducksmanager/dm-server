@@ -193,9 +193,36 @@ class DucksmanagerController extends AbstractController
 
             $demoUserIssueData = $csvService->readCsv('demo_user/issues.csv');
 
+            $issueNumbers = [];
+            $previousPublicationCode = null;
+            $previousCondition = null;
             foreach ($demoUserIssueData as $publicationData) {
+                if (isset($previousPublicationCode, $previousCondition)) {
+                    if ($previousPublicationCode === $publicationData['publicationCode'] &&
+                        $issueNumbers[count($issueNumbers)-1] === $publicationData['issueNumber']
+                    ) {
+                        $collectionUpdateService->addOrChangeCopies(
+                            $demoUser->getId(), $previousPublicationCode, $publicationData['issueNumber'], [$previousCondition, $publicationData['condition']], [], []
+                        );
+                    }
+                    else if ($previousPublicationCode !== $publicationData['publicationCode'] ||
+                        $previousCondition !== $publicationData['condition']
+                    ) {
+                        $collectionUpdateService->addOrChangeIssues(
+                            $demoUser->getId(), $previousPublicationCode, $issueNumbers, $previousCondition, null, null
+                        );
+                        $issueNumbers = [];
+                    }
+                }
+                $publicationCode = $publicationData['publicationCode'];
+                $condition = $publicationData['condition'];
+                $issueNumbers[] = $publicationData['issueNumber'];
+                $previousPublicationCode = $publicationCode;
+                $previousCondition = $condition;
+            }
+            if (!empty($previousPublicationCode) && !empty($previousCondition)) {
                 $collectionUpdateService->addOrChangeIssues(
-                    $demoUser->getId(), $publicationData['publicationCode'], $publicationData['issueNumbers'], $publicationData['condition'], null, null
+                    $demoUser->getId(), $previousPublicationCode, $issueNumbers, $previousCondition, null, null
                 );
             }
 
