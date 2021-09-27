@@ -240,19 +240,20 @@ class CoaService
         return $issueNumbers;
     }
 
-    public function getStoriesByKeywords(array $keywords) : array
+    public function getStoriesByKeywords(array $keywords, bool $withIssues = false) : array
     {
-        $condition = "MATCH(inducks_entry.title) AGAINST (:search)";
+        $matchCondition = "MATCH(inducks_entry.title) AGAINST (:search)";
 
         $rsm = (new ResultSetMapping())
             ->addScalarResult('storycode', 'storycode')
             ->addScalarResult('title', 'title');
 
         $query = self::$coaEm->createNativeQuery("
-            SELECT inducks_storyversion.storycode, inducks_entry.title AS title, $condition AS score
+            SELECT inducks_storyversion.storycode, inducks_entry.title AS title, $matchCondition /
+       (IF(inducks_storyversion.kind = 'n', 1, 2)) AS score
             FROM inducks_entry
             INNER JOIN inducks_storyversion ON inducks_entry.storyversioncode = inducks_storyversion.storyversioncode
-            WHERE $condition
+            WHERE inducks_storyversion.storycode <> '' AND $matchCondition
             GROUP BY inducks_storyversion.storycode
             ORDER BY score DESC, inducks_entry.title
             LIMIT 11
@@ -268,10 +269,17 @@ class CoaService
             $hasMore = true;
         }
         return [
-            'results' => array_map(fn($result) => [
-                'code' => $result['storycode'],
-                'title' => $result['title'],
-            ], $results),
+            'results' => array_map(function ($result) use ($withIssues) {
+                $data = [
+                    'code' => $result['storycode'],
+                    'title' => $result['title'],
+                ];
+                if ($withIssues) {
+                    $issues = $this->listIssuesFromStoryCode($result['storycode']);
+                    $data['issues'] = $issues['results'];
+                }
+                return $data;
+            }, $results),
             'hasmore' => $hasMore
         ];
     }

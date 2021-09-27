@@ -272,14 +272,16 @@ class CoaController extends AbstractController
     /**
      * @Route(
      *     methods={"POST"},
-     *     path="/coa/stories/search"
+     *     path="/coa/stories/search/{withIssues}",
+     *     defaults={"withIssues"=""}
      * )
      */
-    public function listStoriesFromKeywords(CoaService $coaService, Request $request) : JsonResponse
+    public function listStoriesFromKeywords(CoaService $coaService, Request $request, $withIssues) : JsonResponse
     {
         $keywords = $request->request->get('keywords');
+        $withIssues = $withIssues === 'withIssues';
         return new JsonResponse(
-            $coaService->getStoriesByKeywords(explode(' ', $keywords))
+            $coaService->getStoriesByKeywords(explode(' ', $keywords), $withIssues)
         );
     }
 
