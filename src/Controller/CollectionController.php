@@ -511,22 +511,41 @@ class CollectionController extends AbstractController implements RequiresDmVersi
     }
 
     /**
-     * @Route(methods={"PUT"}, path="/collection/subscriptions")
+     * @Route(
+     *     methods={"POST", "PUT"},
+     *     path="/collection/subscriptions/{subscriptionId}",
+     *     defaults={"subscriptionId"=null}
+     * )
      */
-    public function createUserSubscription(Request $request): Response
+    public function createOrEditUserSubscription(Request $request, ?int $subscriptionId = null): Response
     {
-        [$country, $magazine] = explode('/', $request->request->get('publicationCode'));
-        $subscription = (new Abonnements())
-            ->setUser($this->getEm('dm')->getRepository(Users::class)->find($this->getSessionUser()['id']))
+        $user = $this->getEm('dm')->getRepository(Users::class)->find($this->getSessionUser()['id']);
+        if (is_null($subscriptionId)) {
+            [$country, $magazine] = explode('/', $request->request->get('publicationCode'));
+            $subscription = (new Abonnements())
+                ->setPays($country)
+                ->setMagazine($magazine)
+                ->setUser($user);
+        }
+        else {
+            /** @var Abonnements $subscription */
+            $subscription = $this->getEm('dm')->getRepository(Abonnements::class)->find($subscriptionId);
+            if ($subscription->getUser() !== $user) {
+                return new Response('This subscription doesn\'t belong to you', Response::HTTP_FORBIDDEN);
+            }
+        }
+        $subscription
             ->setDateDebut(new DateTime($request->request->get('startDate')))
-            ->setDateFin(new DateTime($request->request->get('endDate')))
-            ->setPays($country)
-            ->setMagazine($magazine);
+            ->setDateFin(new DateTime($request->request->get('endDate')));
 
         $this->getEm('dm')->persist($subscription);
         $this->getEm('dm')->flush();
 
-        return new Response('OK', Response::HTTP_CREATED);
+        if (is_null($subscriptionId)) {
+            return new Response('OK', Response::HTTP_CREATED);
+        }
+
+        return new Response('OK', Response::HTTP_OK);
     }
 
     /**
