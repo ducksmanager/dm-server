@@ -1,18 +1,3 @@
-CREATE TABLE `abonnements`
-(
-    `ID`             int(11)    NOT NULL AUTO_INCREMENT,
-    `ID_Utilisateur` int(11)    NOT NULL,
-    `Pays`           varchar(3) NOT NULL,
-    `Magazine`       varchar(6) NOT NULL,
-    `Date_debut`     date       NOT NULL,
-    `Date_fin`       date       NOT NULL,
-    PRIMARY KEY (`ID`),
-    UNIQUE KEY `abonnements_unique` (`Pays`, `Magazine`, `ID_Utilisateur`, `Date_debut`, `Date_fin`),
-    KEY `abonnements_users_ID_fk` (`ID_Utilisateur`),
-    CONSTRAINT `abonnements_users_ID_fk` FOREIGN KEY (`ID_Utilisateur`) REFERENCES `users` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB
-  DEFAULT CHARSET = latin1;
-
 CREATE TABLE `abonnements_sorties`
 (
     `Pays`            varchar(3) NOT NULL,
@@ -86,6 +71,22 @@ CREATE TABLE `bouquineries`
     `DateAjout`       timestamp                                             NULL     DEFAULT current_timestamp(),
     `Actif`           tinyint(1)                                            NOT NULL DEFAULT 0,
     PRIMARY KEY (`ID`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
+
+CREATE TABLE `bouquineries_commentaires`
+(
+    `ID`             int(11)                                               NOT NULL AUTO_INCREMENT,
+    `ID_Utilisateur` int(11)                                                        DEFAULT NULL,
+    `Commentaire`    text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    `DateAjout`      timestamp                                             NOT NULL DEFAULT current_timestamp(),
+    `Actif`          tinyint(1)                                            NOT NULL DEFAULT 0,
+    `ID_Bouquinerie` int(11)                                               NOT NULL,
+    PRIMARY KEY (`ID`),
+    KEY `bouquineries_commentaires_bouquineries_ID_fk` (`ID_Bouquinerie`),
+    KEY `bouquineries_commentaires_users_ID_fk` (`ID_Utilisateur`),
+    CONSTRAINT `bouquineries_commentaires_bouquineries_ID_fk` FOREIGN KEY (`ID_Bouquinerie`) REFERENCES `bouquineries` (`ID`),
+    CONSTRAINT `bouquineries_commentaires_users_ID_fk` FOREIGN KEY (`ID_Utilisateur`) REFERENCES `users` (`ID`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 
@@ -261,25 +262,43 @@ CREATE TABLE `users`
 
 CREATE TABLE `users_contributions`
 (
-    `ID`           int(11)                                                       NOT NULL AUTO_INCREMENT,
-    `ID_user`      int(11)                                                       NOT NULL,
-    `date`         datetime                                                      NOT NULL DEFAULT current_timestamp(),
-    `contribution` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-    `points_new`   int(11)                                                       NOT NULL,
-    `points_total` int(11)                                                       NOT NULL,
-    `emails_sent`  tinyint(1)                                                    NOT NULL,
-    `ID_tranche`   int(11)                                                                DEFAULT NULL,
-    `ID_bookstore` int(11)                                                                DEFAULT NULL,
+    `ID`                   int(11)                                                       NOT NULL AUTO_INCREMENT,
+    `ID_user`              int(11)                                                       NOT NULL,
+    `date`                 datetime                                                      NOT NULL DEFAULT current_timestamp(),
+    `contribution`         varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    `points_new`           int(11)                                                       NOT NULL,
+    `points_total`         int(11)                                                       NOT NULL,
+    `emails_sent`          tinyint(1)                                                    NOT NULL,
+    `ID_tranche`           int(11)                                                                DEFAULT NULL,
+    `ID_bookstore`         int(11)                                                                DEFAULT NULL,
+    `ID_bookstore_comment` int(11)                                                                DEFAULT NULL,
     PRIMARY KEY (`ID`),
     KEY `IDX_7FDC16F375567043` (`ID_tranche`),
     KEY `IDX_7FDC16F3A5778B6C` (`ID_bookstore`),
     KEY `users_contributions__user_contribution` (`ID_user`, `contribution`),
+    KEY `users_contributions_bouquineries_commentaires_ID_fk` (`ID_bookstore_comment`),
     CONSTRAINT `FK_7FDC16F375567043` FOREIGN KEY (`ID_tranche`) REFERENCES `tranches_pretes` (`ID`),
     CONSTRAINT `FK_7FDC16F3A5778B6C` FOREIGN KEY (`ID_bookstore`) REFERENCES `bouquineries` (`ID`),
-    CONSTRAINT `users_contributions___fk_user` FOREIGN KEY (`ID_user`) REFERENCES `users` (`ID`)
+    CONSTRAINT `users_contributions___fk_user` FOREIGN KEY (`ID_user`) REFERENCES `users` (`ID`),
+    CONSTRAINT `users_contributions_bouquineries_commentaires_ID_fk` FOREIGN KEY (`ID_bookstore_comment`) REFERENCES `bouquineries_commentaires` (`ID`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = latin1
   COLLATE = latin1_german2_ci;
+
+CREATE TABLE `abonnements`
+(
+    `ID`             int(11)    NOT NULL AUTO_INCREMENT,
+    `ID_Utilisateur` int(11)    NOT NULL,
+    `Pays`           varchar(3) NOT NULL,
+    `Magazine`       varchar(6) NOT NULL,
+    `Date_debut`     date       NOT NULL,
+    `Date_fin`       date       NOT NULL,
+    PRIMARY KEY (`ID`),
+    UNIQUE KEY `abonnements_unique` (`Pays`, `Magazine`, `ID_Utilisateur`, `Date_debut`, `Date_fin`),
+    KEY `abonnements_users_ID_fk` (`ID_Utilisateur`),
+    CONSTRAINT `abonnements_users_ID_fk` FOREIGN KEY (`ID_Utilisateur`) REFERENCES `users` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB
+  DEFAULT CHARSET = latin1;
 
 CREATE TABLE `users_options`
 (
