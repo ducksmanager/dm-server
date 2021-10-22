@@ -65,8 +65,7 @@ services:
 
   coa-updater:
     container_name: coa-updater
-    build:
-      context: ../coa-updater
+    image: bperel/coa-updater
     depends_on:
       - db_coa
     environment:
