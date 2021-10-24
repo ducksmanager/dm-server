@@ -34,39 +34,11 @@ class Bouquineries
     private $name;
 
     /**
-     * @var string|null
-     *
-     * @ORM\Column(name="Adresse", type="text", length=65535, nullable=true)
-     */
-    private $adresse;
-
-    /**
      * @var string
      *
      * @ORM\Column(name="AdresseComplete", type="text", length=65535, nullable=false)
      */
     private $address;
-
-    /**
-     * @var int|null
-     *
-     * @ORM\Column(name="CodePostal", type="integer", nullable=true)
-     */
-    private $codepostal;
-
-    /**
-     * @var string|null
-     *
-     * @ORM\Column(name="Ville", type="string", length=20, nullable=true)
-     */
-    private $ville;
-
-    /**
-     * @var string|null
-     *
-     * @ORM\Column(name="Pays", type="string", length=20, nullable=true, options={"default"="France"})
-     */
-    private $pays = 'France';
 
     /**
      * @var float
@@ -110,18 +82,6 @@ class Bouquineries
         return $this;
     }
 
-    public function getAdresse(): ?string
-    {
-        return $this->adresse;
-    }
-
-    public function setAdresse(?string $adresse): self
-    {
-        $this->adresse = $adresse;
-
-        return $this;
-    }
-
     public function getAddress(): ?string
     {
         return $this->address;
@@ -130,42 +90,6 @@ class Bouquineries
     public function setAddress(string $address): self
     {
         $this->address = $address;
-
-        return $this;
-    }
-
-    public function getCodepostal(): ?int
-    {
-        return $this->codepostal;
-    }
-
-    public function setCodepostal(?int $codepostal): self
-    {
-        $this->codepostal = $codepostal;
-
-        return $this;
-    }
-
-    public function getVille(): ?string
-    {
-        return $this->ville;
-    }
-
-    public function setVille(?string $ville): self
-    {
-        $this->ville = $ville;
-
-        return $this;
-    }
-
-    public function getPays(): ?string
-    {
-        return $this->pays;
-    }
-
-    public function setPays(?string $pays): self
-    {
-        $this->pays = $pays;
 
         return $this;
     }

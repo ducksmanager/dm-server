@@ -4,6 +4,7 @@ namespace App\Tests\Controller;
 use App\Controller\RequiresDmVersionController;
 use App\Entity\Dm\Achats;
 use App\Entity\Dm\Bouquineries;
+use App\Entity\Dm\BouquineriesCommentaires;
 use App\Entity\Dm\Demo;
 use App\Entity\Dm\Numeros;
 use App\Entity\Dm\Users;
@@ -170,17 +171,20 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
         ]);
 
         $bookstore = (new Bouquineries())
-            ->setActive(true)
             ->setName('Bookstore')
-            ->setCommentaire('Comment')
             ->setCoordX(0)
             ->setCoordY(0)
-            ->setAddress('1 street A')
-            ->setUtilisateur($demoUser->getId())
-            ->setDateajout(new DateTime());
+            ->setAddress('1 street A');
+
+        $bookstoreComment = (new BouquineriesCommentaires())
+            ->setActive(true)
+            ->setBookstore($bookstore)
+            ->setComment('Comment')
+            ->setCreationDate(new DateTime())
+            ->setUser($demoUser->getId());
 
         $bookstoreContribution = (new UsersContributions())
-            ->setBookstore($bookstore)
+            ->setBookstoreComment($bookstoreComment)
             ->setUser($demoUser)
             ->setPointsNew(1)
             ->setDate(new DateTime())
@@ -188,6 +192,7 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
             ->setContribution('duckhunter');
 
         $this->getEm('dm')->persist($bookstore);
+        $this->getEm('dm')->persist($bookstoreComment);
         $this->getEm('dm')->persist($bookstoreContribution);
         $this->getEm('dm')->flush();
 
@@ -240,19 +245,23 @@ class DucksManagerTest extends TestCommon implements RequiresDmVersionController
         ]);
 
         $existingBookstore = (new Bouquineries())
-            ->setActive(false)
             ->setName('Bookstore')
-            ->setCommentaire('Comment')
             ->setCoordX(0)
             ->setCoordY(0)
-            ->setAddress('1 street A')
-            ->setUtilisateur($demoUser->getId())
-            ->setDateajout(new DateTime());
+            ->setAddress('1 street A');
+
+        $existingBookstoreComment = (new BouquineriesCommentaires())
+            ->setActive(false)
+            ->setBookstore($existingBookstore)
+            ->setComment('Comment')
+            ->setCreationDate(new DateTime())
+            ->setUser($demoUser->getId());
 
         $bookstore = (clone $existingBookstore)
-            ->setNom('Bookstore 2');
+            ->setName('Bookstore 2');
 
         $this->getEm('dm')->persist($existingBookstore);
+        $this->getEm('dm')->persist($existingBookstoreComment);
         $this->getEm('dm')->persist($bookstore);
         $this->getEm('dm')->persist(
             (new UsersContributions())

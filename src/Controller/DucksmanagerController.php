@@ -668,7 +668,7 @@ class DucksmanagerController extends AbstractController
                     fn(BouquineriesCommentaires $comment) => $filter !== 'active' || $comment->getActive()
                 )
             )
-        ], array_values(array_filter(
+        ], array_values($filter !== 'active' ? $bookstores : array_filter(
             $bookstores,
             fn(Bouquineries $bookstore) => !empty(array_values(array_filter(
                 $bookstore->getComments()->toArray(),
