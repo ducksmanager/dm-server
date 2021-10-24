@@ -294,10 +294,10 @@ CREATE TABLE `abonnements`
 
 CREATE TABLE `users_options`
 (
-    `ID`            int(11)                                  NOT NULL AUTO_INCREMENT,
-    `ID_User`       int(11)                                  NOT NULL,
-    `Option_nom`    enum ('suggestion_notification_country') NOT NULL,
-    `Option_valeur` varchar(50)                              NOT NULL,
+    `ID`            int(11)                                                                     NOT NULL AUTO_INCREMENT,
+    `ID_User`       int(11)                                                                     NOT NULL,
+    `Option_nom`    enum ('suggestion_notification_country', 'sales_notification_publications') NOT NULL,
+    `Option_valeur` varchar(50)                                                                 NOT NULL,
     PRIMARY KEY (`ID`),
     UNIQUE KEY `users_options__unique` (`ID_User`, `Option_nom`, `Option_valeur`),
     KEY `users_options__user_option` (`ID_User`, `Option_nom`),

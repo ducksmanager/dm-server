@@ -76,13 +76,43 @@ class CollectionController extends AbstractController implements RequiresDmVersi
      * @Route(methods={"POST"}, path="collection/notifications/countries")
      */
     public function updateCountriesToNotify(Request $request): Response
-    {
-        $countries = $request->request->get('countries');
+	{
+		return $this->updateOptions(
+			UsersOptionsService::OPTION_NAME_SUGGESTION_NOTIFICATION_COUNTRY,
+			$request->request->get('countries'),
+		);
+	}
 
+	/**
+	 * @Route(methods={"GET"}, path="collection/notifications/sales/publications")
+	 */
+	public function getWatchedPublications(UsersOptionsService $usersOptionsService): Response
+	{
+		$currentUser = $this->getEm('dm')->getRepository(Users::class)->find($this->getSessionUser()['id']);
+
+		return new JsonResponseFromObject($usersOptionsService->getOptionValueForUser(
+			$currentUser,
+			UsersOptionsService::OPTION_NAME_SALES_NOTIFICATION_PUBLICATIONS
+		)->getValue()
+		);
+	}
+
+    /**
+     * @Route(methods={"POST"}, path="collection/notifications/sales/publications")
+     */
+    public function updateWatchedPublications(Request $request, LoggerInterface $logger): Response
+	{
+		return $this->updateOptions(
+			UsersOptionsService::OPTION_NAME_SALES_NOTIFICATION_PUBLICATIONS,
+			$request->request->get('publications') ?? [],
+		);
+	}
+
+    public function updateOptions(string $optionName, array $values): Response
+    {
         /** @var Users $currentUser */
         $dmEm = $this->getEm('dm');
         $currentUser = $dmEm->getRepository(Users::class)->find($this->getSessionUser()['id']);
-        $optionName = 'suggestion_notification_country';
 
         try {
             $qbDeleteExistingValues = ($dmEm->createQueryBuilder())
@@ -93,12 +123,12 @@ class CollectionController extends AbstractController implements RequiresDmVersi
 
             $qbDeleteExistingValues->getQuery()->execute();
 
-            foreach ($countries as $countryCode) {
+            foreach ($values as $value) {
                 $currentUser->getOptions()->add(
                     (new UsersOptions())
                         ->setUser($currentUser)
                         ->setOptionNom($optionName)
-                        ->setOptionValeur($countryCode)
+                        ->setOptionValeur($value)
                 );
             }
             $dmEm->flush();
@@ -150,14 +180,16 @@ class CollectionController extends AbstractController implements RequiresDmVersi
     /**
      * @Route(methods={"GET"}, path="/collection/issues")
      */
-    public function getIssues(): JsonResponse
+    public function getIssues(LoggerInterface $logger): JsonResponse
     {
         $dmEm = $this->getEm('dm');
         $qb = $dmEm->createQueryBuilder();
-        $qb->select('issues.id, issues.pays AS country, issues.magazine, issues.numero AS issueNumber, issues.etat AS condition, issues.idAcquisition AS purchaseId, issues.dateajout AS creationDate')
+        $qb->select('issues.id, issues.pays AS country, issues.magazine, issues.numero AS issueNumber, issues.etat AS condition, issues.idAcquisition AS purchaseId, issues.isToSell, issues.dateajout AS creationDate')
             ->from(Numeros::class, 'issues')
             ->where($qb->expr()->eq('issues.idUtilisateur', $this->getSessionUser()['id']))
             ->orderBy('issues.pays, issues.magazine, issues.numero', 'ASC');
+
+		$logger->info($qb->getQuery()->getSQL());
 
         return new JsonResponseFromObject(
             array_map(function ($result) {
@@ -283,7 +315,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
             return new Response("Can't update copies of multiple issues at once", Response::HTTP_BAD_REQUEST);
         }
 
-        $isToSell = $request->request->get('istosell');
+        $isToSell = $request->request->get('isToSell');
         $purchaseId = $request->request->get('purchaseId');
 
         $purchaseIds = is_array($purchaseId) ? $purchaseId : [$purchaseId];
@@ -297,12 +329,10 @@ class CollectionController extends AbstractController implements RequiresDmVersi
         else {
             if (in_array($condition, ['non_possede', 'missing'])) {
                 $collectionUpdateService->deleteIssues($userId, $publication, $issueNumbers);
-                return new JsonResponse(
-                    self::getSimpleArray([])
-                );
+                return new JsonResponse(self::getSimpleArray([]));
             }
             [$nbUpdated, $nbCreated] = $collectionUpdateService->addOrChangeIssues(
-                $userId, $publication, $issueNumbers, $condition, $isToSell, $purchaseIds[0]
+                $userId, $publication, $issueNumbers, $condition, $isToSell === 'true', $purchaseIds[0]
             );
         }
         return new JsonResponse(self::getSimpleArray([
@@ -462,7 +492,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
                 ->setPays($country)
                 ->setMagazine($magazine)
                 ->setNumero($issue['issuenumber'])
-                ->setAv(false)
+                ->setIsToSell(false)
                 ->setDateajout(new DateTime())
                 ->setEtat($defaultCondition);
             $dmEm->persist($newIssue);

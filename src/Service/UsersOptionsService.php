@@ -11,6 +11,7 @@ class UsersOptionsService {
 
     private static ObjectManager $dmEm;
     public const OPTION_NAME_SUGGESTION_NOTIFICATION_COUNTRY = 'suggestion_notification_country';
+    public const OPTION_NAME_SALES_NOTIFICATION_PUBLICATIONS = 'sales_notification_publications';
 
     public function __construct(ManagerRegistry $doctrineManagerRegistry)
     {
@@ -38,7 +39,7 @@ class UsersOptionsService {
      * @param string $optionKey
      * @return UserWithOptionValue[]
      */
-    public function getOptionValueAllUsers(string $optionKey) {
+    public function getOptionValueAllUsers(string $optionKey): array {
         /** @var UsersOptions[] $valuesAllUsers */
         $valuesAllUsers = self::$dmEm->getRepository(UsersOptions::class)->findBy([
             'optionNom' => $optionKey

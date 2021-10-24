@@ -66,7 +66,7 @@ class Numeros
      *
      * @ORM\Column(name="AV", type="boolean", nullable=false, options={"default"="false"})
      */
-    private $av = false;
+²    private $isToSell = false;
 
     /**
      * @var bool
@@ -168,14 +168,14 @@ class Numeros
         return $this;
     }
 
-    public function getAv(): ?bool
+    public function getIsToSell(): ?bool
     {
-        return $this->av;
+        return $this->isToSell;
     }
 
-    public function setAv(bool $av): self
+    public function setIsToSell(bool $isToSell): self
     {
-        $this->av = $av;
+        $this->isToSell = $isToSell;
 
         return $this;
     }

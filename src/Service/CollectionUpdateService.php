@@ -58,7 +58,7 @@ class CollectionUpdateService {
                 $existingIssue->setEtat($condition);
             }
             if (!is_null($isToSell)) {
-                $existingIssue->setAv($isToSell);
+                $existingIssue->setIsToSell($isToSell);
             }
             if (!is_null($purchaseId)) {
                 $existingIssue->setIdAcquisition($purchaseId);
@@ -101,7 +101,7 @@ class CollectionUpdateService {
                 continue;
             }
             $condition = $conditions[$copyNumber] ?? 'indefini';
-            $isToSell = $areToSell[$copyNumber] ?? false;
+            $isToSell = $areToSell[$copyNumber] === 'true';
             $purchaseId = empty($purchaseIds[$copyNumber]) ? -2 : $purchaseIds[$copyNumber]; // TODO allow NULL
 
             $this->buildAndPersistIssue($countryCode, $magazineCode, $issueNumber, $condition, $isToSell, $purchaseId, $userId);
@@ -134,7 +134,7 @@ class CollectionUpdateService {
         $newIssue->setMagazine($magazine);
         $newIssue->setNumero($issueNumberToCreate);
         $newIssue->setEtat($conditionNewIssues);
-        $newIssue->setAv($isToSellNewIssues);
+        $newIssue->setIsToSell($isToSellNewIssues);
         $newIssue->setIdAcquisition($purchaseIdNewIssues);
         $newIssue->setIdUtilisateur($userId);
         $newIssue->setDateajout(new DateTime());

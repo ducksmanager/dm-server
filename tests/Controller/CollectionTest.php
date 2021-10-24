@@ -169,7 +169,7 @@ class CollectionTest extends TestCommon
         $this->assertEquals('3', $lastIssue->getNumero());
         $this->assertEquals('bon', $lastIssue->getEtat());
         $this->assertEquals(-2, $lastIssue->getIdAcquisition());
-        $this->assertEquals(false, $lastIssue->getAv());
+        $this->assertEquals(false, $lastIssue->getIsToSell());
         $this->assertEquals($this->getUser(self::$defaultTestDmUserName)->getId(), $lastIssue->getIdUtilisateur());
         $this->assertEquals(date('Y-m-d'), $lastIssue->getDateajout()->format('Y-m-d'));
     }
@@ -183,7 +183,7 @@ class CollectionTest extends TestCommon
             'publicationCode' => $publicationCode,
             'issueNumbers' => $issuesToUpdate,
             'condition' => 'bon',
-            'istosell' => '1',
+            'isToSell' => true,
             'purchaseId' => '2'
         ])->call();
 
@@ -208,7 +208,7 @@ class CollectionTest extends TestCommon
         $this->assertEquals('1', $updatedIssue->getNumero());
         $this->assertEquals('bon', $updatedIssue->getEtat());
         $this->assertEquals(1, $updatedIssue->getIdAcquisition());
-        $this->assertEquals(true, $updatedIssue->getAv());
+        $this->assertEquals(true, $updatedIssue->getIsToSell());
         $this->assertEquals($this->getUser(self::$defaultTestDmUserName)->getId(), $updatedIssue->getIdUtilisateur());
         $this->assertEquals(date('Y-m-d'), $updatedIssue->getDateajout()->format('Y-m-d'));
     }
@@ -255,7 +255,7 @@ class CollectionTest extends TestCommon
         $this->assertNotNull($updatedIssue);
         $this->assertEquals('bon', $updatedIssue->getEtat());
         $this->assertEquals(1, $updatedIssue->getIdAcquisition());
-        $this->assertFalse($updatedIssue->getAv());
+        $this->assertFalse($updatedIssue->getIsToSell());
 
         $this->assertEquals('CREATE', $responseObject[1]->action);
         $this->assertEquals(1, $responseObject[1]->numberOfIssues);
@@ -270,7 +270,7 @@ class CollectionTest extends TestCommon
         $this->assertNotNull($createdIssue);
         $this->assertEquals('bon', $createdIssue->getEtat());
         $this->assertEquals('-2', $createdIssue->getIdAcquisition());
-        $this->assertFalse($createdIssue->getAv());
+        $this->assertFalse($createdIssue->getIsToSell());
     }
 
     public function testFetchCollection(): void
