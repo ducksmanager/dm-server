@@ -66,7 +66,7 @@ class Numeros
      *
      * @ORM\Column(name="AV", type="boolean", nullable=false, options={"default"="false"})
      */
-²    private $isToSell = false;
+    private $isToSell = false;
 
     /**
      * @var bool
