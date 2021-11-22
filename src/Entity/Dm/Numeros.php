@@ -66,7 +66,7 @@ class Numeros
      *
      * @ORM\Column(name="AV", type="boolean", nullable=false, options={"default"="false"})
      */
-    private $isToSell = false;
+    private $isOnSale = false;
 
     /**
      * @var bool
@@ -168,14 +168,14 @@ class Numeros
         return $this;
     }
 
-    public function getIsToSell(): ?bool
+    public function getIsOnSale(): ?bool
     {
-        return $this->isToSell;
+        return $this->isOnSale;
     }
 
-    public function setIsToSell(bool $isToSell): self
+    public function setIsOnSale(bool $isOnSale): self
     {
-        $this->isToSell = $isToSell;
+        $this->isOnSale = $isOnSale;
 
         return $this;
     }

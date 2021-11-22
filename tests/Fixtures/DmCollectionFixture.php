@@ -75,7 +75,7 @@ class DmCollectionFixture implements FixtureInterface
                 ->setNumero('1')
                 ->setEtat('indefini')
                 ->setIdAcquisition(1)
-                ->setIsToSell(false)
+                ->setIsOnSale(false)
                 ->setIdUtilisateur($user->getId())
                 ->setDateajout(new DateTime())
         );
@@ -86,7 +86,7 @@ class DmCollectionFixture implements FixtureInterface
                 ->setMagazine('MP')
                 ->setNumero('300')
                 ->setEtat('bon')
-                ->setIsToSell(false)
+                ->setIsOnSale(false)
                 ->setIdUtilisateur($user->getId())
                 ->setDateajout(new DateTime())
         );
@@ -97,7 +97,7 @@ class DmCollectionFixture implements FixtureInterface
                 ->setMagazine('MP')
                 ->setNumero('301')
                 ->setEtat('mauvais')
-                ->setIsToSell(true)
+                ->setIsOnSale(true)
                 ->setIdUtilisateur($user->getId())
                 ->setDateajout(new DateTime())
         );

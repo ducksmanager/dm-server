@@ -184,7 +184,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
     {
         $dmEm = $this->getEm('dm');
         $qb = $dmEm->createQueryBuilder();
-        $qb->select('issues.id, issues.pays AS country, issues.magazine, issues.numero AS issueNumber, issues.etat AS condition, issues.idAcquisition AS purchaseId, issues.isToSell, issues.dateajout AS creationDate')
+        $qb->select('issues.id, issues.pays AS country, issues.magazine, issues.numero AS issueNumber, issues.etat AS condition, issues.idAcquisition AS purchaseId, issues.isOnSale, issues.dateajout AS creationDate')
             ->from(Numeros::class, 'issues')
             ->where($qb->expr()->eq('issues.idUtilisateur', $this->getSessionUser()['id']))
             ->orderBy('issues.pays, issues.magazine, issues.numero', 'ASC');
@@ -315,7 +315,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
             return new Response("Can't update copies of multiple issues at once", Response::HTTP_BAD_REQUEST);
         }
 
-        $isToSell = $request->request->get('isToSell');
+        $isOnSale = $request->request->get('isOnSale');
         $purchaseId = $request->request->get('purchaseId');
 
         $purchaseIds = is_array($purchaseId) ? $purchaseId : [$purchaseId];
@@ -323,7 +323,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
 
         if (is_array($condition)) {
             [$nbUpdated, $nbCreated] = $collectionUpdateService->addOrChangeCopies(
-                $userId, $publication, $issueNumbers[0], $condition ?? [], $isToSell ?? [], $purchaseIds ?? []
+                $userId, $publication, $issueNumbers[0], $condition ?? [], $isOnSale ?? [], $purchaseIds ?? []
             );
         }
         else {
@@ -332,7 +332,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
                 return new JsonResponse(self::getSimpleArray([]));
             }
             [$nbUpdated, $nbCreated] = $collectionUpdateService->addOrChangeIssues(
-                $userId, $publication, $issueNumbers, $condition, $isToSell === 'true', $purchaseIds[0]
+                $userId, $publication, $issueNumbers, $condition, $isOnSale === 'true', $purchaseIds[0]
             );
         }
         return new JsonResponse(self::getSimpleArray([
@@ -492,7 +492,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
                 ->setPays($country)
                 ->setMagazine($magazine)
                 ->setNumero($issue['issuenumber'])
-                ->setIsToSell(false)
+                ->setIsOnSale(false)
                 ->setDateajout(new DateTime())
                 ->setEtat($defaultCondition);
             $dmEm->persist($newIssue);
