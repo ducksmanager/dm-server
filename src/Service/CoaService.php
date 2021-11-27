@@ -206,20 +206,26 @@ class CoaService
 
         $query = self::$coaEm->createNativeQuery("
             SELECT
-                inducks_issue.publicationcode,
-                REGEXP_REPLACE(inducks_issue.issuenumber, '[ ]+', ' ') AS issuenumber,
-                inducks_issue.title,
-                CONCAT(IF(sitecode = 'thumbnails', 'webusers', sitecode), '/', url) AS cover_url
+                publicationcode,
+                issuenumber,
+                title,
+                (
+                    SELECT CONCAT(IF(sitecode = 'thumbnails', 'webusers', sitecode), '/', url) AS cover_url
+                    FROM inducks_entry
+                    INNER JOIN inducks_entryurl ON inducks_entry.entrycode = inducks_entryurl.entrycode
+                    WHERE inducks_entry.issuecode = inducks_issue.issuecode
+                      AND SUBSTR(inducks_entry.position, 0, 1) <> 'p'
+                    LIMIT 1
+                ) AS cover_url
             FROM inducks_issue
-            INNER JOIN inducks_entry ON inducks_issue.issuecode = inducks_entry.issuecode
-            LEFT JOIN inducks_entryurl ON inducks_entry.entrycode = inducks_entryurl.entrycode
             WHERE inducks_issue.publicationcode = :publicationCode
-              AND SUBSTR(inducks_entry.position, 0, 1) <> 'p'
-            GROUP BY inducks_issue.issuenumber
         ", $rsm);
 
         $query->setParameters(compact('publicationCode'));
-        return $query->getArrayResult();
+        return array_map(function($row) {
+            $row['issuenumber'] = preg_replace('/[ ]+/', ' ', $row['issuenumber']);
+            return $row;
+        }, $query->getArrayResult());
     }
 
     public function getIssueNumbersFromPublicationCodeAsArray(string $publicationCode) : array
