@@ -6,6 +6,7 @@ use App\Entity\Dm\TranchesPretesSprites;
 use App\Service\SpriteService;
 use App\Tests\Fixtures\EdgesFixture;
 use App\Tests\TestCommon;
+use Cloudinary\Api\ApiResponse;
 use DateTime;
 
 class EdgeSpritesTest extends TestCommon
@@ -22,15 +23,15 @@ class EdgeSpritesTest extends TestCommon
         ]);
 
         SpriteService::$mockedResults = [
-            'upload' => 'Success',
-            'add_tag' => 'Success',
-            'generate_sprite' => [
+            'upload' => new ApiResponse('Success', []),
+            'add_tag' => new ApiResponse('Success', []),
+            'generate_sprite' => new ApiResponse([
                 'edges-fr-JM-3001-3010' => ['version' => 1],
                 'edges-fr-JM-3001-3020' => ['version' => 2],
                 'edges-fr-JM-3001-3050' => ['version' => 3],
                 'edges-fr-JM-3001-3100' => ['version' => 4],
                 'edges-fr-JM-full' => ['version' => 5]
-            ]
+            ], [])
         ];
 
         $response = $this->buildAuthenticatedServiceWithTestUser("/edgesprites/{$edge->getId()}", self::$adminUser, 'PUT')->call();
@@ -87,14 +88,14 @@ class EdgeSpritesTest extends TestCommon
         ]);
 
         SpriteService::$mockedResults = [
-            'upload' => 'Success',
-            'add_tag' => 'Success',
-            'generate_sprite' => [
+            'upload' => new ApiResponse('Success', []),
+            'add_tag' => new ApiResponse('Success', []),
+            'generate_sprite' => new ApiResponse([
                 'edges-fr-JM-3001-3010' => ['version' => 1],
                 'edges-fr-JM-3001-3020' => ['version' => 2],
                 'edges-fr-JM-3001-3050' => ['version' => 3],
                 'edges-fr-JM-3001-3100' => ['version' => 4]
-            ]
+            ], [])
         ];
 
         $response = $this->buildAuthenticatedServiceWithTestUser("/edgesprites/{$edge->getId()}", self::$adminUser, 'PUT')->call();

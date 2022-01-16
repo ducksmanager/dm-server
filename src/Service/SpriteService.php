@@ -5,10 +5,12 @@ namespace App\Service;
 use App\Entity\Dm\TranchesPretes;
 use App\Entity\Dm\TranchesPretesSprites;
 use App\Entity\Dm\TranchesPretesSpritesUrls;
-use Cloudinary\Uploader;
+use Cloudinary\Api\ApiResponse;
+use Cloudinary\Api\Upload\UploadApi;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use Psr\Log\LoggerInterface;
+
 
 class SpriteService
 {
@@ -37,7 +39,7 @@ class SpriteService
         ];
     }
 
-    private function uploadEdge(TranchesPretes $edgeToUpload) : void
+    private function uploadEdge(TranchesPretes $edgeToUpload): void
     {
         [$country, $magazine] = explode('/', $edgeToUpload->getPublicationcode());
 
@@ -79,7 +81,7 @@ class SpriteService
             }
 
             $this->logger->info("Adding tag $spriteName on {$edge->getSlug()}");
-            $this->add_tag(
+            $this->addTag(
                 $spriteName,
                 $edge->getSlug()
             );
@@ -117,7 +119,7 @@ class SpriteService
         foreach ($spritesWithNoUrl as $sprite) {
             ['spriteName' => $spriteName] = $sprite;
             $this->logger->info("Generating sprite for $spriteName...");
-            $externalResponse = $this->generate_sprite($spriteName);
+            $externalResponse = $this->generateSprite($spriteName);
 
             $spriteUrl = new TranchesPretesSpritesUrls();
 
@@ -149,21 +151,21 @@ class SpriteService
         ]);
     }
 
-    public function upload($file, $options = array())
+    public function upload($file, $options = array()) : ApiResponse
     {
         putenv('CLOUDINARY_URL=' . $_ENV['CLOUDINARY_URL']);
-        return self::$mockedResults['upload'] ?: Uploader::upload($file, $options);
+        return self::$mockedResults['upload'] ?: (new UploadApi())->upload($file, $options);
     }
 
-    public function add_tag($tag, $public_ids = array(), $options = array())
+    public function addTag($tag, $public_ids = array(), $options = array()) : ApiResponse
     {
         putenv('CLOUDINARY_URL=' . $_ENV['CLOUDINARY_URL']);
-        return self::$mockedResults['add_tag'] ?: Uploader::add_tag($tag, $public_ids, $options);
+        return self::$mockedResults['add_tag'] ?: (new UploadApi())->addTag($tag, $public_ids, $options);
     }
 
-    public function generate_sprite($tag, $options = array())
+    public function generateSprite($tag, $options = array()) : ApiResponse
     {
         putenv('CLOUDINARY_URL=' . $_ENV['CLOUDINARY_URL']);
-        return self::$mockedResults['generate_sprite'][$tag] ?: Uploader::generate_sprite($tag, $options);
+        return self::$mockedResults['generate_sprite'][$tag] ?: (new UploadApi())->generateSprite($tag, $options);
     }
 }

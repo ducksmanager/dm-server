@@ -21,7 +21,7 @@
         "ext-intl": "*",
         "ext-json": "*",
         "beberlei/doctrineextensions": "^1.2",
-        "cloudinary/cloudinary_php": "^1.14",
+        "cloudinary/cloudinary_php": "^2.0",
         "pusher/pusher-push-notifications": "^1.1",
         "sensio/framework-extra-bundle": "^5.2",
         "sentry/sentry-symfony": "^4.1",
