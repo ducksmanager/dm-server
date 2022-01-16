@@ -9,6 +9,9 @@ use Cloudinary\Api\ApiResponse;
 use Cloudinary\Api\Upload\UploadApi;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
+use GuzzleHttp\Promise\Promise;
+use GuzzleHttp\Promise\PromiseInterface;
+use GuzzleHttp\Promise\Utils;
 use Psr\Log\LoggerInterface;
 
 
@@ -116,20 +119,25 @@ class SpriteService
             ->andWhere($qb->expr()->eq('sprites.idTranche', $edge->getId()));
 
         $spritesWithNoUrl = $qb->getQuery()->getResult();
+
+        $responsePromises = [];
         foreach ($spritesWithNoUrl as $sprite) {
             ['spriteName' => $spriteName] = $sprite;
             $this->logger->info("Generating sprite for $spriteName...");
-            $externalResponse = $this->generateSprite($spriteName);
-
-            $spriteUrl = new TranchesPretesSpritesUrls();
-
-            $this->dmEm->persist(
-                $spriteUrl
-                    ->setVersion($externalResponse['version'])
-                    ->setSpriteName($spriteName)
-            );
-            $this->dmEm->flush();
+            $responsePromises[] = $this->generateSprite($spriteName);
         }
+
+        Utils::all($responsePromises)->then(function (array $responses) use ($spritesWithNoUrl) {
+            foreach($responses as $idx => $response) {
+                $this->dmEm->persist(
+                    (new TranchesPretesSpritesUrls())
+                        ->setVersion($response['version'])
+                        ->setSpriteName($spritesWithNoUrl[$idx]['spriteName'])
+                );
+            }
+            $this->dmEm->flush();
+        })->wait();
+
         return array_map(fn($spriteWithNoUrl) => $spriteWithNoUrl['spriteName'], $spritesWithNoUrl);
     }
 
@@ -163,9 +171,12 @@ class SpriteService
         return self::$mockedResults['add_tag'] ?: (new UploadApi())->addTag($tag, $public_ids, $options);
     }
 
-    public function generateSprite($tag, $options = array()) : ApiResponse
+    public function generateSprite($tag, $options = array()) : PromiseInterface
     {
         putenv('CLOUDINARY_URL=' . $_ENV['CLOUDINARY_URL']);
-        return self::$mockedResults['generate_sprite'][$tag] ?: (new UploadApi())->generateSprite($tag, $options);
+        $mockedResults = self::$mockedResults['generate_sprite'][$tag];
+        return isset($mockedResults)
+            ? new Promise(fn() => $mockedResults)
+            : (new UploadApi())->generateSpriteAsync($tag, $options);
     }
 }
