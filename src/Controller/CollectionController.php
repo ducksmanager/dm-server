@@ -313,11 +313,18 @@ class CollectionController extends AbstractController implements RequiresDmVersi
 
     private function checkPurchaseIdsBelongToUser(LoggerInterface $logger, &$purchaseIds) {
         foreach($purchaseIds as &$purchaseId) {
-            if ($purchaseId === 'do_not_change') {
-                $purchaseId = -1;
-            } else if (!$this->getUserPurchase($purchaseId)) {
-                $logger->warning("User {$this->getSessionUser()['id']} tried to use purchase ID $purchaseId which is owned by another user");
-                $purchaseId = null;
+            switch($purchaseId) {
+                case 'do_not_change':
+                    $purchaseId = -1;
+                    break;
+                case 'unlink':
+                    $purchaseId = -2;
+                    break;
+                default:
+                    if (!$this->getUserPurchase($purchaseId)) {
+                        $logger->warning("User {$this->getSessionUser()['id']} tried to use purchase ID $purchaseId which is owned by another user");
+                        $purchaseId = null;
+                    }
             }
         }
     }
