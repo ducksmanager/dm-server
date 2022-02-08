@@ -28,16 +28,17 @@ class InjectsDmUserSubscriber implements EventSubscriberInterface
         $request = $event->getRequest();
         $controller = $event->getController();
 
-        $username = $event->getRequest()->headers->get('x-dm-user');
+        $username = utf8_encode($event->getRequest()->headers->get('x-dm-user'));
         $password = $event->getRequest()->headers->get('x-dm-pass');
         if (!empty($username) && !empty($password)) {
             $this->logger->info("Authenticating $username...");
-            $existingUser = $this->dmEm->getRepository(Users::class)->findOneBy([
-                'username' => $username,
-                'password' => $password
-            ]);
 
-            if (is_null($existingUser)) {
+            $existingUser = $this->dmEm->getConnection()->fetchAssociative(
+                "SELECT ID, username FROM users WHERE username = CONVERT(? USING utf8mb4) AND password=?",
+                [$username, $password]
+            );
+
+            if ($existingUser === false) {
                 if (self::isUserRequired($controller)) {
                     throw new UnauthorizedHttpException('Invalid credentials!');
                 }
@@ -52,8 +53,8 @@ class InjectsDmUserSubscriber implements EventSubscriberInterface
                     throw new HttpException(403, 'You need admin rights!');
                 }
                 $request->getSession()->set('user', [
-                    'username' => $existingUser->getUsername(),
-                    'id' => $existingUser->getId()
+                    'username' => $existingUser['username'],
+                    'id' => $existingUser['ID']
                 ]);
                 $this->logger->info("$username is logged in");
             }
