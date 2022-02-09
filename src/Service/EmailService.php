@@ -12,23 +12,23 @@ class EmailService
 {
     private Environment $twig;
     private Swift_Mailer $mailer;
-    private TranslatorInterface $translator;
     private LoggerInterface $logger;
 
-    public function __construct(Environment $twig, Swift_Mailer $mailer, TranslatorInterface $translator, LoggerInterface $logger)
+    public function __construct(Environment $twig, Swift_Mailer $mailer, LoggerInterface $logger)
     {
         $this->twig = $twig;
         $this->mailer = $mailer;
-        $this->translator = $translator;
         $this->logger = $logger;
     }
 
     public function send(AbstractEmail $email): void
     {
+        $from = str_replace(' ', '__', $email->getFrom());
+        $to = str_replace(' ', '__', $email->getTo());
         $message = (new Swift_Message())
             ->setSubject($email->getSubject())
-            ->setFrom($email->getFrom(), $email->getFromName())
-            ->setTo($email->getTo(), $email->getToName())
+            ->setFrom($from, $email->getFromName())
+            ->setTo($to, $email->getToName())
             ->setBody($email->getHtmlBody($this->twig), 'text/html')
             ->addPart($email->getTextBody(), 'text/plain');
 
