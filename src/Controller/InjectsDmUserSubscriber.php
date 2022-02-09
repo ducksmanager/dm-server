@@ -39,6 +39,13 @@ class InjectsDmUserSubscriber implements EventSubscriberInterface
             );
 
             if ($existingUser === false) {
+                $existingUser = $this->dmEm->getConnection()->fetchAssociative(
+                    "SELECT ID, username FROM users WHERE username = CONVERT(? USING utf8mb4) AND password=?",
+                    [urldecode($username), $password]
+                );
+            }
+
+            if ($existingUser === false) {
                 if (self::isUserRequired($controller)) {
                     throw new UnauthorizedHttpException('Invalid credentials!');
                 }
