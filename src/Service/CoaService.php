@@ -8,6 +8,7 @@ use App\Entity\Coa\InducksPerson;
 use App\Entity\Coa\InducksPublication;
 use App\Entity\Coa\InducksStory;
 use App\Entity\Coa\InducksStoryversion;
+use DateTime;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\Query\QueryException;
@@ -401,5 +402,16 @@ class CoaService
             $acc[$issue['publicationcode']][] = preg_replace('#[ ]+#', ' ', $issue['issuenumber']);
             return $acc;
         }, array_fill_keys($publicationCodes, []));
+    }
+
+    public function listRecentIssues()
+    {
+        $qb = self::$coaEm->createQueryBuilder();
+        $qb->select('issue')
+            ->from(InducksIssue::class, 'issue')
+            ->where($qb->expr()->lte('issue.oldestdate', $qb->expr()->literal((new DateTime())->format('Y-m-d'))))
+            ->orderBy('issue.oldestdate', 'DESC')
+            ->setMaxResults(50);
+        return $qb->getQuery()->getArrayResult();
     }
 }

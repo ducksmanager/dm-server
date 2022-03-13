@@ -315,6 +315,19 @@ class CoaController extends AbstractController
     /**
      * @Route(
      *     methods={"GET"},
+     *     path="/coa/list/issues/recent",
+     * )
+     */
+    public function listRecentIssues(CoaService $coaService) : JsonResponse
+    {
+        return new JsonResponse(
+            $coaService->listRecentIssues()
+        );
+    }
+
+    /**
+     * @Route(
+     *     methods={"GET"},
      *     path="/coa/list/details/{publicationCode}/{issueNumber}",
      *     requirements={"publicationCode"="^(?P<publicationcode_regex>[a-z]+/[-A-Z0-9]+)$"})
      */
