@@ -1,0 +1,28 @@
+name: duck-estimator
+
+on:
+  schedule:
+    - cron:  '30 7 * * *'
+jobs:
+  duck-estimator:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_KEY" > ~/.ssh/production.key
+          chmod 600 ~/.ssh/production.key
+          cat >>~/.ssh/config <<END
+          Host production
+            HostName $SSH_HOST
+            User $SSH_USER
+            IdentityFile ~/.ssh/production.key
+            StrictHostKeyChecking no
+          END
+        env:
+          SSH_USER: ${{ secrets.PRODUCTION_SSH_USER }}
+          SSH_KEY: ${{ secrets.PRODUCTION_SSH_KEY }}
+          SSH_HOST: ${{ secrets.PRODUCTION_SSH_HOST }}
+
+      - name: Run duck-estimator
+        run: ssh production 'cd workspace/dm-server && env `cat .env.prod.local` docker-compose run --rm --no-deps duck-estimator'
