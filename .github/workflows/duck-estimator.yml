@@ -3,9 +3,11 @@ name: duck-estimator
 on:
   schedule:
     - cron:  '30 7 * * *'
+  workflow_dispatch:
 jobs:
   duck-estimator:
     runs-on: ubuntu-latest
+    environment: production
     steps:
       - name: Configure SSH
         run: |
