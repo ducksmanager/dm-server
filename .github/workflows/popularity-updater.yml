@@ -1,8 +1,8 @@
-name: duck-estimator
+name: popularity-updater
 
 on:
   schedule:
-    - cron:  '30 7 * * *'
+    - cron:  '0 * * * *'
   workflow_dispatch:
 jobs:
   duck-estimator:
@@ -26,5 +26,7 @@ jobs:
           SSH_KEY: ${{ secrets.PRODUCTION_SSH_KEY }}
           SSH_HOST: ${{ secrets.PRODUCTION_SSH_HOST }}
 
-      - name: Run duck-estimator
-        run: ssh production 'cd workspace/dm-server && env `cat .env.prod.local` docker-compose run --rm --no-deps duck-estimator'
+      - name: Run popularity-updater
+        run: >
+          ssh production 'cd workspace/dm-server && \
+                          docker-compose exec -T db_dm mysql -uroot -pchangeme dm -e "CALL reset_issue_popularities"'

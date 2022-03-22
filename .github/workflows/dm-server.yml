@@ -1,0 +1,71 @@
+name: dm-server
+
+on:
+  schedule:
+    - cron:  '0 1 * * *'
+  workflow_dispatch:
+jobs:
+  duck-estimator:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_KEY" > ~/.ssh/production.key
+          chmod 600 ~/.ssh/production.key
+          cat >>~/.ssh/config <<END
+          Host production
+            HostName $SSH_HOST
+            User $SSH_USER
+            IdentityFile ~/.ssh/production.key
+            StrictHostKeyChecking no
+          END
+        env:
+          SSH_USER: ${{ secrets.PRODUCTION_SSH_USER }}
+          SSH_KEY: ${{ secrets.PRODUCTION_SSH_KEY }}
+          SSH_HOST: ${{ secrets.PRODUCTION_SSH_HOST }}
+
+      - name: Run coa-updater
+        run: >
+          ssh production 'cd workspace/dm-server && \
+                          docker-compose pull coa-updater && \
+                          env `cat .env.prod.local` docker-compose run --rm --no-deps coa-updater | ts '[%Y-%m-%d %H:%M:%S]'
+
+      - name: Run stats-updater
+        needs: coa-updater
+        run: >
+          ssh production 'cd workspace/dm-server && \
+                          docker-compose pull stats-updater && \
+                          env `cat .env.prod.local` docker-compose run --rm --no-deps stats-updater'
+
+      - name: Run cover-updater
+        needs: coa-updater
+        run: >
+          ssh production 'cd workspace/dm-server && \
+                          docker-compose pull cover-updater && \
+                          env `cat .env.prod.local` docker-compose run --rm --no-deps cover-updater'
+
+      - name: Run sprite-names-updater
+        needs: coa-updater
+        run: >
+          ssh production 'cd workspace/dm-server && \
+                          docker-compose exec -T db_dm mysql -uroot -pchangeme dm -e "CALL generate_sprite_names"'
+
+      - name: Run duck-estimator
+        needs: coa-updater
+        run: >
+          ssh production 'cd workspace/dm-server && \
+                          env `cat .env.prod.local` docker-compose run --rm --no-deps duck-estimator'
+
+      - name: Run subscription-handler
+        needs: coa-updater
+        env:
+          SUBSCRIPTIONS_BASIC_AUTH: ${{ secrets.PRODUCTION_SUBSCRIPTIONS_BASIC_AUTH }}
+        run: >
+          ssh production "cd workspace/dm-server && \
+                          env `cat .env.prod.local` docker-compose run --rm --no-deps subscription-runner | ts '[%Y-%m-%d %H:%M:%S] && \
+                          curl --location --request POST \"https://api.ducksmanager.net/ducksmanager/emails/subscription/release\" \
+                            --header \"x-dm-version: 1.0.0\" \
+                            --header \"Content-Type: application/x-www-form-urlencoded\" \
+                            --header \"Authorization: Basic $SUBSCRIPTIONS_BASIC_AUTH\""
