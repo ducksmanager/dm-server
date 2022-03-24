@@ -5,7 +5,7 @@ on:
     - cron:  '0 8 * * *'
   workflow_dispatch:
 jobs:
-  duck-estimator:
+  notification-sender:
     runs-on: ubuntu-latest
     environment: production
     steps:
@@ -17,4 +17,4 @@ jobs:
                             --url https://api.ducksmanager.net/notification/send \
                             --header \"Authorization: Basic $NOTIFICATIONS_BASIC_AUTH\" \
                             --header \"cache-control: no-cache\" \
-                            --header \"x-dm-version: 1.0.0\"
+                            --header \"x-dm-version: 1.0.0\""
