@@ -33,33 +33,28 @@ jobs:
                           env `cat .env.prod.local` docker-compose run --rm --no-deps coa-updater | ts '[%Y-%m-%d %H:%M:%S]'
 
       - name: Run stats-updater
-        needs: coa-updater
         run: >
           ssh production 'cd workspace/dm-server && \
                           docker-compose pull stats-updater && \
                           env `cat .env.prod.local` docker-compose run --rm --no-deps stats-updater'
 
       - name: Run cover-updater
-        needs: coa-updater
         run: >
           ssh production 'cd workspace/dm-server && \
                           docker-compose pull cover-updater && \
                           env `cat .env.prod.local` docker-compose run --rm --no-deps cover-updater'
 
       - name: Run sprite-names-updater
-        needs: coa-updater
         run: >
           ssh production 'cd workspace/dm-server && \
                           docker-compose exec -T db_dm mysql -uroot -pchangeme dm -e "CALL generate_sprite_names"'
 
       - name: Run duck-estimator
-        needs: coa-updater
         run: >
           ssh production 'cd workspace/dm-server && \
                           env `cat .env.prod.local` docker-compose run --rm --no-deps duck-estimator'
 
       - name: Run subscription-handler
-        needs: coa-updater
         env:
           SUBSCRIPTIONS_BASIC_AUTH: ${{ secrets.PRODUCTION_SUBSCRIPTIONS_BASIC_AUTH }}
         run: >
