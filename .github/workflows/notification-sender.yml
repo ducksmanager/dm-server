@@ -13,8 +13,8 @@ jobs:
         env:
           NOTIFICATIONS_BASIC_AUTH: ${{ secrets.PRODUCTION_NOTIFICATIONS_BASIC_AUTH }}
         run: >
-          ssh production "curl --request POST \
-                            --url https://api.ducksmanager.net/notification/send \
-                            --header \"Authorization: Basic $NOTIFICATIONS_BASIC_AUTH\" \
-                            --header \"cache-control: no-cache\" \
-                            --header \"x-dm-version: 1.0.0\""
+          curl --request POST \
+               --url https://api.ducksmanager.net/notification/send \
+               --header "Authorization: Basic $NOTIFICATIONS_BASIC_AUTH" \
+               --header "cache-control: no-cache" \
+               --header "x-dm-version: 1.0.0"
