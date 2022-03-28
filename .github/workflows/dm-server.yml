@@ -5,7 +5,7 @@ on:
     - cron:  '0 1 * * *'
   workflow_dispatch:
 jobs:
-  duck-estimator:
+  dm-server:
     runs-on: ubuntu-latest
     environment: production
     steps:
@@ -30,7 +30,7 @@ jobs:
         run: >
           ssh production 'cd workspace/dm-server && \
                           docker-compose pull coa-updater && \
-                          env `cat .env.prod.local` docker-compose run --rm --no-deps coa-updater | ts '[%Y-%m-%d %H:%M:%S]'
+                          env `cat .env.prod.local` docker-compose run --rm --no-deps coa-updater | ts "[%Y-%m-%d %H:%M:%S]"'
 
       - name: Run stats-updater
         run: >
@@ -59,7 +59,7 @@ jobs:
           SUBSCRIPTIONS_BASIC_AUTH: ${{ secrets.PRODUCTION_SUBSCRIPTIONS_BASIC_AUTH }}
         run: >
           ssh production "cd workspace/dm-server && \
-                          env `cat .env.prod.local` docker-compose run --rm --no-deps subscription-runner | ts '[%Y-%m-%d %H:%M:%S] && \
+                          env `cat .env.prod.local` docker-compose run --rm --no-deps subscription-runner | ts '[%Y-%m-%d %H:%M:%S]' && \
                           curl --location --request POST \"https://api.ducksmanager.net/ducksmanager/emails/subscription/release\" \
                             --header \"x-dm-version: 1.0.0\" \
                             --header \"Content-Type: application/x-www-form-urlencoded\" \
