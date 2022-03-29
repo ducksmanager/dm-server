@@ -9,15 +9,15 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     steps:
-      - name: Configure SSH
+      - name: Run coa-updater
         uses: appleboy/ssh-action@v0.1.4
         with:
           host: ${{ secrets.PRODUCTION_SSH_HOST }}
           username: ${{ secrets.PRODUCTION_SSH_USER }}
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
-          script: >
-            cd workspace/dm-server && \
-            docker-compose pull coa-updater && \
+          script: |
+            cd workspace/dm-server
+            docker-compose pull coa-updater
             env `cat .env.prod.local` docker-compose run --rm --no-deps coa-updater | ts "[%Y-%m-%d %H:%M:%S]"
 
       - name: Run stats-updater
