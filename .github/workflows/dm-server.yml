@@ -28,7 +28,7 @@ jobs:
 
       - name: Run coa-updater
         run: >
-          ssh production 'cd workspace/dm-server && \
+          ssh -t production 'cd workspace/dm-server && \
                           docker-compose pull coa-updater && \
                           env `cat .env.prod.local` docker-compose run --rm --no-deps coa-updater | ts "[%Y-%m-%d %H:%M:%S]"'
 
