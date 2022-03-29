@@ -57,6 +57,7 @@ jobs:
             docker-compose exec -T db_dm mysql -uroot -pchangeme dm -e "CALL generate_sprite_names"
 
       - name: Run duck-estimator
+        uses: appleboy/ssh-action@v0.1.4
         with:
           host: ${{ secrets.PRODUCTION_SSH_HOST }}
           username: ${{ secrets.PRODUCTION_SSH_USER }}
@@ -67,6 +68,7 @@ jobs:
             env `cat .env.prod.local` docker-compose run --rm --no-deps duck-estimator
 
       - name: Run subscription-handler
+        uses: appleboy/ssh-action@v0.1.4
         env:
           SUBSCRIPTIONS_BASIC_AUTH: ${{ secrets.PRODUCTION_SUBSCRIPTIONS_BASIC_AUTH }}
         with:
