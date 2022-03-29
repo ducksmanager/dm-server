@@ -22,34 +22,63 @@ jobs:
             env `cat .env.prod.local` docker-compose run --rm --no-deps coa-updater | ts "[%Y-%m-%d %H:%M:%S]"
 
       - name: Run stats-updater
-        run: >
-          ssh production 'cd workspace/dm-server && \
-                          docker-compose pull stats-updater && \
-                          env `cat .env.prod.local` docker-compose run --rm --no-deps stats-updater'
+        uses: appleboy/ssh-action@v0.1.4
+        with:
+          host: ${{ secrets.PRODUCTION_SSH_HOST }}
+          username: ${{ secrets.PRODUCTION_SSH_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          command_timeout: 70m
+          script: |
+            cd workspace/dm-server
+            docker-compose pull stats-updater
+            env `cat .env.prod.local` docker-compose run --rm --no-deps stats-updater
 
       - name: Run cover-updater
-        run: >
-          ssh production 'cd workspace/dm-server && \
-                          docker-compose pull cover-updater && \
-                          env `cat .env.prod.local` docker-compose run --rm --no-deps cover-updater'
+        uses: appleboy/ssh-action@v0.1.4
+        with:
+          host: ${{ secrets.PRODUCTION_SSH_HOST }}
+          username: ${{ secrets.PRODUCTION_SSH_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          command_timeout: 5m
+          script: |
+            cd workspace/dm-server
+            docker-compose pull cover-updater
+            env `cat .env.prod.local` docker-compose run --rm --no-deps cover-updater
 
       - name: Run sprite-names-updater
-        run: >
-          ssh production 'cd workspace/dm-server && \
-                          docker-compose exec -T db_dm mysql -uroot -pchangeme dm -e "CALL generate_sprite_names"'
+        uses: appleboy/ssh-action@v0.1.4
+        with:
+          host: ${{ secrets.PRODUCTION_SSH_HOST }}
+          username: ${{ secrets.PRODUCTION_SSH_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          command_timeout: 5m
+          script: |
+            cd workspace/dm-server
+            docker-compose exec -T db_dm mysql -uroot -pchangeme dm -e "CALL generate_sprite_names"
 
       - name: Run duck-estimator
-        run: >
-          ssh production 'cd workspace/dm-server && \
-                          env `cat .env.prod.local` docker-compose run --rm --no-deps duck-estimator'
+        with:
+          host: ${{ secrets.PRODUCTION_SSH_HOST }}
+          username: ${{ secrets.PRODUCTION_SSH_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          command_timeout: 40m
+          script: |
+            cd workspace/dm-server
+            env `cat .env.prod.local` docker-compose run --rm --no-deps duck-estimator
 
       - name: Run subscription-handler
         env:
           SUBSCRIPTIONS_BASIC_AUTH: ${{ secrets.PRODUCTION_SUBSCRIPTIONS_BASIC_AUTH }}
-        run: >
-          ssh production "cd workspace/dm-server && \
-                          env `cat .env.prod.local` docker-compose run --rm --no-deps subscription-runner | ts '[%Y-%m-%d %H:%M:%S]' && \
-                          curl --location --request POST \"https://api.ducksmanager.net/ducksmanager/emails/subscription/release\" \
-                            --header \"x-dm-version: 1.0.0\" \
-                            --header \"Content-Type: application/x-www-form-urlencoded\" \
-                            --header \"Authorization: Basic $SUBSCRIPTIONS_BASIC_AUTH\""
+        with:
+          host: ${{ secrets.PRODUCTION_SSH_HOST }}
+          username: ${{ secrets.PRODUCTION_SSH_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          command_timeout: 5m
+          envs: SUBSCRIPTIONS_BASIC_AUTH
+          script: |
+            cd workspace/dm-server
+            env `cat .env.prod.local` docker-compose run --rm --no-deps subscription-runner | ts '[%Y-%m-%d %H:%M:%S]'
+            curl --location --request POST "https://api.ducksmanager.net/ducksmanager/emails/subscription/release" \
+                 --header "x-dm-version: 1.0.0" \
+                 --header "Content-Type: application/x-www-form-urlencoded" \
+                 --header "Authorization: Basic $SUBSCRIPTIONS_BASIC_AUTH"
