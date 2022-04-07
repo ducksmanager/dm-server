@@ -1,0 +1,47 @@
+name: pending-emails-sender
+
+on:
+  workflow_dispatch:
+jobs:
+  reset-issue-popularities:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_KEY" > ~/.ssh/production.key
+          chmod 600 ~/.ssh/production.key
+          cat >>~/.ssh/config <<END
+          Host production
+            HostName $SSH_HOST
+            User $SSH_USER
+            IdentityFile ~/.ssh/production.key
+            StrictHostKeyChecking no
+          END
+        env:
+          SSH_USER: ${{ secrets.PRODUCTION_SSH_USER }}
+          SSH_KEY: ${{ secrets.PRODUCTION_SSH_KEY }}
+          SSH_HOST: ${{ secrets.PRODUCTION_SSH_HOST }}
+
+      - name: Reset issue popularities
+        run: >
+          ssh production 'cd workspace/dm-server && \
+                          docker-compose exec -T db_dm mysql -uroot -pchangeme dm -e "CALL reset_issue_popularities"'
+  pending-emails-sender:
+    runs-on: ubuntu-latest
+    environment: production
+    needs: reset-issue-popularities
+    steps:
+      - name: Send pending emails
+        env:
+          EMAILS_BASIC_AUTH: ${{ secrets.PRODUCTION_EMAILS_BASIC_AUTH }}
+          DEMO_PASSWORD_SHA1: ${{ secrets.PRODUCTION_DEMO_PASSWORD_SHA1 }}
+        run: >
+          curl --request POST \
+               --url https://api.ducksmanager.net/ducksmanager/emails/pending \
+               --header "x-dm-version: 1.0.0" \
+               --header "x-dm-user: demo" \
+               --header "x-dm-pass: $DEMO_PASSWORD_SHA1" \
+               --header "Content-Type: application/x-www-form-urlencoded" \
+               --header "Authorization: Basic $EMAILS_BASIC_AUTH"
