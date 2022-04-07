@@ -1,0 +1,33 @@
+name: db-backuper
+
+on:
+  schedule:
+    - cron:  '0 4 * * *'
+  workflow_dispatch:
+jobs:
+  db-backuper:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_KEY" > ~/.ssh/production.key
+          chmod 600 ~/.ssh/production.key
+          cat >>~/.ssh/config <<END
+          Host production
+            HostName $SSH_HOST
+            User $SSH_USER
+            IdentityFile ~/.ssh/production.key
+            StrictHostKeyChecking no
+          END
+        env:
+          SSH_USER: ${{ secrets.PRODUCTION_SSH_USER }}
+          SSH_KEY: ${{ secrets.PRODUCTION_SSH_KEY }}
+          SSH_HOST: ${{ secrets.PRODUCTION_SSH_HOST }}
+
+      - name: Backup databases
+        env:
+          BACKUP_TARGET: ${{ secrets.PRODUCTION_BACKUP_TARGET }}
+        run: >
+          ssh production "cd workspace/dm-server && bash scripts/host-backup-schemas.sh $HOME/backup $BACKUP_TARGET | ts '[%Y-%m-%d %H:%M:%S]'"
