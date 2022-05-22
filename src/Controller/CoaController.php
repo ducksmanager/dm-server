@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Coa\InducksCountry;
 use App\Entity\Coa\InducksCountryname;
 use App\Entity\Coa\InducksIssue;
 use App\Entity\Coa\InducksPublication;
@@ -10,7 +11,6 @@ use App\Entity\Dm\Numeros;
 use App\EntityTransform\IssueWithCoverIdAndPopularity;
 use App\Service\CoaService;
 use Doctrine\ORM\Query\Expr\Join;
-use Doctrine\ORM\Query\Expr\OrderBy;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,29 +28,32 @@ class CoaController extends AbstractController
         $coaEm = $this->getEm('coa');
         $qb = $coaEm->createQueryBuilder();
         $qb
-            ->select('inducks_countryname.countrycode, inducks_countryname.countryname')
-            ->from(InducksCountryname::class, 'inducks_countryname')
-            ->where($qb->expr()->eq('inducks_countryname.languagecode', ':locale'))
+            ->select('inducks_country.countrycode, inducks_countryname.countryname, inducks_country.countryname AS default_countryname')
+            ->from(InducksCountry::class, 'inducks_country')
+            ->leftJoin(InducksCountryname::class, 'inducks_countryname', Join::WITH, $qb->expr()->andX(
+                $qb->expr()->eq(
+                'inducks_countryname.countrycode','inducks_country.countrycode'
+            ), $qb->expr()->eq('inducks_countryname.languagecode', ':locale')
+            ))
             ->setParameter(':locale', $locale);
 
         if (empty($countryCodes)) {
             $qb
-                ->andWhere($qb->expr()->neq('inducks_countryname.countrycode', ':fakeCountry'))
+                ->andWhere($qb->expr()->neq('inducks_country.countrycode', ':fakeCountry'))
                 ->setParameter(':fakeCountry', 'zz');
         } else {
-            $qb->andWhere($qb->expr()->in('inducks_countryname.countrycode', explode(',', $countryCodes)));
+            $qb->andWhere($qb->expr()->in('inducks_country.countrycode', explode(',', $countryCodes)));
         }
-
-        $qb->addOrderBy(new OrderBy('inducks_countryname.countryname'));
 
         $results = $qb->getQuery()->getResult();
         $countryNames = [];
         array_walk(
             $results,
             function ($result) use (&$countryNames) {
-                $countryNames[$result['countrycode']] = $result['countryname'];
+                $countryNames[$result['countrycode']] = $result['countryname'] ?? $result['default_countryname'];
             }
         );
+        asort($countryNames);
         return new JsonResponse($countryNames);
     }
 
