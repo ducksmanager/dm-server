@@ -28,4 +28,4 @@ jobs:
 
       - name: Renew certificates
         run: >
-          ssh production 'cd workspace && docker-compose run --rm  certbot'
+          ssh production 'cd workspace && docker-compose run --rm  certbot && docker-compose up -d --force-recreate web_global'
