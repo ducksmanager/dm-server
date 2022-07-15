@@ -54,7 +54,7 @@ jobs:
           command_timeout: 5m
           script: |
             cd workspace/dm-server
-            docker-compose exec -T db_dm mysql -uroot -pchangeme dm -e "CALL generate_sprite_names"
+            docker-compose exec -T db mysql -uroot -pchangeme dm -e "CALL generate_sprite_names"
 
       - name: Run duck-estimator
         uses: appleboy/ssh-action@v0.1.4
