@@ -6,171 +6,123 @@ services:
     image: "nginx:1.15"
     restart: always
     depends_on:
-     - db_coa
-     - db_cover_id
-     - db_dm
-     - db_dm_stats
-     - db_edgecreator
-     - php
+      - php
     volumes:
-     - ./nginx.conf:/etc/nginx/conf.d/default.conf
-     - ./current:/var/www:z
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./current:/var/www:z
     networks:
-     front-network:
-       aliases:
-         - web
-     workspace_global-front-network:
-       aliases:
-         - web-api
+      front-network:
+        aliases:
+          - web
+      workspace_global-front-network:
+        aliases:
+          - web-api
 
   php:
     container_name: dm-server-php
     restart: always
+    depends_on:
+      - db
     build:
       context: .
       dockerfile: Dockerfile
     volumes:
-     - ./msmtp.conf:/etc/msmtprc
-     - ./current:/var/www:z
+      - ./msmtp.conf:/etc/msmtprc
+      - ./current:/var/www:z
     networks:
-     - front-network
-     - db-network
-     - cover-id-network
+      - front-network
+      - db-network
+      - cover-id-network
+
+
+  db:
+    container_name: db
+    image: "mariadb:10.4"
+    restart: always
+    volumes:
+      - db:/var/lib/mysql
+      - $MYSQL_INIT_SCRIPT_COA:/docker-entrypoint-initdb.d/coa_$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
+      - $MYSQL_INIT_SCRIPT_COVER_INFO:/docker-entrypoint-initdb.d/cover_info_$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
+      - $MYSQL_INIT_SCRIPT_DM:/docker-entrypoint-initdb.d/dm_$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
+      - $MYSQL_INIT_SCRIPT_EDGECREATOR:/docker-entrypoint-initdb.d/dm_stats_$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
+      - $MYSQL_INIT_SCRIPT_DM_STATS:/docker-entrypoint-initdb.d/edgecreator_$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
+    ports:
+      - "64999:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+    command: ['mysqld', '--character-set-server=utf8', '--collation-server=utf8_unicode_ci']
+    networks:
+      - db-network
+      - cover-id-network
 
   coa-updater:
     container_name: coa-updater
     image: "bperel/coa-updater"
     depends_on:
-      - db_coa
+      - db
     environment:
-      MYSQL_HOST: db_coa
+      MYSQL_HOST: db
       MYSQL_DATABASE: coa
       MYSQL_DATABASE_NEW: coa_new
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
     networks:
       - db-network
 
-  db_coa:
-    container_name: db_coa
-    restart: always
-    image: "mariadb:10.4"
-    ports:
-     - "127.0.0.1:64000:3306"
-    volumes:
-     - $MYSQL_INIT_SCRIPT_COA:/docker-entrypoint-initdb.d/$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
-     - data_db_coa:/var/lib/mysql
-    environment:
-      MYSQL_DATABASE: coa
-      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
-    command: ['mysqld', '--character-set-server=utf8', '--collation-server=utf8_unicode_ci']
-    networks:
-     - db-network
-     - cover-id-network
-
   cover-updater:
     container_name: cover-updater
     restart: always
     image: "bperel/duck-cover-id-updater"
     depends_on:
-     - db_cover_id
-     - db_coa
+      - db
     environment:
-      - MYSQL_COVER_INFO_HOST=db_cover_id
+      - MYSQL_COVER_INFO_HOST=db
       - MYSQL_COVER_INFO_PASSWORD=${MYSQL_ROOT_PASSWORD}
       - MYSQL_COVER_INFO_DATABASE=cover_info
-      - MYSQL_COA_HOST=db_coa
+      - MYSQL_COA_HOST=db
       - MYSQL_COA_PASSWORD=${MYSQL_ROOT_PASSWORD}
       - MYSQL_COA_DATABASE=coa
       - PASTEC_HOST=pastec
       - PASTEC_PORT=4212
       - PASTEC_CONTAINER_HOME=/pastec/build
     networks:
-     - db-network
-     - cover-id-network
-
-  db_cover_id:
-    container_name: db_cover_id
-    restart: always
-    image: "mariadb:10.4"
-    ports:
-      - "127.0.0.1:64009:3306"
-    volumes:
-     - $MYSQL_INIT_SCRIPT_COVER_INFO:/docker-entrypoint-initdb.d/$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
-     - data_db_cover_id:/var/lib/mysql
-    environment:
-      MYSQL_DATABASE: cover_info
-      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
-    networks:
-     - db-network
+      - db-network
+      - cover-id-network
 
   pastec:
     container_name: pastec-ubuntu-1704-timestamps
     restart: always
     image: "bperel/pastec-ubuntu-1704-timestamps"
     volumes:
-     - $PASTEC_INIT_INDEX:/pastec-index-last.dat:ro
+      - $PASTEC_INIT_INDEX:/pastec-index-last.dat:ro
     command: "./pastec -p 4212 -i /pastec-index-last.dat /pastec/data/visualWordsORB.dat"
     networks:
-     - cover-id-network
-
-  db_dm:
-    container_name: db_dm
-    restart: always
-    image: "mariadb:10.4"
-    ports:
-     - "127.0.0.1:64002:3306"
-    volumes:
-     - $MYSQL_INIT_SCRIPT_DM:/docker-entrypoint-initdb.d/$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
-     - data_db_dm:/var/lib/mysql
-    environment:
-      MYSQL_DATABASE: dm
-      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
-    networks:
-     - db-network
-
-  db_edgecreator:
-    container_name: db_edgecreator
-    restart: always
-    image: "mariadb:10.4"
-    ports:
-     - "127.0.0.1:64003:3306"
-    volumes:
-     - $MYSQL_INIT_SCRIPT_EDGECREATOR:/docker-entrypoint-initdb.d/$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
-     - data_db_edgecreator:/var/lib/mysql
-    environment:
-      MYSQL_DATABASE: edgecreator
-      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
-    networks:
-     - db-network
+      - cover-id-network
 
   stats-updater:
     container_name: stats-updater
     image: "bperel/dm-stats-updater"
     depends_on:
-    - db_coa
-    - db_dm_stats
-    - db_dm
+      - db
     environment:
-    - MYSQL_COA_HOST=db_coa
-    - MYSQL_COA_DATABASE=coa
-    - MYSQL_DM_STATS_HOST=db_dm_stats
-    - MYSQL_DM_STATS_DATABASE=dm_stats
-    - MYSQL_DM_HOST=db_dm
-    - MYSQL_DM_DATABASE=dm
-    - MYSQL_PASSWORD=$MYSQL_ROOT_PASSWORD
+      - MYSQL_COA_HOST=db
+      - MYSQL_COA_DATABASE=coa
+      - MYSQL_DM_STATS_HOST=db
+      - MYSQL_DM_STATS_DATABASE=dm_stats
+      - MYSQL_DM_HOST=db
+      - MYSQL_DM_DATABASE=dm
+      - MYSQL_PASSWORD=$MYSQL_ROOT_PASSWORD
     networks:
-    - db-network
+      - db-network
 
   subscription-runner:
     container_name: subscriptions-runner
     image: "library/debian:jessie-slim"
     depends_on:
-      - db_coa
-      - db_dm
+      - db
     environment:
-      - MYSQL_COA_HOST=db_coa
+      - MYSQL_COA_HOST=db
       - MYSQL_COA_DATABASE=coa
-      - MYSQL_DM_HOST=db_dm
+      - MYSQL_DM_HOST=db
       - MYSQL_DM_DATABASE=dm
       - MYSQL_PASSWORD=$MYSQL_ROOT_PASSWORD
     networks:
@@ -179,40 +131,36 @@ services:
       - ./scripts:/home/scripts
     command: "bash -c 'apt-get update && apt-get install -y mysql-client && sh /home/scripts/subscriptions/create-issues-from-subscriptions.sh'"
 
-  db_dm_stats:
-    container_name: db_dm_stats
-    restart: always
-    image: "mariadb:10.4"
-    ports:
-      - "127.0.0.1:64010:3306"
-    volumes:
-     - $MYSQL_INIT_SCRIPT_DM_STATS:/docker-en
-    environment:
-      MYSQL_DATABASE: dm_stats
-      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
-    networks:
-     - db-network
-
   duck-estimator:
     container_name: duck-estimator
     image: "mcr.microsoft.com/playwright:focal"
     depends_on:
-     - db_coa
+      - db
     environment:
-      MYSQL_COA_HOST: db_coa
+      MYSQL_COA_HOST: db
       MYSQL_COA_PORT: 3306
       MYSQL_COA_DATABASE: coa
       MYSQL_PASSWORD: $MYSQL_ROOT_PASSWORD
+      GOCOLLECT_USERNAME: brunoperel@gmail.com
+      GOCOLLECT_PASSWORD: syn5AnZuKRCSbH6
       GITHUB_TOKEN: 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
-      GITHUB_NAME: Admin
-      GITHUB_EMAIL: admin@ducksmanager.net
+      GIT_AUTHOR_NAME: Admin
+      GIT_COMMITTER_NAME: Admin
+      GIT_AUTHOR_EMAIL: admin@ducksmanager.net
+      GIT_COMMITTER_EMAIL: admin@ducksmanager.net
     networks:
-     - db-network
+      - db-network
     volumes:
-     - duck_estimator_cache:/home/cache
-     - node_cache:/root/.cache
-    command: "bash -c 'git clone --depth 1 --single-branch https://github.com/bperel/duck-estimator && cd duck-estimator && npm install && node duck-estimator.js --cache-dir=/home/cache'"
-
+      - duck_estimator_cache:/home/cache
+      - node_cache:/root/.cache
+      - ~/.ssh/id_ed25519:/root/.ssh/id_ed25519:ro
+    command:
+      bash -c "
+      git clone --depth 1 --single-branch https://github.com/bperel/duck-estimator;
+      cd duck-estimator;
+      npm install;
+      node duck-estimator.js --cache-dir=/home/cache;
+      "
 networks:
   front-network:
     driver: bridge
@@ -224,10 +172,6 @@ networks:
     external: true
 
 volumes:
-  data_db_coa:
-  data_db_cover_id:
-  data_db_dm:
-  data_db_edgecreator:
-  data_db_dm_stats:
+  db:
   duck_estimator_cache:
   node_cache:

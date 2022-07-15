@@ -21,11 +21,7 @@ services:
       dockerfile: Dockerfile-dev
     restart: always
     depends_on:
-      - db_coa
-      - db_cover_id
-      - db_dm
-      - db_dm_stats
-      - db_edgecreator
+      - db
       - mailcatcher
     volumes:
      - .:/var/www/html
@@ -42,54 +38,43 @@ services:
     image: yappabe/mailcatcher
     restart: always
     ports:
-      - 1080:1080
+      - "1080:1080"
     networks:
       - mail-network
 
-  db_coa:
-    container_name: db_coa
+  db:
+    container_name: db
     image: "mariadb:10.4"
     restart: always
     volumes:
-     - $MYSQL_INIT_SCRIPT_COA:/docker-entrypoint-initdb.d/$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
-     - db_coa:/var/lib/mysql
+      - db:/var/lib/mysql
+      - $MYSQL_INIT_SCRIPT_COA:/docker-entrypoint-initdb.d/coa_$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
+      - $MYSQL_INIT_SCRIPT_COVER_INFO:/docker-entrypoint-initdb.d/cover_info_$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
+      - $MYSQL_INIT_SCRIPT_DM:/docker-entrypoint-initdb.d/dm_$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
+      - $MYSQL_INIT_SCRIPT_EDGECREATOR:/docker-entrypoint-initdb.d/dm_stats_$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
+      - $MYSQL_INIT_SCRIPT_DM_STATS:/docker-entrypoint-initdb.d/edgecreator_$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
     ports:
-     - "64000:3306"
+      - "64999:3306"
     environment:
-      MYSQL_DATABASE: coa
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
     command: ['mysqld', '--character-set-server=utf8', '--collation-server=utf8_unicode_ci']
     networks:
-     - db-network
-     - cover-id-network
+      - db-network
+      - cover-id-network
 
   coa-updater:
     container_name: coa-updater
     image: bperel/coa-updater
     depends_on:
-      - db_coa
+      - db
     environment:
-      MYSQL_HOST: db_coa
+      MYSQL_HOST: db
       MYSQL_DATABASE: coa
       MYSQL_DATABASE_NEW: coa_new
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
     networks:
       - db-network
 
-  db_cover_id:
-    container_name: db_cover_id
-    image: "mariadb:10.4"
-    restart: always
-    volumes:
-     - $MYSQL_INIT_SCRIPT_COVER_INFO:/docker-entrypoint-initdb.d/$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
-     - db_cover_id:/var/lib/mysql
-    ports:
-     - "64009:3306"
-    environment:
-      MYSQL_DATABASE: cover_info
-      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
-    networks:
-     - db-network
   pastec:
     container_name: pastec
     image: "bperel/pastec-ubuntu-1704-timestamps"
@@ -100,58 +85,13 @@ services:
     volumes:
      - $PASTEC_INIT_INDEX:/pastec-index-last.dat:ro
 
-  db_dm:
-    container_name: db_dm
-    image: "mariadb:10.4"
-    restart: always
-    volumes:
-     - $MYSQL_INIT_SCRIPT_DM:/docker-entrypoint-initdb.d/$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
-     - db_dm:/var/lib/mysql
-    ports:
-     - "64002:3306"
-    environment:
-      MYSQL_DATABASE: dm
-      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
-    networks:
-     - db-network
-
-  db_edgecreator:
-    container_name: db_edgecreator
-    image: "mariadb:10.4"
-    restart: always
-    volumes:
-     - $MYSQL_INIT_SCRIPT_EDGECREATOR:/docker-entrypoint-initdb.d/$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
-     - db_edgecreator:/var/lib/mysql
-    ports:
-     - "64003:3306"
-    environment:
-      MYSQL_DATABASE: edgecreator
-      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
-    networks:
-     - db-network
-
-  db_dm_stats:
-    container_name: db_dm_stats
-    image: "mariadb:10.4"
-    restart: always
-    volumes:
-     - $MYSQL_INIT_SCRIPT_DM_STATS:/docker-entrypoint-initdb.d/$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
-     - db_dm_stats:/var/lib/mysql
-    ports:
-     - "64010:3306"
-    environment:
-      MYSQL_DATABASE: dm_stats
-      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
-    networks:
-     - db-network
-
   duck-estimator:
     container_name: duck-estimator
     image: "mcr.microsoft.com/playwright:focal"
     depends_on:
-     - db_coa
+     - db
     environment:
-     - MYSQL_COA_HOST=db_coa
+     - MYSQL_COA_HOST=db
      - MYSQL_COA_PORT=3306
      - MYSQL_COA_DATABASE=coa
      - MYSQL_PASSWORD=$MYSQL_ROOT_PASSWORD
@@ -176,11 +116,6 @@ networks:
     driver: bridge
 
 volumes:
-  db_coa:
-    driver: local
-  db_cover_id:
-  db_dm:
-  db_edgecreator:
-  db_dm_stats:
+  db:
   duck_estimator_cache:
   node_cache:
