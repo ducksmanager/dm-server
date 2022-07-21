@@ -29,4 +29,4 @@ jobs:
       - name: Run popularity-updater
         run: >
           ssh production 'cd workspace/dm-server && \
-                          docker-compose exec -T db mysql -uroot -pchangeme dm -e "CALL reset_issue_popularities"'
+                          docker compose exec -T db mysql -uroot -pchangeme dm -e "CALL reset_issue_popularities"'

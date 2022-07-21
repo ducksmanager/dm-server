@@ -27,7 +27,7 @@ jobs:
       - name: Reset issue popularities
         run: >
           ssh production 'cd workspace/dm-server && \
-                          docker-compose exec -T db mysql -uroot -pchangeme dm -e "CALL reset_issue_popularities"'
+                          docker compose exec -T db mysql -uroot -pchangeme dm -e "CALL reset_issue_popularities"'
   pending-emails-sender:
     runs-on: ubuntu-latest
     environment: production

@@ -18,8 +18,8 @@ jobs:
           command_timeout: 50m
           script: |
             cd workspace/dm-server
-            docker-compose pull coa-updater
-            env `cat .env.prod.local` docker-compose run --rm --no-deps coa-updater | ts "[%Y-%m-%d %H:%M:%S]"
+            docker compose pull coa-updater
+            docker compose run --rm --no-deps coa-updater | ts "[%Y-%m-%d %H:%M:%S]"
 
       - name: Run stats-updater
         uses: appleboy/ssh-action@v0.1.4
@@ -30,8 +30,8 @@ jobs:
           command_timeout: 70m
           script: |
             cd workspace/dm-server
-            docker-compose pull stats-updater
-            env `cat .env.prod.local` docker-compose run --rm --no-deps stats-updater
+            docker compose pull stats-updater
+            docker compose run --rm --no-deps stats-updater
 
       - name: Run cover-updater
         uses: appleboy/ssh-action@v0.1.4
@@ -42,8 +42,8 @@ jobs:
           command_timeout: 20m
           script: |
             cd workspace/dm-server
-            docker-compose pull cover-updater
-            env `cat .env.prod.local` docker-compose run --rm --no-deps cover-updater
+            docker compose pull cover-updater
+            docker compose run --rm --no-deps cover-updater
 
       - name: Run sprite-names-updater
         uses: appleboy/ssh-action@v0.1.4
@@ -54,7 +54,7 @@ jobs:
           command_timeout: 5m
           script: |
             cd workspace/dm-server
-            docker-compose exec -T db mysql -uroot -pchangeme dm -e "CALL generate_sprite_names"
+            docker compose exec -T db mysql -uroot -pchangeme dm -e "CALL generate_sprite_names"
 
       - name: Run duck-estimator
         uses: appleboy/ssh-action@v0.1.4
@@ -65,7 +65,7 @@ jobs:
           command_timeout: 40m
           script: |
             cd workspace/dm-server
-            env `cat .env.prod.local` docker-compose run --rm --no-deps duck-estimator
+            docker compose run --rm --no-deps duck-estimator
 
       - name: Run subscription-handler
         uses: appleboy/ssh-action@v0.1.4
@@ -79,7 +79,7 @@ jobs:
           envs: SUBSCRIPTIONS_BASIC_AUTH
           script: |
             cd workspace/dm-server
-            env `cat .env.prod.local` docker-compose run --rm --no-deps subscription-runner | ts '[%Y-%m-%d %H:%M:%S]'
+            docker compose run --rm --no-deps subscription-runner | ts '[%Y-%m-%d %H:%M:%S]'
             curl --location --request POST "https://api.ducksmanager.net/ducksmanager/emails/subscription/release" \
                  --header "x-dm-version: 1.0.0" \
                  --header "Content-Type: application/x-www-form-urlencoded" \
