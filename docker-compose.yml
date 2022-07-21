@@ -14,7 +14,7 @@ services:
       front-network:
         aliases:
           - web
-      workspace_global-front-network:
+      public-network:
         aliases:
           - web-api
 
@@ -169,7 +169,7 @@ networks:
     driver: bridge
   cover-id-network:
     driver: bridge
-  workspace_global-front-network:
+  public-network:
     external: true
 
 volumes:
