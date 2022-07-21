@@ -56,6 +56,7 @@ services:
     image: "bperel/coa-updater"
     depends_on:
       - db
+    env_file: .env.prod.local
     environment:
       MYSQL_HOST: db
       MYSQL_DATABASE: coa
@@ -70,6 +71,7 @@ services:
     image: "bperel/duck-cover-id-updater"
     depends_on:
       - db
+    env_file: .env.prod.local
     environment:
       - MYSQL_COVER_INFO_HOST=db
       - MYSQL_COVER_INFO_PASSWORD=${MYSQL_ROOT_PASSWORD}
@@ -89,7 +91,7 @@ services:
     restart: always
     image: "bperel/pastec-ubuntu-1704-timestamps"
     volumes:
-      - $PASTEC_INIT_INDEX:/pastec-index-last.dat:ro
+      - ./pastec-index-last.dat:/pastec-index-last.dat:ro
     command: "./pastec -p 4212 -i /pastec-index-last.dat /pastec/data/visualWordsORB.dat"
     networks:
       - cover-id-network
@@ -99,6 +101,7 @@ services:
     image: "bperel/dm-stats-updater"
     depends_on:
       - db
+    env_file: .env.prod.local
     environment:
       - MYSQL_COA_HOST=db
       - MYSQL_COA_DATABASE=coa
@@ -115,6 +118,7 @@ services:
     image: "library/debian:jessie-slim"
     depends_on:
       - db
+    env_file: .env.prod.local
     environment:
       - MYSQL_COA_HOST=db
       - MYSQL_COA_DATABASE=coa
@@ -132,6 +136,7 @@ services:
     image: "mcr.microsoft.com/playwright:focal"
     depends_on:
       - db
+    env_file: .env.prod.local
     environment:
       MYSQL_COA_HOST: db
       MYSQL_COA_PORT: 3306
