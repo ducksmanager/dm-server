@@ -20,6 +20,6 @@ cd ${DIR}/..
     fi
     if [ $? -ne 0 ]; then
       echo "Schema diff failed."
-      exit -1
+      exit 1
     fi
   done
