@@ -48,11 +48,7 @@ services:
     restart: always
     volumes:
       - db:/var/lib/mysql
-      - $MYSQL_INIT_SCRIPT_COA:/docker-entrypoint-initdb.d/coa_$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
-      - $MYSQL_INIT_SCRIPT_COVER_INFO:/docker-entrypoint-initdb.d/cover_info_$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
-      - $MYSQL_INIT_SCRIPT_DM:/docker-entrypoint-initdb.d/dm_$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
-      - $MYSQL_INIT_SCRIPT_EDGECREATOR:/docker-entrypoint-initdb.d/dm_stats_$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
-      - $MYSQL_INIT_SCRIPT_DM_STATS:/docker-entrypoint-initdb.d/edgecreator_$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
+      - $MYSQL_INIT_SCRIPT:/docker-entrypoint-initdb.d/$MYSQL_INIT_SCRIPT_TARGET_FILE_NAME:ro
     ports:
       - "64999:3306"
     environment:
