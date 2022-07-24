@@ -30,4 +30,4 @@ jobs:
         env:
           BACKUP_TARGET: ${{ secrets.PRODUCTION_BACKUP_TARGET }}
         run: >
-          ssh production "cd workspace/dm-server && bash scripts/host-backup-schemas.sh \$HOME/backup $BACKUP_TARGET | ts '[%Y-%m-%d %H:%M:%S]'"
+          ssh production "cd workspace/dm-server && bash scripts/host-backup-schema.sh \$HOME/backup $BACKUP_TARGET | ts '[%Y-%m-%d %H:%M:%S]'"
