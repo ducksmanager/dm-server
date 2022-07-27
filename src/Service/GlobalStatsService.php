@@ -24,9 +24,9 @@ class GlobalStatsService
                u.TextePresentation as presentationSentence,
                count(distinct Pays) AS numberOfCountries,
                count(distinct concat(Pays, '/', Magazine)) as numberOfPublications,
-               count(*) as numberOfIssues
+               count(Numero) as numberOfIssues
             from users u
-            inner join numeros on numeros.ID_Utilisateur = u.ID
+            left join numeros on numeros.ID_Utilisateur = u.ID
             where u.ID IN (?)
             group by u.ID";
 
