@@ -22,6 +22,7 @@ class GlobalStatsService
                u.ID AS userId,
                u.username,
                u.TextePresentation as presentationSentence,
+               u.AccepterPartage as shared,
                count(distinct Pays) AS numberOfCountries,
                count(distinct concat(Pays, '/', Magazine)) as numberOfPublications,
                count(Numero) as numberOfIssues
