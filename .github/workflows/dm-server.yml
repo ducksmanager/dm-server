@@ -27,7 +27,7 @@ jobs:
           host: ${{ secrets.PRODUCTION_SSH_HOST }}
           username: ${{ secrets.PRODUCTION_SSH_USER }}
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
-          command_timeout: 70m
+          command_timeout: 90m
           script: |
             cd workspace/dm-server
             docker compose pull stats-updater
