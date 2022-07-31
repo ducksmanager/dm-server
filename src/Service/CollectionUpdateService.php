@@ -18,19 +18,13 @@ class CollectionUpdateService {
     }
 
     /**
-     * @param int $userId
-     * @param string $publicationCode
-     * @param array $issueNumbers
-     * @param string|null $condition
-     * @param bool|null $isToSell
-     * @param int|null $purchaseId
-     * @return array
      * @throws Exception
      */
-    public function addOrChangeIssues(int $userId, string $publicationCode, array $issueNumbers, ?string $condition, ?bool $isToSell, ?int $purchaseId): array
+    public function addOrChangeIssues(int $userId, string $publicationCode, array $issueNumbers, ?string $condition, ?bool $isToSell, ?bool $isToRead, ?int $purchaseId): array
     {
         $conditionNewIssues = is_null($condition) ? 'indefini' : $condition;
         $isToSellNewIssues = is_null($isToSell) ? false : $isToSell;
+        $isToReadNewIssues = is_null($isToRead) ? false : $isToRead;
         $purchaseIdNewIssues = is_null($purchaseId) ? -2 : $purchaseId; // TODO allow NULL
 
         /** @var QueryBuilder $qb */
@@ -60,6 +54,9 @@ class CollectionUpdateService {
             if (!is_null($isToSell)) {
                 $existingIssue->setAv($isToSell);
             }
+            if (!is_null($isToRead)) {
+                $existingIssue->setALire($isToRead);
+            }
             if (!is_null($purchaseId)) {
                 $existingIssue->setIdAcquisition($purchaseId);
             }
@@ -70,7 +67,7 @@ class CollectionUpdateService {
 
         $issueNumbersToCreate = array_diff($issueNumbers, array_keys($existingIssues));
         foreach($issueNumbersToCreate as $issueNumberToCreate) {
-            $this->buildAndPersistIssue($countryCode, $magazineCode, $issueNumberToCreate, $conditionNewIssues, $isToSellNewIssues, $purchaseIdNewIssues, $userId);
+            $this->buildAndPersistIssue($countryCode, $magazineCode, $issueNumberToCreate, $conditionNewIssues, $isToSellNewIssues, $isToReadNewIssues, $purchaseIdNewIssues, $userId);
         }
 
         self::$dmEm->flush();
@@ -88,11 +85,12 @@ class CollectionUpdateService {
      * @param string $issueNumber
      * @param ?string[] $conditions
      * @param ?bool[] $areToSell
+     * @param ?bool[] $areToRead
      * @param ?int[] $purchaseIds
      * @return array
      * @throws Exception
      */
-    public function addOrChangeCopies(int $userId, string $publicationCode, string $issueNumber, array $conditions, array $areToSell, array $purchaseIds): array
+    public function addOrChangeCopies(int $userId, string $publicationCode, string $issueNumber, array $conditions, array $areToSell, array $areToRead, array $purchaseIds): array
     {
         $this->deleteIssues($userId, $publicationCode, [$issueNumber]);
         [$countryCode, $magazineCode] = explode('/', $publicationCode);
@@ -102,9 +100,16 @@ class CollectionUpdateService {
             }
             $condition = $conditions[$copyNumber] ?? 'indefini';
             $isToSell = $areToSell[$copyNumber] ?? false;
+            $isToRead = $areToRead[$copyNumber] ?? false;
+            if ($areToRead[$copyNumber] === 'do_not_change') {
+                $isToRead = false;
+            }
+            else {
+                $isToRead = $areToRead[$copyNumber] ?? false;
+            }
             $purchaseId = empty($purchaseIds[$copyNumber]) ? -2 : $purchaseIds[$copyNumber]; // TODO allow NULL
 
-            $this->buildAndPersistIssue($countryCode, $magazineCode, $issueNumber, $condition, $isToSell, $purchaseId, $userId);
+            $this->buildAndPersistIssue($countryCode, $magazineCode, $issueNumber, $condition, $isToSell, $isToRead, $purchaseId, $userId);
 
         }
         self::$dmEm->flush();
@@ -127,7 +132,16 @@ class CollectionUpdateService {
         $qb->getQuery()->execute();
     }
 
-    private function buildAndPersistIssue(string $countryCode, string $magazine, string $issueNumberToCreate, string $conditionNewIssues, bool $isToSellNewIssues, int $purchaseIdNewIssues, int $userId): void
+    private function buildAndPersistIssue(
+        string $countryCode,
+        string $magazine,
+        string $issueNumberToCreate,
+        string $conditionNewIssues,
+        bool   $isToSellNewIssues,
+        bool   $isToReadNewIssues,
+        int    $purchaseIdNewIssues,
+        int    $userId
+    ): void
     {
         $newIssue = new Numeros();
         $newIssue->setPays($countryCode);
@@ -135,6 +149,7 @@ class CollectionUpdateService {
         $newIssue->setNumero($issueNumberToCreate);
         $newIssue->setEtat($conditionNewIssues);
         $newIssue->setAv($isToSellNewIssues);
+        $newIssue->setALire($isToReadNewIssues);
         $newIssue->setIdAcquisition($purchaseIdNewIssues);
         $newIssue->setIdUtilisateur($userId);
         $newIssue->setDateajout(new DateTime());

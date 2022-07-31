@@ -71,6 +71,13 @@ class Numeros
     /**
      * @var bool
      *
+     * @ORM\Column(name="A_Lire", type="boolean", nullable=false, options={"default"="false"})
+     */
+    private $aLire = false;
+
+    /**
+     * @var bool
+     *
      * @ORM\Column(name="abonnement", type="boolean", nullable=false, options={"default"="false"})
      */
     private $abonnement = false;
@@ -176,6 +183,18 @@ class Numeros
     public function setAv(bool $av): self
     {
         $this->av = $av;
+
+        return $this;
+    }
+
+    public function getALire(): ?bool
+    {
+        return $this->aLire;
+    }
+
+    public function setALire(bool $aLire): self
+    {
+        $this->aLire = $aLire;
 
         return $this;
     }

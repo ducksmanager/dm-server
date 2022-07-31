@@ -202,14 +202,14 @@ class DucksmanagerController extends AbstractController
                         $issueNumbers[count($issueNumbers)-1] === $publicationData['issueNumber']
                     ) {
                         $collectionUpdateService->addOrChangeCopies(
-                            $demoUser->getId(), $previousPublicationCode, $publicationData['issueNumber'], [$previousCondition, $publicationData['condition']], [], []
+                            $demoUser->getId(), $previousPublicationCode, $publicationData['issueNumber'], [$previousCondition, $publicationData['condition']], [], [], []
                         );
                     }
                     else if ($previousPublicationCode !== $publicationData['publicationCode'] ||
                         $previousCondition !== $publicationData['condition']
                     ) {
                         $collectionUpdateService->addOrChangeIssues(
-                            $demoUser->getId(), $previousPublicationCode, $issueNumbers, $previousCondition, null, null
+                            $demoUser->getId(), $previousPublicationCode, $issueNumbers, $previousCondition, null, false, null
                         );
                         $issueNumbers = [];
                     }
@@ -222,7 +222,7 @@ class DucksmanagerController extends AbstractController
             }
             if (!empty($previousPublicationCode) && !empty($previousCondition)) {
                 $collectionUpdateService->addOrChangeIssues(
-                    $demoUser->getId(), $previousPublicationCode, $issueNumbers, $previousCondition, null, null
+                    $demoUser->getId(), $previousPublicationCode, $issueNumbers, $previousCondition, null, false, null
                 );
             }
 

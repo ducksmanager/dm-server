@@ -154,7 +154,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
     {
         $dmEm = $this->getEm('dm');
         $qb = $dmEm->createQueryBuilder();
-        $qb->select('issues.id, issues.pays AS country, issues.magazine, issues.numero AS issueNumber, issues.etat AS condition, issues.idAcquisition AS purchaseId, issues.dateajout AS creationDate')
+        $qb->select('issues.id, issues.pays AS country, issues.magazine, issues.numero AS issueNumber, issues.etat AS condition, issues.idAcquisition AS purchaseId, issues.aLire as isToRead, issues.dateajout AS creationDate')
             ->from(Numeros::class, 'issues')
             ->where($qb->expr()->eq('issues.idUtilisateur', $this->getSessionUser()['id']))
             ->orderBy('issues.pays, issues.magazine, issues.numero', 'ASC');
@@ -269,7 +269,6 @@ class CollectionController extends AbstractController implements RequiresDmVersi
 
     /**
      * @Route(methods={"POST"}, path="/collection/issues")
-     * @return Response
      * @throws Exception
      */
     public function postIssues(Request $request, LoggerInterface $logger, CollectionUpdateService $collectionUpdateService): Response
@@ -284,6 +283,11 @@ class CollectionController extends AbstractController implements RequiresDmVersi
         }
 
         $isToSell = $request->request->get('istosell');
+        $isToRead = $request->request->get('istoread');
+        if (!isset($isToRead) || $isToRead === 'do_not_change') {
+            $isToRead = null;
+        }
+
         $purchaseId = $request->request->get('purchaseId');
 
         $purchaseIds = is_array($purchaseId) ? $purchaseId : [$purchaseId];
@@ -291,7 +295,13 @@ class CollectionController extends AbstractController implements RequiresDmVersi
 
         if (is_array($condition)) {
             [$nbUpdated, $nbCreated] = $collectionUpdateService->addOrChangeCopies(
-                $userId, $publication, $issueNumbers[0], $condition ?? [], $isToSell ?? [], $purchaseIds ?? []
+                $userId,
+                $publication,
+                $issueNumbers[0],
+                $condition ?? [],
+                $isToSell ?? [],
+                $isToRead ?? [],
+                $purchaseIds ?? []
             );
         }
         else {
@@ -302,7 +312,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
                 );
             }
             [$nbUpdated, $nbCreated] = $collectionUpdateService->addOrChangeIssues(
-                $userId, $publication, $issueNumbers, $condition, $isToSell, $purchaseIds[0]
+                $userId, $publication, $issueNumbers, $condition, $isToSell, $isToRead, $purchaseIds[0]
             );
         }
         return new JsonResponse(self::getSimpleArray([
