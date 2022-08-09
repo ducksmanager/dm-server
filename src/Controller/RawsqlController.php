@@ -41,7 +41,7 @@ class RawsqlController extends AbstractController implements RequiresDmVersionCo
         }
 
         if (stripos(trim($query), 'SELECT') === 0) {
-            $results = $em->getConnection()->fetchAll($query, $parameters);
+            $results = $em->getConnection()->fetchAllAssociative($query, $parameters);
         }
         else {
             $results = $em->getConnection()->executeQuery($query, $parameters);
