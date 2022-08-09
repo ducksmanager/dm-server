@@ -1,5 +1,5 @@
 security:
-    password_hashers:
+    encoders:
         Symfony\Component\Security\Core\User\User: plaintext
 
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
