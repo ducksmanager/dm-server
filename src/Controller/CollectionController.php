@@ -529,7 +529,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
 
     /**
      * @Route(
-     *     methods={"POST", "PUT"},
+     *     methods={"POST"},
      *     path="/collection/subscriptions/{subscriptionId}",
      *     defaults={"subscriptionId"=null}
      * )

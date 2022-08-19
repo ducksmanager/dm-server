@@ -18,10 +18,7 @@ class SuggestionService
     /** @var EntityManager */
     private static $dmStatsEm;
 
-    /** @var CoaService */
     private static CoaService $coaService;
-
-    /** @var UsersOptionsService */
     private static UsersOptionsService $usersOptionsService;
 
     public function __construct(ManagerRegistry $doctrineManagerRegistry, CoaService $coaService, UsersOptionsService $usersOptionsService)
