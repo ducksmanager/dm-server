@@ -613,7 +613,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
             'id' => $edge->getId(),
             'publicationcode' => $edge->getPublicationcode(),
             'issuenumber' => $edge->getIssuenumber(),
-            'creationDate' => $edge->getDateajout()->format('Y-m-d'),
+            'creationDate' => is_null($edge->getDateajout()) ? '0000-00-00': $edge->getDateajout()->format('Y-m-d'),
         ], $results));
     }
 
