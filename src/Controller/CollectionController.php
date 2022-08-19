@@ -161,7 +161,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
 
         return new JsonResponseFromObject(
             array_map(function ($result) {
-                $result['creationDate'] = $result['creationDate']->format('Y-m-d');
+                $result['creationDate'] = empty($result['creationDate']) ? '0000-00-00' : $result['creationDate']->format('Y-m-d');
                 return $result;
             }, $qb->getQuery()->getArrayResult()
             ));
