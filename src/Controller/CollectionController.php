@@ -287,12 +287,20 @@ class CollectionController extends AbstractController implements RequiresDmVersi
         if (!isset($isToRead) || $isToRead === 'do_not_change') {
             $isToRead = null;
         }
+        else if ($isToRead === ['do_not_change']) {
+            $isToRead = [null];
+        }
 
         $purchaseId = $request->request->get('purchaseId');
 
         $purchaseIds = is_array($purchaseId) ? $purchaseId : [$purchaseId];
         $this->checkPurchaseIdsBelongToUser($logger, $purchaseIds);
 
+        if (is_array($condition) && count($condition) === 1) {
+            $condition = $condition[0];
+            $isToRead = $isToRead[0];
+            $isToSell = false;
+        }
         if (is_array($condition)) {
             [$nbUpdated, $nbCreated] = $collectionUpdateService->addOrChangeCopies(
                 $userId,
