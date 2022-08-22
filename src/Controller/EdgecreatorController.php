@@ -824,6 +824,15 @@ CONCAT;
     }
 
     /**
+     * @Route(methods={"PUT"}, path="/edgecreator/sprites")
+     * @throws ORMException
+     * @throws Exception
+     */
+    public function generateEdgeSprites() {
+        $createdSprites = $this->spriteService->generateSprites();
+    }
+
+    /**
      * @throws ORMException
      * @throws OptimisticLockException
      */

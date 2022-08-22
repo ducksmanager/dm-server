@@ -7,6 +7,7 @@ use App\Entity\Dm\TranchesPretesSprites;
 use App\Entity\Dm\TranchesPretesSpritesUrls;
 use Cloudinary\Api\ApiResponse;
 use Cloudinary\Api\Upload\UploadApi;
+use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use GuzzleHttp\Promise\Promise;
@@ -30,15 +31,13 @@ class SpriteService
         $this->logger = $logger;
     }
 
-    public function uploadEdgesAndGenerateSprites(TranchesPretes $edge): array
+    public function uploadEdgesAndUpdateTags(TranchesPretes $edge): array
     {
         $this->uploadEdge($edge);
         $spriteNames = $this->updateTags($edge);
-        $createdSprites = $this->generateSprites($edge);
         return [
             'edgesToUpload' => $edge,
-            'spriteNames' => $spriteNames,
-            'createdSprites' => $createdSprites,
+            'spriteNames' => $spriteNames
         ];
     }
 
@@ -110,15 +109,15 @@ class SpriteService
         return $spriteNames;
     }
 
-    private function generateSprites(TranchesPretes $edge): array
+    public function generateSprites(): array
     {
-        $qb = ($this->dmEm->createQueryBuilder());
-        $qb
-            ->select('distinct sprites.spriteName')
-            ->from(TranchesPretesSprites::class, 'sprites')
-            ->andWhere($qb->expr()->eq('sprites.idTranche', $edge->getId()));
-
-        $spritesWithNoUrl = $qb->getQuery()->getResult();
+        $rsm = (new ResultSetMapping())
+            ->addScalarResult('Sprite_name', 'spriteName');
+        $spritesWithNoUrl = $this->dmEm->createNativeQuery("
+            select distinct Sprite_name
+            from tranches_pretes_sprites
+            where Sprite_name not in (select sprite_name from tranches_pretes_sprites_urls)
+              and Sprite_size < 100", $rsm)->getArrayResult();
 
         $responsePromises = [];
         foreach ($spritesWithNoUrl as $sprite) {
