@@ -2,10 +2,9 @@
 
 namespace App\Controller;
 
-use App\Entity\Dm\NumerosPopularite;
 use App\Entity\Dm\TranchesPretes;
+use App\Entity\Dm\TranchesPretesSprites;
 use App\Entity\Dm\Users;
-use App\Entity\Dm\UsersContributions;
 use App\Entity\EdgeCreator\EdgecreatorIntervalles;
 use App\Entity\EdgeCreator\EdgecreatorModeles2;
 use App\Entity\EdgeCreator\EdgecreatorValeurs;
@@ -18,7 +17,6 @@ use App\Entity\EdgeCreator\TranchesEnCoursValeurs;
 use App\Helper\Email\EdgeModelReady;
 use App\Helper\Email\EdgePhotoSent;
 use App\Helper\JsonResponseFromObject;
-use App\Service\ContributionService;
 use App\Service\EdgeService;
 use App\Service\EmailService;
 use App\Service\SpriteService;
@@ -34,10 +32,6 @@ use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\Mapping\MappingException;
 use Exception;
 use InvalidArgumentException;
-use Psr\Log\LoggerInterface;
-use RuntimeException;
-use Swift_Mailer;
-use Swift_Message;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -743,7 +737,8 @@ CONCAT;
      * @throws ORMException
      * @throws Exception
      */
-    public function publishEdgeFromIssuenumber(Request $request, EdgeService $edgeService, string $publicationCode, string $issueNumber) {
+    public function publishEdgeFromIssuenumber(Request $request, EdgeService $edgeService, string $publicationCode, string $issueNumber): JsonResponse
+    {
         $designers = $request->request->get('designers');
         $photographers = $request->request->get('photographers');
 
@@ -803,6 +798,31 @@ CONCAT;
             ]);
         }
         return new Response("$modelId is not a non-published model", Response::HTTP_BAD_REQUEST);
+    }
+
+    /**
+     * @Route(methods={"PUT"}, path="/edgecreator/publish_sprites")
+     * @throws Exception
+     */
+    public function generateSprites(SpriteService $spriteService): Response {
+        $ecEm = $this->getEm('edgecreator');
+
+        $edgeIdsWithSprites = $ecEm->createQueryBuilder()
+            ->select('edges.id')
+            ->from(TranchesPretesSprites::class, 'edges')->getQuery()->getScalarResult();
+
+        $edgesWithoutSpritesQb = $ecEm->createQueryBuilder();
+        $edgesWithoutSprites = $edgesWithoutSpritesQb
+            ->select('edges')
+            ->from(TranchesPretes::class, 'edges')
+            ->where($edgesWithoutSpritesQb->expr()->not($edgesWithoutSpritesQb->expr()->in('id', ':edgeIdsWithSprites')))
+            ->setParameter(':edgeIdsWithSprites',$edgeIdsWithSprites)
+            ->getQuery()->getScalarResult();
+
+        $spriteService->updateTags($edgesWithoutSprites);
+        $spriteService->generateSprites();
+
+        return new Response("OK", Response::HTTP_OK);
     }
 
     private function getUserIdsByUsername(array $usernames) : array {

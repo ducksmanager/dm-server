@@ -87,7 +87,7 @@ class EdgeService
 
         if ($this->kernel->getEnvironment() === 'prod') {
             $edgeToUpload = $this->dmEm->getRepository(TranchesPretes::class)->find($edgeId);
-            $this->spriteService->uploadEdgesAndUpdateTags($edgeToUpload);
+            $this->spriteService->uploadEdge($edgeToUpload);
         }
 
         return [

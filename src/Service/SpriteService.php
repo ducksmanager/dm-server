@@ -31,17 +31,7 @@ class SpriteService
         $this->logger = $logger;
     }
 
-    public function uploadEdgesAndUpdateTags(TranchesPretes $edge): array
-    {
-        $this->uploadEdge($edge);
-        $spriteNames = $this->updateTags($edge);
-        return [
-            'edgesToUpload' => $edge,
-            'spriteNames' => $spriteNames
-        ];
-    }
-
-    private function uploadEdge(TranchesPretes $edgeToUpload): void
+    public function uploadEdge(TranchesPretes $edgeToUpload): void
     {
         [$country, $magazine] = explode('/', $edgeToUpload->getPublicationcode());
 
@@ -52,61 +42,68 @@ class SpriteService
         ]);
     }
 
-    private function updateTags(TranchesPretes $edge): array
+    /**
+     * @param TranchesPretes[] $edges
+     * @return void
+     */
+    public function updateTags(array $edges): array
     {
         $qbDeleteExistingSpriteNames = $this->dmEm->createQueryBuilder();
         $qbDeleteExistingSpriteNames
             ->delete(TranchesPretesSprites::class, 'sprite')
-            ->andWhere($qbDeleteExistingSpriteNames->expr()->eq('sprite.idTranche', $edge->getId()));
+            ->andWhere($qbDeleteExistingSpriteNames->expr()->in('sprite.idTranche', array_map(fn(TranchesPretes $edge) => $edge->getId(), $edges)));
         $qbDeleteExistingSpriteNames->getQuery()->execute();
 
+        $tagsToAdd = [];
         $spriteNames = [];
 
-        foreach (self::$SPRITE_SIZES as $spriteSize) {
-            $spriteName = self::getSpriteName($edge->getPublicationcode(), $spriteSize === 'full'
-                ? 'full'
-                : self::getSpriteRange($edge->getIssuenumber(), $spriteSize)
-            );
+        foreach($edges as $edge) {
+            foreach (self::$SPRITE_SIZES as $spriteSize) {
+                $spriteName = self::getSpriteName($edge->getPublicationcode(), $spriteSize === 'full'
+                    ? 'full'
+                    : self::getSpriteRange($edge->getIssuenumber(), $spriteSize)
+                );
 
-            if ($spriteSize === 'full') {
-                $spriteSize = $this->dmEm->getRepository(TranchesPretes::class)->count([
-                    'publicationcode' => $edge->getPublicationcode()
-                ]);
-                if ($spriteSize > self::$MAX_SPRITE_SIZE) {
-                    $this->logger->info("Not creating a full sprite for publication {$edge->getPublicationcode()} : sprite size is too big ($spriteSize)");
-                    continue;
-                }
-            } else {
-                $spriteSize = $this->dmEm->getRepository(TranchesPretesSprites::class)->count([
+                if ($spriteSize === 'full') {
+                    $spriteSize = $this->dmEm->getRepository(TranchesPretes::class)->count([
+                        'publicationcode' => $edge->getPublicationcode()
+                    ]);
+                    if ($spriteSize > self::$MAX_SPRITE_SIZE) {
+                        $this->logger->info("Not creating a full sprite for publication {$edge->getPublicationcode()} : sprite size is too big ($spriteSize)");
+                        continue;
+                    }
+                } else {
+                    $spriteSize = $this->dmEm->getRepository(TranchesPretesSprites::class)->count([
                         'spriteName' => $spriteName
                     ]) + 1;
+                }
+
+                $this->logger->info("Adding tag $spriteName on {$edge->getSlug()}");
+                if (!array_key_exists($spriteName, $tagsToAdd)) {
+                    $tagsToAdd[$spriteName] = ['slugs' => [], 'spriteSize' => $spriteSize];
+                }
+                $tagsToAdd[$spriteName]['slugs'][] = $edge->getSlug();
+
+                $spriteForEdge = new TranchesPretesSprites();
+                $this->dmEm->persist($spriteForEdge
+                    ->setIdTranche($edge)
+                    ->setSpriteName($spriteName)
+                    ->setSpriteSize($spriteSize)
+                );
             }
+        }
 
-            $this->logger->info("Adding tag $spriteName on {$edge->getSlug()}");
-            $this->addTag(
-                $spriteName,
-                $edge->getSlug()
-            );
+        $this->dmEm->flush();
 
-            $spriteForEdge = new TranchesPretesSprites();
-            $this->dmEm->persist($spriteForEdge
-                ->setIdTranche($edge)
-                ->setSpriteName($spriteName)
-                ->setSpriteSize($spriteSize)
-            );
+        foreach($tagsToAdd as $spriteName => $slugsAndSpriteSize) {
+            $this->addTag($spriteName, $slugsAndSpriteSize['slugs']);
 
             $qbUpdateOtherEdgesInSprite = $this->dmEm->createQueryBuilder()
                 ->update(TranchesPretesSprites::class, 'otherEdgeInSprite')
-                ->set('otherEdgeInSprite.spriteSize', $spriteSize)
+                ->set('otherEdgeInSprite.spriteSize', $slugsAndSpriteSize['spriteSize'])
                 ->andWhere($qbDeleteExistingSpriteNames->expr()->eq('otherEdgeInSprite.spriteName', $qbDeleteExistingSpriteNames->expr()->literal($spriteName)));
             $qbUpdateOtherEdgesInSprite->getQuery()->execute();
-
-            $this->dmEm->flush();
-
-            $spriteNames[$spriteName] = (object)['size' => $spriteSize];
         }
-
-        return $spriteNames;
     }
 
     public function generateSprites(): array
