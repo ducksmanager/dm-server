@@ -805,13 +805,13 @@ CONCAT;
      * @throws Exception
      */
     public function generateSprites(SpriteService $spriteService): Response {
-        $ecEm = $this->getEm('edgecreator');
+        $dmEm = $this->getEm('dm');
 
-        $edgeIdsWithSprites = $ecEm->createQueryBuilder()
+        $edgeIdsWithSprites = $dmEm->createQueryBuilder()
             ->select('edges.id')
             ->from(TranchesPretesSprites::class, 'edges')->getQuery()->getScalarResult();
 
-        $edgesWithoutSpritesQb = $ecEm->createQueryBuilder();
+        $edgesWithoutSpritesQb = $dmEm->createQueryBuilder();
         $edgesWithoutSprites = $edgesWithoutSpritesQb
             ->select('edges')
             ->from(TranchesPretes::class, 'edges')
