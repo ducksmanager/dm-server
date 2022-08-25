@@ -815,7 +815,7 @@ CONCAT;
         $edgesWithoutSprites = $edgesWithoutSpritesQb
             ->select('edges')
             ->from(TranchesPretes::class, 'edges')
-            ->where($edgesWithoutSpritesQb->expr()->not($edgesWithoutSpritesQb->expr()->in('id', ':edgeIdsWithSprites')))
+            ->where($edgesWithoutSpritesQb->expr()->not($edgesWithoutSpritesQb->expr()->in('edges.id', ':edgeIdsWithSprites')))
             ->setParameter(':edgeIdsWithSprites',$edgeIdsWithSprites)
             ->getQuery()->getScalarResult();
 
