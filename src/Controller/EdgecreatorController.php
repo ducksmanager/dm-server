@@ -801,7 +801,7 @@ CONCAT;
     }
 
     /**
-     * @Route(methods={"PUT"}, path="/edgecreator/publish_sprites")
+     * @Route(methods={"PUT"}, path="/edgesprites/publish")
      * @throws Exception
      */
     public function generateSprites(SpriteService $spriteService): Response {
