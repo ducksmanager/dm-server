@@ -383,7 +383,7 @@ class CollectionController extends AbstractController implements RequiresDmVersi
 
         $purchase->setIdUser($idUser);
         $purchase->setDate($purchaseDate);
-        $purchase->setDescription($purchaseDescription);
+        $purchase->setDescription($purchaseDescription ?? '');
 
         $dmEm->persist($purchase);
         $dmEm->flush();
