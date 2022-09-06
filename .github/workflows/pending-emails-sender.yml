@@ -38,16 +38,10 @@ jobs:
           EMAILS_BASIC_AUTH: ${{ secrets.PRODUCTION_EMAILS_BASIC_AUTH }}
           DEMO_PASSWORD_SHA1: ${{ secrets.PRODUCTION_DEMO_PASSWORD_SHA1 }}
         run: >
-          curl --request PUT \
-               --url https://api.ducksmanager.net/edgecreator/publish_sprites \
+          curl --request POST \
+               --url https://api.ducksmanager.net/ducksmanager/emails/pending \
                --header "x-dm-version: 1.0.0" \
                --header "x-dm-user: demo" \
                --header "x-dm-pass: $DEMO_PASSWORD_SHA1" \
+               --header "Content-Type: application/x-www-form-urlencoded" \
                --header "Authorization: Basic $EMAILS_BASIC_AUTH"
-#          curl --request POST \
-#               --url https://api.ducksmanager.net/ducksmanager/emails/pending \
-#               --header "x-dm-version: 1.0.0" \
-#               --header "x-dm-user: demo" \
-#               --header "x-dm-pass: $DEMO_PASSWORD_SHA1" \
-#               --header "Content-Type: application/x-www-form-urlencoded" \
-#               --header "Authorization: Basic $EMAILS_BASIC_AUTH"
