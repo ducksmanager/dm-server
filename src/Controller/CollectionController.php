@@ -402,7 +402,6 @@ class CollectionController extends AbstractController implements RequiresDmVersi
     public function deletePurchase(TranslatorInterface $translator, ?string $purchaseId): ?Response
     {
         $dmEm = $this->getEm('dm');
-        $idUser = $this->getSessionUser()['id'];
 
         $purchase = $this->getUserPurchase($purchaseId);
         if (is_null($purchase)) {

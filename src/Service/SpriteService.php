@@ -31,17 +31,6 @@ class SpriteService
         $this->logger = $logger;
     }
 
-    public function uploadEdge(TranchesPretes $edgeToUpload): void
-    {
-        [$country, $magazine] = explode('/', $edgeToUpload->getPublicationcode());
-
-        $this->logger->info("Uploading edge with ID {$edgeToUpload->getId()} and slug {$edgeToUpload->getSlug()}...");
-        $this->upload(
-            "{$_ENV['EDGES_ROOT']}/$country/gen/$magazine.{$edgeToUpload->getIssuenumber()}.png", [
-            'public_id' => $edgeToUpload->getSlug()
-        ]);
-    }
-
     /**
      * @param TranchesPretes[] $edges
      * @return void
