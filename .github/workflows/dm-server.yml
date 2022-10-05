@@ -31,7 +31,7 @@ jobs:
           script: |
             cd workspace/dm-server
             docker compose pull stats-updater
-            docker compose run --rm --no-deps stats-updater
+            #docker compose run --rm --no-deps stats-updater
 
       - name: Run cover-updater
         uses: appleboy/ssh-action@v0.1.4
