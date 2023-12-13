@@ -51,41 +51,6 @@ services:
       - db-network
       - cover-id-network
 
-  coa-updater:
-    container_name: coa-updater
-    image: "bperel/coa-updater"
-    depends_on:
-      - db
-    env_file: .env.prod.local
-    environment:
-      MYSQL_HOST: db
-      MYSQL_DATABASE: coa
-      MYSQL_DATABASE_NEW: coa_new
-      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
-    networks:
-      - db-network
-
-  cover-updater:
-    container_name: cover-updater
-    restart: always
-    image: "bperel/duck-cover-id-updater"
-    depends_on:
-      - db
-    env_file: .env.prod.local
-    environment:
-      - MYSQL_COVER_INFO_HOST=db
-      - MYSQL_COVER_INFO_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_COVER_INFO_DATABASE=cover_info
-      - MYSQL_COA_HOST=db
-      - MYSQL_COA_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_COA_DATABASE=coa
-      - PASTEC_HOST=pastec
-      - PASTEC_PORT=4212
-      - PASTEC_CONTAINER_HOME=/pastec/build
-    networks:
-      - db-network
-      - cover-id-network
-
   pastec:
     container_name: pastec-ubuntu-1704-timestamps
     restart: always
@@ -95,23 +60,6 @@ services:
     command: "./pastec -p 4212 -i /pastec-index-last.dat /pastec/data/visualWordsORB.dat"
     networks:
       - cover-id-network
-
-  stats-updater:
-    container_name: stats-updater
-    image: "bperel/dm-stats-updater"
-    depends_on:
-      - db
-    env_file: .env.prod.local
-    environment:
-      - MYSQL_COA_HOST=db
-      - MYSQL_COA_DATABASE=coa
-      - MYSQL_DM_STATS_HOST=db
-      - MYSQL_DM_STATS_DATABASE=dm_stats
-      - MYSQL_DM_HOST=db
-      - MYSQL_DM_DATABASE=dm
-      - MYSQL_PASSWORD=$MYSQL_ROOT_PASSWORD
-    networks:
-      - db-network
 
   subscription-runner:
     container_name: subscriptions-runner
@@ -131,37 +79,6 @@ services:
       - ./scripts:/home/scripts
     command: "bash -c 'apt-get update && apt-get install -y mysql-client && sh /home/scripts/subscriptions/create-issues-from-subscriptions.sh'"
 
-  duck-estimator:
-    container_name: duck-estimator
-    image: "mcr.microsoft.com/playwright:focal"
-    depends_on:
-      - db
-    env_file: .env.prod.local
-    environment:
-      MYSQL_COA_HOST: db
-      MYSQL_COA_PORT: 3306
-      MYSQL_COA_DATABASE: coa
-      MYSQL_PASSWORD: $MYSQL_ROOT_PASSWORD
-      GOCOLLECT_USERNAME: brunoperel@gmail.com
-      GOCOLLECT_PASSWORD: syn5AnZuKRCSbH6
-      GITHUB_TOKEN: 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
-      GIT_AUTHOR_NAME: Admin
-      GIT_COMMITTER_NAME: Admin
-      GIT_AUTHOR_EMAIL: admin@ducksmanager.net
-      GIT_COMMITTER_EMAIL: admin@ducksmanager.net
-    networks:
-      - db-network
-    volumes:
-      - duck_estimator_cache:/home/cache
-      - node_cache:/root/.cache
-      - ~/.ssh/id_ed25519:/root/.ssh/id_ed25519:ro
-    command:
-      bash -c "
-      git clone --depth 1 --single-branch https://github.com/bperel/duck-estimator;
-      cd duck-estimator;
-      npm install;
-      node duck-estimator.js --cache-dir=/home/cache;
-      "
 networks:
   front-network:
     driver: bridge
