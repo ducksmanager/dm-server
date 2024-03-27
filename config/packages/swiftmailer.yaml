@@ -2,4 +2,6 @@ swiftmailer:
     host: '%env(SMTP_HOST)%'
     username: '%env(SMTP_USERNAME)%'
     password: '%env(SMTP_PASSWORD)%'
+    port: 587
+    encryption: tls
     spool: { type: 'memory' }
