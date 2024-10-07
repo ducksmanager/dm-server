@@ -50,13 +50,6 @@ class InducksIssuequotation
     private $estimationmax;
 
     /**
-     * @var \DateTime|null
-     *
-     * @ORM\Column(name="scrapedate", type="datetime", nullable=true)
-     */
-    private $scrapedate;
-
-    /**
      * @var string|null
      *
      * @ORM\Column(name="issuecode", type="string", length=28, nullable=true)
@@ -112,18 +105,6 @@ class InducksIssuequotation
     public function setEstimationmax(?float $estimationmax): self
     {
         $this->estimationmax = $estimationmax;
-
-        return $this;
-    }
-
-    public function getScrapedate(): ?\DateTimeInterface
-    {
-        return $this->scrapedate;
-    }
-
-    public function setScrapedate(?\DateTimeInterface $scrapedate): self
-    {
-        $this->scrapedate = $scrapedate;
 
         return $this;
     }
